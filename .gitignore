@@ -43,3 +43,15 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Database file
+florin.db
+
+# Claude
+claude/
+claude-flow/
+.mcp.json
+
+# Codex
+.codex/
+.agents/
