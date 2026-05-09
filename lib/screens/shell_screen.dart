@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:florin/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/providers.dart';
 import '../theme/app_theme.dart';
@@ -25,23 +26,23 @@ class ShellScreen extends ConsumerWidget {
 }
 
 class _NavItem {
-  final String label;
+  final String Function(AppLocalizations l) label;
   final IconData icon;
   final String route;
   const _NavItem(this.label, this.icon, this.route);
 }
 
-const _mainItems = [
-  _NavItem('Dashboard', Icons.dashboard_outlined, '/dashboard'),
-  _NavItem('Invoices', Icons.receipt_long_outlined, '/invoices'),
-  _NavItem('Clients', Icons.people_outlined, '/clients'),
-  _NavItem('Expenses', Icons.payment_outlined, '/expenses'),
-  _NavItem('VAT Return', Icons.account_balance_outlined, '/vat'),
-  _NavItem('P&L & Tax', Icons.bar_chart_outlined, '/tax'),
-  _NavItem('Hours', Icons.timer_outlined, '/hours'),
-  _NavItem('Mileage', Icons.directions_car_outlined, '/mileage'),
-  _NavItem('Assets', Icons.computer_outlined, '/assets'),
-  _NavItem('Pension', Icons.savings_outlined, '/pension'),
+List<_NavItem> _buildMainItems() => [
+  _NavItem((l) => l.navDashboard, Icons.dashboard_outlined, '/dashboard'),
+  _NavItem((l) => l.navInvoices, Icons.receipt_long_outlined, '/invoices'),
+  _NavItem((l) => l.navClients, Icons.people_outlined, '/clients'),
+  _NavItem((l) => l.navExpenses, Icons.payment_outlined, '/expenses'),
+  _NavItem((l) => l.navVatReturn, Icons.account_balance_outlined, '/vat'),
+  _NavItem((l) => l.navPlTax, Icons.bar_chart_outlined, '/tax'),
+  _NavItem((l) => l.navHours, Icons.timer_outlined, '/hours'),
+  _NavItem((l) => l.navMileage, Icons.directions_car_outlined, '/mileage'),
+  _NavItem((l) => l.navAssets, Icons.computer_outlined, '/assets'),
+  _NavItem((l) => l.navPension, Icons.savings_outlined, '/pension'),
 ];
 
 class _NavPanel extends ConsumerWidget {
@@ -50,8 +51,10 @@ class _NavPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context)!;
     final primary = Theme.of(context).colorScheme.primary;
     final year = ref.watch(fiscalYearProvider);
+    final mainItems = _buildMainItems();
 
     return Container(
       width: 220,
@@ -60,20 +63,19 @@ class _NavPanel extends ConsumerWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Florin', style: AppTheme.wordmark),
-            ),
+            child: Text('Florin', style: AppTheme.wordmark),
           ),
           const Divider(color: Colors.white24, height: 1),
           const SizedBox(height: 4),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 4),
-              children: _mainItems
+              children: mainItems
                   .map(
                     (item) => _NavTile(
-                      item: item,
+                      label: item.label(l),
+                      icon: item.icon,
+                      route: item.route,
                       isSelected: currentPath.startsWith(item.route),
                     ),
                   )
@@ -91,9 +93,9 @@ class _NavPanel extends ConsumerWidget {
                   color: Colors.white70,
                 ),
                 const SizedBox(width: 8),
-                const Text(
-                  'Year:',
-                  style: TextStyle(color: Colors.white70, fontSize: 13),
+                Text(
+                  l.navYear,
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
                 ),
                 const SizedBox(width: 4),
                 DropdownButton<int>(
@@ -116,11 +118,9 @@ class _NavPanel extends ConsumerWidget {
             ),
           ),
           _NavTile(
-            item: const _NavItem(
-              'Settings',
-              Icons.settings_outlined,
-              '/settings',
-            ),
+            label: l.navSettings,
+            icon: Icons.settings_outlined,
+            route: '/settings',
             isSelected: currentPath.startsWith('/settings'),
           ),
           const SizedBox(height: 12),
@@ -131,9 +131,16 @@ class _NavPanel extends ConsumerWidget {
 }
 
 class _NavTile extends StatelessWidget {
-  final _NavItem item;
+  final String label;
+  final IconData icon;
+  final String route;
   final bool isSelected;
-  const _NavTile({required this.item, required this.isSelected});
+  const _NavTile({
+    required this.label,
+    required this.icon,
+    required this.route,
+    required this.isSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +148,7 @@ class _NavTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
-        onTap: () => context.go(item.route),
+        onTap: () => context.go(route),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: isSelected
@@ -153,13 +160,13 @@ class _NavTile extends StatelessWidget {
           child: Row(
             children: [
               Icon(
-                item.icon,
+                icon,
                 size: 20,
                 color: isSelected ? Colors.white : Colors.white70,
               ),
               const SizedBox(width: 12),
               Text(
-                item.label,
+                label,
                 style: TextStyle(
                   color: isSelected ? Colors.white : Colors.white70,
                   fontSize: 14,

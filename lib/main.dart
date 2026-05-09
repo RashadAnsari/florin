@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 import 'app.dart';
 import 'providers/providers.dart';
-import 'services/db_location_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,11 +27,6 @@ void main() async {
   );
 
   final prefs = await SharedPreferences.getInstance();
-
-  // Ensure a valid DB path exists before the app renders.
-  // Defaults to getApplicationSupportDirectory() which is always accessible
-  // inside the macOS sandbox, no file-picker permission required.
-  await DbLocationService(prefs).ensurePath();
 
   runApp(
     ProviderScope(

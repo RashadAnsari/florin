@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:florin/l10n/app_localizations.dart';
 import '../../providers/providers.dart';
 import '../../services/tax_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/amount_field.dart';
+import '../expenses/expenses_screen.dart' show expenseCategoryLabels;
 
 class PlTaxScreen extends ConsumerStatefulWidget {
   const PlTaxScreen({super.key});
@@ -28,6 +30,7 @@ class _PlTaxScreenState extends ConsumerState<PlTaxScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final year = ref.watch(fiscalYearProvider);
     final invoices = ref.watch(invoicesStreamProvider(year)).valueOrNull ?? [];
     final expenses = ref.watch(expensesStreamProvider(year)).valueOrNull ?? [];
@@ -108,8 +111,10 @@ class _PlTaxScreenState extends ConsumerState<PlTaxScreen> {
           (expByCategory[e.category] ?? 0) + e.deductibleAmount;
     }
 
+    final catLabels = expenseCategoryLabels(l);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('W&V / Belasting')),
+      appBar: AppBar(title: Text(l.plTaxTitle)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: ConstrainedBox(
@@ -119,110 +124,123 @@ class _PlTaxScreenState extends ConsumerState<PlTaxScreen> {
             children: [
               if (!urenOk)
                 _banner(
-                  'Urencriterium: ${totalHours.toStringAsFixed(1)} / 1.225 uur gelogd'
-                  '${yearDone ? " — zelfstandigenaftrek vervalt" : " — nog niet bereikt"}.',
+                  l.plTaxUrenBanner(
+                    totalHours.toStringAsFixed(1),
+                    yearDone
+                        ? l.plTaxUrenBannerSuffixDone
+                        : l.plTaxUrenBannerSuffixPending,
+                  ),
                   yearDone ? AppColors.red : AppColors.expense,
                   context,
                 ),
 
-              _head('OMZET', context),
-              _plLine('Bruto omzet (excl. BTW)', result.grossRevenue),
+              _head(l.plTaxRevenuSection, context),
+              _plLine(l.plTaxGrossRevenue, result.grossRevenue),
               if (result.creditNotes > 0)
-                _plLine('Af: creditnota\'s', -result.creditNotes),
-              _plLine('NETTO OMZET', result.netRevenue, bold: true),
+                _plLine(l.plTaxCreditNotes, -result.creditNotes),
+              _plLine(l.plTaxNetRevenue, result.netRevenue, bold: true),
               const SizedBox(height: 12),
 
-              _head('KOSTEN', context),
-              ...expByCategory.entries.map((e) => _plLine(e.key, -e.value)),
+              _head(l.plTaxCostsSection, context),
+              ...expByCategory.entries.map(
+                (e) => _plLine(catLabels[e.key] ?? e.key, -e.value),
+              ),
               if (mileageAllowance > 0)
                 _plLine(
-                  'Kilometervergoeding (${businessKm}km × €${params.mileageRatePerKm})',
+                  l.plTaxMileageAllowance(
+                    businessKm,
+                    params.mileageRatePerKm.toStringAsFixed(2),
+                  ),
                   -mileageAllowance,
                 ),
               if (totalDepreciation > 0)
-                _plLine('Afschrijvingen', -totalDepreciation),
-              _plLine('TOTAAL KOSTEN', -result.totalExpenses, bold: true),
+                _plLine(l.plTaxDepreciation, -totalDepreciation),
+              _plLine(l.plTaxTotalCosts, -result.totalExpenses, bold: true),
               const SizedBox(height: 12),
-              _plLine('BRUTOWEINST', result.grossProfit, bold: true),
+              _plLine(l.plTaxGrossProfit, result.grossProfit, bold: true),
               const Divider(),
 
-              _head('ONDERNEMERSAFTREK', context),
+              _head(l.plTaxDeductionsSection, context),
               _plLine(
-                'Zelfstandigenaftrek 2026',
+                l.plTaxZelfstandigenaftrek(year),
                 result.zelfstandigenaftrekApplied,
                 muted: !claimZelfs,
               ),
               if (_claimStarters)
-                _plLine('Startersaftrek', result.startersaftrekApplied),
+                _plLine(l.plTaxStartersaftrek, result.startersaftrekApplied),
               _plLine(
-                'MKB-winstvrijstelling (${(params.mkbWinstvrijstellingPct * 100).toStringAsFixed(1)}%)',
+                l.plTaxMkb(
+                  (params.mkbWinstvrijstellingPct * 100).toStringAsFixed(1),
+                ),
                 -result.mkbDeduction,
               ),
-              if (kiaDeduction > 0) _plLine('KIA-aftrek', -kiaDeduction),
-              if (lijrente > 0) _plLine('Lijfrenteaftrek', -lijrente),
-              _plLine('BELASTBARE WINST', result.taxableProfit, bold: true),
+              if (kiaDeduction > 0) _plLine(l.plTaxKia, -kiaDeduction),
+              if (lijrente > 0) _plLine(l.plTaxLijrente, -lijrente),
+              _plLine(l.plTaxTaxableProfit, result.taxableProfit, bold: true),
               const Divider(),
 
-              _head('INKOMSTENBELASTING BOX 1', context),
+              _head(l.plTaxBox1Section, context),
               _plLine(
-                'Schijf 1 (${(params.bracket1Rate * 100).toStringAsFixed(2)}%)',
+                l.plTaxBracket1((params.bracket1Rate * 100).toStringAsFixed(2)),
                 result.bracket1Tax,
               ),
               if (result.bracket2Tax > 0)
                 _plLine(
-                  'Schijf 2 (${(params.bracket2Rate * 100).toStringAsFixed(2)}%)',
+                  l.plTaxBracket2(
+                    (params.bracket2Rate * 100).toStringAsFixed(2),
+                  ),
                   result.bracket2Tax,
                 ),
               if (result.bracket3Tax > 0)
                 _plLine(
-                  'Schijf 3 (${(params.bracket3Rate * 100).toStringAsFixed(2)}%)',
+                  l.plTaxBracket3(
+                    (params.bracket3Rate * 100).toStringAsFixed(2),
+                  ),
                   result.bracket3Tax,
                 ),
               const SizedBox(height: 8),
               _kortingRow(
-                'Algemene heffingskorting',
+                l.plTaxAlgHeffing,
                 algHeffing,
                 params.algHeffingskortingMax,
                 (v) => setState(() => _algHeffingOverride = v),
                 context,
               ),
               _kortingRow(
-                'Arbeidskorting',
+                l.plTaxArbeidskorting,
                 arbeids,
                 params.arbeidskortingMax,
                 (v) => setState(() => _arbeidskortingOverride = v),
                 context,
               ),
-              _plLine('INKOMSTENBELASTING', result.box1Tax, bold: true),
+              _plLine(l.plTaxInkomsten, result.box1Tax, bold: true),
               _plLine(
-                'ZVW-bijdrage (${(params.zvwRate * 100).toStringAsFixed(2)}%)',
+                l.plTaxZvw((params.zvwRate * 100).toStringAsFixed(2)),
                 result.zvwContribution,
               ),
               const Divider(),
-              _plLine('TOTAAL BELASTING', result.totalTax, bold: true),
-              _plLine(
-                'NETTO WINST NA BELASTING',
-                result.netProfitAfterTax,
-                bold: true,
-              ),
+              _plLine(l.plTaxTotalTax, result.totalTax, bold: true),
+              _plLine(l.plTaxNetProfit, result.netProfitAfterTax, bold: true),
               const SizedBox(height: 12),
               Text(
-                'Effectief tarief: ${(result.effectiveTaxRate / 100).toStringAsFixed(1)}%',
+                l.plTaxEffectiveRate(
+                  (result.effectiveTaxRate / 100).toStringAsFixed(1),
+                ),
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 32),
 
-              _head('INSTELLINGEN', context),
+              _head(l.plTaxSettingsSection, context),
               CheckboxListTile(
                 value: _claimZelfs,
                 onChanged: (v) => setState(() => _claimZelfs = v ?? true),
-                title: const Text('Zelfstandigenaftrek claimen'),
+                title: Text(l.plTaxClaimZelfs),
                 contentPadding: EdgeInsets.zero,
               ),
               CheckboxListTile(
                 value: _claimStarters,
                 onChanged: (v) => setState(() => _claimStarters = v ?? false),
-                title: const Text('Startersaftrek claimen'),
+                title: Text(l.plTaxClaimStarters),
                 contentPadding: EdgeInsets.zero,
               ),
             ],
@@ -278,13 +296,14 @@ class _PlTaxScreenState extends ConsumerState<PlTaxScreen> {
     ValueChanged<int> onChanged,
     BuildContext context,
   ) {
+    final l = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         children: [
           Expanded(
             child: Text(
-              'Af: $label',
+              l.plTaxDeduct(label),
               style: const TextStyle(color: AppColors.income),
             ),
           ),
@@ -299,7 +318,7 @@ class _PlTaxScreenState extends ConsumerState<PlTaxScreen> {
           ),
           const SizedBox(width: 8),
           Text(
-            '(max ${AppFormat.cents(max)})',
+            l.plTaxMax(AppFormat.cents(max)),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],

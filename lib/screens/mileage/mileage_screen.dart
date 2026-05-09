@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../theme/app_theme.dart';
@@ -35,7 +36,7 @@ class _MileageScreenState extends ConsumerState<MileageScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kilometerregistratie'),
+        title: Text(AppLocalizations.of(context)!.mileageTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -85,8 +86,10 @@ class _MileageScreenState extends ConsumerState<MileageScreen> {
                             _isNew = false;
                           }),
                         )
-                      : const Center(
-                          child: Text('Selecteer een rit of klik +'),
+                      : Center(
+                          child: Text(
+                            AppLocalizations.of(context)!.mileageSelectOrNew,
+                          ),
                         ),
                 ),
               ],
@@ -119,12 +122,22 @@ class _SummaryBar extends StatelessWidget {
       color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
       child: Row(
         children: [
-          _stat('Zakelijk', '$businessKm km', theme),
-          const SizedBox(width: 32),
-          _stat('Totaal', '$totalKm km', theme),
+          _stat(
+            AppLocalizations.of(context)!.mileageBusiness,
+            '$businessKm km',
+            theme,
+          ),
           const SizedBox(width: 32),
           _stat(
-            'Aftrek (€${ratePerKm.toStringAsFixed(2)}/km)',
+            AppLocalizations.of(context)!.mileageTotal,
+            '$totalKm km',
+            theme,
+          ),
+          const SizedBox(width: 32),
+          _stat(
+            AppLocalizations.of(
+              context,
+            )!.mileageAllowance(ratePerKm.toStringAsFixed(2)),
             AppFormat.cents(allowance),
             theme,
             valueColor: AppColors.income,
@@ -170,7 +183,7 @@ class _TripList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (trips.isEmpty) {
-      return const Center(child: Text('Geen ritten geregistreerd'));
+      return Center(child: Text(AppLocalizations.of(context)!.mileageNone));
     }
     return ListView.builder(
       itemCount: trips.length,
@@ -331,7 +344,9 @@ class _TripFormState extends ConsumerState<_TripForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.trip == null ? 'Nieuwe rit' : 'Bewerk rit',
+                widget.trip == null
+                    ? AppLocalizations.of(context)!.mileageNewTrip
+                    : AppLocalizations.of(context)!.mileageEditTrip,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 20),
@@ -346,7 +361,9 @@ class _TripFormState extends ConsumerState<_TripForm> {
                   if (d != null) setState(() => _date = d);
                 },
                 child: InputDecorator(
-                  decoration: const InputDecoration(labelText: 'Datum'),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.mileageFieldDate,
+                  ),
                   child: Text(AppFormat.date(_date)),
                 ),
               ),
@@ -357,8 +374,10 @@ class _TripFormState extends ConsumerState<_TripForm> {
                     flex: 2,
                     child: TextFormField(
                       controller: _makeModel,
-                      decoration: const InputDecoration(
-                        labelText: 'Merk/model',
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.mileageFieldMakeModel,
                       ),
                     ),
                   ),
@@ -366,7 +385,11 @@ class _TripFormState extends ConsumerState<_TripForm> {
                   Expanded(
                     child: TextFormField(
                       controller: _plate,
-                      decoration: const InputDecoration(labelText: 'Kenteken'),
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.mileageFieldPlate,
+                      ),
                     ),
                   ),
                 ],
@@ -374,16 +397,22 @@ class _TripFormState extends ConsumerState<_TripForm> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _from,
-                decoration: const InputDecoration(labelText: 'Vertrekadres'),
-                validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? 'Verplicht' : null,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.mileageFieldFrom,
+                ),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? AppLocalizations.of(context)!.labelRequired
+                    : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _to,
-                decoration: const InputDecoration(labelText: 'Aankomstadres'),
-                validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? 'Verplicht' : null,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.mileageFieldTo,
+                ),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? AppLocalizations.of(context)!.labelRequired
+                    : null,
               ),
               const SizedBox(height: 12),
               Row(
@@ -404,9 +433,13 @@ class _TripFormState extends ConsumerState<_TripForm> {
                     child: TextFormField(
                       controller: _odoEnd,
                       decoration: InputDecoration(
-                        labelText: 'Km-stand eind',
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.mileageFieldOdoEnd,
                         suffixText: 'km',
-                        errorText: odometerError ? 'Eind < begin' : null,
+                        errorText: odometerError
+                            ? AppLocalizations.of(context)!.mileageFieldOdoError
+                            : null,
                       ),
                       keyboardType: TextInputType.number,
                       onChanged: (_) => _computeDistance(),
@@ -416,7 +449,7 @@ class _TripFormState extends ConsumerState<_TripForm> {
                   Column(
                     children: [
                       Text(
-                        'Afstand',
+                        AppLocalizations.of(context)!.mileageFieldDistance,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       Text(
@@ -432,39 +465,58 @@ class _TripFormState extends ConsumerState<_TripForm> {
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 initialValue: _tripType,
-                decoration: const InputDecoration(labelText: 'Type rit'),
-                items: _kTripTypes
-                    .map((t) => DropdownMenuItem(value: t, child: Text(t)))
-                    .toList(),
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.mileageFieldTripType,
+                ),
+                items: _kTripTypes.map((t) {
+                  final l = AppLocalizations.of(context)!;
+                  final labels = {
+                    'Business': l.tripTypeBusiness,
+                    'Commute': l.tripTypeCommute,
+                    'Private': l.tripTypePrivate,
+                  };
+                  return DropdownMenuItem(
+                    value: t,
+                    child: Text(labels[t] ?? t),
+                  );
+                }).toList(),
                 onChanged: (v) => setState(() => _tripType = v ?? _tripType),
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _purpose,
-                decoration: const InputDecoration(labelText: 'Doel'),
-                validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? 'Verplicht' : null,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.mileageFieldPurpose,
+                ),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? AppLocalizations.of(context)!.labelRequired
+                    : null,
               ),
               const SizedBox(height: 8),
               CheckboxListTile(
                 value: _routeDeviation,
                 onChanged: (v) =>
                     setState(() => _routeDeviation = v ?? _routeDeviation),
-                title: const Text('Omrijden'),
+                title: Text(
+                  AppLocalizations.of(context)!.mileageFieldRouteDeviation,
+                ),
                 contentPadding: EdgeInsets.zero,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _notes,
-                decoration: const InputDecoration(
-                  labelText: 'Notities (optioneel)',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.mileageFieldNotes,
                 ),
                 maxLines: 2,
               ),
               const SizedBox(height: 24),
               Row(
                 children: [
-                  FilledButton(onPressed: _save, child: const Text('Opslaan')),
+                  FilledButton(
+                    onPressed: _save,
+                    child: Text(AppLocalizations.of(context)!.actionSave),
+                  ),
                   if (widget.trip != null) ...[
                     const SizedBox(width: 12),
                     OutlinedButton(
@@ -472,7 +524,7 @@ class _TripFormState extends ConsumerState<_TripForm> {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.red,
                       ),
-                      child: const Text('Verwijderen'),
+                      child: Text(AppLocalizations.of(context)!.actionDelete),
                     ),
                   ],
                 ],

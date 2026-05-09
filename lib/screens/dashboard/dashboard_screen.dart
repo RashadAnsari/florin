@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:florin/l10n/app_localizations.dart';
 import '../../providers/providers.dart';
 import '../../services/tax_service.dart';
 import '../../services/vat_service.dart';
@@ -11,6 +12,7 @@ class DashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context)!;
     final year = ref.watch(fiscalYearProvider);
     final invoices = ref.watch(invoicesStreamProvider(year)).valueOrNull ?? [];
     final expenses = ref.watch(expensesStreamProvider(year)).valueOrNull ?? [];
@@ -113,7 +115,7 @@ class DashboardScreen extends ConsumerWidget {
         : monthlyRevenue.reduce((a, b) => a > b ? a : b);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Dashboard $year')),
+      appBar: AppBar(title: Text(l.dashboardTitle(year))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -127,14 +129,14 @@ class DashboardScreen extends ConsumerWidget {
                 SizedBox(
                   width: 220,
                   child: StatCard(
-                    label: 'Netto omzet',
+                    label: l.dashboardNetRevenue,
                     value: AppFormat.cents(netRevenue),
                   ),
                 ),
                 SizedBox(
                   width: 220,
                   child: StatCard(
-                    label: 'Kosten (aftrekbaar)',
+                    label: l.dashboardDeductibleCosts,
                     value: AppFormat.cents(totalExpenses),
                   ),
                 ),
@@ -142,17 +144,18 @@ class DashboardScreen extends ConsumerWidget {
                   SizedBox(
                     width: 220,
                     child: StatCard(
-                      label: 'Geschatte belasting',
+                      label: l.dashboardEstimatedTax,
                       value: AppFormat.cents(taxResult.totalTax),
-                      delta:
-                          'Effectief ${(taxResult.effectiveTaxRate / 100).toStringAsFixed(1)}%',
+                      delta: l.dashboardEffectiveRate(
+                        (taxResult.effectiveTaxRate / 100).toStringAsFixed(1),
+                      ),
                     ),
                   ),
                 if (taxResult != null)
                   SizedBox(
                     width: 220,
                     child: StatCard(
-                      label: 'Netto winst na belasting',
+                      label: l.dashboardNetProfitAfterTax,
                       value: AppFormat.cents(taxResult.netProfitAfterTax),
                       deltaColor: taxResult.netProfitAfterTax >= 0
                           ? AppColors.income
@@ -163,9 +166,9 @@ class DashboardScreen extends ConsumerWidget {
                   SizedBox(
                     width: 220,
                     child: StatCard(
-                      label: 'Openstaande facturen',
+                      label: l.dashboardOutstandingInvoices,
                       value: AppFormat.cents(unpaidAmount),
-                      delta: '$unpaidCount factuur/facturen',
+                      delta: l.dashboardInvoiceCount(unpaidCount),
                       deltaColor: AppColors.expense,
                     ),
                   ),
@@ -175,14 +178,17 @@ class DashboardScreen extends ConsumerWidget {
 
             // Hours progress
             Text(
-              'Urencriterium',
+              l.dashboardUrencriterium,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             Row(
               children: [
                 Text(
-                  '${totalHours.toStringAsFixed(1)} / ${hoursTarget.toStringAsFixed(0)} uur',
+                  l.dashboardHoursProgress(
+                    totalHours.toStringAsFixed(1),
+                    hoursTarget.toStringAsFixed(0),
+                  ),
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: urenOk
@@ -213,7 +219,7 @@ class DashboardScreen extends ConsumerWidget {
 
             // VAT deadlines
             Text(
-              'BTW-deadlines',
+              l.dashboardBtwDeadlines,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
@@ -235,7 +241,7 @@ class DashboardScreen extends ConsumerWidget {
 
             // Monthly revenue bar chart
             Text(
-              'Maandelijkse omzet',
+              l.dashboardMonthlyRevenue,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 12),
@@ -268,6 +274,7 @@ class _DeadlineChip extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context)!;
     final prefs = ref.read(sharedPreferencesProvider);
     final filed =
         prefs.getBool('vat_${year}_${quarter.toLowerCase()}_filed') ?? false;
@@ -306,18 +313,18 @@ class _DeadlineChip extends ConsumerWidget {
           ),
           Text(AppFormat.date(deadline), style: theme.textTheme.bodySmall),
           if (filed)
-            const Text(
-              'ingediend',
-              style: TextStyle(color: AppColors.income, fontSize: 11),
+            Text(
+              l.deadlineStatusFiled,
+              style: const TextStyle(color: AppColors.income, fontSize: 11),
             )
           else if (overdue)
-            const Text(
-              'te laat',
-              style: TextStyle(color: AppColors.red, fontSize: 11),
+            Text(
+              l.deadlineStatusOverdue,
+              style: const TextStyle(color: AppColors.red, fontSize: 11),
             )
           else
             Text(
-              '$daysLeft d',
+              l.deadlineDaysLeft(daysLeft),
               style: TextStyle(color: chipColor, fontSize: 11),
             ),
         ],
@@ -364,7 +371,7 @@ class _MonthlyBarChart extends StatelessWidget {
                   Text(
                     AppFormat.cents(
                       values[i],
-                    ).replaceAll('€ ', '').split(',').first,
+                    ).replaceAll('€ ', '').split(',').first,
                     style: const TextStyle(fontSize: 9),
                     textAlign: TextAlign.center,
                   ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../services/db_location_service.dart';
@@ -19,7 +20,7 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
   final _address = TextEditingController();
   final _iban = TextEditingController();
   bool _isStarter = false;
-  String? _customPath; // only set if user explicitly picks a folder
+  String? _customPath;
   bool _saving = false;
 
   @override
@@ -50,7 +51,6 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
       await prefs.setString('business_iban', _iban.text.trim());
       await prefs.setBool('is_starter', _isStarter);
 
-      // Use custom path if chosen, else the default already set by ensurePath()
       final service = DbLocationService(prefs);
       final path = _customPath ?? await service.ensurePath();
 
@@ -72,6 +72,7 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Scaffold(
       body: Center(
@@ -88,28 +89,27 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Welcome to Florin',
+                      l.firstLaunchWelcome,
                       style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Set up your bookkeeping workspace.',
+                      l.firstLaunchSubtitle,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 32),
 
-                    // Database location
                     Text(
-                      'Database location (optioneel)',
+                      l.firstLaunchDbSection,
                       style: theme.textTheme.titleSmall,
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Standaard: Application Support. Kies een andere map voor iCloud / Google Drive sync.',
+                      l.firstLaunchDbDescription,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -130,7 +130,7 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
-                              _customPath ?? 'Application Support (standaard)',
+                              _customPath ?? l.firstLaunchDbDefault,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: _customPath != null
                                     ? theme.colorScheme.onSurface
@@ -144,25 +144,25 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
                         OutlinedButton.icon(
                           onPressed: _pickFolder,
                           icon: const Icon(Icons.folder_open_outlined),
-                          label: const Text('Choose folder'),
+                          label: Text(l.firstLaunchChooseFolder),
                         ),
                       ],
                     ),
                     const SizedBox(height: 28),
 
-                    // Business identity
                     Text(
-                      'Business identity',
+                      l.firstLaunchBusinessSection,
                       style: theme.textTheme.titleSmall,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _name,
-                      decoration: const InputDecoration(
-                        labelText: 'Business name *',
+                      decoration: InputDecoration(
+                        labelText: l.firstLaunchBusinessName,
                       ),
-                      validator: (v) =>
-                          (v == null || v.trim().isEmpty) ? 'Required' : null,
+                      validator: (v) => (v == null || v.trim().isEmpty)
+                          ? l.labelRequired
+                          : null,
                     ),
                     const SizedBox(height: 12),
                     Row(
@@ -170,8 +170,8 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
                         Expanded(
                           child: TextFormField(
                             controller: _vat,
-                            decoration: const InputDecoration(
-                              labelText: 'VAT number (BTW-ID)',
+                            decoration: InputDecoration(
+                              labelText: l.firstLaunchVat,
                             ),
                           ),
                         ),
@@ -179,8 +179,8 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
                         Expanded(
                           child: TextFormField(
                             controller: _kvk,
-                            decoration: const InputDecoration(
-                              labelText: 'KVK number',
+                            decoration: InputDecoration(
+                              labelText: l.firstLaunchKvk,
                             ),
                           ),
                         ),
@@ -189,24 +189,22 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _address,
-                      decoration: const InputDecoration(
-                        labelText: 'Business address',
+                      decoration: InputDecoration(
+                        labelText: l.firstLaunchAddress,
                       ),
                       maxLines: 2,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _iban,
-                      decoration: const InputDecoration(labelText: 'IBAN'),
+                      decoration: InputDecoration(labelText: l.firstLaunchIban),
                     ),
                     const SizedBox(height: 16),
                     CheckboxListTile(
                       value: _isStarter,
                       onChanged: (v) => setState(() => _isStarter = v ?? false),
-                      title: const Text('Eligible for startersaftrek'),
-                      subtitle: const Text(
-                        'First 3 years of business — €2,123 additional deduction',
-                      ),
+                      title: Text(l.firstLaunchStarters),
+                      subtitle: Text(l.firstLaunchStartersSubtitle),
                       contentPadding: EdgeInsets.zero,
                     ),
                     const SizedBox(height: 28),
@@ -223,7 +221,7 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
                                   color: Colors.white,
                                 ),
                               )
-                            : const Text('Get started'),
+                            : Text(l.firstLaunchGetStarted),
                       ),
                     ),
                   ],

@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../theme/app_theme.dart';
@@ -8,7 +9,23 @@ import '../../widgets/amount_field.dart';
 import '../../widgets/confirmation_dialog.dart';
 import '../../widgets/vat_rate_selector.dart';
 
-const kExpenseCategories = [
+// Internal category IDs (stored in DB — do NOT change these values).
+const kExpenseCategoryIds = [
+  'office',
+  'travel',
+  'meals',
+  'software',
+  'hardware',
+  'marketing',
+  'professional',
+  'phone',
+  'insurance',
+  'training',
+  'other',
+];
+
+// Legacy Dutch strings stored in existing databases.
+const kExpenseCategoriesLegacy = [
   'Kantoor & benodigdheden',
   'Reizen & verblijf',
   'Maaltijden & entertainment',
@@ -21,6 +38,24 @@ const kExpenseCategories = [
   'Training & opleiding',
   'Overig',
 ];
+
+// Keep kExpenseCategories as alias for compatibility.
+const kExpenseCategories = kExpenseCategoriesLegacy;
+
+/// Returns a map from stored category value → localized display label.
+Map<String, String> expenseCategoryLabels(AppLocalizations l) => {
+  kExpenseCategoriesLegacy[0]: l.expenseCatOffice,
+  kExpenseCategoriesLegacy[1]: l.expenseCatTravel,
+  kExpenseCategoriesLegacy[2]: l.expenseCatMeals,
+  kExpenseCategoriesLegacy[3]: l.expenseCatSoftware,
+  kExpenseCategoriesLegacy[4]: l.expenseCatHardware,
+  kExpenseCategoriesLegacy[5]: l.expenseCatMarketing,
+  kExpenseCategoriesLegacy[6]: l.expenseCatProfessional,
+  kExpenseCategoriesLegacy[7]: l.expenseCatPhone,
+  kExpenseCategoriesLegacy[8]: l.expenseCatInsurance,
+  kExpenseCategoriesLegacy[9]: l.expenseCatTraining,
+  kExpenseCategoriesLegacy[10]: l.expenseCatOther,
+};
 
 const _kQuarters = ['Q1', 'Q2', 'Q3', 'Q4'];
 
@@ -52,11 +87,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Uitgaven'),
+        title: Text(AppLocalizations.of(context)!.expensesTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'Nieuwe uitgave',
+            tooltip: AppLocalizations.of(context)!.expensesNewTooltip,
             onPressed: () => setState(() {
               _selected = null;
               _isNew = true;
@@ -83,7 +118,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
                     data: (all) {
                       final visible = _filter(all);
                       if (visible.isEmpty) {
-                        return const Center(child: Text('Geen uitgaven'));
+                        return Center(
+                          child: Text(
+                            AppLocalizations.of(context)!.expensesNone,
+                          ),
+                        );
                       }
                       return ListView.builder(
                         itemCount: visible.length,
@@ -132,7 +171,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Selecteer een uitgave of voeg een nieuwe toe',
+                          AppLocalizations.of(context)!.expensesSelectOrNew,
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
@@ -169,7 +208,7 @@ class _Filters extends StatelessWidget {
             spacing: 4,
             children: [
               FilterChip(
-                label: const Text('Alle'),
+                label: Text(AppLocalizations.of(context)!.labelAll),
                 selected: qFilter == null,
                 onSelected: (_) => onQChanged(null),
               ),
@@ -185,15 +224,24 @@ class _Filters extends StatelessWidget {
           const SizedBox(height: 4),
           DropdownButtonFormField<String?>(
             initialValue: catFilter,
-            decoration: const InputDecoration(
-              labelText: 'Categorie',
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.labelCategory,
               isDense: true,
             ),
             items: [
               const DropdownMenuItem(value: null, child: Text('Alle')),
-              ...kExpenseCategories.map(
-                (c) => DropdownMenuItem(value: c, child: Text(c)),
-              ),
+              ...() {
+                final l = AppLocalizations.of(context)!;
+                final labels = expenseCategoryLabels(l);
+                return kExpenseCategories
+                    .map(
+                      (c) => DropdownMenuItem(
+                        value: c,
+                        child: Text(labels[c] ?? c),
+                      ),
+                    )
+                    .toList();
+              }(),
             ],
             onChanged: onCatChanged,
           ),
@@ -395,9 +443,11 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
       final created = all.firstWhere((e) => e.id == id);
       if (mounted) {
         widget.onSaved(created);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Uitgave aangemaakt')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.expensesCreated),
+          ),
+        );
       }
     } else {
       await dao.saveExpense(companion);
@@ -405,18 +455,19 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
       final updated = all.firstWhere((e) => e.id == orig.id);
       if (mounted) {
         widget.onSaved(updated);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Uitgave opgeslagen')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.expensesSaved)),
+        );
       }
     }
   }
 
   Future<void> _delete() async {
+    final l = AppLocalizations.of(context)!;
     final confirmed = await showConfirmationDialog(
       context,
-      title: 'Uitgave verwijderen',
-      message: 'Weet je zeker dat je deze uitgave wilt verwijderen?',
+      title: l.expensesDeleteTitle,
+      message: l.expensesDeleteMessage,
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
@@ -440,7 +491,9 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
             children: [
               Expanded(
                 child: Text(
-                  isNew ? 'Nieuwe uitgave' : _supplier.text,
+                  isNew
+                      ? AppLocalizations.of(context)!.expensesNewHeader
+                      : _supplier.text,
                   style: theme.textTheme.titleMedium,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -448,10 +501,13 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
               if (!isNew)
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
-                  tooltip: 'Verwijderen',
+                  tooltip: AppLocalizations.of(context)!.actionDelete,
                   onPressed: _delete,
                 ),
-              FilledButton(onPressed: _save, child: const Text('Opslaan')),
+              FilledButton(
+                onPressed: _save,
+                child: Text(AppLocalizations.of(context)!.actionSave),
+              ),
               const SizedBox(width: 8),
             ],
           ),
@@ -475,19 +531,20 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                           border: Border.all(color: AppColors.expense),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Row(
+                        child: Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.info_outline,
                               color: AppColors.expense,
                               size: 18,
                             ),
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'BUA: maaltijden & entertainment boven €227 — '
-                                'BTW-aftrek mogelijk beperkt (Besluit Uitsluiting Aftrek).',
-                                style: TextStyle(
+                                AppLocalizations.of(
+                                  context,
+                                )!.expensesBuaWarning,
+                                style: const TextStyle(
                                   color: AppColors.expense,
                                   fontSize: 13,
                                 ),
@@ -512,8 +569,10 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                               if (d != null) setState(() => _date = d);
                             },
                             child: InputDecorator(
-                              decoration: const InputDecoration(
-                                labelText: 'Datum',
+                              decoration: InputDecoration(
+                                labelText: AppLocalizations.of(
+                                  context,
+                                )!.labelDate,
                               ),
                               child: Text(AppFormat.date(_date)),
                             ),
@@ -524,17 +583,19 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                           flex: 2,
                           child: DropdownButtonFormField<String>(
                             initialValue: _category,
-                            decoration: const InputDecoration(
-                              labelText: 'Categorie',
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.labelCategory,
                             ),
-                            items: kExpenseCategories
-                                .map(
-                                  (c) => DropdownMenuItem(
-                                    value: c,
-                                    child: Text(c),
-                                  ),
-                                )
-                                .toList(),
+                            items: kExpenseCategories.map((c) {
+                              final l = AppLocalizations.of(context)!;
+                              final labels = expenseCategoryLabels(l);
+                              return DropdownMenuItem(
+                                value: c,
+                                child: Text(labels[c] ?? c),
+                              );
+                            }).toList(),
                             onChanged: (v) => setState(() => _category = v!),
                           ),
                         ),
@@ -546,11 +607,13 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                         Expanded(
                           child: TextFormField(
                             controller: _supplier,
-                            decoration: const InputDecoration(
-                              labelText: 'Leverancier *',
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.expensesFieldSupplier,
                             ),
                             validator: (v) => (v == null || v.trim().isEmpty)
-                                ? 'Verplicht'
+                                ? AppLocalizations.of(context)!.labelRequired
                                 : null,
                           ),
                         ),
@@ -558,11 +621,13 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                         Expanded(
                           child: TextFormField(
                             controller: _description,
-                            decoration: const InputDecoration(
-                              labelText: 'Omschrijving *',
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.expensesFieldDescription,
                             ),
                             validator: (v) => (v == null || v.trim().isEmpty)
-                                ? 'Verplicht'
+                                ? AppLocalizations.of(context)!.labelRequired
                                 : null,
                           ),
                         ),
@@ -575,7 +640,9 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                         Expanded(
                           child: AmountField(
                             initialValueCents: _amountExclVat,
-                            label: 'Bedrag (excl. BTW) *',
+                            label: AppLocalizations.of(
+                              context,
+                            )!.expensesFieldAmountExcl,
                             required: true,
                             onChanged: (v) {
                               _amountExclVat = v;
@@ -593,14 +660,18 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                                 _compute();
                               }
                             },
-                            label: 'BTW-tarief',
+                            label: AppLocalizations.of(
+                              context,
+                            )!.expensesFieldVatRate,
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: AmountField(
                             initialValueCents: _vatAmount,
-                            label: 'BTW',
+                            label: AppLocalizations.of(
+                              context,
+                            )!.expensesFieldVat,
                             readOnly: true,
                             onChanged: (_) {},
                           ),
@@ -609,7 +680,9 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                         Expanded(
                           child: AmountField(
                             initialValueCents: _totalInclVat,
-                            label: 'Totaal (incl. BTW)',
+                            label: AppLocalizations.of(
+                              context,
+                            )!.expensesFieldTotalIncl,
                             readOnly: true,
                             onChanged: (_) {},
                           ),
@@ -617,7 +690,10 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    Text('Zakelijk gebruik', style: theme.textTheme.titleSmall),
+                    Text(
+                      AppLocalizations.of(context)!.expensesBusinessUse,
+                      style: theme.textTheme.titleSmall,
+                    ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
@@ -626,7 +702,11 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '${(_businessUsePct * 100).round()}% zakelijk',
+                                AppLocalizations.of(
+                                  context,
+                                )!.expensesBusinessUsePct(
+                                  (_businessUsePct * 100).round(),
+                                ),
                                 style: theme.textTheme.bodySmall,
                               ),
                               Slider(
@@ -646,7 +726,7 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Aftrekbaar',
+                              AppLocalizations.of(context)!.expensesDeductible,
                               style: theme.textTheme.bodySmall,
                             ),
                             Text(
@@ -666,11 +746,17 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                                 _vatReclaimable = v ?? true;
                                 _compute();
                               },
-                              title: const Text('BTW terugvragen'),
+                              title: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.expensesReclaimVat,
+                              ),
                               contentPadding: EdgeInsets.zero,
                             ),
                             Text(
-                              'BTW terug: ${AppFormat.cents(_vatToReclaim)}',
+                              AppLocalizations.of(context)!.expensesVatBack(
+                                AppFormat.cents(_vatToReclaim),
+                              ),
                               style: theme.textTheme.bodySmall,
                             ),
                           ],
@@ -684,7 +770,9 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                           value: _isMixedCost,
                           onChanged: (v) =>
                               setState(() => _isMixedCost = v ?? false),
-                          title: const Text('Gemengde kosten'),
+                          title: Text(
+                            AppLocalizations.of(context)!.expensesMixedCosts,
+                          ),
                           contentPadding: EdgeInsets.zero,
                         ),
                         const SizedBox(width: 24),
@@ -692,7 +780,11 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                           value: _receiptAttached,
                           onChanged: (v) =>
                               setState(() => _receiptAttached = v ?? false),
-                          title: const Text('Bon aanwezig'),
+                          title: Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.expensesReceiptAttached,
+                          ),
                           contentPadding: EdgeInsets.zero,
                         ),
                       ],
@@ -703,8 +795,10 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                         Expanded(
                           child: TextFormField(
                             controller: _paidFrom,
-                            decoration: const InputDecoration(
-                              labelText: 'Betaald van',
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.expensesFieldPaidFrom,
                             ),
                           ),
                         ),
@@ -712,8 +806,10 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                         Expanded(
                           child: TextFormField(
                             controller: _paymentRef,
-                            decoration: const InputDecoration(
-                              labelText: 'Betalingsreferentie',
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.expensesFieldPaymentRef,
                             ),
                           ),
                         ),
@@ -722,8 +818,8 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _notes,
-                      decoration: const InputDecoration(
-                        labelText: 'Opmerkingen',
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.labelNotes,
                       ),
                       maxLines: 2,
                     ),

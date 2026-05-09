@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:florin/l10n/app_localizations.dart';
 import '../../providers/providers.dart';
 import '../../services/vat_service.dart';
 import '../../theme/app_theme.dart';
@@ -46,7 +47,7 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
     final paid = prefs.getBool(_prefKey(year, 'paid')) ?? false;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('BTW-aangifte')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.vatReturnTitle)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: ConstrainedBox(
@@ -77,47 +78,54 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
               ] else ...[
                 if (result.korRisk)
                   _banner(
-                    'KOR-drempel bereikt (${AppFormat.cents(result.ytdRevenue)}'
-                    ' van ${AppFormat.cents(params!.korThreshold)}) — '
-                    'factureer BTW vanaf volgende transactie.',
+                    AppLocalizations.of(context)!.vatReturnKorWarning(
+                      AppFormat.cents(result.ytdRevenue),
+                      AppFormat.cents(params!.korThreshold),
+                    ),
                     AppColors.red,
                     context,
                   ),
 
-                _sectionTitle('Omzet', context),
+                _sectionTitle(
+                  AppLocalizations.of(context)!.vatReturnRevenueSection,
+                  context,
+                ),
                 _row(
-                  '1a  Leveringen/diensten belast met 21%',
+                  AppLocalizations.of(context)!.vatRow1a,
                   AppFormat.cents(result.revenue21),
                 ),
                 _row(
-                  '1b  Leveringen/diensten belast met 9%',
+                  AppLocalizations.of(context)!.vatRow1b,
                   AppFormat.cents(result.revenue9),
                 ),
                 _row(
-                  '1c  Leveringen/diensten belast met 0% (export)',
+                  AppLocalizations.of(context)!.vatRow1c,
                   AppFormat.cents(result.revenue0),
                 ),
                 _row(
-                  '3a  Leveringen naar EU-ondernemers (ICP/RC)',
+                  AppLocalizations.of(context)!.vatRow3a,
                   AppFormat.cents(result.reverseChargeRevenue),
                 ),
                 const SizedBox(height: 16),
 
-                _sectionTitle('BTW-berekening', context),
+                _sectionTitle(
+                  AppLocalizations.of(context)!.vatReturnCalculationSection,
+                  context,
+                ),
                 _row(
-                  '5a  BTW over omzet',
+                  AppLocalizations.of(context)!.vatRow5a,
                   AppFormat.cents(result.outputVatTotal),
                   bold: true,
                 ),
                 _row(
-                  '5b  Voorbelasting (terug te vragen)',
+                  AppLocalizations.of(context)!.vatRow5b,
                   AppFormat.cents(result.inputVatReclaimable),
                 ),
                 const Divider(height: 24),
                 _row(
                   result.netVatDue >= 0
-                      ? 'Te betalen BTW'
-                      : 'Terug te ontvangen BTW',
+                      ? AppLocalizations.of(context)!.vatReturnDue
+                      : AppLocalizations.of(context)!.vatReturnRefund,
                   AppFormat.cents(result.netVatDue.abs()),
                   bold: true,
                   color: result.netVatDue >= 0
@@ -127,9 +135,14 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                 const SizedBox(height: 24),
 
                 if (result.icpInvoices.isNotEmpty) ...[
-                  _sectionTitle('ICP-opgaaf', context),
+                  _sectionTitle(
+                    AppLocalizations.of(context)!.vatReturnIcpSection,
+                    context,
+                  ),
                   Text(
-                    'Deadline gelijk aan BTW-aangifte: ${AppFormat.date(deadline)}.',
+                    AppLocalizations.of(
+                      context,
+                    )!.vatReturnIcpDeadline(AppFormat.date(deadline)),
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 8),
@@ -151,14 +164,17 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                   const SizedBox(height: 24),
                 ],
 
-                _sectionTitle('Afhandelstatus', context),
+                _sectionTitle(
+                  AppLocalizations.of(context)!.vatReturnStatusSection,
+                  context,
+                ),
                 CheckboxListTile(
                   value: filed,
                   onChanged: (v) async {
                     await prefs.setBool(_prefKey(year, 'filed'), v ?? false);
                     setState(() {});
                   },
-                  title: const Text('Aangifte ingediend'),
+                  title: Text(AppLocalizations.of(context)!.vatReturnFiled),
                   contentPadding: EdgeInsets.zero,
                 ),
                 CheckboxListTile(
@@ -167,12 +183,14 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                     await prefs.setBool(_prefKey(year, 'paid'), v ?? false);
                     setState(() {});
                   },
-                  title: const Text('BTW betaald'),
+                  title: Text(AppLocalizations.of(context)!.vatReturnPaid),
                   contentPadding: EdgeInsets.zero,
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'YTD omzet: ${AppFormat.cents(result.ytdRevenue)}',
+                  AppLocalizations.of(
+                    context,
+                  )!.vatReturnYtdRevenue(AppFormat.cents(result.ytdRevenue)),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],

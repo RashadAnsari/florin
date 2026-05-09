@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../services/tax_service.dart';
@@ -46,7 +47,7 @@ class _AssetsScreenState extends ConsumerState<AssetsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Vaste activa'),
+        title: Text(AppLocalizations.of(context)!.assetsTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -97,8 +98,10 @@ class _AssetsScreenState extends ConsumerState<AssetsScreen> {
                             _isNew = false;
                           }),
                         )
-                      : const Center(
-                          child: Text('Selecteer een activum of klik +'),
+                      : Center(
+                          child: Text(
+                            AppLocalizations.of(context)!.assetsSelectOrNew,
+                          ),
                         ),
                 ),
               ],
@@ -129,17 +132,21 @@ class _SummaryBar extends StatelessWidget {
       color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
       child: Row(
         children: [
-          _stat('KIA-investeringen', AppFormat.cents(kiaTotal), theme),
+          _stat(
+            AppLocalizations.of(context)!.assetsKiaInvestments,
+            AppFormat.cents(kiaTotal),
+            theme,
+          ),
           const SizedBox(width: 32),
           _stat(
-            'KIA-aftrek',
+            AppLocalizations.of(context)!.assetsKiaDeduction,
             AppFormat.cents(kiaDeduction),
             theme,
             valueColor: AppColors.income,
           ),
           const SizedBox(width: 32),
           _stat(
-            'Afschrijving dit jaar',
+            AppLocalizations.of(context)!.assetsDepreciationThisYear,
             AppFormat.cents(totalDepreciation),
             theme,
           ),
@@ -188,7 +195,7 @@ class _AssetList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (assets.isEmpty) {
-      return const Center(child: Text('Geen activa geregistreerd'));
+      return Center(child: Text(AppLocalizations.of(context)!.assetsNone));
     }
     return ListView.builder(
       itemCount: assets.length,
@@ -217,7 +224,7 @@ class _AssetList extends StatelessWidget {
                 : null,
           ),
           subtitle: Text(
-            '${AppFormat.cents(a.costExclVat)}  ·  ${a.usefulLifeYears} jaar',
+            '${AppFormat.cents(a.costExclVat)}  ·  ${AppLocalizations.of(context)!.assetsYears(a.usefulLifeYears)}',
             style: Theme.of(context).textTheme.bodySmall,
           ),
           trailing: Column(
@@ -339,20 +346,25 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.asset == null ? 'Nieuw activum' : 'Bewerk activum',
+                widget.asset == null
+                    ? AppLocalizations.of(context)!.assetsNewAsset
+                    : AppLocalizations.of(context)!.assetsEditAsset,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 20),
               TextFormField(
                 controller: _name,
-                decoration: const InputDecoration(labelText: 'Naam activum'),
-                validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? 'Verplicht' : null,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.assetsFieldName,
+                ),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? AppLocalizations.of(context)!.labelRequired
+                    : null,
               ),
               const SizedBox(height: 12),
               AmountField(
                 key: ValueKey('cost_${widget.asset?.id}'),
-                label: 'Kosten excl. BTW',
+                label: AppLocalizations.of(context)!.assetsFieldCost,
                 initialValueCents: _costExclVat,
                 onChanged: (v) => setState(() => _costExclVat = v),
                 required: true,
@@ -369,7 +381,11 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                   if (d != null) setState(() => _purchaseDate = d);
                 },
                 child: InputDecorator(
-                  decoration: const InputDecoration(labelText: 'Aankoopdatum'),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(
+                      context,
+                    )!.assetsFieldPurchaseDate,
+                  ),
                   child: Text(AppFormat.date(_purchaseDate)),
                 ),
               ),
@@ -381,7 +397,9 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Zakelijk gebruik: ${(_businessUsePct * 100).round()}%',
+                          AppLocalizations.of(context)!.assetsFieldBusinessUse(
+                            (_businessUsePct * 100).round(),
+                          ),
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                         Slider(
@@ -400,9 +418,13 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                     width: 120,
                     child: TextFormField(
                       initialValue: _usefulLifeYears.toString(),
-                      decoration: const InputDecoration(
-                        labelText: 'Levensduur',
-                        suffixText: 'jaar',
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.assetsFieldUsefulLife,
+                        suffixText: AppLocalizations.of(
+                          context,
+                        )!.assetsFieldUsefulLifeUnit,
                       ),
                       keyboardType: TextInputType.number,
                       onChanged: (v) => setState(
@@ -410,7 +432,11 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                       ),
                       validator: (v) {
                         final y = int.tryParse(v ?? '');
-                        if (y == null || y < 1) return 'Min 1';
+                        if (y == null || y < 1) {
+                          return AppLocalizations.of(
+                            context,
+                          )!.assetsFieldUsefulLifeMin;
+                        }
                         return null;
                       },
                     ),
@@ -422,26 +448,26 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                 value: _kiaEligible,
                 onChanged: (v) =>
                     setState(() => _kiaEligible = v ?? _kiaEligible),
-                title: const Text('KIA-aanspraak'),
+                title: Text(AppLocalizations.of(context)!.assetsFieldKia),
                 contentPadding: EdgeInsets.zero,
               ),
               CheckboxListTile(
                 value: _eiaOrMia,
                 onChanged: (v) => setState(() => _eiaOrMia = v ?? _eiaOrMia),
-                title: const Text('EIA / MIA'),
+                title: Text(AppLocalizations.of(context)!.assetsFieldEiaMia),
                 contentPadding: EdgeInsets.zero,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _notes,
-                decoration: const InputDecoration(
-                  labelText: 'Notities (optioneel)',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.assetsFieldNotes,
                 ),
                 maxLines: 2,
               ),
               const SizedBox(height: 16),
               Text(
-                'Vervreemding',
+                AppLocalizations.of(context)!.assetsDisposal,
                 style: Theme.of(context).textTheme.titleSmall,
               ),
               const SizedBox(height: 8),
@@ -456,8 +482,10 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                   setState(() => _disposalDate = d);
                 },
                 child: InputDecorator(
-                  decoration: const InputDecoration(
-                    labelText: 'Vervreemdingsdatum',
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(
+                      context,
+                    )!.assetsFieldDisposalDate,
                   ),
                   child: Text(
                     _disposalDate != null
@@ -470,7 +498,9 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                 const SizedBox(height: 12),
                 AmountField(
                   key: ValueKey('proceeds_${widget.asset?.id}'),
-                  label: 'Opbrengst excl. BTW',
+                  label: AppLocalizations.of(
+                    context,
+                  )!.assetsFieldDisposalProceeds,
                   initialValueCents: _disposalProceeds,
                   onChanged: (v) => setState(() => _disposalProceeds = v),
                 ),
@@ -478,7 +508,10 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
               const SizedBox(height: 24),
               Row(
                 children: [
-                  FilledButton(onPressed: _save, child: const Text('Opslaan')),
+                  FilledButton(
+                    onPressed: _save,
+                    child: Text(AppLocalizations.of(context)!.actionSave),
+                  ),
                   if (widget.asset != null) ...[
                     const SizedBox(width: 12),
                     OutlinedButton(
@@ -486,7 +519,7 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.red,
                       ),
-                      child: const Text('Verwijderen'),
+                      child: Text(AppLocalizations.of(context)!.actionDelete),
                     ),
                   ],
                 ],

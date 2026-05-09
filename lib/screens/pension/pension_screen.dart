@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../services/pension_service.dart';
@@ -24,6 +25,7 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final year = ref.watch(fiscalYearProvider);
     final paramsAsync = ref.watch(taxParamsStreamProvider(year));
     final pensionAsync = ref.watch(pensionStreamProvider(year));
@@ -108,7 +110,7 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Pensioen')),
+      appBar: AppBar(title: Text(l.pensionTitle)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: ConstrainedBox(
@@ -116,46 +118,46 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _head('JAARRUIMTEBEREKENING', context),
+              _head(l.pensionJaarruimte, context),
               _row(
-                'Belastbare winst',
+                l.pensionTaxableProfit,
                 AppFormat.cents(taxResult.taxableProfit),
               ),
-              _row('AOW-franchise', AppFormat.cents(params.aowFranchise)),
+              _row(l.pensionAowFranchise, AppFormat.cents(params.aowFranchise)),
               _row(
-                'Pensioengrondslag',
+                l.pensionPensioengrondslag,
                 AppFormat.cents(jaarruimteResult.pensioengrondsdag),
                 bold: true,
               ),
               const SizedBox(height: 8),
               _row(
-                'Jaarruimte (30%)',
+                l.pensionJaarruimte30,
                 AppFormat.cents(jaarruimteResult.jaarruimte),
               ),
               _row(
-                'Jaarruimte (max ${AppFormat.cents(params.jaarruimteMax)})',
+                l.pensionJaarruimteMax(AppFormat.cents(params.jaarruimteMax)),
                 AppFormat.cents(jaarruimteResult.jaarruimteCapped),
                 bold: true,
               ),
               const SizedBox(height: 8),
               _row(
-                'Reserveringsruimte',
+                l.pensionReserveringsruimte,
                 AppFormat.cents(jaarruimteResult.reserveringsruimte),
               ),
               _row(
-                'Totaal beschikbaar',
+                l.pensionTotalBudget,
                 AppFormat.cents(jaarruimteResult.totalBudget),
                 bold: true,
                 valueColor: AppColors.income,
               ),
               _row(
-                'Geschatte belastingbesparing',
+                l.pensionEstimatedTaxSaving,
                 AppFormat.cents(jaarruimteResult.estimatedTaxSaving),
                 valueColor: AppColors.income,
               ),
               const Divider(height: 32),
 
-              _head('INVOER', context),
+              _head(l.pensionInputSection, context),
               const SizedBox(height: 8),
               Row(
                 children: [
@@ -164,9 +166,9 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
                       initialValue: _factorA
                           .toStringAsFixed(2)
                           .replaceAll('.', ','),
-                      decoration: const InputDecoration(
-                        labelText: 'Factor A (euro\'s)',
-                        helperText: 'Pensioenopbouw bij werkgever/BV',
+                      decoration: InputDecoration(
+                        labelText: l.pensionFactorA,
+                        helperText: l.pensionFactorAHelper,
                       ),
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
@@ -181,7 +183,7 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
                   Expanded(
                     child: AmountField(
                       key: const ValueKey('reserveringsruimte'),
-                      label: 'Reserveringsruimte (ongebruikte jaren)',
+                      label: l.pensionReserveringsruimteLabel,
                       initialValueCents: _unusedPriorYears,
                       onChanged: (v) => setState(() => _unusedPriorYears = v),
                     ),
@@ -190,19 +192,18 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
               ),
               const SizedBox(height: 24),
 
-              _head('VOORGENOMEN INLEG', context),
+              _head(l.pensionPlannedSection, context),
               const SizedBox(height: 8),
               AmountField(
                 key: ValueKey('lijfrente_$year'),
-                label: 'Lijfrentepremie / AOV-premie',
+                label: l.pensionLijfrente,
                 initialValueCents: pension?.plannedContribution ?? 0,
-                helperText:
-                    'Wordt als aftrekpost meegenomen in belastingberekening',
+                helperText: l.pensionLijfrenteHelper,
                 onChanged: (v) => _savePlannedContribution(v),
               ),
               const SizedBox(height: 24),
 
-              _head('AOV (ARBEIDSONGESCHIKTHEIDSVERZEKERING)', context),
+              _head(l.pensionAovSection, context),
               const SizedBox(height: 8),
               _AovSection(pension: pension, year: year),
             ],
@@ -300,6 +301,7 @@ class _AovSectionState extends ConsumerState<_AovSection> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -309,7 +311,7 @@ class _AovSectionState extends ConsumerState<_AovSection> {
             setState(() => _insured = v ?? _insured);
             _save();
           },
-          title: const Text('AOV afgesloten'),
+          title: Text(l.pensionAovInsured),
           contentPadding: EdgeInsets.zero,
         ),
         if (_insured) ...[
@@ -318,7 +320,7 @@ class _AovSectionState extends ConsumerState<_AovSection> {
             width: 280,
             child: AmountField(
               key: ValueKey('aov_premium_${widget.year}'),
-              label: 'Maandelijkse premie',
+              label: l.pensionMonthlyPremium,
               initialValueCents: _monthlyPremium,
               onChanged: (v) {
                 setState(() => _monthlyPremium = v);
@@ -328,7 +330,7 @@ class _AovSectionState extends ConsumerState<_AovSection> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Jaarlijkse premie: ${AppFormat.cents(_monthlyPremium * 12)}',
+            l.pensionAnnualPremium(AppFormat.cents(_monthlyPremium * 12)),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],

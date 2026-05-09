@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:florin/l10n/app_localizations.dart';
 import 'theme/app_theme.dart';
 import 'providers/providers.dart';
 import 'screens/first_launch/first_launch_screen.dart';
@@ -16,6 +20,21 @@ import 'screens/mileage/mileage_screen.dart';
 import 'screens/assets/assets_screen.dart';
 import 'screens/pension/pension_screen.dart';
 import 'screens/settings/settings_screen.dart';
+
+/// Supported locales.
+const kSupportedLocales = [Locale('nl'), Locale('en')];
+
+/// Active locale provider — persisted in shared_preferences.
+final localeProvider = StateProvider<Locale>((ref) {
+  final prefs = ref.read(sharedPreferencesProvider);
+  final tag = prefs.getString('app_locale');
+  if (tag != null) {
+    try {
+      return kSupportedLocales.firstWhere((l) => l.languageCode == tag);
+    } catch (_) {}
+  }
+  return const Locale('nl'); // default Dutch
+});
 
 class FlorinApp extends ConsumerStatefulWidget {
   const FlorinApp({super.key});
@@ -35,7 +54,8 @@ class _FlorinAppState extends ConsumerState<FlorinApp> {
       refreshListenable: notifier,
       initialLocation: '/dashboard',
       redirect: (context, state) {
-        final hasDb = notifier.path != null;
+        final path = notifier.path;
+        final hasDb = path != null && File(path).existsSync();
         final isSetup = state.matchedLocation == '/setup';
         if (!hasDb && !isSetup) return '/setup';
         if (hasDb && isSetup) return '/dashboard';
@@ -83,11 +103,20 @@ class _FlorinAppState extends ConsumerState<FlorinApp> {
 
   @override
   Widget build(BuildContext context) {
+    final locale = ref.watch(localeProvider);
     return MaterialApp.router(
       title: 'Florin',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
+      locale: locale,
+      supportedLocales: kSupportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       routerConfig: _router,
     );
   }

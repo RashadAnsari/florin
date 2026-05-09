@@ -1,7 +1,9 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
+import '../../app.dart' show localeProvider, kSupportedLocales;
 import '../../providers/providers.dart';
 import '../../services/csv_export_service.dart';
 import '../../services/db_location_service.dart';
@@ -57,9 +59,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await prefs.setString('business_iban', _iban.text.trim());
     await prefs.setBool('is_starter', _isStarter);
     if (mounted) {
+      final l = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Instellingen opgeslagen')));
+      ).showSnackBar(SnackBar(content: Text(l.settingsSaved)));
     }
   }
 
@@ -69,9 +72,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (result != null && mounted) {
       await ref.read(dbPathNotifierProvider).setPath(result);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Database verplaatst naar $result')),
-      );
+      final l = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l.settingsDatabaseMoved(result))));
     }
   }
 
@@ -82,9 +86,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     try {
       final dir = await CsvExportService(db).exportYear(year);
       if (dir != null && mounted) {
+        final l = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Geëxporteerd naar $dir')));
+        ).showSnackBar(SnackBar(content: Text(l.settingsExported(dir))));
       }
     } finally {
       if (mounted) setState(() => _exportRunning = false);
@@ -93,14 +98,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final dbPath = ref.watch(dbPathNotifierProvider).path;
     final year = ref.watch(fiscalYearProvider);
     final paramsAsync = ref.watch(taxParamsStreamProvider(year));
     final params = paramsAsync.valueOrNull;
+    final locale = ref.watch(localeProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Instellingen')),
+      appBar: AppBar(title: Text(l.settingsTitle)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
         child: ConstrainedBox(
@@ -108,12 +115,37 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Business identity ──────────────────────────────────────────
-              Text('Bedrijfsgegevens', style: theme.textTheme.titleLarge),
+              Text(
+                l.settingsLanguageSection,
+                style: theme.textTheme.titleLarge,
+              ),
+              const SizedBox(height: 12),
+              SegmentedButton<String>(
+                segments: [
+                  ButtonSegment(value: 'nl', label: Text(l.settingsLanguageNl)),
+                  ButtonSegment(value: 'en', label: Text(l.settingsLanguageEn)),
+                ],
+                selected: {locale.languageCode},
+                onSelectionChanged: (selection) {
+                  final next = kSupportedLocales.firstWhere(
+                    (loc) => loc.languageCode == selection.first,
+                  );
+                  ref.read(localeProvider.notifier).state = next;
+                  ref
+                      .read(sharedPreferencesProvider)
+                      .setString('app_locale', next.languageCode);
+                },
+              ),
+              const SizedBox(height: 40),
+
+              Text(
+                l.settingsBusinessSection,
+                style: theme.textTheme.titleLarge,
+              ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _name,
-                decoration: const InputDecoration(labelText: 'Bedrijfsnaam'),
+                decoration: InputDecoration(labelText: l.settingsBusinessName),
               ),
               const SizedBox(height: 12),
               Row(
@@ -121,8 +153,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: _vat,
-                      decoration: const InputDecoration(
-                        labelText: 'BTW-nummer',
+                      decoration: InputDecoration(
+                        labelText: l.settingsVatNumber,
                       ),
                     ),
                   ),
@@ -130,8 +162,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: _kvk,
-                      decoration: const InputDecoration(
-                        labelText: 'KVK-nummer',
+                      decoration: InputDecoration(
+                        labelText: l.settingsKvkNumber,
                       ),
                     ),
                   ),
@@ -140,45 +172,48 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _address,
-                decoration: const InputDecoration(labelText: 'Bedrijfsadres'),
+                decoration: InputDecoration(
+                  labelText: l.settingsBusinessAddress,
+                ),
                 maxLines: 2,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _iban,
-                decoration: const InputDecoration(labelText: 'IBAN'),
+                decoration: InputDecoration(labelText: l.settingsIban),
               ),
               const SizedBox(height: 12),
               CheckboxListTile(
                 value: _isStarter,
                 onChanged: (v) => setState(() => _isStarter = v ?? false),
-                title: const Text('Recht op startersaftrek'),
+                title: Text(l.settingsStartersaftrek),
                 contentPadding: EdgeInsets.zero,
               ),
               const SizedBox(height: 16),
-              FilledButton(onPressed: _save, child: const Text('Opslaan')),
+              FilledButton(onPressed: _save, child: Text(l.actionSave)),
               const SizedBox(height: 40),
 
-              // ── Database ─────────────────────────────────────────────────
-              Text('Database', style: theme.textTheme.titleLarge),
+              Text(
+                l.settingsDatabaseSection,
+                style: theme.textTheme.titleLarge,
+              ),
               const SizedBox(height: 12),
               Text(
-                'Locatie: ${dbPath ?? 'Niet ingesteld'}',
+                l.settingsDatabaseLocation(dbPath ?? l.settingsDatabaseNotSet),
                 style: theme.textTheme.bodySmall,
               ),
               const SizedBox(height: 8),
               OutlinedButton.icon(
                 onPressed: _moveDb,
                 icon: const Icon(Icons.drive_file_move_outlined),
-                label: const Text('Database verplaatsen…'),
+                label: Text(l.settingsMoveDatabase),
               ),
               const SizedBox(height: 40),
 
-              // ── CSV export ───────────────────────────────────────────────
-              Text('Exporteren', style: theme.textTheme.titleLarge),
+              Text(l.settingsExportSection, style: theme.textTheme.titleLarge),
               const SizedBox(height: 8),
               Text(
-                'Exporteer alle gegevens van $year naar CSV-bestanden.',
+                l.settingsExportDescription(year),
                 style: theme.textTheme.bodyMedium,
               ),
               const SizedBox(height: 12),
@@ -193,21 +228,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     : const Icon(Icons.download_outlined),
                 label: Text(
                   _exportRunning
-                      ? 'Bezig met exporteren…'
-                      : 'Exporteer $year als CSV',
+                      ? l.settingsExportRunning
+                      : l.settingsExportButton(year),
                 ),
               ),
               const SizedBox(height: 40),
 
-              // ── Tax parameters ───────────────────────────────────────────
               Text(
-                'Belastingparameters $year',
+                l.settingsTaxSection(year),
                 style: theme.textTheme.titleLarge,
               ),
               const SizedBox(height: 8),
               if (params == null)
                 Text(
-                  'Geen parameters gevonden voor $year. Start de app opnieuw na het aanmaken van een database.',
+                  l.settingsTaxNoParams(year),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -362,57 +396,59 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
       ),
     );
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Belastingparameters opgeslagen')),
-      );
+      final l = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l.settingsTaxParamsSaved)));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Tarieven & schijven', style: theme.textTheme.titleSmall),
+        Text(l.settingsTaxRates, style: theme.textTheme.titleSmall),
         const SizedBox(height: 12),
         _row2(
-          _field('Zelfstandigenaftrek (€)', _zelfs),
-          _field('Startersaftrek (€)', _starters),
+          _field(l.settingsTaxZelfs, _zelfs),
+          _field(l.settingsTaxStarters, _starters),
         ),
         _row2(
-          _field('MKB-winstvrijstelling (%)', _mkbPct),
-          _field('Kilometervergoeding (€/km)', _mileageRate),
+          _field(l.settingsTaxMkb, _mkbPct),
+          _field(l.settingsTaxMileage, _mileageRate),
         ),
         const SizedBox(height: 16),
-        Text('Schijven inkomstenbelasting', style: theme.textTheme.titleSmall),
+        Text(l.settingsTaxBrackets, style: theme.textTheme.titleSmall),
         const SizedBox(height: 12),
         _row2(
-          _field('Schijf 1 tarief (%)', _b1Rate),
-          _field('Schijf 1 grens (€)', _b1Thresh),
+          _field(l.settingsTaxB1Rate, _b1Rate),
+          _field(l.settingsTaxB1Thresh, _b1Thresh),
         ),
         _row2(
-          _field('Schijf 2 tarief (%)', _b2Rate),
-          _field('Schijf 2 grens (€)', _b2Thresh),
+          _field(l.settingsTaxB2Rate, _b2Rate),
+          _field(l.settingsTaxB2Thresh, _b2Thresh),
         ),
-        _row2(_field('Schijf 3 tarief (%)', _b3Rate), const SizedBox()),
+        _row2(_field(l.settingsTaxB3Rate, _b3Rate), const SizedBox()),
         const SizedBox(height: 16),
-        Text('Kortingen & ZVW', style: theme.textTheme.titleSmall),
+        Text(l.settingsTaxKortingen, style: theme.textTheme.titleSmall),
         const SizedBox(height: 12),
         _row2(
-          _field('Alg. heffingskorting max (€)', _algHeff),
-          _field('Arbeidskorting max (€)', _arbeids),
+          _field(l.settingsTaxAlgHeff, _algHeff),
+          _field(l.settingsTaxArbeids, _arbeids),
         ),
         _row2(
-          _field('ZVW tarief (%)', _zvwRate),
-          _field('ZVW max (€)', _zvwMax),
+          _field(l.settingsTaxZvwRate, _zvwRate),
+          _field(l.settingsTaxZvwMax, _zvwMax),
         ),
         const SizedBox(height: 16),
-        Text('KOR drempel', style: theme.textTheme.titleSmall),
+        Text(l.settingsTaxKor, style: theme.textTheme.titleSmall),
         const SizedBox(height: 12),
-        SizedBox(width: 280, child: _field('KOR drempel (€)', _korThresh)),
+        SizedBox(width: 280, child: _field(l.settingsTaxKorThresh, _korThresh)),
         const SizedBox(height: 20),
-        FilledButton(onPressed: _save, child: const Text('Parameters opslaan')),
+        FilledButton(onPressed: _save, child: Text(l.settingsTaxSaveParams)),
       ],
     );
   }

@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../services/invoice_pdf_service.dart';
@@ -199,16 +200,17 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
   }
 
   Future<void> _save() async {
+    final l = AppLocalizations.of(context)!;
     if (_clientId == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Selecteer een klant')));
+      ).showSnackBar(SnackBar(content: Text(l.invoiceValidateClient)));
       return;
     }
     if (_invoiceNumber.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Factuurnummer is verplicht')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l.invoiceValidateNumber)));
       return;
     }
     final dao = ref.read(invoiceDaoProvider);
@@ -273,19 +275,21 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
     if (_original == null) {
       final newInv = await dao.getById(invoiceId);
       if (mounted && newInv != null) {
+        final l = AppLocalizations.of(context)!;
         setState(() => _original = newInv);
         widget.onCreated?.call(invoiceId);
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Factuur aangemaakt')));
+        ).showSnackBar(SnackBar(content: Text(l.invoiceCreated)));
       }
     } else {
       final updated = await dao.getById(invoiceId);
       if (mounted && updated != null) setState(() => _original = updated);
       if (mounted) {
+        final l = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Factuur opgeslagen')));
+        ).showSnackBar(SnackBar(content: Text(l.invoiceSaved)));
       }
     }
   }
@@ -346,19 +350,20 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
 
   Future<void> _delete() async {
     if (_original == null) return;
+    final l = AppLocalizations.of(context)!;
     final confirmed = await showConfirmationDialog(
       context,
-      title: 'Factuur verwijderen',
-      message:
-          'Weet je zeker dat je factuur "${_original!.invoiceNumber}" wilt verwijderen?',
+      title: l.invoiceDeleteTitle,
+      message: l.invoiceDeleteMessage(_original!.invoiceNumber),
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
     await ref.read(invoiceDaoProvider).deleteInvoice(_original!.id);
     if (mounted) {
+      final l2 = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Factuur verwijderd')));
+      ).showSnackBar(SnackBar(content: Text(l2.invoiceDeleted)));
     }
   }
 
@@ -379,7 +384,9 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
             children: [
               Expanded(
                 child: Text(
-                  isNew ? 'Nieuwe factuur' : _invoiceNumber.text,
+                  isNew
+                      ? AppLocalizations.of(context)!.invoicesNewHeader
+                      : _invoiceNumber.text,
                   style: theme.textTheme.titleMedium,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -390,7 +397,9 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                 if (status != 'Sent' && status != 'Paid')
                   OutlinedButton.icon(
                     icon: const Icon(Icons.send, size: 16),
-                    label: const Text('Verzenden'),
+                    label: Text(
+                      AppLocalizations.of(context)!.invoiceActionSend,
+                    ),
                     onPressed: () => _markStatus('Sent'),
                   ),
                 if (status != 'Paid')
@@ -398,7 +407,9 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                     padding: const EdgeInsets.only(left: 8),
                     child: OutlinedButton.icon(
                       icon: const Icon(Icons.check, size: 16),
-                      label: const Text('Betaald'),
+                      label: Text(
+                        AppLocalizations.of(context)!.invoiceActionMarkPaid,
+                      ),
                       onPressed: () =>
                           _markStatus('Paid', paidDate: DateTime.now()),
                     ),
@@ -406,16 +417,19 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                 const SizedBox(width: 8),
                 IconButton(
                   icon: const Icon(Icons.picture_as_pdf_outlined),
-                  tooltip: 'PDF exporteren',
+                  tooltip: AppLocalizations.of(context)!.invoiceActionExportPdf,
                   onPressed: _sharePdf,
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
-                  tooltip: 'Verwijderen',
+                  tooltip: AppLocalizations.of(context)!.invoiceActionDelete,
                   onPressed: _delete,
                 ),
               ],
-              FilledButton(onPressed: _save, child: const Text('Opslaan')),
+              FilledButton(
+                onPressed: _save,
+                child: Text(AppLocalizations.of(context)!.actionSave),
+              ),
               const SizedBox(width: 8),
             ],
           ),
@@ -435,15 +449,25 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                       width: 150,
                       child: DropdownButtonFormField<String>(
                         initialValue: _invoiceType,
-                        decoration: const InputDecoration(labelText: 'Type'),
-                        items: const [
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(
+                            context,
+                          )!.invoiceFieldType,
+                        ),
+                        items: [
                           DropdownMenuItem(
                             value: 'Invoice',
-                            child: Text('Factuur'),
+                            child: Text(
+                              AppLocalizations.of(context)!.invoiceTypeInvoice,
+                            ),
                           ),
                           DropdownMenuItem(
                             value: 'CreditNote',
-                            child: Text('Creditnota'),
+                            child: Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.invoiceTypeCreditNote,
+                            ),
                           ),
                         ],
                         onChanged: (v) => setState(() => _invoiceType = v!),
@@ -455,7 +479,11 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                         initialValue: clients.any((c) => c.id == _clientId)
                             ? _clientId
                             : null,
-                        decoration: const InputDecoration(labelText: 'Klant *'),
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(
+                            context,
+                          )!.invoiceFieldClient,
+                        ),
                         items: clients
                             .map(
                               (c) => DropdownMenuItem(
@@ -472,8 +500,10 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                       width: 160,
                       child: TextFormField(
                         controller: _invoiceNumber,
-                        decoration: const InputDecoration(
-                          labelText: 'Factuurnummer',
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(
+                            context,
+                          )!.invoiceFieldNumber,
                         ),
                       ),
                     ),
@@ -494,8 +524,10 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                           if (d != null) setState(() => _invoiceDate = d);
                         },
                         child: InputDecorator(
-                          decoration: const InputDecoration(
-                            labelText: 'Factuurdatum',
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.invoiceFieldInvoiceDate,
                           ),
                           child: Text(AppFormat.date(_invoiceDate)),
                         ),
@@ -516,8 +548,10 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                           }
                         },
                         child: InputDecorator(
-                          decoration: const InputDecoration(
-                            labelText: 'Leveringsdatum',
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.invoiceFieldSupplyDate,
                           ),
                           child: Text(
                             _supplyDate != null
@@ -532,8 +566,10 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                       width: 100,
                       child: TextFormField(
                         controller: _paymentTermDays,
-                        decoration: const InputDecoration(
-                          labelText: 'Termijn (dagen)',
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(
+                            context,
+                          )!.invoiceFieldPaymentTerm,
                         ),
                         keyboardType: TextInputType.number,
                         onChanged: (_) => setState(() {}),
@@ -542,8 +578,10 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: InputDecorator(
-                        decoration: const InputDecoration(
-                          labelText: 'Vervaldatum',
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(
+                            context,
+                          )!.invoiceFieldDueDate,
                         ),
                         child: Text(AppFormat.date(_dueDate)),
                       ),
@@ -556,7 +594,9 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                     CheckboxListTile(
                       value: _isIcp,
                       onChanged: (v) => setState(() => _isIcp = v ?? false),
-                      title: const Text('ICP (intracommunautair)'),
+                      title: Text(
+                        AppLocalizations.of(context)!.invoiceFieldIcp,
+                      ),
                       contentPadding: EdgeInsets.zero,
                     ),
                     const SizedBox(width: 24),
@@ -564,14 +604,19 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                       value: _isReverseCharge,
                       onChanged: (v) =>
                           setState(() => _isReverseCharge = v ?? false),
-                      title: const Text('BTW verlegd'),
+                      title: Text(
+                        AppLocalizations.of(context)!.invoiceFieldBtwVerlegd,
+                      ),
                       contentPadding: EdgeInsets.zero,
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
                 // ── Line items ─────────────────────────────────────────────
-                Text('Regels', style: theme.textTheme.titleSmall),
+                Text(
+                  AppLocalizations.of(context)!.invoiceFieldLines,
+                  style: theme.textTheme.titleSmall,
+                ),
                 const SizedBox(height: 8),
                 _buildLineHeader(theme),
                 ..._lines.asMap().entries.map(
@@ -580,7 +625,9 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                 const SizedBox(height: 8),
                 TextButton.icon(
                   icon: const Icon(Icons.add, size: 16),
-                  label: const Text('Regel toevoegen'),
+                  label: Text(
+                    AppLocalizations.of(context)!.invoiceFieldAddLine,
+                  ),
                   onPressed: _addLine,
                 ),
                 const SizedBox(height: 20),
@@ -592,7 +639,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                     child: Column(
                       children: [
                         _totalRow(
-                          'Subtotaal (excl. BTW)',
+                          AppLocalizations.of(context)!.invoiceSubtotal,
                           AppFormat.cents(_totalExclVat),
                           theme,
                         ),
@@ -605,7 +652,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                         ),
                         const Divider(),
                         _totalRow(
-                          'Totaal (incl. BTW)',
+                          AppLocalizations.of(context)!.invoiceTotalInclVat,
                           AppFormat.cents(_totalInclVat),
                           theme,
                           bold: true,
@@ -617,7 +664,11 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: _notes,
-                  decoration: const InputDecoration(labelText: 'Opmerkingen'),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(
+                      context,
+                    )!.invoiceFieldRemarks,
+                  ),
                   maxLines: 3,
                 ),
               ],
@@ -629,65 +680,66 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
   }
 
   Widget _buildLineHeader(ThemeData theme) {
+    final l = AppLocalizations.of(context)!;
     return Container(
       color: theme.colorScheme.surfaceContainerHighest,
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       child: Row(
         children: [
-          const Expanded(
+          Expanded(
             child: Text(
-              'Omschrijving',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+              l.invoiceFieldDescription,
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
             ),
           ),
-          const SizedBox(
+          SizedBox(
             width: 50,
             child: Text(
-              'Aantal',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+              l.invoiceFieldQuantity,
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
               textAlign: TextAlign.right,
             ),
           ),
           const SizedBox(width: 4),
-          const SizedBox(
+          SizedBox(
             width: 45,
             child: Text(
-              'Eenheid',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+              l.invoiceFieldUnit,
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
             ),
           ),
           const SizedBox(width: 4),
-          const SizedBox(
+          SizedBox(
             width: 90,
             child: Text(
-              'Prijs (excl.)',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+              l.invoiceFieldPrice,
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
               textAlign: TextAlign.right,
             ),
           ),
           const SizedBox(width: 4),
-          const SizedBox(
+          SizedBox(
             width: 110,
             child: Text(
-              'BTW',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+              l.invoiceFieldVat,
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
             ),
           ),
           const SizedBox(width: 4),
-          const SizedBox(
+          SizedBox(
             width: 80,
             child: Text(
-              'BTW bedrag',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+              l.invoiceFieldVatAmount,
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
               textAlign: TextAlign.right,
             ),
           ),
           const SizedBox(width: 4),
-          const SizedBox(
+          SizedBox(
             width: 80,
             child: Text(
-              'Totaal excl.',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+              l.invoiceFieldLineTotal,
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
               textAlign: TextAlign.right,
             ),
           ),
@@ -705,9 +757,9 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
           Expanded(
             child: TextFormField(
               controller: line.description,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 isDense: true,
-                hintText: 'Omschrijving',
+                hintText: AppLocalizations.of(context)!.invoiceFieldDescription,
               ),
               onChanged: (_) => setState(() {}),
             ),
@@ -730,7 +782,10 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
             width: 45,
             child: TextFormField(
               controller: line.unit,
-              decoration: const InputDecoration(isDense: true, hintText: 'uur'),
+              decoration: InputDecoration(
+                isDense: true,
+                hintText: AppLocalizations.of(context)!.invoiceUnitHint,
+              ),
               onChanged: (_) => setState(() {}),
             ),
           ),
@@ -832,12 +887,13 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isOverdue = status != 'Paid' && dueDate.isBefore(DateTime.now());
+    final l = AppLocalizations.of(context)!;
     final (label, color) = isOverdue
-        ? ('Verlopen', AppColors.red)
+        ? (l.invoiceStatusOverdue, AppColors.red)
         : switch (status) {
-            'Draft' => ('Concept', Colors.grey),
-            'Sent' => ('Verzonden', AppColors.action),
-            'Paid' => ('Betaald', AppColors.income),
+            'Draft' => (l.invoiceStatusConcept, Colors.grey),
+            'Sent' => (l.invoiceStatusSent, AppColors.action),
+            'Paid' => (l.invoiceStatusPaid, AppColors.income),
             _ => (status, Colors.grey),
           };
     return Container(

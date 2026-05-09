@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../theme/app_theme.dart';
@@ -26,6 +27,7 @@ class _HoursScreenState extends ConsumerState<HoursScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final year = ref.watch(fiscalYearProvider);
     final entries =
         ref.watch(hourEntriesStreamProvider(year)).valueOrNull ?? [];
@@ -39,7 +41,7 @@ class _HoursScreenState extends ConsumerState<HoursScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Urenregistratie'),
+        title: Text(l.hoursTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -90,9 +92,7 @@ class _HoursScreenState extends ConsumerState<HoursScreen> {
                             _isNew = false;
                           }),
                         )
-                      : const Center(
-                          child: Text('Selecteer een invoer of klik +'),
-                        ),
+                      : Center(child: Text(l.hoursSelectOrNew)),
                 ),
               ],
             ),
@@ -120,6 +120,7 @@ class _SummaryBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final ok = totalHours >= target;
     final color = ok
@@ -137,7 +138,10 @@ class _SummaryBar extends StatelessWidget {
           Row(
             children: [
               Text(
-                '${totalHours.toStringAsFixed(1)} / ${target.toStringAsFixed(0)} uur',
+                l.hoursProgress(
+                  totalHours.toStringAsFixed(1),
+                  target.toStringAsFixed(0),
+                ),
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: color,
@@ -145,13 +149,13 @@ class _SummaryBar extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Text(
-                'Facturabel: ${billableHours.toStringAsFixed(1)} uur',
+                l.hoursBillable(billableHours.toStringAsFixed(1)),
                 style: theme.textTheme.bodySmall,
               ),
               const Spacer(),
               if (ok)
                 Chip(
-                  label: const Text('Urencriterium OK'),
+                  label: Text(l.hoursUrencriteriumOk),
                   backgroundColor: AppColors.income.withValues(alpha: 0.15),
                   labelStyle: const TextStyle(
                     color: AppColors.income,
@@ -162,7 +166,9 @@ class _SummaryBar extends StatelessWidget {
               else
                 Chip(
                   label: Text(
-                    '${(target - totalHours).toStringAsFixed(1)} uur te gaan',
+                    l.hoursUrencriteriumLeft(
+                      (target - totalHours).toStringAsFixed(1),
+                    ),
                   ),
                   backgroundColor: color.withValues(alpha: 0.1),
                   labelStyle: TextStyle(color: color, fontSize: 12),
@@ -199,8 +205,9 @@ class _EntryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     if (entries.isEmpty) {
-      return const Center(child: Text('Geen uren geregistreerd'));
+      return Center(child: Text(l.hoursNone));
     }
     return ListView.builder(
       itemCount: entries.length,
@@ -331,6 +338,15 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    final Map<String, String> workTypeLabels = {
+      'Billable': l.workTypeBillable,
+      'Non-billable': l.workTypeNonBillable,
+      'Administrative': l.workTypeAdministrative,
+      'WBSO': l.workTypeWbso,
+      'Other': l.workTypeOther,
+    };
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: ConstrainedBox(
@@ -341,7 +357,7 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.entry == null ? 'Nieuwe invoer' : 'Bewerk invoer',
+                widget.entry == null ? l.hoursNewEntry : l.hoursEditEntry,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 20),
@@ -359,7 +375,9 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
                         if (d != null) setState(() => _date = d);
                       },
                       child: InputDecorator(
-                        decoration: const InputDecoration(labelText: 'Datum'),
+                        decoration: InputDecoration(
+                          labelText: l.hoursFieldDate,
+                        ),
                         child: Text(AppFormat.date(_date)),
                       ),
                     ),
@@ -369,8 +387,8 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
                     width: 120,
                     child: TextFormField(
                       controller: _hours,
-                      decoration: const InputDecoration(
-                        labelText: 'Uren',
+                      decoration: InputDecoration(
+                        labelText: l.hoursFieldHours,
                         suffixText: 'u',
                       ),
                       keyboardType: const TextInputType.numberWithOptions(
@@ -380,7 +398,7 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
                         final h = double.tryParse(
                           (v ?? '').replaceAll(',', '.'),
                         );
-                        if (h == null || h <= 0) return 'Vul uren in';
+                        if (h == null || h <= 0) return l.hoursValidateHours;
                         return null;
                       },
                     ),
@@ -390,16 +408,21 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _description,
-                decoration: const InputDecoration(labelText: 'Omschrijving'),
+                decoration: InputDecoration(labelText: l.hoursFieldDescription),
                 validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? 'Verplicht' : null,
+                    (v == null || v.trim().isEmpty) ? l.labelRequired : null,
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 initialValue: _workType,
-                decoration: const InputDecoration(labelText: 'Type werk'),
+                decoration: InputDecoration(labelText: l.hoursFieldWorkType),
                 items: _kWorkTypes
-                    .map((t) => DropdownMenuItem(value: t, child: Text(t)))
+                    .map(
+                      (t) => DropdownMenuItem(
+                        value: t,
+                        child: Text(workTypeLabels[t] ?? t),
+                      ),
+                    )
                     .toList(),
                 onChanged: (v) => setState(() {
                   _workType = v ?? _workType;
@@ -410,15 +433,15 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _clientProject,
-                decoration: const InputDecoration(
-                  labelText: 'Klant / project (optioneel)',
+                decoration: InputDecoration(
+                  labelText: l.hoursFieldClientProject,
                 ),
               ),
               const SizedBox(height: 8),
               CheckboxListTile(
                 value: _billable,
                 onChanged: (v) => setState(() => _billable = v ?? _billable),
-                title: const Text('Facturabel'),
+                title: Text(l.hoursFieldBillable),
                 contentPadding: EdgeInsets.zero,
               ),
               CheckboxListTile(
@@ -430,15 +453,13 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _notes,
-                decoration: const InputDecoration(
-                  labelText: 'Notities (optioneel)',
-                ),
+                decoration: InputDecoration(labelText: l.hoursFieldNotes),
                 maxLines: 2,
               ),
               const SizedBox(height: 24),
               Row(
                 children: [
-                  FilledButton(onPressed: _save, child: const Text('Opslaan')),
+                  FilledButton(onPressed: _save, child: Text(l.actionSave)),
                   if (widget.entry != null) ...[
                     const SizedBox(width: 12),
                     OutlinedButton(
@@ -446,7 +467,7 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.red,
                       ),
-                      child: const Text('Verwijderen'),
+                      child: Text(l.actionDelete),
                     ),
                   ],
                 ],

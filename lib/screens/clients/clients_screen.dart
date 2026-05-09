@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:florin/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
@@ -43,16 +44,18 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Klanten'),
+        title: Text(AppLocalizations.of(context)!.clientsTitle),
         actions: [
           IconButton(
             icon: Icon(_showInactive ? Icons.visibility_off : Icons.visibility),
-            tooltip: _showInactive ? 'Verberg inactief' : 'Toon inactief',
+            tooltip: _showInactive
+                ? AppLocalizations.of(context)!.clientsHideInactive
+                : AppLocalizations.of(context)!.clientsShowInactive,
             onPressed: () => setState(() => _showInactive = !_showInactive),
           ),
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'Nieuwe klant',
+            tooltip: AppLocalizations.of(context)!.clientsNewTooltip,
             onPressed: () => setState(() {
               _selected = null;
               _isNew = true;
@@ -72,7 +75,9 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
                     ? all
                     : all.where((c) => c.isActive).toList();
                 if (visible.isEmpty) {
-                  return const Center(child: Text('Geen klanten'));
+                  return Center(
+                    child: Text(AppLocalizations.of(context)!.clientsNone),
+                  );
                 }
                 return ListView.builder(
                   itemCount: visible.length,
@@ -117,7 +122,7 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Selecteer een klant of maak een nieuwe aan',
+                          AppLocalizations.of(context)!.clientsSelectOrNew,
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
@@ -318,27 +323,28 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
       final created = await dao.getById(id);
       if (mounted && created != null) {
         widget.onSaved(created);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Klant aangemaakt')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.clientsCreated)),
+        );
       }
     } else {
       await dao.saveClient(companion);
       final updated = await dao.getById(orig.id);
       if (mounted && updated != null) {
         widget.onSaved(updated);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Klant opgeslagen')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.clientsSaved)),
+        );
       }
     }
   }
 
   Future<void> _delete() async {
+    final l = AppLocalizations.of(context)!;
     final confirmed = await showConfirmationDialog(
       context,
-      title: 'Klant verwijderen',
-      message: 'Weet je zeker dat je "${_name.text}" wilt verwijderen?',
+      title: l.clientsDeleteTitle,
+      message: l.clientsDeleteMessage(_name.text),
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
@@ -350,7 +356,9 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
     final vat = _vatNumber.text.trim();
     if (vat.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Voer eerst een BTW-nummer in')),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.clientsViesEmptyVat),
+        ),
       );
       return;
     }
@@ -376,7 +384,9 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
             children: [
               Expanded(
                 child: Text(
-                  isNew ? 'Nieuwe klant' : _name.text,
+                  isNew
+                      ? AppLocalizations.of(context)!.clientsNewHeader
+                      : _name.text,
                   style: theme.textTheme.titleMedium,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -384,10 +394,13 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
               if (!isNew)
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
-                  tooltip: 'Verwijderen',
+                  tooltip: AppLocalizations.of(context)!.actionDelete,
                   onPressed: _delete,
                 ),
-              FilledButton(onPressed: _save, child: const Text('Opslaan')),
+              FilledButton(
+                onPressed: _save,
+                child: Text(AppLocalizations.of(context)!.actionSave),
+              ),
               const SizedBox(width: 8),
             ],
           ),
@@ -411,18 +424,20 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                           border: Border.all(color: AppColors.red),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Row(
+                        child: Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.warning_amber,
                               color: AppColors.red,
                               size: 18,
                             ),
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'Hoog Wet DBA-risico: zorg voor een geldige overeenkomst van opdracht.',
-                                style: TextStyle(
+                                AppLocalizations.of(
+                                  context,
+                                )!.clientsHighRiskWarning,
+                                style: const TextStyle(
                                   color: AppColors.red,
                                   fontSize: 13,
                                 ),
@@ -435,9 +450,14 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                     ],
                     TextFormField(
                       controller: _name,
-                      decoration: const InputDecoration(labelText: 'Naam *'),
-                      validator: (v) =>
-                          (v == null || v.trim().isEmpty) ? 'Verplicht' : null,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.clientsFieldName,
+                      ),
+                      validator: (v) => (v == null || v.trim().isEmpty)
+                          ? AppLocalizations.of(context)!.labelRequired
+                          : null,
                     ),
                     const SizedBox(height: 12),
                     Row(
@@ -446,8 +466,10 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                           width: 70,
                           child: TextFormField(
                             controller: _country,
-                            decoration: const InputDecoration(
-                              labelText: 'Land',
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.clientsFieldCountry,
                             ),
                             textCapitalization: TextCapitalization.characters,
                             maxLength: 2,
@@ -457,22 +479,28 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                         Expanded(
                           child: TextFormField(
                             controller: _vatNumber,
-                            decoration: const InputDecoration(
-                              labelText: 'BTW-nummer',
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.clientsFieldVat,
                             ),
                           ),
                         ),
                         const SizedBox(width: 8),
                         OutlinedButton(
                           onPressed: _checkVies,
-                          child: const Text('VIES'),
+                          child: Text(
+                            AppLocalizations.of(context)!.clientsCheckVies,
+                          ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: TextFormField(
                             controller: _kvkNumber,
-                            decoration: const InputDecoration(
-                              labelText: 'KVK-nummer',
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.clientsFieldKvk,
                             ),
                           ),
                         ),
@@ -481,7 +509,11 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _address,
-                      decoration: const InputDecoration(labelText: 'Adres'),
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.clientsFieldAddress,
+                      ),
                       maxLines: 2,
                     ),
                     const SizedBox(height: 12),
@@ -490,8 +522,10 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                         Expanded(
                           child: TextFormField(
                             controller: _contactPerson,
-                            decoration: const InputDecoration(
-                              labelText: 'Contactpersoon',
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.clientsFieldContact,
                             ),
                           ),
                         ),
@@ -499,8 +533,10 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                         Expanded(
                           child: TextFormField(
                             controller: _email,
-                            decoration: const InputDecoration(
-                              labelText: 'E-mail',
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.clientsFieldEmail,
                             ),
                             keyboardType: TextInputType.emailAddress,
                           ),
@@ -509,8 +545,10 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                         Expanded(
                           child: TextFormField(
                             controller: _phone,
-                            decoration: const InputDecoration(
-                              labelText: 'Telefoon',
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.clientsFieldPhone,
                             ),
                             keyboardType: TextInputType.phone,
                           ),
@@ -518,15 +556,20 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    Text('Wet DBA', style: theme.textTheme.titleSmall),
+                    Text(
+                      AppLocalizations.of(context)!.clientsWetDba,
+                      style: theme.textTheme.titleSmall,
+                    ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
                         Expanded(
                           child: DropdownButtonFormField<String>(
                             initialValue: _riskLevel,
-                            decoration: const InputDecoration(
-                              labelText: 'Risiconiveau',
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.clientsRiskLevel,
                             ),
                             items: _kRiskOptions
                                 .map(
@@ -545,7 +588,11 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                             value: _contractSigned,
                             onChanged: (v) =>
                                 setState(() => _contractSigned = v ?? false),
-                            title: const Text('Contract getekend'),
+                            title: Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.clientsContractSigned,
+                            ),
                             contentPadding: EdgeInsets.zero,
                           ),
                         ),
@@ -568,8 +615,10 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                               }
                             },
                             child: InputDecorator(
-                              decoration: const InputDecoration(
-                                labelText: 'Vervaldatum contract',
+                              decoration: InputDecoration(
+                                labelText: AppLocalizations.of(
+                                  context,
+                                )!.clientsContractExpiry,
                               ),
                               child: Text(
                                 _contractExpiry != null
@@ -585,14 +634,18 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                     CheckboxListTile(
                       value: _isActive,
                       onChanged: (v) => setState(() => _isActive = v ?? true),
-                      title: const Text('Actief'),
+                      title: Text(
+                        AppLocalizations.of(context)!.clientsFieldActive,
+                      ),
                       contentPadding: EdgeInsets.zero,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _notes,
-                      decoration: const InputDecoration(
-                        labelText: 'Opmerkingen',
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.clientsFieldNotes,
                       ),
                       maxLines: 3,
                     ),

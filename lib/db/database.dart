@@ -29,13 +29,11 @@ part 'database.g.dart';
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
-  static AppDatabase connect(String path) => AppDatabase(
-    LazyDatabase(() async {
-      final file = File(path);
-      await file.parent.create(recursive: true);
-      return NativeDatabase.createInBackground(file);
-    }),
-  );
+  static AppDatabase connect(String path) {
+    final file = File(path);
+    file.parent.createSync(recursive: true);
+    return AppDatabase(NativeDatabase(file));
+  }
 
   @override
   int get schemaVersion => 1;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../theme/app_theme.dart';
@@ -15,17 +16,21 @@ class InvoicesScreen extends ConsumerStatefulWidget {
 class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
   int? _selectedId;
   bool _isNew = false;
-  String _statusFilter = 'Alle';
+  String _statusFilter = 'all';
   final _searchCtrl = TextEditingController();
 
   static bool _isOverdue(Invoice inv) =>
       inv.status != 'Paid' && inv.dueDate.isBefore(DateTime.now());
 
-  List<Invoice> _filter(List<Invoice> all, Map<int, String> clientMap) {
+  List<Invoice> _filter(
+    List<Invoice> all,
+    Map<int, String> clientMap,
+    AppLocalizations l,
+  ) {
     var result = all;
-    if (_statusFilter != 'Alle') {
+    if (_statusFilter != 'all') {
       result = result.where((i) {
-        if (_statusFilter == 'Verlopen') return _isOverdue(i);
+        if (_statusFilter == 'overdue') return _isOverdue(i);
         return i.status == _statusFilter;
       }).toList();
     }
@@ -48,6 +53,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final year = ref.watch(fiscalYearProvider);
     final invsAsync = ref.watch(invoicesStreamProvider(year));
     final clientMap = <int, String>{
@@ -57,11 +63,11 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Facturen'),
+        title: Text(l.invoicesTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'Nieuwe factuur',
+            tooltip: l.invoicesNewTooltip,
             onPressed: () => setState(() {
               _selectedId = null;
               _isNew = true;
@@ -76,15 +82,15 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
             width: 320,
             child: Column(
               children: [
-                _buildSearch(),
-                _buildStatusFilters(),
+                _buildSearch(l),
+                _buildStatusFilters(l),
                 const Divider(height: 1),
                 Expanded(
                   child: invsAsync.when(
                     data: (all) {
-                      final visible = _filter(all, clientMap);
+                      final visible = _filter(all, clientMap, l);
                       if (visible.isEmpty) {
-                        return const Center(child: Text('Geen facturen'));
+                        return Center(child: Text(l.invoicesNone));
                       }
                       return ListView.builder(
                         itemCount: visible.length,
@@ -129,7 +135,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Selecteer een factuur of maak een nieuwe aan',
+                          l.invoicesSelectOrNew,
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
@@ -141,14 +147,14 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     );
   }
 
-  Widget _buildSearch() {
+  Widget _buildSearch(AppLocalizations l) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
       child: TextField(
         controller: _searchCtrl,
         decoration: InputDecoration(
           isDense: true,
-          hintText: 'Zoeken…',
+          hintText: l.labelSearch,
           prefixIcon: const Icon(Icons.search, size: 18),
           suffixIcon: _searchCtrl.text.isNotEmpty
               ? IconButton(
@@ -165,8 +171,14 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
     );
   }
 
-  Widget _buildStatusFilters() {
-    const statuses = ['Alle', 'Draft', 'Sent', 'Paid', 'Verlopen'];
+  Widget _buildStatusFilters(AppLocalizations l) {
+    final statuses = [
+      ('all', l.invoicesFilterAll),
+      ('Draft', l.invoiceStatusConcept),
+      ('Sent', l.invoiceStatusSent),
+      ('Paid', l.invoiceStatusPaid),
+      ('overdue', l.invoicesFilterOverdue),
+    ];
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
@@ -176,9 +188,9 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
               (s) => Padding(
                 padding: const EdgeInsets.only(right: 4),
                 child: FilterChip(
-                  label: Text(s),
-                  selected: _statusFilter == s,
-                  onSelected: (_) => setState(() => _statusFilter = s),
+                  label: Text(s.$2),
+                  selected: _statusFilter == s.$1,
+                  onSelected: (_) => setState(() => _statusFilter = s.$1),
                 ),
               ),
             )
@@ -206,14 +218,15 @@ class _InvoiceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final overdue = _isOverdue;
     final (statusLabel, statusColor) = overdue
-        ? ('Verlopen', AppColors.red)
+        ? (l.invoiceStatusOverdue, AppColors.red)
         : switch (invoice.status) {
-            'Draft' => ('Concept', Colors.grey),
-            'Sent' => ('Verzonden', AppColors.action),
-            'Paid' => ('Betaald', AppColors.income),
+            'Draft' => (l.invoiceStatusConcept, Colors.grey),
+            'Sent' => (l.invoiceStatusSent, AppColors.action),
+            'Paid' => (l.invoiceStatusPaid, AppColors.income),
             _ => (invoice.status, Colors.grey),
           };
 
