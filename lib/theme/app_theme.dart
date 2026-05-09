@@ -2,24 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-class AppTheme {
-  static const _primary = Color(0xFF1A5276);
-  static const _primaryDark = Color(0xFF0D2137);
-  static const _accent = Color(0xFFF39C12);
-  static const _background = Color(0xFFF8F9FA);
+class AppColors {
+  // Core palette
+  static const navy = Color(0xFF1C3F6E);
+  static const teal = Color(0xFF007377);
+  static const green = Color(0xFF2E7032);
+  static const red = Color(0xFFC83928);
 
+  // Semantic tokens
+  static const income = Color(0xFF2E7032); // positive balance, revenue
+  static const expense = Color(0xFFCC8339); // costs, deductions
+  static const vat = Color(0xFFB45389); // BTW deadlines, warnings
+  static const action = Color(0xFF007377); // buttons, links, active states
+
+  // Surfaces — light
+  static const bgLight = Color(0xFFF1F5F9);
+  static const surfaceLight = Color(0xFFFFFFFF);
+
+  // Surfaces — dark
+  static const bgDark = Color(0xFF0F172A);
+  static const surfaceDark = Color(0xFF1E293B);
+}
+
+class AppTheme {
   static ThemeData get light {
     final base = ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: _primary,
-        primary: _primary,
-        secondary: _accent,
-        surface: _background,
+        seedColor: AppColors.navy,
+        primary: AppColors.navy,
+        secondary: AppColors.teal,
+        surface: AppColors.surfaceLight,
         brightness: Brightness.light,
-      ),
+      ).copyWith(error: AppColors.red),
     );
     return base.copyWith(
+      scaffoldBackgroundColor: AppColors.bgLight,
       textTheme: GoogleFonts.interTextTheme(base.textTheme),
       cardTheme: const CardThemeData(elevation: 1, margin: EdgeInsets.zero),
       inputDecorationTheme: const InputDecorationTheme(
@@ -34,13 +52,15 @@ class AppTheme {
     final base = ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: _primaryDark,
-        primary: _primaryDark,
-        secondary: _accent,
+        seedColor: AppColors.navy,
+        primary: AppColors.teal,
+        secondary: AppColors.navy,
+        surface: AppColors.surfaceDark,
         brightness: Brightness.dark,
-      ),
+      ).copyWith(error: AppColors.red),
     );
     return base.copyWith(
+      scaffoldBackgroundColor: AppColors.bgDark,
       textTheme: GoogleFonts.interTextTheme(base.textTheme),
       cardTheme: const CardThemeData(elevation: 1, margin: EdgeInsets.zero),
       inputDecorationTheme: const InputDecorationTheme(

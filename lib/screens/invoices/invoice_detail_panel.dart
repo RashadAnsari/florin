@@ -833,11 +833,11 @@ class _StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final isOverdue = status != 'Paid' && dueDate.isBefore(DateTime.now());
     final (label, color) = isOverdue
-        ? ('Verlopen', Colors.red)
+        ? ('Verlopen', AppColors.red)
         : switch (status) {
             'Draft' => ('Concept', Colors.grey),
-            'Sent' => ('Verzonden', Colors.blue),
-            'Paid' => ('Betaald', Colors.green),
+            'Sent' => ('Verzonden', AppColors.action),
+            'Paid' => ('Betaald', AppColors.income),
             _ => (status, Colors.grey),
           };
     return Container(

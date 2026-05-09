@@ -155,8 +155,8 @@ class DashboardScreen extends ConsumerWidget {
                       label: 'Netto winst na belasting',
                       value: AppFormat.cents(taxResult.netProfitAfterTax),
                       deltaColor: taxResult.netProfitAfterTax >= 0
-                          ? Colors.green
-                          : Colors.red,
+                          ? AppColors.income
+                          : AppColors.red,
                     ),
                   ),
                 if (unpaidCount > 0)
@@ -166,7 +166,7 @@ class DashboardScreen extends ConsumerWidget {
                       label: 'Openstaande facturen',
                       value: AppFormat.cents(unpaidAmount),
                       delta: '$unpaidCount factuur/facturen',
-                      deltaColor: Colors.orange,
+                      deltaColor: AppColors.expense,
                     ),
                   ),
               ],
@@ -186,9 +186,9 @@ class DashboardScreen extends ConsumerWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: urenOk
-                        ? Colors.green
+                        ? AppColors.income
                         : yearDone
-                        ? Colors.red
+                        ? AppColors.red
                         : null,
                   ),
                 ),
@@ -200,9 +200,9 @@ class DashboardScreen extends ConsumerWidget {
                       value: hoursProgress,
                       minHeight: 8,
                       color: urenOk
-                          ? Colors.green
+                          ? AppColors.income
                           : yearDone
-                          ? Colors.red
+                          ? AppColors.red
                           : Theme.of(context).colorScheme.primary,
                     ),
                   ),
@@ -280,11 +280,11 @@ class _DeadlineChip extends ConsumerWidget {
 
     Color chipColor;
     if (filed) {
-      chipColor = Colors.green;
+      chipColor = AppColors.income;
     } else if (overdue) {
-      chipColor = Colors.red;
+      chipColor = AppColors.red;
     } else if (urgent) {
-      chipColor = Colors.orange;
+      chipColor = AppColors.vat;
     } else {
       chipColor = theme.colorScheme.outline;
     }
@@ -308,12 +308,12 @@ class _DeadlineChip extends ConsumerWidget {
           if (filed)
             const Text(
               'ingediend',
-              style: TextStyle(color: Colors.green, fontSize: 11),
+              style: TextStyle(color: AppColors.income, fontSize: 11),
             )
           else if (overdue)
             const Text(
               'te laat',
-              style: TextStyle(color: Colors.red, fontSize: 11),
+              style: TextStyle(color: AppColors.red, fontSize: 11),
             )
           else
             Text(

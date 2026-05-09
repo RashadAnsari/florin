@@ -144,9 +144,9 @@ class _ClientTile extends StatelessWidget {
   });
 
   Color _riskColor(String level) => switch (level) {
-    'High' => Colors.red,
-    'Medium' => Colors.orange,
-    _ => Colors.green,
+    'High' => AppColors.red,
+    'Medium' => AppColors.expense,
+    _ => AppColors.income,
   };
 
   @override
@@ -407,15 +407,15 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha: 0.08),
-                          border: Border.all(color: Colors.red),
+                          color: AppColors.red.withValues(alpha: 0.08),
+                          border: Border.all(color: AppColors.red),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Row(
                           children: [
                             Icon(
                               Icons.warning_amber,
-                              color: Colors.red,
+                              color: AppColors.red,
                               size: 18,
                             ),
                             SizedBox(width: 8),
@@ -423,7 +423,7 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                               child: Text(
                                 'Hoog Wet DBA-risico: zorg voor een geldige overeenkomst van opdracht.',
                                 style: TextStyle(
-                                  color: Colors.red,
+                                  color: AppColors.red,
                                   fontSize: 13,
                                 ),
                               ),

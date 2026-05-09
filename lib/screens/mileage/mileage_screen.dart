@@ -127,7 +127,7 @@ class _SummaryBar extends StatelessWidget {
             'Aftrek (€${ratePerKm.toStringAsFixed(2)}/km)',
             AppFormat.cents(allowance),
             theme,
-            valueColor: Colors.green,
+            valueColor: AppColors.income,
           ),
         ],
       ),
@@ -194,7 +194,7 @@ class _TripList extends StatelessWidget {
             '${t.distanceKm} km',
             style: TextStyle(
               fontWeight: FontWeight.w600,
-              color: t.tripType == 'Business' ? Colors.green : null,
+              color: t.tripType == 'Business' ? AppColors.income : null,
             ),
           ),
           onTap: () => onTap(t),
@@ -470,7 +470,7 @@ class _TripFormState extends ConsumerState<_TripForm> {
                     OutlinedButton(
                       onPressed: _delete,
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.red,
+                        foregroundColor: AppColors.red,
                       ),
                       child: const Text('Verwijderen'),
                     ),

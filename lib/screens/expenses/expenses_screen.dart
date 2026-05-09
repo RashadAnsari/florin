@@ -471,15 +471,15 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.orange.withValues(alpha: 0.08),
-                          border: Border.all(color: Colors.orange),
+                          color: AppColors.expense.withValues(alpha: 0.08),
+                          border: Border.all(color: AppColors.expense),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Row(
                           children: [
                             Icon(
                               Icons.info_outline,
-                              color: Colors.orange,
+                              color: AppColors.expense,
                               size: 18,
                             ),
                             SizedBox(width: 8),
@@ -488,7 +488,7 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                                 'BUA: maaltijden & entertainment boven €227 — '
                                 'BTW-aftrek mogelijk beperkt (Besluit Uitsluiting Aftrek).',
                                 style: TextStyle(
-                                  color: Colors.orange,
+                                  color: AppColors.expense,
                                   fontSize: 13,
                                 ),
                               ),

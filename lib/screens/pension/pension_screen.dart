@@ -146,12 +146,12 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
                 'Totaal beschikbaar',
                 AppFormat.cents(jaarruimteResult.totalBudget),
                 bold: true,
-                valueColor: Colors.green,
+                valueColor: AppColors.income,
               ),
               _row(
                 'Geschatte belastingbesparing',
                 AppFormat.cents(jaarruimteResult.estimatedTaxSaving),
-                valueColor: Colors.green,
+                valueColor: AppColors.income,
               ),
               const Divider(height: 32),
 

@@ -121,7 +121,7 @@ class _PlTaxScreenState extends ConsumerState<PlTaxScreen> {
                 _banner(
                   'Urencriterium: ${totalHours.toStringAsFixed(1)} / 1.225 uur gelogd'
                   '${yearDone ? " — zelfstandigenaftrek vervalt" : " — nog niet bereikt"}.',
-                  yearDone ? Colors.red : Colors.orange,
+                  yearDone ? AppColors.red : AppColors.expense,
                   context,
                 ),
 
@@ -252,7 +252,7 @@ class _PlTaxScreenState extends ConsumerState<PlTaxScreen> {
     final color = muted
         ? Colors.grey
         : cents < 0
-        ? Colors.red
+        ? AppColors.red
         : null;
     final ts = bold
         ? TextStyle(fontWeight: FontWeight.w700, color: color)
@@ -285,7 +285,7 @@ class _PlTaxScreenState extends ConsumerState<PlTaxScreen> {
           Expanded(
             child: Text(
               'Af: $label',
-              style: const TextStyle(color: Colors.green),
+              style: const TextStyle(color: AppColors.income),
             ),
           ),
           SizedBox(

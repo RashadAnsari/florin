@@ -209,11 +209,11 @@ class _InvoiceTile extends StatelessWidget {
     final theme = Theme.of(context);
     final overdue = _isOverdue;
     final (statusLabel, statusColor) = overdue
-        ? ('Verlopen', Colors.red)
+        ? ('Verlopen', AppColors.red)
         : switch (invoice.status) {
             'Draft' => ('Concept', Colors.grey),
-            'Sent' => ('Verzonden', Colors.blue),
-            'Paid' => ('Betaald', Colors.green),
+            'Sent' => ('Verzonden', AppColors.action),
+            'Paid' => ('Betaald', AppColors.income),
             _ => (invoice.status, Colors.grey),
           };
 
@@ -221,7 +221,7 @@ class _InvoiceTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         color: overdue
-            ? Colors.red.withValues(alpha: 0.04)
+            ? AppColors.red.withValues(alpha: 0.04)
             : isSelected
             ? theme.colorScheme.secondaryContainer
             : null,

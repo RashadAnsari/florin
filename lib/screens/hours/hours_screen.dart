@@ -123,9 +123,9 @@ class _SummaryBar extends StatelessWidget {
     final theme = Theme.of(context);
     final ok = totalHours >= target;
     final color = ok
-        ? Colors.green
+        ? AppColors.income
         : yearDone
-        ? Colors.red
+        ? AppColors.red
         : theme.colorScheme.primary;
 
     return Container(
@@ -152,9 +152,9 @@ class _SummaryBar extends StatelessWidget {
               if (ok)
                 Chip(
                   label: const Text('Urencriterium OK'),
-                  backgroundColor: Colors.green.withValues(alpha: 0.15),
+                  backgroundColor: AppColors.income.withValues(alpha: 0.15),
                   labelStyle: const TextStyle(
-                    color: Colors.green,
+                    color: AppColors.income,
                     fontSize: 12,
                   ),
                   padding: EdgeInsets.zero,
@@ -224,7 +224,7 @@ class _EntryList extends StatelessWidget {
             '${e.hours.toStringAsFixed(1)}u',
             style: TextStyle(
               fontWeight: FontWeight.w600,
-              color: e.billable ? Colors.green : null,
+              color: e.billable ? AppColors.income : null,
             ),
           ),
           onTap: () => onTap(e),
@@ -444,7 +444,7 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
                     OutlinedButton(
                       onPressed: _delete,
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.red,
+                        foregroundColor: AppColors.red,
                       ),
                       child: const Text('Verwijderen'),
                     ),

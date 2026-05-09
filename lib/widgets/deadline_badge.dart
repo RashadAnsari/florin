@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class DeadlineBadge extends StatelessWidget {
   final DateTime deadline;
@@ -9,12 +10,12 @@ class DeadlineBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (filed) {
-      return _badge('Filed', Colors.green);
+      return _badge('Filed', AppColors.income);
     }
     final days = deadline.difference(DateTime.now()).inDays;
-    if (days < 0) return _badge('Overdue', Colors.red);
-    if (days <= 14) return _badge('$days days', Colors.amber[700]!);
-    return _badge('$days days', Colors.green);
+    if (days < 0) return _badge('Overdue', AppColors.red);
+    if (days <= 14) return _badge('$days days', AppColors.vat);
+    return _badge('$days days', AppColors.income);
   }
 
   Widget _badge(String label, Color color) {

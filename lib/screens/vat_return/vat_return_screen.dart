@@ -80,7 +80,7 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                     'KOR-drempel bereikt (${AppFormat.cents(result.ytdRevenue)}'
                     ' van ${AppFormat.cents(params!.korThreshold)}) — '
                     'factureer BTW vanaf volgende transactie.',
-                    Colors.red,
+                    AppColors.red,
                     context,
                   ),
 
@@ -120,7 +120,9 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                       : 'Terug te ontvangen BTW',
                   AppFormat.cents(result.netVatDue.abs()),
                   bold: true,
-                  color: result.netVatDue >= 0 ? Colors.red : Colors.green,
+                  color: result.netVatDue >= 0
+                      ? AppColors.red
+                      : AppColors.income,
                 ),
                 const SizedBox(height: 24),
 

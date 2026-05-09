@@ -135,7 +135,7 @@ class _SummaryBar extends StatelessWidget {
             'KIA-aftrek',
             AppFormat.cents(kiaDeduction),
             theme,
-            valueColor: Colors.green,
+            valueColor: AppColors.income,
           ),
           const SizedBox(width: 32),
           _stat(
@@ -231,7 +231,7 @@ class _AssetList extends StatelessWidget {
               if (a.kiaEligible)
                 const Text(
                   'KIA',
-                  style: TextStyle(color: Colors.green, fontSize: 11),
+                  style: TextStyle(color: AppColors.income, fontSize: 11),
                 ),
             ],
           ),
@@ -484,7 +484,7 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                     OutlinedButton(
                       onPressed: _delete,
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.red,
+                        foregroundColor: AppColors.red,
                       ),
                       child: const Text('Verwijderen'),
                     ),
