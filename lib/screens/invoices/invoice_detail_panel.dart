@@ -62,8 +62,14 @@ class _LineItem {
 class InvoiceDetailPanel extends ConsumerStatefulWidget {
   final int? invoiceId;
   final void Function(int id)? onCreated;
+  final VoidCallback? onBack;
 
-  const InvoiceDetailPanel({super.key, this.invoiceId, this.onCreated});
+  const InvoiceDetailPanel({
+    super.key,
+    this.invoiceId,
+    this.onCreated,
+    this.onBack,
+  });
 
   @override
   ConsumerState<InvoiceDetailPanel> createState() => _InvoiceDetailPanelState();
@@ -382,6 +388,11 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
           padding: const EdgeInsets.fromLTRB(16, 6, 8, 6),
           child: Row(
             children: [
+              if (widget.onBack != null)
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: widget.onBack,
+                ),
               Expanded(
                 child: Text(
                   isNew
@@ -591,23 +602,27 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    CheckboxListTile(
-                      value: _isIcp,
-                      onChanged: (v) => setState(() => _isIcp = v ?? false),
-                      title: Text(
-                        AppLocalizations.of(context)!.invoiceFieldIcp,
+                    Expanded(
+                      child: CheckboxListTile(
+                        value: _isIcp,
+                        onChanged: (v) => setState(() => _isIcp = v ?? false),
+                        title: Text(
+                          AppLocalizations.of(context)!.invoiceFieldIcp,
+                        ),
+                        contentPadding: EdgeInsets.zero,
                       ),
-                      contentPadding: EdgeInsets.zero,
                     ),
                     const SizedBox(width: 24),
-                    CheckboxListTile(
-                      value: _isReverseCharge,
-                      onChanged: (v) =>
-                          setState(() => _isReverseCharge = v ?? false),
-                      title: Text(
-                        AppLocalizations.of(context)!.invoiceFieldBtwVerlegd,
+                    Expanded(
+                      child: CheckboxListTile(
+                        value: _isReverseCharge,
+                        onChanged: (v) =>
+                            setState(() => _isReverseCharge = v ?? false),
+                        title: Text(
+                          AppLocalizations.of(context)!.invoiceFieldBtwVerlegd,
+                        ),
+                        contentPadding: EdgeInsets.zero,
                       ),
-                      contentPadding: EdgeInsets.zero,
                     ),
                   ],
                 ),

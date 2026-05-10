@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
@@ -8,19 +9,11 @@ import '../../theme/app_theme.dart';
 
 const _kTripTypes = ['Business', 'Commute', 'Private'];
 
-class MileageScreen extends ConsumerStatefulWidget {
+class MileageScreen extends ConsumerWidget {
   const MileageScreen({super.key});
 
   @override
-  ConsumerState<MileageScreen> createState() => _MileageScreenState();
-}
-
-class _MileageScreenState extends ConsumerState<MileageScreen> {
-  MileageTrip? _selected;
-  bool _isNew = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final year = ref.watch(fiscalYearProvider);
     final trips = ref.watch(mileageTripsStreamProvider(year)).valueOrNull ?? [];
     final paramsAsync = ref.watch(taxParamsStreamProvider(year));
@@ -40,10 +33,7 @@ class _MileageScreenState extends ConsumerState<MileageScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () => setState(() {
-              _selected = null;
-              _isNew = true;
-            }),
+            onPressed: () => context.push('/mileage/new'),
           ),
         ],
       ),
@@ -56,43 +46,9 @@ class _MileageScreenState extends ConsumerState<MileageScreen> {
             ratePerKm: params?.mileageRatePerKm ?? 0.23,
           ),
           Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 320,
-                  child: _TripList(
-                    trips: trips,
-                    selected: _selected,
-                    onTap: (t) => setState(() {
-                      _selected = t;
-                      _isNew = false;
-                    }),
-                  ),
-                ),
-                const VerticalDivider(width: 1),
-                Expanded(
-                  child: (_isNew || _selected != null)
-                      ? _TripForm(
-                          key: ValueKey(_isNew ? 'new' : _selected!.id),
-                          trip: _isNew ? null : _selected,
-                          year: year,
-                          onSaved: () => setState(() {
-                            _selected = null;
-                            _isNew = false;
-                          }),
-                          onDeleted: () => setState(() {
-                            _selected = null;
-                            _isNew = false;
-                          }),
-                        )
-                      : Center(
-                          child: Text(
-                            AppLocalizations.of(context)!.mileageSelectOrNew,
-                          ),
-                        ),
-                ),
-              ],
+            child: _TripList(
+              trips: trips,
+              onTap: (t) => context.push('/mileage/${t.id}', extra: t),
             ),
           ),
         ],
@@ -171,14 +127,9 @@ class _SummaryBar extends StatelessWidget {
 
 class _TripList extends StatelessWidget {
   final List<MileageTrip> trips;
-  final MileageTrip? selected;
   final ValueChanged<MileageTrip> onTap;
 
-  const _TripList({
-    required this.trips,
-    required this.selected,
-    required this.onTap,
-  });
+  const _TripList({required this.trips, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -190,10 +141,6 @@ class _TripList extends StatelessWidget {
       itemBuilder: (context, i) {
         final t = trips[i];
         return ListTile(
-          selected: selected?.id == t.id,
-          selectedTileColor: Theme.of(
-            context,
-          ).colorScheme.primaryContainer.withValues(alpha: 0.3),
           title: Text(
             '${t.departureAddress} → ${t.arrivalAddress}',
             maxLines: 1,
@@ -224,7 +171,6 @@ class _TripForm extends ConsumerStatefulWidget {
   final VoidCallback onDeleted;
 
   const _TripForm({
-    super.key,
     required this.trip,
     required this.year,
     required this.onSaved,
@@ -532,6 +478,29 @@ class _TripFormState extends ConsumerState<_TripForm> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class MileageDetailPage extends ConsumerWidget {
+  final MileageTrip? trip;
+
+  const MileageDetailPage({super.key, this.trip});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context)!;
+    final year = ref.watch(fiscalYearProvider);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(trip == null ? l.mileageNewTrip : l.mileageEditTrip),
+      ),
+      body: _TripForm(
+        trip: trip,
+        year: trip?.fiscalYear ?? year,
+        onSaved: () => context.pop(),
+        onDeleted: () => context.pop(),
       ),
     );
   }

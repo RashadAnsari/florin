@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
@@ -8,19 +9,11 @@ import '../../services/tax_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/amount_field.dart';
 
-class AssetsScreen extends ConsumerStatefulWidget {
+class AssetsScreen extends ConsumerWidget {
   const AssetsScreen({super.key});
 
   @override
-  ConsumerState<AssetsScreen> createState() => _AssetsScreenState();
-}
-
-class _AssetsScreenState extends ConsumerState<AssetsScreen> {
-  FixedAsset? _selected;
-  bool _isNew = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final year = ref.watch(fiscalYearProvider);
     final assets = ref.watch(assetsStreamProvider(year)).valueOrNull ?? [];
     final paramsAsync = ref.watch(taxParamsStreamProvider(year));
@@ -51,10 +44,7 @@ class _AssetsScreenState extends ConsumerState<AssetsScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () => setState(() {
-              _selected = null;
-              _isNew = true;
-            }),
+            onPressed: () => context.push('/assets/new'),
           ),
         ],
       ),
@@ -66,45 +56,11 @@ class _AssetsScreenState extends ConsumerState<AssetsScreen> {
             totalDepreciation: totalDepreciation,
           ),
           Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 320,
-                  child: _AssetList(
-                    assets: assets,
-                    selected: _selected,
-                    year: year,
-                    service: service,
-                    onTap: (a) => setState(() {
-                      _selected = a;
-                      _isNew = false;
-                    }),
-                  ),
-                ),
-                const VerticalDivider(width: 1),
-                Expanded(
-                  child: (_isNew || _selected != null)
-                      ? _AssetForm(
-                          key: ValueKey(_isNew ? 'new' : _selected!.id),
-                          asset: _isNew ? null : _selected,
-                          year: year,
-                          onSaved: () => setState(() {
-                            _selected = null;
-                            _isNew = false;
-                          }),
-                          onDeleted: () => setState(() {
-                            _selected = null;
-                            _isNew = false;
-                          }),
-                        )
-                      : Center(
-                          child: Text(
-                            AppLocalizations.of(context)!.assetsSelectOrNew,
-                          ),
-                        ),
-                ),
-              ],
+            child: _AssetList(
+              assets: assets,
+              year: year,
+              service: service,
+              onTap: (a) => context.push('/assets/${a.id}', extra: a),
             ),
           ),
         ],
@@ -179,14 +135,12 @@ class _SummaryBar extends StatelessWidget {
 
 class _AssetList extends StatelessWidget {
   final List<FixedAsset> assets;
-  final FixedAsset? selected;
   final int year;
   final TaxService service;
   final ValueChanged<FixedAsset> onTap;
 
   const _AssetList({
     required this.assets,
-    required this.selected,
     required this.year,
     required this.service,
     required this.onTap,
@@ -210,10 +164,6 @@ class _AssetList extends StatelessWidget {
           yearsElapsed: yearsElapsed,
         );
         return ListTile(
-          selected: selected?.id == a.id,
-          selectedTileColor: Theme.of(
-            context,
-          ).colorScheme.primaryContainer.withValues(alpha: 0.3),
           title: Text(
             a.assetName,
             style: disposed
@@ -256,7 +206,6 @@ class _AssetForm extends ConsumerStatefulWidget {
   final VoidCallback onDeleted;
 
   const _AssetForm({
-    super.key,
     required this.asset,
     required this.year,
     required this.onSaved,
@@ -527,6 +476,29 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class AssetDetailPage extends ConsumerWidget {
+  final FixedAsset? asset;
+
+  const AssetDetailPage({super.key, this.asset});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context)!;
+    final year = ref.watch(fiscalYearProvider);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(asset == null ? l.assetsNewAsset : l.assetsEditAsset),
+      ),
+      body: _AssetForm(
+        asset: asset,
+        year: asset?.fiscalYear ?? year,
+        onSaved: () => context.pop(),
+        onDeleted: () => context.pop(),
       ),
     );
   }

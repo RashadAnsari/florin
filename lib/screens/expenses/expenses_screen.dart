@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
@@ -67,8 +68,6 @@ class ExpensesScreen extends ConsumerStatefulWidget {
 }
 
 class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
-  Expense? _selected;
-  bool _isNew = false;
   String? _qFilter;
   String? _catFilter;
 
@@ -92,91 +91,43 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
           IconButton(
             icon: const Icon(Icons.add),
             tooltip: AppLocalizations.of(context)!.expensesNewTooltip,
-            onPressed: () => setState(() {
-              _selected = null;
-              _isNew = true;
-            }),
+            onPressed: () => context.push('/expenses/new'),
           ),
           const SizedBox(width: 8),
         ],
       ),
-      body: Row(
+      body: Column(
         children: [
-          SizedBox(
-            width: 300,
-            child: Column(
-              children: [
-                _Filters(
-                  qFilter: _qFilter,
-                  catFilter: _catFilter,
-                  onQChanged: (q) => setState(() => _qFilter = q),
-                  onCatChanged: (c) => setState(() => _catFilter = c),
-                ),
-                const Divider(height: 1),
-                Expanded(
-                  child: expsAsync.when(
-                    data: (all) {
-                      final visible = _filter(all);
-                      if (visible.isEmpty) {
-                        return Center(
-                          child: Text(
-                            AppLocalizations.of(context)!.expensesNone,
-                          ),
-                        );
-                      }
-                      return ListView.builder(
-                        itemCount: visible.length,
-                        itemBuilder: (_, i) => _ExpenseTile(
-                          expense: visible[i],
-                          isSelected: _selected?.id == visible[i].id,
-                          onTap: () => setState(() {
-                            _selected = visible[i];
-                            _isNew = false;
-                          }),
-                        ),
-                      );
-                    },
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
-                    error: (e, _) => Center(child: Text('$e')),
-                  ),
-                ),
-              ],
-            ),
+          _Filters(
+            qFilter: _qFilter,
+            catFilter: _catFilter,
+            onQChanged: (q) => setState(() => _qFilter = q),
+            onCatChanged: (c) => setState(() => _catFilter = c),
           ),
-          const VerticalDivider(width: 1),
+          const Divider(height: 1),
           Expanded(
-            child: (_isNew || _selected != null)
-                ? _ExpenseForm(
-                    key: ValueKey(_isNew ? 'new' : '${_selected!.id}'),
-                    expense: _isNew ? null : _selected,
-                    fiscalYear: year,
-                    onSaved: (e) => setState(() {
-                      _selected = e;
-                      _isNew = false;
-                    }),
-                    onDeleted: () => setState(() {
-                      _selected = null;
-                      _isNew = false;
-                    }),
-                  )
-                : Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.receipt_long_outlined,
-                          size: 64,
-                          color: Theme.of(context).colorScheme.outlineVariant,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          AppLocalizations.of(context)!.expensesSelectOrNew,
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      ],
+            child: expsAsync.when(
+              data: (all) {
+                final visible = _filter(all);
+                if (visible.isEmpty) {
+                  return Center(
+                    child: Text(AppLocalizations.of(context)!.expensesNone),
+                  );
+                }
+                return ListView.builder(
+                  itemCount: visible.length,
+                  itemBuilder: (_, i) => _ExpenseTile(
+                    expense: visible[i],
+                    onTap: () => context.push(
+                      '/expenses/${visible[i].id}',
+                      extra: visible[i],
                     ),
                   ),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(child: Text('$e')),
+            ),
           ),
         ],
       ),
@@ -253,14 +204,9 @@ class _Filters extends StatelessWidget {
 
 class _ExpenseTile extends StatelessWidget {
   final Expense expense;
-  final bool isSelected;
   final VoidCallback onTap;
 
-  const _ExpenseTile({
-    required this.expense,
-    required this.isSelected,
-    required this.onTap,
-  });
+  const _ExpenseTile({required this.expense, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -268,8 +214,7 @@ class _ExpenseTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        color: isSelected ? theme.colorScheme.secondaryContainer : null,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -327,13 +272,14 @@ class _ExpenseForm extends ConsumerStatefulWidget {
   final int fiscalYear;
   final void Function(Expense) onSaved;
   final VoidCallback onDeleted;
+  final VoidCallback? onBack;
 
   const _ExpenseForm({
-    super.key,
     required this.expense,
     required this.fiscalYear,
     required this.onSaved,
     required this.onDeleted,
+    this.onBack,
   });
 
   @override
@@ -442,22 +388,22 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
       final all = await dao.getByYear(widget.fiscalYear);
       final created = all.firstWhere((e) => e.id == id);
       if (mounted) {
-        widget.onSaved(created);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.expensesCreated),
           ),
         );
+        widget.onSaved(created);
       }
     } else {
       await dao.saveExpense(companion);
       final all = await dao.getByYear(widget.fiscalYear);
       final updated = all.firstWhere((e) => e.id == orig.id);
       if (mounted) {
-        widget.onSaved(updated);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.expensesSaved)),
         );
+        widget.onSaved(updated);
       }
     }
   }
@@ -489,6 +435,11 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
           padding: const EdgeInsets.fromLTRB(16, 6, 8, 6),
           child: Row(
             children: [
+              if (widget.onBack != null)
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: widget.onBack,
+                ),
               Expanded(
                 child: Text(
                   isNew
@@ -766,26 +717,30 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        CheckboxListTile(
-                          value: _isMixedCost,
-                          onChanged: (v) =>
-                              setState(() => _isMixedCost = v ?? false),
-                          title: Text(
-                            AppLocalizations.of(context)!.expensesMixedCosts,
+                        Expanded(
+                          child: CheckboxListTile(
+                            value: _isMixedCost,
+                            onChanged: (v) =>
+                                setState(() => _isMixedCost = v ?? false),
+                            title: Text(
+                              AppLocalizations.of(context)!.expensesMixedCosts,
+                            ),
+                            contentPadding: EdgeInsets.zero,
                           ),
-                          contentPadding: EdgeInsets.zero,
                         ),
                         const SizedBox(width: 24),
-                        CheckboxListTile(
-                          value: _receiptAttached,
-                          onChanged: (v) =>
-                              setState(() => _receiptAttached = v ?? false),
-                          title: Text(
-                            AppLocalizations.of(
-                              context,
-                            )!.expensesReceiptAttached,
+                        Expanded(
+                          child: CheckboxListTile(
+                            value: _receiptAttached,
+                            onChanged: (v) =>
+                                setState(() => _receiptAttached = v ?? false),
+                            title: Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.expensesReceiptAttached,
+                            ),
+                            contentPadding: EdgeInsets.zero,
                           ),
-                          contentPadding: EdgeInsets.zero,
                         ),
                       ],
                     ),
@@ -830,6 +785,26 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class ExpenseDetailPage extends ConsumerWidget {
+  final Expense? expense;
+
+  const ExpenseDetailPage({super.key, this.expense});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final year = ref.watch(fiscalYearProvider);
+    return Scaffold(
+      body: _ExpenseForm(
+        expense: expense,
+        fiscalYear: expense?.fiscalYear ?? year,
+        onBack: () => context.pop(),
+        onSaved: (_) => context.pop(),
+        onDeleted: () => context.pop(),
+      ),
     );
   }
 }

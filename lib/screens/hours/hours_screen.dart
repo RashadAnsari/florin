@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
@@ -14,19 +15,11 @@ const _kWorkTypes = [
   'Other',
 ];
 
-class HoursScreen extends ConsumerStatefulWidget {
+class HoursScreen extends ConsumerWidget {
   const HoursScreen({super.key});
 
   @override
-  ConsumerState<HoursScreen> createState() => _HoursScreenState();
-}
-
-class _HoursScreenState extends ConsumerState<HoursScreen> {
-  HourEntry? _selected;
-  bool _isNew = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context)!;
     final year = ref.watch(fiscalYearProvider);
     final entries =
@@ -45,10 +38,7 @@ class _HoursScreenState extends ConsumerState<HoursScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () => setState(() {
-              _selected = null;
-              _isNew = true;
-            }),
+            onPressed: () => context.push('/hours/new'),
           ),
         ],
       ),
@@ -62,39 +52,9 @@ class _HoursScreenState extends ConsumerState<HoursScreen> {
             yearDone: yearDone,
           ),
           Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 320,
-                  child: _EntryList(
-                    entries: entries,
-                    selected: _selected,
-                    onTap: (e) => setState(() {
-                      _selected = e;
-                      _isNew = false;
-                    }),
-                  ),
-                ),
-                const VerticalDivider(width: 1),
-                Expanded(
-                  child: (_isNew || _selected != null)
-                      ? _EntryForm(
-                          key: ValueKey(_isNew ? 'new' : _selected!.id),
-                          entry: _isNew ? null : _selected,
-                          year: year,
-                          onSaved: () => setState(() {
-                            _selected = null;
-                            _isNew = false;
-                          }),
-                          onDeleted: () => setState(() {
-                            _selected = null;
-                            _isNew = false;
-                          }),
-                        )
-                      : Center(child: Text(l.hoursSelectOrNew)),
-                ),
-              ],
+            child: _EntryList(
+              entries: entries,
+              onTap: (e) => context.push('/hours/${e.id}', extra: e),
             ),
           ),
         ],
@@ -194,14 +154,9 @@ class _SummaryBar extends StatelessWidget {
 
 class _EntryList extends StatelessWidget {
   final List<HourEntry> entries;
-  final HourEntry? selected;
   final ValueChanged<HourEntry> onTap;
 
-  const _EntryList({
-    required this.entries,
-    required this.selected,
-    required this.onTap,
-  });
+  const _EntryList({required this.entries, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -214,10 +169,6 @@ class _EntryList extends StatelessWidget {
       itemBuilder: (context, i) {
         final e = entries[i];
         return ListTile(
-          selected: selected?.id == e.id,
-          selectedTileColor: Theme.of(
-            context,
-          ).colorScheme.primaryContainer.withValues(alpha: 0.3),
           title: Text(
             e.description,
             maxLines: 1,
@@ -248,7 +199,6 @@ class _EntryForm extends ConsumerStatefulWidget {
   final VoidCallback onDeleted;
 
   const _EntryForm({
-    super.key,
     required this.entry,
     required this.year,
     required this.onSaved,
@@ -475,6 +425,29 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class HourDetailPage extends ConsumerWidget {
+  final HourEntry? entry;
+
+  const HourDetailPage({super.key, this.entry});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context)!;
+    final year = ref.watch(fiscalYearProvider);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(entry == null ? l.hoursNewEntry : l.hoursEditEntry),
+      ),
+      body: _EntryForm(
+        entry: entry,
+        year: entry?.fiscalYear ?? year,
+        onSaved: () => context.pop(),
+        onDeleted: () => context.pop(),
       ),
     );
   }

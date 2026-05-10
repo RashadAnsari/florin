@@ -5,12 +5,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:florin/l10n/app_localizations.dart';
+import 'package:florin/db/database.dart';
 import 'theme/app_theme.dart';
 import 'providers/providers.dart';
 import 'screens/first_launch/first_launch_screen.dart';
 import 'screens/shell_screen.dart';
 import 'screens/dashboard/dashboard_screen.dart';
 import 'screens/invoices/invoices_screen.dart';
+import 'screens/invoices/invoice_detail_panel.dart';
 import 'screens/clients/clients_screen.dart';
 import 'screens/expenses/expenses_screen.dart';
 import 'screens/vat_return/vat_return_screen.dart';
@@ -73,17 +75,101 @@ class _FlorinAppState extends ConsumerState<FlorinApp> {
             GoRoute(
               path: '/invoices',
               builder: (c, s) => const InvoicesScreen(),
+              routes: [
+                GoRoute(
+                  path: 'new',
+                  builder: (c, s) => Scaffold(
+                    body: InvoiceDetailPanel(
+                      onBack: () => c.pop(),
+                      onCreated: (id) => c.go('/invoices/$id'),
+                    ),
+                  ),
+                ),
+                GoRoute(
+                  path: ':id',
+                  builder: (c, s) => Scaffold(
+                    body: InvoiceDetailPanel(
+                      invoiceId: int.parse(s.pathParameters['id']!),
+                      onBack: () => c.pop(),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            GoRoute(path: '/clients', builder: (c, s) => const ClientsScreen()),
+            GoRoute(
+              path: '/clients',
+              builder: (c, s) => const ClientsScreen(),
+              routes: [
+                GoRoute(
+                  path: 'new',
+                  builder: (c, s) => const ClientDetailPage(),
+                ),
+                GoRoute(
+                  path: ':id',
+                  builder: (c, s) =>
+                      ClientDetailPage(client: s.extra as Client?),
+                ),
+              ],
+            ),
             GoRoute(
               path: '/expenses',
               builder: (c, s) => const ExpensesScreen(),
+              routes: [
+                GoRoute(
+                  path: 'new',
+                  builder: (c, s) => const ExpenseDetailPage(),
+                ),
+                GoRoute(
+                  path: ':id',
+                  builder: (c, s) =>
+                      ExpenseDetailPage(expense: s.extra as Expense?),
+                ),
+              ],
             ),
             GoRoute(path: '/vat', builder: (c, s) => const VatReturnScreen()),
             GoRoute(path: '/tax', builder: (c, s) => const PlTaxScreen()),
-            GoRoute(path: '/hours', builder: (c, s) => const HoursScreen()),
-            GoRoute(path: '/mileage', builder: (c, s) => const MileageScreen()),
-            GoRoute(path: '/assets', builder: (c, s) => const AssetsScreen()),
+            GoRoute(
+              path: '/hours',
+              builder: (c, s) => const HoursScreen(),
+              routes: [
+                GoRoute(path: 'new', builder: (c, s) => const HourDetailPage()),
+                GoRoute(
+                  path: ':id',
+                  builder: (c, s) =>
+                      HourDetailPage(entry: s.extra as HourEntry?),
+                ),
+              ],
+            ),
+            GoRoute(
+              path: '/mileage',
+              builder: (c, s) => const MileageScreen(),
+              routes: [
+                GoRoute(
+                  path: 'new',
+                  builder: (c, s) => const MileageDetailPage(),
+                ),
+                GoRoute(
+                  path: ':id',
+                  builder: (c, s) =>
+                      MileageDetailPage(trip: s.extra as MileageTrip?),
+                ),
+              ],
+            ),
+            GoRoute(
+              path: '/assets',
+              builder: (c, s) => const AssetsScreen(),
+              routes: [
+                GoRoute(
+                  path: 'new',
+                  builder: (c, s) => const AssetDetailPage(),
+                ),
+                GoRoute(
+                  path: ':id',
+                  builder: (c, s) =>
+                      AssetDetailPage(asset: s.extra as FixedAsset?),
+                ),
+              ],
+            ),
             GoRoute(path: '/pension', builder: (c, s) => const PensionScreen()),
             GoRoute(
               path: '/settings',

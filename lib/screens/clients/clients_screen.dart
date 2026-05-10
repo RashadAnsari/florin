@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../db/database.dart';
@@ -22,8 +23,6 @@ class ClientsScreen extends ConsumerStatefulWidget {
 }
 
 class _ClientsScreenState extends ConsumerState<ClientsScreen> {
-  Client? _selected;
-  bool _isNew = false;
   bool _showInactive = false;
 
   Map<int, int> _revenueMap(AsyncValue<List<Invoice>> inv) {
@@ -56,80 +55,34 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
           IconButton(
             icon: const Icon(Icons.add),
             tooltip: AppLocalizations.of(context)!.clientsNewTooltip,
-            onPressed: () => setState(() {
-              _selected = null;
-              _isNew = true;
-            }),
+            onPressed: () => context.push('/clients/new'),
           ),
           const SizedBox(width: 8),
         ],
       ),
-      body: Row(
-        children: [
-          SizedBox(
-            width: 300,
-            child: allAsync.when(
-              data: (all) {
-                final revenue = _revenueMap(invAsync);
-                final visible = _showInactive
-                    ? all
-                    : all.where((c) => c.isActive).toList();
-                if (visible.isEmpty) {
-                  return Center(
-                    child: Text(AppLocalizations.of(context)!.clientsNone),
-                  );
-                }
-                return ListView.builder(
-                  itemCount: visible.length,
-                  itemBuilder: (_, i) => _ClientTile(
-                    client: visible[i],
-                    revenueYtd: revenue[visible[i].id] ?? 0,
-                    isSelected: _selected?.id == visible[i].id,
-                    onTap: () => setState(() {
-                      _selected = visible[i];
-                      _isNew = false;
-                    }),
-                  ),
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text('$e')),
+      body: allAsync.when(
+        data: (all) {
+          final revenue = _revenueMap(invAsync);
+          final visible = _showInactive
+              ? all
+              : all.where((c) => c.isActive).toList();
+          if (visible.isEmpty) {
+            return Center(
+              child: Text(AppLocalizations.of(context)!.clientsNone),
+            );
+          }
+          return ListView.builder(
+            itemCount: visible.length,
+            itemBuilder: (_, i) => _ClientTile(
+              client: visible[i],
+              revenueYtd: revenue[visible[i].id] ?? 0,
+              onTap: () =>
+                  context.push('/clients/${visible[i].id}', extra: visible[i]),
             ),
-          ),
-          const VerticalDivider(width: 1),
-          Expanded(
-            child: (_isNew || _selected != null)
-                ? _ClientForm(
-                    key: ValueKey(_isNew ? 'new' : '${_selected!.id}'),
-                    client: _isNew ? null : _selected,
-                    onSaved: (c) => setState(() {
-                      _selected = c;
-                      _isNew = false;
-                    }),
-                    onDeleted: () => setState(() {
-                      _selected = null;
-                      _isNew = false;
-                    }),
-                  )
-                : Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.people_outline,
-                          size: 64,
-                          color: Theme.of(context).colorScheme.outlineVariant,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          AppLocalizations.of(context)!.clientsSelectOrNew,
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      ],
-                    ),
-                  ),
-          ),
-        ],
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('$e')),
       ),
     );
   }
@@ -138,13 +91,11 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
 class _ClientTile extends StatelessWidget {
   final Client client;
   final int revenueYtd;
-  final bool isSelected;
   final VoidCallback onTap;
 
   const _ClientTile({
     required this.client,
     required this.revenueYtd,
-    required this.isSelected,
     required this.onTap,
   });
 
@@ -161,8 +112,7 @@ class _ClientTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        color: isSelected ? theme.colorScheme.secondaryContainer : null,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -230,12 +180,13 @@ class _ClientForm extends ConsumerStatefulWidget {
   final Client? client;
   final void Function(Client) onSaved;
   final VoidCallback onDeleted;
+  final VoidCallback? onBack;
 
   const _ClientForm({
-    super.key,
     required this.client,
     required this.onSaved,
     required this.onDeleted,
+    this.onBack,
   });
 
   @override
@@ -322,19 +273,19 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
       final id = await dao.insertClient(companion);
       final created = await dao.getById(id);
       if (mounted && created != null) {
-        widget.onSaved(created);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.clientsCreated)),
         );
+        widget.onSaved(created);
       }
     } else {
       await dao.saveClient(companion);
       final updated = await dao.getById(orig.id);
       if (mounted && updated != null) {
-        widget.onSaved(updated);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.clientsSaved)),
         );
+        widget.onSaved(updated);
       }
     }
   }
@@ -382,6 +333,11 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
           padding: const EdgeInsets.fromLTRB(16, 6, 8, 6),
           child: Row(
             children: [
+              if (widget.onBack != null)
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: widget.onBack,
+                ),
               Expanded(
                 child: Text(
                   isNew
@@ -656,6 +612,24 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class ClientDetailPage extends ConsumerWidget {
+  final Client? client;
+
+  const ClientDetailPage({super.key, this.client});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      body: _ClientForm(
+        client: client,
+        onBack: () => context.pop(),
+        onSaved: (_) => context.pop(),
+        onDeleted: () => context.pop(),
+      ),
     );
   }
 }

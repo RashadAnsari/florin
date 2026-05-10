@@ -48,8 +48,8 @@ app.*.map.json
 florin.db
 
 # Claude
-claude/
-claude-flow/
+.claude/
+.claude-flow/
 .mcp.json
 
 # Codex

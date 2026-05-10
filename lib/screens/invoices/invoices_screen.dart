@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../theme/app_theme.dart';
-import 'invoice_detail_panel.dart';
 
 class InvoicesScreen extends ConsumerStatefulWidget {
   const InvoicesScreen({super.key});
@@ -14,8 +14,6 @@ class InvoicesScreen extends ConsumerStatefulWidget {
 }
 
 class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
-  int? _selectedId;
-  bool _isNew = false;
   String _statusFilter = 'all';
   final _searchCtrl = TextEditingController();
 
@@ -68,79 +66,35 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
           IconButton(
             icon: const Icon(Icons.add),
             tooltip: l.invoicesNewTooltip,
-            onPressed: () => setState(() {
-              _selectedId = null;
-              _isNew = true;
-            }),
+            onPressed: () => context.push('/invoices/new'),
           ),
           const SizedBox(width: 8),
         ],
       ),
-      body: Row(
+      body: Column(
         children: [
-          SizedBox(
-            width: 320,
-            child: Column(
-              children: [
-                _buildSearch(l),
-                _buildStatusFilters(l),
-                const Divider(height: 1),
-                Expanded(
-                  child: invsAsync.when(
-                    data: (all) {
-                      final visible = _filter(all, clientMap, l);
-                      if (visible.isEmpty) {
-                        return Center(child: Text(l.invoicesNone));
-                      }
-                      return ListView.builder(
-                        itemCount: visible.length,
-                        itemBuilder: (_, i) => _InvoiceTile(
-                          invoice: visible[i],
-                          clientName: clientMap[visible[i].clientId] ?? '—',
-                          isSelected: _selectedId == visible[i].id,
-                          onTap: () => setState(() {
-                            _selectedId = visible[i].id;
-                            _isNew = false;
-                          }),
-                        ),
-                      );
-                    },
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
-                    error: (e, _) => Center(child: Text('$e')),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const VerticalDivider(width: 1),
+          _buildSearch(l),
+          _buildStatusFilters(l),
+          const Divider(height: 1),
           Expanded(
-            child: (_isNew || _selectedId != null)
-                ? InvoiceDetailPanel(
-                    key: ValueKey(_isNew ? 'new' : '$_selectedId'),
-                    invoiceId: _isNew ? null : _selectedId,
-                    onCreated: (id) => setState(() {
-                      _selectedId = id;
-                      _isNew = false;
-                    }),
-                  )
-                : Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.receipt_outlined,
-                          size: 64,
-                          color: Theme.of(context).colorScheme.outlineVariant,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          l.invoicesSelectOrNew,
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      ],
-                    ),
+            child: invsAsync.when(
+              data: (all) {
+                final visible = _filter(all, clientMap, l);
+                if (visible.isEmpty) {
+                  return Center(child: Text(l.invoicesNone));
+                }
+                return ListView.builder(
+                  itemCount: visible.length,
+                  itemBuilder: (_, i) => _InvoiceTile(
+                    invoice: visible[i],
+                    clientName: clientMap[visible[i].clientId] ?? '—',
+                    onTap: () => context.push('/invoices/${visible[i].id}'),
                   ),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(child: Text('$e')),
+            ),
           ),
         ],
       ),
@@ -203,13 +157,11 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
 class _InvoiceTile extends StatelessWidget {
   final Invoice invoice;
   final String clientName;
-  final bool isSelected;
   final VoidCallback onTap;
 
   const _InvoiceTile({
     required this.invoice,
     required this.clientName,
-    required this.isSelected,
     required this.onTap,
   });
 
@@ -233,12 +185,8 @@ class _InvoiceTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        color: overdue
-            ? AppColors.red.withValues(alpha: 0.04)
-            : isSelected
-            ? theme.colorScheme.secondaryContainer
-            : null,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        color: overdue ? AppColors.red.withValues(alpha: 0.04) : null,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
