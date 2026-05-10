@@ -126,8 +126,8 @@ class InvoicePdfService {
                         client.name,
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                       ),
-                      if (client.address != null)
-                        ...client.address!
+                      if (client.address.isNotEmpty)
+                        ...client.address
                             .split('\n')
                             .map(
                               (l) => pw.Text(

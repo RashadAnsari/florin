@@ -1730,9 +1730,10 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
   late final GeneratedColumn<String> address = GeneratedColumn<String>(
     'address',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    defaultValue: const Constant(''),
   );
   static const VerificationMeta _contactPersonMeta = const VerificationMeta(
     'contactPerson',
@@ -1982,7 +1983,7 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
       address: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}address'],
-      ),
+      )!,
       contactPerson: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}contact_person'],
@@ -2030,7 +2031,7 @@ class Client extends DataClass implements Insertable<Client> {
   final String country;
   final String? vatNumber;
   final String? kvkNumber;
-  final String? address;
+  final String address;
   final String? contactPerson;
   final String? email;
   final String? phone;
@@ -2045,7 +2046,7 @@ class Client extends DataClass implements Insertable<Client> {
     required this.country,
     this.vatNumber,
     this.kvkNumber,
-    this.address,
+    required this.address,
     this.contactPerson,
     this.email,
     this.phone,
@@ -2067,9 +2068,7 @@ class Client extends DataClass implements Insertable<Client> {
     if (!nullToAbsent || kvkNumber != null) {
       map['kvk_number'] = Variable<String>(kvkNumber);
     }
-    if (!nullToAbsent || address != null) {
-      map['address'] = Variable<String>(address);
-    }
+    map['address'] = Variable<String>(address);
     if (!nullToAbsent || contactPerson != null) {
       map['contact_person'] = Variable<String>(contactPerson);
     }
@@ -2102,9 +2101,7 @@ class Client extends DataClass implements Insertable<Client> {
       kvkNumber: kvkNumber == null && nullToAbsent
           ? const Value.absent()
           : Value(kvkNumber),
-      address: address == null && nullToAbsent
-          ? const Value.absent()
-          : Value(address),
+      address: Value(address),
       contactPerson: contactPerson == null && nullToAbsent
           ? const Value.absent()
           : Value(contactPerson),
@@ -2137,7 +2134,7 @@ class Client extends DataClass implements Insertable<Client> {
       country: serializer.fromJson<String>(json['country']),
       vatNumber: serializer.fromJson<String?>(json['vatNumber']),
       kvkNumber: serializer.fromJson<String?>(json['kvkNumber']),
-      address: serializer.fromJson<String?>(json['address']),
+      address: serializer.fromJson<String>(json['address']),
       contactPerson: serializer.fromJson<String?>(json['contactPerson']),
       email: serializer.fromJson<String?>(json['email']),
       phone: serializer.fromJson<String?>(json['phone']),
@@ -2157,7 +2154,7 @@ class Client extends DataClass implements Insertable<Client> {
       'country': serializer.toJson<String>(country),
       'vatNumber': serializer.toJson<String?>(vatNumber),
       'kvkNumber': serializer.toJson<String?>(kvkNumber),
-      'address': serializer.toJson<String?>(address),
+      'address': serializer.toJson<String>(address),
       'contactPerson': serializer.toJson<String?>(contactPerson),
       'email': serializer.toJson<String?>(email),
       'phone': serializer.toJson<String?>(phone),
@@ -2175,7 +2172,7 @@ class Client extends DataClass implements Insertable<Client> {
     String? country,
     Value<String?> vatNumber = const Value.absent(),
     Value<String?> kvkNumber = const Value.absent(),
-    Value<String?> address = const Value.absent(),
+    String? address,
     Value<String?> contactPerson = const Value.absent(),
     Value<String?> email = const Value.absent(),
     Value<String?> phone = const Value.absent(),
@@ -2190,7 +2187,7 @@ class Client extends DataClass implements Insertable<Client> {
     country: country ?? this.country,
     vatNumber: vatNumber.present ? vatNumber.value : this.vatNumber,
     kvkNumber: kvkNumber.present ? kvkNumber.value : this.kvkNumber,
-    address: address.present ? address.value : this.address,
+    address: address ?? this.address,
     contactPerson: contactPerson.present
         ? contactPerson.value
         : this.contactPerson,
@@ -2295,7 +2292,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
   final Value<String> country;
   final Value<String?> vatNumber;
   final Value<String?> kvkNumber;
-  final Value<String?> address;
+  final Value<String> address;
   final Value<String?> contactPerson;
   final Value<String?> email;
   final Value<String?> phone;
@@ -2376,7 +2373,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     Value<String>? country,
     Value<String?>? vatNumber,
     Value<String?>? kvkNumber,
-    Value<String?>? address,
+    Value<String>? address,
     Value<String?>? contactPerson,
     Value<String?>? email,
     Value<String?>? phone,
@@ -8965,7 +8962,7 @@ typedef $$ClientsTableCreateCompanionBuilder =
       Value<String> country,
       Value<String?> vatNumber,
       Value<String?> kvkNumber,
-      Value<String?> address,
+      Value<String> address,
       Value<String?> contactPerson,
       Value<String?> email,
       Value<String?> phone,
@@ -8982,7 +8979,7 @@ typedef $$ClientsTableUpdateCompanionBuilder =
       Value<String> country,
       Value<String?> vatNumber,
       Value<String?> kvkNumber,
-      Value<String?> address,
+      Value<String> address,
       Value<String?> contactPerson,
       Value<String?> email,
       Value<String?> phone,
@@ -9320,7 +9317,7 @@ class $$ClientsTableTableManager
                 Value<String> country = const Value.absent(),
                 Value<String?> vatNumber = const Value.absent(),
                 Value<String?> kvkNumber = const Value.absent(),
-                Value<String?> address = const Value.absent(),
+                Value<String> address = const Value.absent(),
                 Value<String?> contactPerson = const Value.absent(),
                 Value<String?> email = const Value.absent(),
                 Value<String?> phone = const Value.absent(),
@@ -9352,7 +9349,7 @@ class $$ClientsTableTableManager
                 Value<String> country = const Value.absent(),
                 Value<String?> vatNumber = const Value.absent(),
                 Value<String?> kvkNumber = const Value.absent(),
-                Value<String?> address = const Value.absent(),
+                Value<String> address = const Value.absent(),
                 Value<String?> contactPerson = const Value.absent(),
                 Value<String?> email = const Value.absent(),
                 Value<String?> phone = const Value.absent(),

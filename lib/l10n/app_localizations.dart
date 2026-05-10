@@ -629,13 +629,13 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceValidateClient.
   ///
   /// In en, this message translates to:
-  /// **'Please select a client'**
+  /// **'Select a client for this invoice'**
   String get invoiceValidateClient;
 
   /// No description provided for @invoiceValidateNumber.
   ///
   /// In en, this message translates to:
-  /// **'Invoice number is required'**
+  /// **'Enter a unique invoice number, e.g. F-2024-001'**
   String get invoiceValidateNumber;
 
   /// No description provided for @invoiceUnitHint.
@@ -698,11 +698,23 @@ abstract class AppLocalizations {
   /// **'Name *'**
   String get clientsFieldName;
 
+  /// No description provided for @clientsValidateName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the client\'s name'**
+  String get clientsValidateName;
+
   /// No description provided for @clientsFieldCountry.
   ///
   /// In en, this message translates to:
   /// **'Country'**
   String get clientsFieldCountry;
+
+  /// No description provided for @clientsValidateCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a 2-letter country code (e.g. NL, DE, FR)'**
+  String get clientsValidateCountry;
 
   /// No description provided for @clientsFieldVat.
   ///
@@ -710,17 +722,35 @@ abstract class AppLocalizations {
   /// **'VAT number'**
   String get clientsFieldVat;
 
+  /// No description provided for @clientsValidateVat.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid EU VAT number (e.g. NL854224798B01)'**
+  String get clientsValidateVat;
+
   /// No description provided for @clientsFieldKvk.
   ///
   /// In en, this message translates to:
   /// **'KVK number'**
   String get clientsFieldKvk;
 
+  /// No description provided for @clientsValidateKvk.
+  ///
+  /// In en, this message translates to:
+  /// **'KVK number must be exactly 8 digits'**
+  String get clientsValidateKvk;
+
   /// No description provided for @clientsFieldAddress.
   ///
   /// In en, this message translates to:
-  /// **'Address'**
+  /// **'Address *'**
   String get clientsFieldAddress;
+
+  /// No description provided for @clientsValidateAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the client\'s street address'**
+  String get clientsValidateAddress;
 
   /// No description provided for @clientsFieldContact.
   ///
@@ -733,6 +763,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'E-mail'**
   String get clientsFieldEmail;
+
+  /// No description provided for @clientsValidateEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address (e.g. name@company.nl)'**
+  String get clientsValidateEmail;
+
+  /// No description provided for @clientsValidatePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid phone number (digits, spaces, +, or dashes only)'**
+  String get clientsValidatePhone;
 
   /// No description provided for @clientsFieldPhone.
   ///
@@ -763,6 +805,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Risk level'**
   String get clientsRiskLevel;
+
+  /// No description provided for @clientsRiskLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get clientsRiskLow;
+
+  /// No description provided for @clientsRiskMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get clientsRiskMedium;
+
+  /// No description provided for @clientsRiskHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get clientsRiskHigh;
 
   /// No description provided for @clientsContractSigned.
   ///
@@ -854,11 +914,23 @@ abstract class AppLocalizations {
   /// **'Supplier *'**
   String get expensesFieldSupplier;
 
+  /// No description provided for @expensesValidateSupplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the supplier name'**
+  String get expensesValidateSupplier;
+
   /// No description provided for @expensesFieldDescription.
   ///
   /// In en, this message translates to:
   /// **'Description *'**
   String get expensesFieldDescription;
+
+  /// No description provided for @expensesValidateDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a description for this expense'**
+  String get expensesValidateDescription;
 
   /// No description provided for @expensesFieldAmountExcl.
   ///
@@ -1133,8 +1205,14 @@ abstract class AppLocalizations {
   /// No description provided for @hoursValidateHours.
   ///
   /// In en, this message translates to:
-  /// **'Enter hours'**
+  /// **'Enter a number of hours greater than 0'**
   String get hoursValidateHours;
+
+  /// No description provided for @hoursValidateDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the work performed in this session'**
+  String get hoursValidateDescription;
 
   /// No description provided for @workTypeBillable.
   ///
@@ -1247,8 +1325,26 @@ abstract class AppLocalizations {
   /// No description provided for @mileageFieldOdoError.
   ///
   /// In en, this message translates to:
-  /// **'End < start'**
+  /// **'End reading must be higher than start reading'**
   String get mileageFieldOdoError;
+
+  /// No description provided for @mileageValidateFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the departure address'**
+  String get mileageValidateFrom;
+
+  /// No description provided for @mileageValidateTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the arrival address'**
+  String get mileageValidateTo;
+
+  /// No description provided for @mileageValidatePurpose.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the business purpose of this trip'**
+  String get mileageValidatePurpose;
 
   /// No description provided for @mileageFieldDistance.
   ///
@@ -1385,8 +1481,14 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldUsefulLifeMin.
   ///
   /// In en, this message translates to:
-  /// **'Min 1'**
+  /// **'Enter at least 1 year of useful life'**
   String get assetsFieldUsefulLifeMin;
+
+  /// No description provided for @assetsValidateName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the name of this fixed asset'**
+  String get assetsValidateName;
 
   /// No description provided for @assetsFieldKia.
   ///
@@ -2203,6 +2305,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Business name *'**
   String get firstLaunchBusinessName;
+
+  /// No description provided for @firstLaunchValidateBusinessName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your business or trading name'**
+  String get firstLaunchValidateBusinessName;
 
   /// No description provided for @firstLaunchVat.
   ///

@@ -190,7 +190,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 contentPadding: EdgeInsets.zero,
               ),
               const SizedBox(height: 16),
-              FilledButton(onPressed: _save, child: Text(l.actionSave)),
+              FilledButton.icon(
+                onPressed: _save,
+                style: FilledButton.styleFrom(
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.primaryContainer,
+                  foregroundColor: Theme.of(
+                    context,
+                  ).colorScheme.onPrimaryContainer,
+                ),
+                icon: const Icon(Icons.save_outlined, size: 18),
+                label: Text(l.actionSave),
+              ),
               const SizedBox(height: 40),
 
               Text(
@@ -448,7 +460,15 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
         const SizedBox(height: 12),
         SizedBox(width: 280, child: _field(l.settingsTaxKorThresh, _korThresh)),
         const SizedBox(height: 20),
-        FilledButton(onPressed: _save, child: Text(l.settingsTaxSaveParams)),
+        FilledButton.icon(
+          onPressed: _save,
+          style: FilledButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+          ),
+          icon: const Icon(Icons.save_outlined, size: 18),
+          label: Text(l.settingsTaxSaveParams),
+        ),
       ],
     );
   }

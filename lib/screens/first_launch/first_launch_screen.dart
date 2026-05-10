@@ -161,7 +161,7 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
                         labelText: l.firstLaunchBusinessName,
                       ),
                       validator: (v) => (v == null || v.trim().isEmpty)
-                          ? l.labelRequired
+                          ? l.firstLaunchValidateBusinessName
                           : null,
                     ),
                     const SizedBox(height: 12),

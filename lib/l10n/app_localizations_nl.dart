@@ -286,10 +286,11 @@ class AppLocalizationsNl extends AppLocalizations {
   String get invoiceDeleted => 'Factuur verwijderd';
 
   @override
-  String get invoiceValidateClient => 'Selecteer een klant';
+  String get invoiceValidateClient => 'Selecteer een klant voor deze factuur';
 
   @override
-  String get invoiceValidateNumber => 'Factuurnummer is verplicht';
+  String get invoiceValidateNumber =>
+      'Voer een uniek factuurnummer in, bijv. F-2024-001';
 
   @override
   String get invoiceUnitHint => 'uur';
@@ -322,22 +323,47 @@ class AppLocalizationsNl extends AppLocalizations {
   String get clientsFieldName => 'Naam *';
 
   @override
+  String get clientsValidateName => 'Voer de naam van de klant in';
+
+  @override
   String get clientsFieldCountry => 'Land';
+
+  @override
+  String get clientsValidateCountry =>
+      'Gebruik een landcode van 2 letters (bijv. NL, DE, FR)';
 
   @override
   String get clientsFieldVat => 'BTW-nummer';
 
   @override
+  String get clientsValidateVat =>
+      'Voer een geldig EU BTW-nummer in (bijv. NL854224798B01)';
+
+  @override
   String get clientsFieldKvk => 'KVK-nummer';
 
   @override
-  String get clientsFieldAddress => 'Adres';
+  String get clientsValidateKvk => 'KVK-nummer moet exact 8 cijfers bevatten';
+
+  @override
+  String get clientsFieldAddress => 'Adres *';
+
+  @override
+  String get clientsValidateAddress => 'Voer het straatadres van de klant in';
 
   @override
   String get clientsFieldContact => 'Contactpersoon';
 
   @override
   String get clientsFieldEmail => 'E-mail';
+
+  @override
+  String get clientsValidateEmail =>
+      'Voer een geldig e-mailadres in (bijv. naam@bedrijf.nl)';
+
+  @override
+  String get clientsValidatePhone =>
+      'Voer een geldig telefoonnummer in (alleen cijfers, spaties, + of koppeltekens)';
 
   @override
   String get clientsFieldPhone => 'Telefoon';
@@ -353,6 +379,15 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get clientsRiskLevel => 'Risiconiveau';
+
+  @override
+  String get clientsRiskLow => 'Laag';
+
+  @override
+  String get clientsRiskMedium => 'Gemiddeld';
+
+  @override
+  String get clientsRiskHigh => 'Hoog';
 
   @override
   String get clientsContractSigned => 'Contract getekend';
@@ -404,7 +439,14 @@ class AppLocalizationsNl extends AppLocalizations {
   String get expensesFieldSupplier => 'Leverancier *';
 
   @override
+  String get expensesValidateSupplier => 'Voer de naam van de leverancier in';
+
+  @override
   String get expensesFieldDescription => 'Omschrijving *';
+
+  @override
+  String get expensesValidateDescription =>
+      'Voer een omschrijving voor deze uitgave in';
 
   @override
   String get expensesFieldAmountExcl => 'Bedrag (excl. BTW) *';
@@ -554,7 +596,12 @@ class AppLocalizationsNl extends AppLocalizations {
   String get hoursEditEntry => 'Bewerk invoer';
 
   @override
-  String get hoursValidateHours => 'Vul uren in';
+  String get hoursValidateHours =>
+      'Voer een aantal uren in dat groter is dan 0';
+
+  @override
+  String get hoursValidateDescription =>
+      'Omschrijf het werk dat in deze sessie is uitgevoerd';
 
   @override
   String get workTypeBillable => 'Billable';
@@ -613,7 +660,17 @@ class AppLocalizationsNl extends AppLocalizations {
   String get mileageFieldOdoEnd => 'Km-stand eind';
 
   @override
-  String get mileageFieldOdoError => 'Eind < begin';
+  String get mileageFieldOdoError => 'Eindstand moet hoger zijn dan beginstand';
+
+  @override
+  String get mileageValidateFrom => 'Voer het vertrekadres in';
+
+  @override
+  String get mileageValidateTo => 'Voer het aankomstadres in';
+
+  @override
+  String get mileageValidatePurpose =>
+      'Omschrijf het zakelijke doel van de rit';
 
   @override
   String get mileageFieldDistance => 'Afstand';
@@ -684,7 +741,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get assetsFieldUsefulLifeUnit => 'jaar';
 
   @override
-  String get assetsFieldUsefulLifeMin => 'Min 1';
+  String get assetsFieldUsefulLifeMin => 'Voer minimaal 1 jaar gebruiksduur in';
+
+  @override
+  String get assetsValidateName => 'Voer de naam van dit vaste activum in';
 
   @override
   String get assetsFieldKia => 'KIA-aanspraak';
@@ -1144,6 +1204,10 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get firstLaunchBusinessName => 'Bedrijfsnaam *';
+
+  @override
+  String get firstLaunchValidateBusinessName =>
+      'Voer je bedrijfs- of handelsnaam in';
 
   @override
   String get firstLaunchVat => 'BTW-nummer (BTW-ID)';

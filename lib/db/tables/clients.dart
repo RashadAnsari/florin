@@ -6,7 +6,7 @@ class Clients extends Table {
   TextColumn get country => text().withDefault(const Constant('NL'))();
   TextColumn get vatNumber => text().nullable()();
   TextColumn get kvkNumber => text().nullable()();
-  TextColumn get address => text().nullable()();
+  TextColumn get address => text().withDefault(const Constant(''))();
   TextColumn get contactPerson => text().nullable()();
   TextColumn get email => text().nullable()();
   TextColumn get phone => text().nullable()();

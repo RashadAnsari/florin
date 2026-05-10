@@ -359,8 +359,9 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
               TextFormField(
                 controller: _description,
                 decoration: InputDecoration(labelText: l.hoursFieldDescription),
-                validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? l.labelRequired : null,
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? l.hoursValidateDescription
+                    : null,
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
@@ -409,15 +410,26 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
               const SizedBox(height: 24),
               Row(
                 children: [
-                  FilledButton(onPressed: _save, child: Text(l.actionSave)),
+                  FilledButton.icon(
+                    onPressed: _save,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer,
+                      foregroundColor: Theme.of(
+                        context,
+                      ).colorScheme.onPrimaryContainer,
+                    ),
+                    icon: const Icon(Icons.save_outlined, size: 18),
+                    label: Text(l.actionSave),
+                  ),
                   if (widget.entry != null) ...[
                     const SizedBox(width: 12),
-                    OutlinedButton(
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline),
+                      tooltip: l.actionDelete,
+                      color: Theme.of(context).colorScheme.error,
                       onPressed: _delete,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.red,
-                      ),
-                      child: Text(l.actionDelete),
                     ),
                   ],
                 ],

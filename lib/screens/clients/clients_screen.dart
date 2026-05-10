@@ -4,13 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:florin/l10n/app_localizations.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/confirmation_dialog.dart';
-
-const _kRiskOptions = ['Low', 'Medium', 'High'];
 
 final _allClientsProvider = StreamProvider.autoDispose<List<Client>>((ref) {
   return ref.watch(clientDaoProvider).watchAll();
@@ -153,6 +150,15 @@ class _ClientTile extends StatelessWidget {
     _ => AppColors.income,
   };
 
+  String _riskLabel(BuildContext context, String level) {
+    final l = AppLocalizations.of(context)!;
+    return switch (level) {
+      'High' => l.clientsRiskHigh,
+      'Medium' => l.clientsRiskMedium,
+      _ => l.clientsRiskLow,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
@@ -183,7 +189,9 @@ class _ClientTile extends StatelessWidget {
                       vertical: 1,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.grey.withValues(alpha: 0.2),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.outline.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -212,7 +220,7 @@ class _ClientTile extends StatelessWidget {
                     border: Border.all(color: _riskColor(risk), width: 0.5),
                   ),
                   child: Text(
-                    risk,
+                    _riskLabel(context, risk),
                     style: TextStyle(fontSize: 10, color: _riskColor(risk)),
                   ),
                 ),
@@ -257,7 +265,6 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
   bool _contractSigned = false;
   DateTime? _contractExpiry;
   bool _isActive = true;
-  String? _vatNumberError;
 
   @override
   void initState() {
@@ -309,7 +316,7 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
       ),
       vatNumber: Value(n(_vatNumber.text)),
       kvkNumber: Value(n(_kvkNumber.text)),
-      address: Value(n(_address.text)),
+      address: Value(_address.text.trim()),
       contactPerson: Value(n(_contactPerson.text)),
       email: Value(n(_email.text)),
       phone: Value(n(_phone.text)),
@@ -323,18 +330,12 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
       final id = await dao.insertClient(companion);
       final created = await dao.getById(id);
       if (mounted && created != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.clientsCreated)),
-        );
         widget.onSaved(created);
       }
     } else {
       await dao.saveClient(companion);
       final updated = await dao.getById(orig.id);
       if (mounted && updated != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.clientsSaved)),
-        );
         widget.onSaved(updated);
       }
     }
@@ -351,24 +352,6 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
     if (!confirmed || !mounted) return;
     await ref.read(clientDaoProvider).deleteClient(widget.client!.id);
     if (mounted) widget.onDeleted();
-  }
-
-  Future<void> _checkVies() async {
-    final vat = _vatNumber.text.trim();
-    if (vat.isEmpty) {
-      setState(
-        () =>
-            _vatNumberError = AppLocalizations.of(context)!.clientsViesEmptyVat,
-      );
-      return;
-    }
-    setState(() => _vatNumberError = null);
-    final country = _country.text.trim().toUpperCase();
-    final uri = Uri.parse(
-      'https://ec.europa.eu/taxation_customs/vies/vatResponse.html'
-      '?memberStateCode=$country&number=$vat',
-    );
-    if (await canLaunchUrl(uri)) await launchUrl(uri);
   }
 
   @override
@@ -464,7 +447,7 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                       labelText: AppLocalizations.of(context)!.clientsFieldName,
                     ),
                     validator: (v) => (v == null || v.trim().isEmpty)
-                        ? AppLocalizations.of(context)!.labelRequired
+                        ? AppLocalizations.of(context)!.clientsValidateName
                         : null,
                   ),
                   const SizedBox(height: 12),
@@ -490,6 +473,17 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                             ),
                           ],
                           maxLength: 2,
+                          validator: (v) {
+                            final s = v?.trim() ?? '';
+                            if (s.isEmpty) return null;
+                            if (s.length != 2 ||
+                                !RegExp(r'^[A-Z]{2}$').hasMatch(s)) {
+                              return AppLocalizations.of(
+                                context,
+                              )!.clientsValidateCountry;
+                            }
+                            return null;
+                          },
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -500,21 +494,19 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                             labelText: AppLocalizations.of(
                               context,
                             )!.clientsFieldVat,
-                            errorText: _vatNumberError,
                           ),
-                          onChanged: (_) {
-                            if (_vatNumberError != null) {
-                              setState(() => _vatNumberError = null);
+                          validator: (v) {
+                            final s = v?.trim() ?? '';
+                            if (s.isEmpty) return null;
+                            if (!RegExp(
+                              r'^[A-Z]{2}.{2,}$',
+                            ).hasMatch(s.toUpperCase())) {
+                              return AppLocalizations.of(
+                                context,
+                              )!.clientsValidateVat;
                             }
+                            return null;
                           },
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      OutlinedButton.icon(
-                        onPressed: _checkVies,
-                        icon: const Icon(Icons.open_in_new, size: 14),
-                        label: Text(
-                          AppLocalizations.of(context)!.clientsCheckVies,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -526,6 +518,17 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                               context,
                             )!.clientsFieldKvk,
                           ),
+                          keyboardType: TextInputType.number,
+                          validator: (v) {
+                            final s = v?.trim() ?? '';
+                            if (s.isEmpty) return null;
+                            if (!RegExp(r'^\d{8}$').hasMatch(s)) {
+                              return AppLocalizations.of(
+                                context,
+                              )!.clientsValidateKvk;
+                            }
+                            return null;
+                          },
                         ),
                       ),
                     ],
@@ -539,6 +542,9 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                       )!.clientsFieldAddress,
                     ),
                     maxLines: 2,
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? AppLocalizations.of(context)!.clientsValidateAddress
+                        : null,
                   ),
                   const SizedBox(height: 12),
                   Row(
@@ -563,6 +569,16 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                             )!.clientsFieldEmail,
                           ),
                           keyboardType: TextInputType.emailAddress,
+                          validator: (v) {
+                            final s = v?.trim() ?? '';
+                            if (s.isEmpty) return null;
+                            if (!RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(s)) {
+                              return AppLocalizations.of(
+                                context,
+                              )!.clientsValidateEmail;
+                            }
+                            return null;
+                          },
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -575,6 +591,18 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                             )!.clientsFieldPhone,
                           ),
                           keyboardType: TextInputType.phone,
+                          validator: (v) {
+                            final s = v?.trim() ?? '';
+                            if (s.isEmpty) return null;
+                            if (!RegExp(
+                              r'^[+\d][\d\s\-().]{4,}$',
+                            ).hasMatch(s)) {
+                              return AppLocalizations.of(
+                                context,
+                              )!.clientsValidatePhone;
+                            }
+                            return null;
+                          },
                         ),
                       ),
                     ],
@@ -590,31 +618,33 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                       Expanded(
                         child: DropdownButtonFormField<String>(
                           initialValue: _riskLevel,
+                          isExpanded: true,
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(
                               context,
                             )!.clientsRiskLevel,
                           ),
-                          items: _kRiskOptions
-                              .map(
-                                (r) =>
-                                    DropdownMenuItem(value: r, child: Text(r)),
-                              )
-                              .toList(),
+                          items: [
+                            DropdownMenuItem(
+                              value: 'Low',
+                              child: Text(
+                                AppLocalizations.of(context)!.clientsRiskLow,
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Medium',
+                              child: Text(
+                                AppLocalizations.of(context)!.clientsRiskMedium,
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'High',
+                              child: Text(
+                                AppLocalizations.of(context)!.clientsRiskHigh,
+                              ),
+                            ),
+                          ],
                           onChanged: (v) => setState(() => _riskLevel = v!),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: CheckboxListTile(
-                          value: _contractSigned,
-                          onChanged: (v) =>
-                              setState(() => _contractSigned = v ?? false),
-                          title: Text(
-                            AppLocalizations.of(context)!.clientsContractSigned,
-                          ),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          contentPadding: EdgeInsets.zero,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -648,6 +678,17 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 4),
+                  CheckboxListTile(
+                    value: _contractSigned,
+                    onChanged: (v) =>
+                        setState(() => _contractSigned = v ?? false),
+                    title: Text(
+                      AppLocalizations.of(context)!.clientsContractSigned,
+                    ),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
                   ),
                   const SizedBox(height: 12),
                   CheckboxListTile(

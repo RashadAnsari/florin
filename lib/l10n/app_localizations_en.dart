@@ -285,10 +285,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoiceDeleted => 'Invoice deleted';
 
   @override
-  String get invoiceValidateClient => 'Please select a client';
+  String get invoiceValidateClient => 'Select a client for this invoice';
 
   @override
-  String get invoiceValidateNumber => 'Invoice number is required';
+  String get invoiceValidateNumber =>
+      'Enter a unique invoice number, e.g. F-2024-001';
 
   @override
   String get invoiceUnitHint => 'hrs';
@@ -321,22 +322,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clientsFieldName => 'Name *';
 
   @override
+  String get clientsValidateName => 'Enter the client\'s name';
+
+  @override
   String get clientsFieldCountry => 'Country';
+
+  @override
+  String get clientsValidateCountry =>
+      'Use a 2-letter country code (e.g. NL, DE, FR)';
 
   @override
   String get clientsFieldVat => 'VAT number';
 
   @override
+  String get clientsValidateVat =>
+      'Enter a valid EU VAT number (e.g. NL854224798B01)';
+
+  @override
   String get clientsFieldKvk => 'KVK number';
 
   @override
-  String get clientsFieldAddress => 'Address';
+  String get clientsValidateKvk => 'KVK number must be exactly 8 digits';
+
+  @override
+  String get clientsFieldAddress => 'Address *';
+
+  @override
+  String get clientsValidateAddress => 'Enter the client\'s street address';
 
   @override
   String get clientsFieldContact => 'Contact person';
 
   @override
   String get clientsFieldEmail => 'E-mail';
+
+  @override
+  String get clientsValidateEmail =>
+      'Enter a valid email address (e.g. name@company.nl)';
+
+  @override
+  String get clientsValidatePhone =>
+      'Enter a valid phone number (digits, spaces, +, or dashes only)';
 
   @override
   String get clientsFieldPhone => 'Phone';
@@ -352,6 +378,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clientsRiskLevel => 'Risk level';
+
+  @override
+  String get clientsRiskLow => 'Low';
+
+  @override
+  String get clientsRiskMedium => 'Medium';
+
+  @override
+  String get clientsRiskHigh => 'High';
 
   @override
   String get clientsContractSigned => 'Contract signed';
@@ -402,7 +437,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expensesFieldSupplier => 'Supplier *';
 
   @override
+  String get expensesValidateSupplier => 'Enter the supplier name';
+
+  @override
   String get expensesFieldDescription => 'Description *';
+
+  @override
+  String get expensesValidateDescription =>
+      'Enter a description for this expense';
 
   @override
   String get expensesFieldAmountExcl => 'Amount (excl. VAT) *';
@@ -552,7 +594,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hoursEditEntry => 'Edit entry';
 
   @override
-  String get hoursValidateHours => 'Enter hours';
+  String get hoursValidateHours => 'Enter a number of hours greater than 0';
+
+  @override
+  String get hoursValidateDescription =>
+      'Describe the work performed in this session';
 
   @override
   String get workTypeBillable => 'Billable';
@@ -611,7 +657,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mileageFieldOdoEnd => 'Odometer end';
 
   @override
-  String get mileageFieldOdoError => 'End < start';
+  String get mileageFieldOdoError =>
+      'End reading must be higher than start reading';
+
+  @override
+  String get mileageValidateFrom => 'Enter the departure address';
+
+  @override
+  String get mileageValidateTo => 'Enter the arrival address';
+
+  @override
+  String get mileageValidatePurpose =>
+      'Describe the business purpose of this trip';
 
   @override
   String get mileageFieldDistance => 'Distance';
@@ -682,7 +739,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assetsFieldUsefulLifeUnit => 'yrs';
 
   @override
-  String get assetsFieldUsefulLifeMin => 'Min 1';
+  String get assetsFieldUsefulLifeMin => 'Enter at least 1 year of useful life';
+
+  @override
+  String get assetsValidateName => 'Enter the name of this fixed asset';
 
   @override
   String get assetsFieldKia => 'KIA-aanspraak';
@@ -1142,6 +1202,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get firstLaunchBusinessName => 'Business name *';
+
+  @override
+  String get firstLaunchValidateBusinessName =>
+      'Enter your business or trading name';
 
   @override
   String get firstLaunchVat => 'VAT number (BTW-ID)';

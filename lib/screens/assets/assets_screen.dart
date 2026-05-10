@@ -307,7 +307,7 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                   labelText: AppLocalizations.of(context)!.assetsFieldName,
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty)
-                    ? AppLocalizations.of(context)!.labelRequired
+                    ? AppLocalizations.of(context)!.assetsValidateName
                     : null,
               ),
               const SizedBox(height: 12),
@@ -457,18 +457,26 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
               const SizedBox(height: 24),
               Row(
                 children: [
-                  FilledButton(
+                  FilledButton.icon(
                     onPressed: _save,
-                    child: Text(AppLocalizations.of(context)!.actionSave),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer,
+                      foregroundColor: Theme.of(
+                        context,
+                      ).colorScheme.onPrimaryContainer,
+                    ),
+                    icon: const Icon(Icons.save_outlined, size: 18),
+                    label: Text(AppLocalizations.of(context)!.actionSave),
                   ),
                   if (widget.asset != null) ...[
                     const SizedBox(width: 12),
-                    OutlinedButton(
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline),
+                      tooltip: AppLocalizations.of(context)!.actionDelete,
+                      color: Theme.of(context).colorScheme.error,
                       onPressed: _delete,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.red,
-                      ),
-                      child: Text(AppLocalizations.of(context)!.actionDelete),
                     ),
                   ],
                 ],

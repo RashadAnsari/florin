@@ -347,7 +347,7 @@ class _TripFormState extends ConsumerState<_TripForm> {
                   labelText: AppLocalizations.of(context)!.mileageFieldFrom,
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty)
-                    ? AppLocalizations.of(context)!.labelRequired
+                    ? AppLocalizations.of(context)!.mileageValidateFrom
                     : null,
               ),
               const SizedBox(height: 12),
@@ -357,7 +357,7 @@ class _TripFormState extends ConsumerState<_TripForm> {
                   labelText: AppLocalizations.of(context)!.mileageFieldTo,
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty)
-                    ? AppLocalizations.of(context)!.labelRequired
+                    ? AppLocalizations.of(context)!.mileageValidateTo
                     : null,
               ),
               const SizedBox(height: 12),
@@ -435,7 +435,7 @@ class _TripFormState extends ConsumerState<_TripForm> {
                   labelText: AppLocalizations.of(context)!.mileageFieldPurpose,
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty)
-                    ? AppLocalizations.of(context)!.labelRequired
+                    ? AppLocalizations.of(context)!.mileageValidatePurpose
                     : null,
               ),
               const SizedBox(height: 8),
@@ -459,18 +459,26 @@ class _TripFormState extends ConsumerState<_TripForm> {
               const SizedBox(height: 24),
               Row(
                 children: [
-                  FilledButton(
+                  FilledButton.icon(
                     onPressed: _save,
-                    child: Text(AppLocalizations.of(context)!.actionSave),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer,
+                      foregroundColor: Theme.of(
+                        context,
+                      ).colorScheme.onPrimaryContainer,
+                    ),
+                    icon: const Icon(Icons.save_outlined, size: 18),
+                    label: Text(AppLocalizations.of(context)!.actionSave),
                   ),
                   if (widget.trip != null) ...[
                     const SizedBox(width: 12),
-                    OutlinedButton(
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline),
+                      tooltip: AppLocalizations.of(context)!.actionDelete,
+                      color: Theme.of(context).colorScheme.error,
                       onPressed: _delete,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.red,
-                      ),
-                      child: Text(AppLocalizations.of(context)!.actionDelete),
                     ),
                   ],
                 ],

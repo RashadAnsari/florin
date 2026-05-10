@@ -453,11 +453,21 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
                   tooltip: AppLocalizations.of(context)!.actionDelete,
+                  color: Theme.of(context).colorScheme.error,
                   onPressed: _delete,
                 ),
-              FilledButton(
+              FilledButton.icon(
                 onPressed: _save,
-                child: Text(AppLocalizations.of(context)!.actionSave),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.primaryContainer,
+                  foregroundColor: Theme.of(
+                    context,
+                  ).colorScheme.onPrimaryContainer,
+                ),
+                icon: const Icon(Icons.save_outlined, size: 18),
+                label: Text(AppLocalizations.of(context)!.actionSave),
               ),
               const SizedBox(width: 8),
             ],
@@ -564,7 +574,9 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                               )!.expensesFieldSupplier,
                             ),
                             validator: (v) => (v == null || v.trim().isEmpty)
-                                ? AppLocalizations.of(context)!.labelRequired
+                                ? AppLocalizations.of(
+                                    context,
+                                  )!.expensesValidateSupplier
                                 : null,
                           ),
                         ),
@@ -578,7 +590,9 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                               )!.expensesFieldDescription,
                             ),
                             validator: (v) => (v == null || v.trim().isEmpty)
-                                ? AppLocalizations.of(context)!.labelRequired
+                                ? AppLocalizations.of(
+                                    context,
+                                  )!.expensesValidateDescription
                                 : null,
                           ),
                         ),
