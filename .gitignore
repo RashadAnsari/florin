@@ -49,6 +49,7 @@ florin.db
 
 # Claude
 .claude/
+!.claude/settings.json
 .claude-flow/
 .mcp.json
 

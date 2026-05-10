@@ -8,6 +8,19 @@ These rules are the source of truth for working in this repository. Always read 
 - **No duplicate code**: before writing a constant, function, or utility, search the codebase first. If it already exists, import it, never redefine it. Shared logic belongs in `lib/services/`. Shared UI belongs in `lib/widgets/`. Shared constants live in the relevant service file.
 - **Punctuation**: no period on short labels, headings, button text, and single-phrase descriptions. Use a period on full sentences, especially multi-clause ones (FAQs, warnings, longer descriptions).
 - **Em dash**: never use the em dash character (—) in any user-facing text, copy, labels, or metadata. Use a colon, comma, or period instead.
+- **Translations**: all user-facing strings must go through `AppLocalizations` — never hardcode text visible to the user. Add keys to both `app_en.arb` and `app_nl.arb`.
+- **Required fields**: every required form field label must end with ` *` (e.g., `Name *`). No exceptions across all forms.
+- **Theme**: always use the project theme defined in `lib/theme/`. Never invent colors, typography, spacing, or any design tokens. Never create a parallel design system. All UI decisions must reference `lib/theme/` exclusively.
+
+## UI design rules
+
+- **List screen structure**: `Column` with search bar + `Divider(height: 1)` + `Expanded(ListView)` — never put `ListView` directly as `body`. Match the invoices/expenses pattern.
+- **Tile spacing**: use `SizedBox(height: 2)` between rows inside list tiles — consistent across all screens.
+- **Checkboxes**: always use `controlAffinity: ListTileControlAffinity.leading` on `CheckboxListTile` — checkbox on left, label on right. Right-side checkbox looks like an unrelated section header.
+- **maxLength fields**: always add `counterText: ''` to `InputDecoration` — hides the character counter that breaks vertical alignment with adjacent fields.
+- **Destructive buttons**: delete `IconButton` must use `color: theme.colorScheme.error` — never a silent grey destructive action.
+- **External link buttons**: use `OutlinedButton.icon` with `Icons.open_in_new` when a button opens a URL.
+- **Primary action buttons**: use `FilledButton.icon` with `backgroundColor: theme.colorScheme.primaryContainer` and `foregroundColor: theme.colorScheme.onPrimaryContainer` — visible in both light and dark mode.
 
 <!-- ================================================== -->
 

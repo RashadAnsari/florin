@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:florin/l10n/app_localizations.dart';
@@ -24,6 +25,13 @@ class ClientsScreen extends ConsumerStatefulWidget {
 
 class _ClientsScreenState extends ConsumerState<ClientsScreen> {
   bool _showInactive = false;
+  final _searchCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
 
   Map<int, int> _revenueMap(AsyncValue<List<Invoice>> inv) {
     final result = <int, int>{};
@@ -35,54 +43,94 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
     return result;
   }
 
+  List<Client> _filter(List<Client> all) {
+    var result = _showInactive ? all : all.where((c) => c.isActive).toList();
+    final q = _searchCtrl.text.toLowerCase().trim();
+    if (q.isNotEmpty) {
+      result = result.where((c) => c.name.toLowerCase().contains(q)).toList();
+    }
+    return result;
+  }
+
+  Widget _buildSearch(AppLocalizations l) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+      child: TextField(
+        controller: _searchCtrl,
+        decoration: InputDecoration(
+          isDense: true,
+          hintText: l.labelSearch,
+          prefixIcon: const Icon(Icons.search, size: 18),
+          suffixIcon: _searchCtrl.text.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.clear, size: 16),
+                  onPressed: () {
+                    _searchCtrl.clear();
+                    setState(() {});
+                  },
+                )
+              : null,
+        ),
+        onChanged: (_) => setState(() {}),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final allAsync = ref.watch(_allClientsProvider);
     final year = ref.watch(fiscalYearProvider);
     final invAsync = ref.watch(invoicesStreamProvider(year));
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.clientsTitle),
+        title: Text(l.clientsTitle),
         actions: [
           IconButton(
             icon: Icon(_showInactive ? Icons.visibility_off : Icons.visibility),
             tooltip: _showInactive
-                ? AppLocalizations.of(context)!.clientsHideInactive
-                : AppLocalizations.of(context)!.clientsShowInactive,
+                ? l.clientsHideInactive
+                : l.clientsShowInactive,
             onPressed: () => setState(() => _showInactive = !_showInactive),
           ),
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: AppLocalizations.of(context)!.clientsNewTooltip,
+            tooltip: l.clientsNewTooltip,
             onPressed: () => context.push('/clients/new'),
           ),
           const SizedBox(width: 8),
         ],
       ),
-      body: allAsync.when(
-        data: (all) {
-          final revenue = _revenueMap(invAsync);
-          final visible = _showInactive
-              ? all
-              : all.where((c) => c.isActive).toList();
-          if (visible.isEmpty) {
-            return Center(
-              child: Text(AppLocalizations.of(context)!.clientsNone),
-            );
-          }
-          return ListView.builder(
-            itemCount: visible.length,
-            itemBuilder: (_, i) => _ClientTile(
-              client: visible[i],
-              revenueYtd: revenue[visible[i].id] ?? 0,
-              onTap: () =>
-                  context.push('/clients/${visible[i].id}', extra: visible[i]),
+      body: Column(
+        children: [
+          _buildSearch(l),
+          const Divider(height: 1),
+          Expanded(
+            child: allAsync.when(
+              data: (all) {
+                final revenue = _revenueMap(invAsync);
+                final visible = _filter(all);
+                if (visible.isEmpty) {
+                  return Center(child: Text(l.clientsNone));
+                }
+                return ListView.builder(
+                  itemCount: visible.length,
+                  itemBuilder: (_, i) => _ClientTile(
+                    client: visible[i],
+                    revenueYtd: revenue[visible[i].id] ?? 0,
+                    onTap: () => context.push(
+                      '/clients/${visible[i].id}',
+                      extra: visible[i],
+                    ),
+                  ),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(child: Text('$e')),
             ),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('$e')),
+          ),
+        ],
       ),
     );
   }
@@ -107,6 +155,7 @@ class _ClientTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final risk = client.wetDbaRiskLevel;
     return InkWell(
@@ -137,14 +186,14 @@ class _ClientTile extends StatelessWidget {
                       color: Colors.grey.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Text(
-                      'Inactief',
-                      style: TextStyle(fontSize: 10),
+                    child: Text(
+                      l.clientsInactive,
+                      style: const TextStyle(fontSize: 10),
                     ),
                   ),
               ],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             Row(
               children: [
                 Text(
@@ -351,11 +400,17 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
                   tooltip: AppLocalizations.of(context)!.actionDelete,
+                  color: theme.colorScheme.error,
                   onPressed: _delete,
                 ),
-              FilledButton(
+              FilledButton.icon(
                 onPressed: _save,
-                child: Text(AppLocalizations.of(context)!.actionSave),
+                icon: const Icon(Icons.check, size: 16),
+                label: Text(AppLocalizations.of(context)!.actionSave),
+                style: FilledButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primaryContainer,
+                  foregroundColor: theme.colorScheme.onPrimaryContainer,
+                ),
               ),
               const SizedBox(width: 8),
             ],
@@ -419,15 +474,24 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                     Row(
                       children: [
                         SizedBox(
-                          width: 70,
+                          width: 90,
                           child: TextFormField(
                             controller: _country,
                             decoration: InputDecoration(
                               labelText: AppLocalizations.of(
                                 context,
                               )!.clientsFieldCountry,
+                              counterText: '',
                             ),
                             textCapitalization: TextCapitalization.characters,
+                            inputFormatters: [
+                              TextInputFormatter.withFunction(
+                                (old, next) => next.copyWith(
+                                  text: next.text.toUpperCase(),
+                                  selection: next.selection,
+                                ),
+                              ),
+                            ],
                             maxLength: 2,
                           ),
                         ),
@@ -443,9 +507,10 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        OutlinedButton(
+                        OutlinedButton.icon(
                           onPressed: _checkVies,
-                          child: Text(
+                          icon: const Icon(Icons.open_in_new, size: 14),
+                          label: Text(
                             AppLocalizations.of(context)!.clientsCheckVies,
                           ),
                         ),
@@ -549,6 +614,7 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                                 context,
                               )!.clientsContractSigned,
                             ),
+                            controlAffinity: ListTileControlAffinity.leading,
                             contentPadding: EdgeInsets.zero,
                           ),
                         ),
@@ -579,7 +645,7 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                               child: Text(
                                 _contractExpiry != null
                                     ? AppFormat.date(_contractExpiry!)
-                                    : '—',
+                                    : '-',
                               ),
                             ),
                           ),
@@ -593,6 +659,7 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                       title: Text(
                         AppLocalizations.of(context)!.clientsFieldActive,
                       ),
+                      controlAffinity: ListTileControlAffinity.leading,
                       contentPadding: EdgeInsets.zero,
                     ),
                     const SizedBox(height: 12),
