@@ -200,7 +200,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get invoiceFieldClient => 'Klant *';
 
   @override
-  String get invoiceFieldNumber => 'Factuurnummer';
+  String get invoiceFieldNumber => 'Factuurnummer *';
 
   @override
   String get invoiceFieldInvoiceDate => 'Factuurdatum';

@@ -76,7 +76,7 @@
   "invoiceTypeCreditNote": "Creditnota",
   "invoiceFieldType": "Type",
   "invoiceFieldClient": "Klant *",
-  "invoiceFieldNumber": "Factuurnummer",
+  "invoiceFieldNumber": "Factuurnummer *",
   "invoiceFieldInvoiceDate": "Factuurdatum",
   "invoiceFieldSupplyDate": "Leveringsdatum",
   "invoiceFieldPaymentTerm": "Termijn (dagen)",

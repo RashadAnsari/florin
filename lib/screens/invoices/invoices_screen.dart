@@ -87,7 +87,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
                   itemCount: visible.length,
                   itemBuilder: (_, i) => _InvoiceTile(
                     invoice: visible[i],
-                    clientName: clientMap[visible[i].clientId] ?? '—',
+                    clientName: clientMap[visible[i].clientId] ?? '-',
                     onTap: () => context.push('/invoices/${visible[i].id}'),
                   ),
                 );
@@ -173,13 +173,14 @@ class _InvoiceTile extends StatelessWidget {
     final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final overdue = _isOverdue;
+    final outline = theme.colorScheme.outline;
     final (statusLabel, statusColor) = overdue
         ? (l.invoiceStatusOverdue, AppColors.red)
         : switch (invoice.status) {
-            'Draft' => (l.invoiceStatusConcept, Colors.grey),
+            'Draft' => (l.invoiceStatusConcept, outline),
             'Sent' => (l.invoiceStatusSent, AppColors.action),
             'Paid' => (l.invoiceStatusPaid, AppColors.income),
-            _ => (invoice.status, Colors.grey),
+            _ => (invoice.status, outline),
           };
 
     return InkWell(

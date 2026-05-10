@@ -257,6 +257,7 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
   bool _contractSigned = false;
   DateTime? _contractExpiry;
   bool _isActive = true;
+  String? _vatNumberError;
 
   @override
   void initState() {
@@ -355,13 +356,13 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
   Future<void> _checkVies() async {
     final vat = _vatNumber.text.trim();
     if (vat.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.clientsViesEmptyVat),
-        ),
+      setState(
+        () =>
+            _vatNumberError = AppLocalizations.of(context)!.clientsViesEmptyVat,
       );
       return;
     }
+    setState(() => _vatNumberError = null);
     final country = _country.text.trim().toUpperCase();
     final uri = Uri.parse(
       'https://ec.europa.eu/taxation_customs/vies/vatResponse.html'
@@ -422,258 +423,253 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
             padding: const EdgeInsets.all(24),
             child: Form(
               key: _formKey,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 700),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (highRisk) ...[
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: AppColors.red.withValues(alpha: 0.08),
-                          border: Border.all(color: AppColors.red),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.warning_amber,
-                              color: AppColors.red,
-                              size: 18,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (highRisk) ...[
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.red.withValues(alpha: 0.08),
+                        border: Border.all(color: AppColors.red),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.warning_amber,
+                            color: AppColors.red,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.clientsHighRiskWarning,
+                              style: const TextStyle(
+                                color: AppColors.red,
+                                fontSize: 13,
+                              ),
                             ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                AppLocalizations.of(
-                                  context,
-                                )!.clientsHighRiskWarning,
-                                style: const TextStyle(
-                                  color: AppColors.red,
-                                  fontSize: 13,
-                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                  TextFormField(
+                    controller: _name,
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.clientsFieldName,
+                    ),
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? AppLocalizations.of(context)!.labelRequired
+                        : null,
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 90,
+                        child: TextFormField(
+                          controller: _country,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.clientsFieldCountry,
+                            counterText: '',
+                          ),
+                          textCapitalization: TextCapitalization.characters,
+                          inputFormatters: [
+                            TextInputFormatter.withFunction(
+                              (old, next) => next.copyWith(
+                                text: next.text.toUpperCase(),
+                                selection: next.selection,
                               ),
                             ),
                           ],
+                          maxLength: 2,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _vatNumber,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.clientsFieldVat,
+                            errorText: _vatNumberError,
+                          ),
+                          onChanged: (_) {
+                            if (_vatNumberError != null) {
+                              setState(() => _vatNumberError = null);
+                            }
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      OutlinedButton.icon(
+                        onPressed: _checkVies,
+                        icon: const Icon(Icons.open_in_new, size: 14),
+                        label: Text(
+                          AppLocalizations.of(context)!.clientsCheckVies,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _kvkNumber,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.clientsFieldKvk,
+                          ),
+                        ),
+                      ),
                     ],
-                    TextFormField(
-                      controller: _name,
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(
-                          context,
-                        )!.clientsFieldName,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _address,
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(
+                        context,
+                      )!.clientsFieldAddress,
+                    ),
+                    maxLines: 2,
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _contactPerson,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.clientsFieldContact,
+                          ),
+                        ),
                       ),
-                      validator: (v) => (v == null || v.trim().isEmpty)
-                          ? AppLocalizations.of(context)!.labelRequired
-                          : null,
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 90,
-                          child: TextFormField(
-                            controller: _country,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.clientsFieldCountry,
-                              counterText: '',
-                            ),
-                            textCapitalization: TextCapitalization.characters,
-                            inputFormatters: [
-                              TextInputFormatter.withFunction(
-                                (old, next) => next.copyWith(
-                                  text: next.text.toUpperCase(),
-                                  selection: next.selection,
-                                ),
-                              ),
-                            ],
-                            maxLength: 2,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _email,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.clientsFieldEmail,
                           ),
+                          keyboardType: TextInputType.emailAddress,
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            controller: _vatNumber,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.clientsFieldVat,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        OutlinedButton.icon(
-                          onPressed: _checkVies,
-                          icon: const Icon(Icons.open_in_new, size: 14),
-                          label: Text(
-                            AppLocalizations.of(context)!.clientsCheckVies,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            controller: _kvkNumber,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.clientsFieldKvk,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _address,
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(
-                          context,
-                        )!.clientsFieldAddress,
                       ),
-                      maxLines: 2,
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: _contactPerson,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.clientsFieldContact,
-                            ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _phone,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.clientsFieldPhone,
                           ),
+                          keyboardType: TextInputType.phone,
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            controller: _email,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.clientsFieldEmail,
-                            ),
-                            keyboardType: TextInputType.emailAddress,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            controller: _phone,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.clientsFieldPhone,
-                            ),
-                            keyboardType: TextInputType.phone,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      AppLocalizations.of(context)!.clientsWetDba,
-                      style: theme.textTheme.titleSmall,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: DropdownButtonFormField<String>(
-                            initialValue: _riskLevel,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.clientsRiskLevel,
-                            ),
-                            items: _kRiskOptions
-                                .map(
-                                  (r) => DropdownMenuItem(
-                                    value: r,
-                                    child: Text(r),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (v) => setState(() => _riskLevel = v!),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: CheckboxListTile(
-                            value: _contractSigned,
-                            onChanged: (v) =>
-                                setState(() => _contractSigned = v ?? false),
-                            title: Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.clientsContractSigned,
-                            ),
-                            controlAffinity: ListTileControlAffinity.leading,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () async {
-                              final d = await showDatePicker(
-                                context: context,
-                                initialDate:
-                                    _contractExpiry ??
-                                    DateTime.now().add(
-                                      const Duration(days: 365),
-                                    ),
-                                firstDate: DateTime(2020),
-                                lastDate: DateTime(2040),
-                              );
-                              if (d != null) {
-                                setState(() => _contractExpiry = d);
-                              }
-                            },
-                            child: InputDecorator(
-                              decoration: InputDecoration(
-                                labelText: AppLocalizations.of(
-                                  context,
-                                )!.clientsContractExpiry,
-                              ),
-                              child: Text(
-                                _contractExpiry != null
-                                    ? AppFormat.date(_contractExpiry!)
-                                    : '-',
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    CheckboxListTile(
-                      value: _isActive,
-                      onChanged: (v) => setState(() => _isActive = v ?? true),
-                      title: Text(
-                        AppLocalizations.of(context)!.clientsFieldActive,
                       ),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _notes,
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(
-                          context,
-                        )!.clientsFieldNotes,
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    AppLocalizations.of(context)!.clientsWetDba,
+                    style: theme.textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          initialValue: _riskLevel,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.clientsRiskLevel,
+                          ),
+                          items: _kRiskOptions
+                              .map(
+                                (r) =>
+                                    DropdownMenuItem(value: r, child: Text(r)),
+                              )
+                              .toList(),
+                          onChanged: (v) => setState(() => _riskLevel = v!),
+                        ),
                       ),
-                      maxLines: 3,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: CheckboxListTile(
+                          value: _contractSigned,
+                          onChanged: (v) =>
+                              setState(() => _contractSigned = v ?? false),
+                          title: Text(
+                            AppLocalizations.of(context)!.clientsContractSigned,
+                          ),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () async {
+                            final d = await showDatePicker(
+                              context: context,
+                              initialDate:
+                                  _contractExpiry ??
+                                  DateTime.now().add(const Duration(days: 365)),
+                              firstDate: DateTime(2020),
+                              lastDate: DateTime(2040),
+                            );
+                            if (d != null) {
+                              setState(() => _contractExpiry = d);
+                            }
+                          },
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.clientsContractExpiry,
+                            ),
+                            child: Text(
+                              _contractExpiry != null
+                                  ? AppFormat.date(_contractExpiry!)
+                                  : '-',
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  CheckboxListTile(
+                    value: _isActive,
+                    onChanged: (v) => setState(() => _isActive = v ?? true),
+                    title: Text(
+                      AppLocalizations.of(context)!.clientsFieldActive,
                     ),
-                  ],
-                ),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _notes,
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(
+                        context,
+                      )!.clientsFieldNotes,
+                    ),
+                    maxLines: 3,
+                  ),
+                ],
               ),
             ),
           ),

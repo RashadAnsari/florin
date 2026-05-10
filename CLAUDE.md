@@ -21,6 +21,8 @@ These rules are the source of truth for working in this repository. Always read 
 - **Destructive buttons**: delete `IconButton` must use `color: theme.colorScheme.error` — never a silent grey destructive action.
 - **External link buttons**: use `OutlinedButton.icon` with `Icons.open_in_new` when a button opens a URL.
 - **Primary action buttons**: use `FilledButton.icon` with `backgroundColor: theme.colorScheme.primaryContainer` and `foregroundColor: theme.colorScheme.onPrimaryContainer` — visible in both light and dark mode.
+- **Detail/form pages fill the screen**: detail panels and forms must always fill all available width. Never wrap form content in `ConstrainedBox`, `SizedBox(width:)`, or any fixed-width container — let the `Column` expand to fill the `Expanded`/`SingleChildScrollView` naturally.
+- **Form validation errors**: always show inline field errors, never toasts. Use `Form` + `GlobalKey<FormState>` + `validator` on each required field. For button-triggered checks (e.g., VIES), use a `String? _fieldError` state variable and wire it to `InputDecoration.errorText`, clearing it `onChanged`. Toasts are only for success feedback (saved, created, deleted).
 
 <!-- ================================================== -->
 

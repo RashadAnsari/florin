@@ -199,7 +199,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoiceFieldClient => 'Client *';
 
   @override
-  String get invoiceFieldNumber => 'Invoice number';
+  String get invoiceFieldNumber => 'Invoice number *';
 
   @override
   String get invoiceFieldInvoiceDate => 'Invoice date';

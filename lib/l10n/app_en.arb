@@ -76,7 +76,7 @@
   "invoiceTypeCreditNote": "Credit note",
   "invoiceFieldType": "Type",
   "invoiceFieldClient": "Client *",
-  "invoiceFieldNumber": "Invoice number",
+  "invoiceFieldNumber": "Invoice number *",
   "invoiceFieldInvoiceDate": "Invoice date",
   "invoiceFieldSupplyDate": "Supply date",
   "invoiceFieldPaymentTerm": "Term (days)",

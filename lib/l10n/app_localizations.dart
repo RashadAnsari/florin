@@ -461,7 +461,7 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceFieldNumber.
   ///
   /// In en, this message translates to:
-  /// **'Invoice number'**
+  /// **'Invoice number *'**
   String get invoiceFieldNumber;
 
   /// No description provided for @invoiceFieldInvoiceDate.

@@ -76,6 +76,7 @@ class InvoiceDetailPanel extends ConsumerStatefulWidget {
 }
 
 class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
+  final _formKey = GlobalKey<FormState>();
   bool _loading = true;
   Invoice? _original;
   List<_LineItem> _lines = [];
@@ -206,19 +207,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
   }
 
   Future<void> _save() async {
-    final l = AppLocalizations.of(context)!;
-    if (_clientId == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l.invoiceValidateClient)));
-      return;
-    }
-    if (_invoiceNumber.text.trim().isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l.invoiceValidateNumber)));
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
     final dao = ref.read(invoiceDaoProvider);
     final year = ref.read(fiscalYearProvider);
     final companion = InvoicesCompanion(
@@ -434,12 +423,22 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
                   tooltip: AppLocalizations.of(context)!.invoiceActionDelete,
+                  color: Theme.of(context).colorScheme.error,
                   onPressed: _delete,
                 ),
               ],
-              FilledButton(
+              FilledButton.icon(
                 onPressed: _save,
-                child: Text(AppLocalizations.of(context)!.actionSave),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.primaryContainer,
+                  foregroundColor: Theme.of(
+                    context,
+                  ).colorScheme.onPrimaryContainer,
+                ),
+                icon: const Icon(Icons.save_outlined, size: 18),
+                label: Text(AppLocalizations.of(context)!.actionSave),
               ),
               const SizedBox(width: 8),
             ],
@@ -448,245 +447,264 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
         const Divider(height: 1),
         // ── Form body ───────────────────────────────────────────────────────
         Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Invoice type + client + dates
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 150,
-                      child: DropdownButtonFormField<String>(
-                        initialValue: _invoiceType,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(
-                            context,
-                          )!.invoiceFieldType,
-                        ),
-                        items: [
-                          DropdownMenuItem(
-                            value: 'Invoice',
-                            child: Text(
-                              AppLocalizations.of(context)!.invoiceTypeInvoice,
-                            ),
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Invoice type + client + dates
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 150,
+                        child: DropdownButtonFormField<String>(
+                          initialValue: _invoiceType,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.invoiceFieldType,
                           ),
-                          DropdownMenuItem(
-                            value: 'CreditNote',
-                            child: Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.invoiceTypeCreditNote,
-                            ),
-                          ),
-                        ],
-                        onChanged: (v) => setState(() => _invoiceType = v!),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: DropdownButtonFormField<int>(
-                        initialValue: clients.any((c) => c.id == _clientId)
-                            ? _clientId
-                            : null,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(
-                            context,
-                          )!.invoiceFieldClient,
-                        ),
-                        items: clients
-                            .map(
-                              (c) => DropdownMenuItem(
-                                value: c.id,
-                                child: Text(c.name),
+                          items: [
+                            DropdownMenuItem(
+                              value: 'Invoice',
+                              child: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.invoiceTypeInvoice,
                               ),
-                            )
-                            .toList(),
-                        onChanged: (v) => setState(() => _clientId = v),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    SizedBox(
-                      width: 160,
-                      child: TextFormField(
-                        controller: _invoiceNumber,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(
-                            context,
-                          )!.invoiceFieldNumber,
+                            ),
+                            DropdownMenuItem(
+                              value: 'CreditNote',
+                              child: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.invoiceTypeCreditNote,
+                              ),
+                            ),
+                          ],
+                          onChanged: (v) => setState(() => _invoiceType = v!),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () async {
-                          final d = await showDatePicker(
-                            context: context,
-                            initialDate: _invoiceDate,
-                            firstDate: DateTime(2020),
-                            lastDate: DateTime(2040),
-                          );
-                          if (d != null) setState(() => _invoiceDate = d);
-                        },
-                        child: InputDecorator(
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: DropdownButtonFormField<int>(
+                          initialValue: clients.any((c) => c.id == _clientId)
+                              ? _clientId
+                              : null,
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(
                               context,
-                            )!.invoiceFieldInvoiceDate,
+                            )!.invoiceFieldClient,
                           ),
-                          child: Text(AppFormat.date(_invoiceDate)),
+                          items: clients
+                              .map(
+                                (c) => DropdownMenuItem(
+                                  value: c.id,
+                                  child: Text(c.name),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (v) => setState(() => _clientId = v),
+                          validator: (_) => _clientId == null
+                              ? AppLocalizations.of(
+                                  context,
+                                )!.invoiceValidateClient
+                              : null,
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () async {
-                          final d = await showDatePicker(
-                            context: context,
-                            initialDate: _supplyDate ?? _invoiceDate,
-                            firstDate: DateTime(2020),
-                            lastDate: DateTime(2040),
-                          );
-                          if (d != null) {
-                            setState(() => _supplyDate = d);
-                          }
-                        },
-                        child: InputDecorator(
+                      const SizedBox(width: 12),
+                      SizedBox(
+                        width: 160,
+                        child: TextFormField(
+                          controller: _invoiceNumber,
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(
                               context,
-                            )!.invoiceFieldSupplyDate,
+                            )!.invoiceFieldNumber,
                           ),
-                          child: Text(
-                            _supplyDate != null
-                                ? AppFormat.date(_supplyDate!)
-                                : '—',
-                          ),
+                          validator: (v) => (v == null || v.trim().isEmpty)
+                              ? AppLocalizations.of(
+                                  context,
+                                )!.invoiceValidateNumber
+                              : null,
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    SizedBox(
-                      width: 100,
-                      child: TextFormField(
-                        controller: _paymentTermDays,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(
-                            context,
-                          )!.invoiceFieldPaymentTerm,
-                        ),
-                        keyboardType: TextInputType.number,
-                        onChanged: (_) => setState(() {}),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: InputDecorator(
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(
-                            context,
-                          )!.invoiceFieldDueDate,
-                        ),
-                        child: Text(AppFormat.date(_dueDate)),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CheckboxListTile(
-                        value: _isIcp,
-                        onChanged: (v) => setState(() => _isIcp = v ?? false),
-                        title: Text(
-                          AppLocalizations.of(context)!.invoiceFieldIcp,
-                        ),
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                    const SizedBox(width: 24),
-                    Expanded(
-                      child: CheckboxListTile(
-                        value: _isReverseCharge,
-                        onChanged: (v) =>
-                            setState(() => _isReverseCharge = v ?? false),
-                        title: Text(
-                          AppLocalizations.of(context)!.invoiceFieldBtwVerlegd,
-                        ),
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                // ── Line items ─────────────────────────────────────────────
-                Text(
-                  AppLocalizations.of(context)!.invoiceFieldLines,
-                  style: theme.textTheme.titleSmall,
-                ),
-                const SizedBox(height: 8),
-                _buildLineHeader(theme),
-                ..._lines.asMap().entries.map(
-                  (e) => _buildLineRow(e.key, e.value, theme),
-                ),
-                const SizedBox(height: 8),
-                TextButton.icon(
-                  icon: const Icon(Icons.add, size: 16),
-                  label: Text(
-                    AppLocalizations.of(context)!.invoiceFieldAddLine,
+                    ],
                   ),
-                  onPressed: _addLine,
-                ),
-                const SizedBox(height: 20),
-                // ── Totals ─────────────────────────────────────────────────
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: SizedBox(
-                    width: 280,
-                    child: Column(
-                      children: [
-                        _totalRow(
-                          AppLocalizations.of(context)!.invoiceSubtotal,
-                          AppFormat.cents(_totalExclVat),
-                          theme,
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () async {
+                            final d = await showDatePicker(
+                              context: context,
+                              initialDate: _invoiceDate,
+                              firstDate: DateTime(2020),
+                              lastDate: DateTime(2040),
+                            );
+                            if (d != null) setState(() => _invoiceDate = d);
+                          },
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.invoiceFieldInvoiceDate,
+                            ),
+                            child: Text(AppFormat.date(_invoiceDate)),
+                          ),
                         ),
-                        ..._vatByRate.entries.map(
-                          (e) => _totalRow(
-                            'BTW ${e.key}',
-                            AppFormat.cents(e.value),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () async {
+                            final d = await showDatePicker(
+                              context: context,
+                              initialDate: _supplyDate ?? _invoiceDate,
+                              firstDate: DateTime(2020),
+                              lastDate: DateTime(2040),
+                            );
+                            if (d != null) {
+                              setState(() => _supplyDate = d);
+                            }
+                          },
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.invoiceFieldSupplyDate,
+                            ),
+                            child: Text(
+                              _supplyDate != null
+                                  ? AppFormat.date(_supplyDate!)
+                                  : '-',
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      SizedBox(
+                        width: 100,
+                        child: TextFormField(
+                          controller: _paymentTermDays,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.invoiceFieldPaymentTerm,
+                          ),
+                          keyboardType: TextInputType.number,
+                          onChanged: (_) => setState(() {}),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.invoiceFieldDueDate,
+                          ),
+                          child: Text(AppFormat.date(_dueDate)),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CheckboxListTile(
+                          value: _isIcp,
+                          onChanged: (v) => setState(() => _isIcp = v ?? false),
+                          title: Text(
+                            AppLocalizations.of(context)!.invoiceFieldIcp,
+                          ),
+                          contentPadding: EdgeInsets.zero,
+                          controlAffinity: ListTileControlAffinity.leading,
+                        ),
+                      ),
+                      const SizedBox(width: 24),
+                      Expanded(
+                        child: CheckboxListTile(
+                          value: _isReverseCharge,
+                          onChanged: (v) =>
+                              setState(() => _isReverseCharge = v ?? false),
+                          title: Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.invoiceFieldBtwVerlegd,
+                          ),
+                          contentPadding: EdgeInsets.zero,
+                          controlAffinity: ListTileControlAffinity.leading,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  // ── Line items ─────────────────────────────────────────────
+                  Text(
+                    AppLocalizations.of(context)!.invoiceFieldLines,
+                    style: theme.textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildLineHeader(theme),
+                  ..._lines.asMap().entries.map(
+                    (e) => _buildLineRow(e.key, e.value, theme),
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton.icon(
+                    icon: const Icon(Icons.add, size: 16),
+                    label: Text(
+                      AppLocalizations.of(context)!.invoiceFieldAddLine,
+                    ),
+                    onPressed: _addLine,
+                  ),
+                  const SizedBox(height: 20),
+                  // ── Totals ─────────────────────────────────────────────────
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: SizedBox(
+                      width: 280,
+                      child: Column(
+                        children: [
+                          _totalRow(
+                            AppLocalizations.of(context)!.invoiceSubtotal,
+                            AppFormat.cents(_totalExclVat),
                             theme,
                           ),
-                        ),
-                        const Divider(),
-                        _totalRow(
-                          AppLocalizations.of(context)!.invoiceTotalInclVat,
-                          AppFormat.cents(_totalInclVat),
-                          theme,
-                          bold: true,
-                        ),
-                      ],
+                          ..._vatByRate.entries.map(
+                            (e) => _totalRow(
+                              'BTW ${e.key}',
+                              AppFormat.cents(e.value),
+                              theme,
+                            ),
+                          ),
+                          const Divider(),
+                          _totalRow(
+                            AppLocalizations.of(context)!.invoiceTotalInclVat,
+                            AppFormat.cents(_totalInclVat),
+                            theme,
+                            bold: true,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _notes,
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(
-                      context,
-                    )!.invoiceFieldRemarks,
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: _notes,
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(
+                        context,
+                      )!.invoiceFieldRemarks,
+                    ),
+                    maxLines: 3,
                   ),
-                  maxLines: 3,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -822,10 +840,11 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
           ),
           const SizedBox(width: 4),
           SizedBox(
-            width: 110,
+            width: 130,
             child: DropdownButtonFormField<String>(
               initialValue: line.vatRate,
               isDense: true,
+              isExpanded: true,
               decoration: const InputDecoration(isDense: true),
               items: kVatRates
                   .map(
@@ -906,10 +925,13 @@ class _StatusBadge extends StatelessWidget {
     final (label, color) = isOverdue
         ? (l.invoiceStatusOverdue, AppColors.red)
         : switch (status) {
-            'Draft' => (l.invoiceStatusConcept, Colors.grey),
+            'Draft' => (
+              l.invoiceStatusConcept,
+              Theme.of(context).colorScheme.outline,
+            ),
             'Sent' => (l.invoiceStatusSent, AppColors.action),
             'Paid' => (l.invoiceStatusPaid, AppColors.income),
-            _ => (status, Colors.grey),
+            _ => (status, Theme.of(context).colorScheme.outline),
           };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
