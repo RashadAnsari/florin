@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'dart:typed_data';
+import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -22,10 +24,16 @@ class InvoicePdfService {
       lines: lines,
       client: client,
     );
-    await Printing.sharePdf(
-      bytes: bytes,
-      filename: '${invoice.invoiceNumber}.pdf',
+    final filename = '${invoice.invoiceNumber}.pdf';
+    final path = await FilePicker.platform.saveFile(
+      dialogTitle: 'Save invoice as',
+      fileName: filename,
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
     );
+    if (path != null) {
+      await File(path).writeAsBytes(bytes);
+    }
   }
 
   static Future<Uint8List> generate({
@@ -33,7 +41,11 @@ class InvoicePdfService {
     required List<InvoiceLine> lines,
     required Client client,
   }) async {
-    final doc = pw.Document();
+    final regular = await PdfGoogleFonts.notoSansRegular();
+    final bold = await PdfGoogleFonts.notoSansBold();
+    final doc = pw.Document(
+      theme: pw.ThemeData.withFont(base: regular, bold: bold),
+    );
 
     doc.addPage(
       pw.Page(

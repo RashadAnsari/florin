@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
@@ -90,16 +91,12 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
   DateTime? _supplyDate;
   bool _isIcp = false;
   bool _isReverseCharge = false;
-  String _sellerName = '';
-  String _sellerVat = '';
-  String _sellerKvk = '';
-  String _sellerAddress = '';
 
   @override
   void initState() {
     super.initState();
     _invoiceNumber = TextEditingController();
-    _paymentTermDays = TextEditingController(text: '30');
+    _paymentTermDays = TextEditingController(text: '14');
     _notes = TextEditingController();
     _load();
   }
@@ -151,16 +148,11 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
       _isIcp = inv.isIcp;
       _isReverseCharge = inv.isReverseCharge;
       _notes.text = inv.notes ?? '';
-      _sellerName = inv.sellerName;
-      _sellerVat = inv.sellerVatNumber;
-      _sellerKvk = inv.sellerKvkNumber;
-      _sellerAddress = inv.sellerAddress;
       _loading = false;
     });
   }
 
   Future<void> _loadNew() async {
-    final prefs = ref.read(sharedPreferencesProvider);
     final year = ref.read(fiscalYearProvider);
     final dao = ref.read(invoiceDaoProvider);
     final prefix = 'F';
@@ -168,10 +160,6 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
     if (!mounted) return;
     setState(() {
       _invoiceNumber.text = '$prefix-$year-${seq.toString().padLeft(3, '0')}';
-      _sellerName = prefs.getString('business_name') ?? '';
-      _sellerVat = prefs.getString('business_vat_number') ?? '';
-      _sellerKvk = prefs.getString('business_kvk') ?? '';
-      _sellerAddress = prefs.getString('business_address') ?? '';
       _lines = [_LineItem()];
       _loading = false;
     });
@@ -189,7 +177,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
   }
 
   DateTime get _dueDate {
-    final days = int.tryParse(_paymentTermDays.text) ?? 30;
+    final days = int.tryParse(_paymentTermDays.text) ?? 0;
     return _invoiceDate.add(Duration(days: days));
   }
 
@@ -210,6 +198,11 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
     if (!_formKey.currentState!.validate()) return;
     final dao = ref.read(invoiceDaoProvider);
     final year = ref.read(fiscalYearProvider);
+    final prefs = await SharedPreferences.getInstance();
+    final sellerName = prefs.getString('business_name') ?? '';
+    final sellerVat = prefs.getString('business_vat_number') ?? '';
+    final sellerKvk = prefs.getString('business_kvk') ?? '';
+    final sellerAddress = prefs.getString('business_address') ?? '';
     final companion = InvoicesCompanion(
       id: _original != null ? Value(_original!.id) : const Value.absent(),
       invoiceNumber: Value(_invoiceNumber.text.trim()),
@@ -217,11 +210,11 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
       supplyDate: Value(_supplyDate),
       clientId: Value(_clientId!),
       invoiceType: Value(_invoiceType),
-      sellerName: Value(_sellerName),
-      sellerVatNumber: Value(_sellerVat),
-      sellerKvkNumber: Value(_sellerKvk),
-      sellerAddress: Value(_sellerAddress),
-      paymentTermDays: Value(int.tryParse(_paymentTermDays.text) ?? 30),
+      sellerName: Value(sellerName),
+      sellerVatNumber: Value(sellerVat),
+      sellerKvkNumber: Value(sellerKvk),
+      sellerAddress: Value(sellerAddress),
+      paymentTermDays: Value(int.tryParse(_paymentTermDays.text) ?? 0),
       dueDate: Value(_dueDate),
       status: Value(_original?.status ?? 'Draft'),
       paidDate: Value(_original?.paidDate),
@@ -270,23 +263,10 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
     if (_original == null) {
       final newInv = await dao.getById(invoiceId);
       if (mounted && newInv != null) {
-        final l = AppLocalizations.of(context)!;
-        setState(() => _original = newInv);
         widget.onCreated?.call(invoiceId);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(l.invoiceCreated)));
-      }
-    } else {
-      final updated = await dao.getById(invoiceId);
-      if (mounted && updated != null) setState(() => _original = updated);
-      if (mounted) {
-        final l = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(l.invoiceSaved)));
       }
     }
+    if (mounted) widget.onBack?.call();
   }
 
   Future<void> _markStatus(
@@ -354,12 +334,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
     );
     if (!confirmed || !mounted) return;
     await ref.read(invoiceDaoProvider).deleteInvoice(_original!.id);
-    if (mounted) {
-      final l2 = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l2.invoiceDeleted)));
-    }
+    if (mounted) widget.onBack?.call();
   }
 
   @override
@@ -461,6 +436,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                         width: 150,
                         child: DropdownButtonFormField<String>(
                           initialValue: _invoiceType,
+                          isExpanded: true,
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(
                               context,
@@ -493,6 +469,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                           initialValue: clients.any((c) => c.id == _clientId)
                               ? _clientId
                               : null,
+                          isExpanded: true,
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(
                               context,
@@ -587,7 +564,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                       ),
                       const SizedBox(width: 12),
                       SizedBox(
-                        width: 100,
+                        width: 130,
                         child: TextFormField(
                           controller: _paymentTermDays,
                           decoration: InputDecoration(
@@ -597,6 +574,15 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                           ),
                           keyboardType: TextInputType.number,
                           onChanged: (_) => setState(() {}),
+                          validator: (v) {
+                            final n = int.tryParse(v ?? '');
+                            if (n == null || n < 0) {
+                              return AppLocalizations.of(
+                                context,
+                              )!.invoiceValidatePaymentTerm;
+                            }
+                            return null;
+                          },
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -677,7 +663,9 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                           ),
                           ..._vatByRate.entries.map(
                             (e) => _totalRow(
-                              'BTW ${e.key}',
+                              AppLocalizations.of(
+                                context,
+                              )!.invoiceVatLine(e.key),
                               AppFormat.cents(e.value),
                               theme,
                             ),
@@ -716,29 +704,35 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
     final l = AppLocalizations.of(context)!;
     return Container(
       color: theme.colorScheme.surfaceContainerHighest,
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      padding: const EdgeInsets.only(left: 2, top: 4, bottom: 4),
       child: Row(
         children: [
           Expanded(
             child: Text(
               l.invoiceFieldDescription,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
-            ),
-          ),
-          SizedBox(
-            width: 50,
-            child: Text(
-              l.invoiceFieldQuantity,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
-              textAlign: TextAlign.right,
+              style: theme.textTheme.labelSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           const SizedBox(width: 4),
           SizedBox(
-            width: 45,
+            width: 50,
+            child: Text(
+              l.invoiceFieldQuantity,
+              style: theme.textTheme.labelSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          SizedBox(
+            width: 70,
             child: Text(
               l.invoiceFieldUnit,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+              style: theme.textTheme.labelSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           const SizedBox(width: 4),
@@ -746,16 +740,19 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
             width: 90,
             child: Text(
               l.invoiceFieldPrice,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
-              textAlign: TextAlign.right,
+              style: theme.textTheme.labelSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           const SizedBox(width: 4),
           SizedBox(
-            width: 110,
+            width: 130,
             child: Text(
               l.invoiceFieldVat,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+              style: theme.textTheme.labelSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           const SizedBox(width: 4),
@@ -763,7 +760,9 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
             width: 80,
             child: Text(
               l.invoiceFieldVatAmount,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+              style: theme.textTheme.labelSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
               textAlign: TextAlign.right,
             ),
           ),
@@ -772,7 +771,9 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
             width: 80,
             child: Text(
               l.invoiceFieldLineTotal,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+              style: theme.textTheme.labelSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
               textAlign: TextAlign.right,
             ),
           ),
@@ -792,9 +793,12 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
               controller: line.description,
               decoration: InputDecoration(
                 isDense: true,
-                hintText: AppLocalizations.of(context)!.invoiceFieldDescription,
+                hintText: AppLocalizations.of(context)!.invoiceHintDescription,
               ),
               onChanged: (_) => setState(() {}),
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? AppLocalizations.of(context)!.invoiceValidateLineDescription
+                  : null,
             ),
           ),
           const SizedBox(width: 4),
@@ -812,7 +816,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
           ),
           const SizedBox(width: 4),
           SizedBox(
-            width: 45,
+            width: 70,
             child: TextFormField(
               controller: line.unit,
               decoration: InputDecoration(
@@ -850,7 +854,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                   .map(
                     (r) => DropdownMenuItem(
                       value: r,
-                      child: Text(r, style: const TextStyle(fontSize: 12)),
+                      child: Text(r, style: theme.textTheme.bodySmall),
                     ),
                   )
                   .toList(),
@@ -865,7 +869,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
             child: Text(
               AppFormat.cents(line.vatAmount),
               textAlign: TextAlign.right,
-              style: const TextStyle(fontSize: 12),
+              style: theme.textTheme.bodySmall,
             ),
           ),
           const SizedBox(width: 4),
@@ -874,7 +878,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
             child: Text(
               AppFormat.cents(line.lineTotalExclVat),
               textAlign: TextAlign.right,
-              style: const TextStyle(fontSize: 12),
+              style: theme.textTheme.bodySmall,
             ),
           ),
           SizedBox(
@@ -882,6 +886,9 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
             child: IconButton(
               icon: const Icon(Icons.close, size: 16),
               padding: EdgeInsets.zero,
+              color: _lines.length > 1
+                  ? Theme.of(context).colorScheme.error
+                  : null,
               onPressed: _lines.length > 1 ? () => _removeLine(i) : null,
             ),
           ),
@@ -942,9 +949,8 @@ class _StatusBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
           color: color,
-          fontSize: 11,
           fontWeight: FontWeight.w600,
         ),
       ),

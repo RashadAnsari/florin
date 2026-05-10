@@ -389,7 +389,7 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                 ),
               FilledButton.icon(
                 onPressed: _save,
-                icon: const Icon(Icons.check, size: 16),
+                icon: const Icon(Icons.save_outlined, size: 18),
                 label: Text(AppLocalizations.of(context)!.actionSave),
                 style: FilledButton.styleFrom(
                   backgroundColor: theme.colorScheme.primaryContainer,

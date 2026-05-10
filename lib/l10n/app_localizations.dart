@@ -482,6 +482,12 @@ abstract class AppLocalizations {
   /// **'Term (days)'**
   String get invoiceFieldPaymentTerm;
 
+  /// No description provided for @invoiceValidatePaymentTerm.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a whole number of days (e.g. 14 or 30)'**
+  String get invoiceValidatePaymentTerm;
+
   /// No description provided for @invoiceFieldDueDate.
   ///
   /// In en, this message translates to:
@@ -518,6 +524,12 @@ abstract class AppLocalizations {
   /// **'Description'**
   String get invoiceFieldDescription;
 
+  /// No description provided for @invoiceHintDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Consulting services, web design...'**
+  String get invoiceHintDescription;
+
   /// No description provided for @invoiceFieldQuantity.
   ///
   /// In en, this message translates to:
@@ -553,6 +565,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total excl.'**
   String get invoiceFieldLineTotal;
+
+  /// No description provided for @invoiceVatLine.
+  ///
+  /// In en, this message translates to:
+  /// **'VAT {rate}'**
+  String invoiceVatLine(String rate);
+
+  /// No description provided for @invoiceValidateLineDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a description for this line item'**
+  String get invoiceValidateLineDescription;
 
   /// No description provided for @invoiceSubtotal.
   ///

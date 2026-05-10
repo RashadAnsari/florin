@@ -80,18 +80,27 @@
   "invoiceFieldInvoiceDate": "Invoice date",
   "invoiceFieldSupplyDate": "Supply date",
   "invoiceFieldPaymentTerm": "Term (days)",
+  "invoiceValidatePaymentTerm": "Enter a whole number of days (e.g. 14 or 30)",
   "invoiceFieldDueDate": "Due date",
   "invoiceFieldIcp": "ICP (intracommunautair)",
   "invoiceFieldBtwVerlegd": "BTW verlegd",
   "invoiceFieldLines": "Lines",
   "invoiceFieldAddLine": "Add line",
   "invoiceFieldDescription": "Description",
+  "invoiceHintDescription": "e.g. Consulting services, web design...",
   "invoiceFieldQuantity": "Qty",
   "invoiceFieldUnit": "Unit",
   "invoiceFieldPrice": "Price (excl.)",
   "invoiceFieldVat": "VAT",
   "invoiceFieldVatAmount": "VAT amount",
   "invoiceFieldLineTotal": "Total excl.",
+  "invoiceVatLine": "VAT {rate}",
+  "@invoiceVatLine": {
+    "placeholders": {
+      "rate": {"type": "String"}
+    }
+  },
+  "invoiceValidateLineDescription": "Enter a description for this line item",
   "invoiceSubtotal": "Subtotal (excl. VAT)",
   "invoiceTotalInclVat": "Total (incl. VAT)",
   "invoiceFieldRemarks": "Remarks",

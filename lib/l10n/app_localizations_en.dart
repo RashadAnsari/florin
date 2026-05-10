@@ -211,6 +211,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoiceFieldPaymentTerm => 'Term (days)';
 
   @override
+  String get invoiceValidatePaymentTerm =>
+      'Enter a whole number of days (e.g. 14 or 30)';
+
+  @override
   String get invoiceFieldDueDate => 'Due date';
 
   @override
@@ -229,6 +233,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoiceFieldDescription => 'Description';
 
   @override
+  String get invoiceHintDescription =>
+      'e.g. Consulting services, web design...';
+
+  @override
   String get invoiceFieldQuantity => 'Qty';
 
   @override
@@ -245,6 +253,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invoiceFieldLineTotal => 'Total excl.';
+
+  @override
+  String invoiceVatLine(String rate) {
+    return 'VAT $rate';
+  }
+
+  @override
+  String get invoiceValidateLineDescription =>
+      'Enter a description for this line item';
 
   @override
   String get invoiceSubtotal => 'Subtotal (excl. VAT)';

@@ -212,6 +212,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get invoiceFieldPaymentTerm => 'Termijn (dagen)';
 
   @override
+  String get invoiceValidatePaymentTerm =>
+      'Voer een heel aantal dagen in (bijv. 14 of 30)';
+
+  @override
   String get invoiceFieldDueDate => 'Vervaldatum';
 
   @override
@@ -230,6 +234,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get invoiceFieldDescription => 'Omschrijving';
 
   @override
+  String get invoiceHintDescription => 'bijv. Advieswerk, webdesign...';
+
+  @override
   String get invoiceFieldQuantity => 'Aantal';
 
   @override
@@ -246,6 +253,15 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get invoiceFieldLineTotal => 'Totaal excl.';
+
+  @override
+  String invoiceVatLine(String rate) {
+    return 'BTW $rate';
+  }
+
+  @override
+  String get invoiceValidateLineDescription =>
+      'Voer een omschrijving in voor deze regelpost';
 
   @override
   String get invoiceSubtotal => 'Subtotaal (excl. BTW)';

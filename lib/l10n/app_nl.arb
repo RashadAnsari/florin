@@ -80,18 +80,27 @@
   "invoiceFieldInvoiceDate": "Factuurdatum",
   "invoiceFieldSupplyDate": "Leveringsdatum",
   "invoiceFieldPaymentTerm": "Termijn (dagen)",
+  "invoiceValidatePaymentTerm": "Voer een heel aantal dagen in (bijv. 14 of 30)",
   "invoiceFieldDueDate": "Vervaldatum",
   "invoiceFieldIcp": "ICP (intracommunautair)",
   "invoiceFieldBtwVerlegd": "BTW verlegd",
   "invoiceFieldLines": "Regels",
   "invoiceFieldAddLine": "Regel toevoegen",
   "invoiceFieldDescription": "Omschrijving",
+  "invoiceHintDescription": "bijv. Advieswerk, webdesign...",
   "invoiceFieldQuantity": "Aantal",
   "invoiceFieldUnit": "Eenheid",
   "invoiceFieldPrice": "Prijs (excl.)",
   "invoiceFieldVat": "BTW",
   "invoiceFieldVatAmount": "BTW bedrag",
   "invoiceFieldLineTotal": "Totaal excl.",
+  "invoiceVatLine": "BTW {rate}",
+  "@invoiceVatLine": {
+    "placeholders": {
+      "rate": {"type": "String"}
+    }
+  },
+  "invoiceValidateLineDescription": "Voer een omschrijving in voor deze regelpost",
   "invoiceSubtotal": "Subtotaal (excl. BTW)",
   "invoiceTotalInclVat": "Totaal (incl. BTW)",
   "invoiceFieldRemarks": "Opmerkingen",
