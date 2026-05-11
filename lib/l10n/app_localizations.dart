@@ -2120,6 +2120,54 @@ abstract class AppLocalizations {
   /// **'Eligible for startersaftrek'**
   String get settingsStartersaftrek;
 
+  /// No description provided for @settingsValidateName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your business name as it appears on invoices.'**
+  String get settingsValidateName;
+
+  /// No description provided for @settingsValidateVat.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your BTW number, e.g. NL123456789B01.'**
+  String get settingsValidateVat;
+
+  /// No description provided for @settingsValidateVatFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid BTW number. Format must be NL + 9 digits + B + 2 digits, e.g. NL123456789B01.'**
+  String get settingsValidateVatFormat;
+
+  /// No description provided for @settingsValidateKvk.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your KVK number.'**
+  String get settingsValidateKvk;
+
+  /// No description provided for @settingsValidateKvkFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'KVK number must be exactly 8 digits.'**
+  String get settingsValidateKvkFormat;
+
+  /// No description provided for @settingsValidateAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your business address as it appears on invoices.'**
+  String get settingsValidateAddress;
+
+  /// No description provided for @settingsValidateIban.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your IBAN, e.g. NL91ABNA0417164300.'**
+  String get settingsValidateIban;
+
+  /// No description provided for @settingsValidateIbanFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid IBAN. Must start with a 2-letter country code followed by 2 digits and up to 30 alphanumeric characters.'**
+  String get settingsValidateIbanFormat;
+
   /// No description provided for @settingsSaved.
   ///
   /// In en, this message translates to:
@@ -2317,6 +2365,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tax parameters saved'**
   String get settingsTaxParamsSaved;
+
+  /// No description provided for @settingsTaxValidateField.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number.'**
+  String get settingsTaxValidateField;
 
   /// No description provided for @firstLaunchWelcome.
   ///

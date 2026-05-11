@@ -7,6 +7,7 @@ import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../theme/app_theme.dart';
+import '../../services/vat_service.dart';
 import '../../widgets/confirmation_dialog.dart';
 
 final _allClientsProvider = StreamProvider.autoDispose<List<Client>>((ref) {
@@ -542,7 +543,7 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                           validator: (v) {
                             final s = v?.trim() ?? '';
                             if (s.isEmpty) return null;
-                            if (!RegExp(r'^\d{8}$').hasMatch(s)) {
+                            if (!isValidKvkNumber(s)) {
                               return AppLocalizations.of(
                                 context,
                               )!.clientsValidateKvk;

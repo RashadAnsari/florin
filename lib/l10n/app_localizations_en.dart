@@ -1103,6 +1103,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsStartersaftrek => 'Eligible for startersaftrek';
 
   @override
+  String get settingsValidateName =>
+      'Enter your business name as it appears on invoices.';
+
+  @override
+  String get settingsValidateVat =>
+      'Enter your BTW number, e.g. NL123456789B01.';
+
+  @override
+  String get settingsValidateVatFormat =>
+      'Invalid BTW number. Format must be NL + 9 digits + B + 2 digits, e.g. NL123456789B01.';
+
+  @override
+  String get settingsValidateKvk => 'Enter your KVK number.';
+
+  @override
+  String get settingsValidateKvkFormat =>
+      'KVK number must be exactly 8 digits.';
+
+  @override
+  String get settingsValidateAddress =>
+      'Enter your business address as it appears on invoices.';
+
+  @override
+  String get settingsValidateIban =>
+      'Enter your IBAN, e.g. NL91ABNA0417164300.';
+
+  @override
+  String get settingsValidateIbanFormat =>
+      'Invalid IBAN. Must start with a 2-letter country code followed by 2 digits and up to 30 alphanumeric characters.';
+
+  @override
   String get settingsSaved => 'Settings saved';
 
   @override
@@ -1214,6 +1245,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsTaxParamsSaved => 'Tax parameters saved';
+
+  @override
+  String get settingsTaxValidateField => 'Enter a valid number.';
 
   @override
   String get firstLaunchWelcome => 'Welcome to Florin';

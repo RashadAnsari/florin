@@ -163,3 +163,22 @@ class VatService {
   int daysUntilDeadline(int year, String quarter) =>
       filingDeadline(year, quarter).difference(DateTime.now()).inDays;
 }
+
+// Dutch BTW number: NL + 9 digits + B + 2 digits, e.g. NL123456789B01
+final _btwRegex = RegExp(r'^NL\d{9}B\d{2}$', caseSensitive: false);
+
+bool isValidDutchVatNumber(String value) =>
+    _btwRegex.hasMatch(value.replaceAll(' ', ''));
+
+// Dutch KVK number: exactly 8 digits
+final _kvkRegex = RegExp(r'^\d{8}$');
+
+bool isValidKvkNumber(String value) =>
+    _kvkRegex.hasMatch(value.replaceAll(' ', ''));
+
+// IBAN: 2-letter country code + 2 check digits + up to 30 alphanumeric BBAN
+// Strips spaces before checking (e.g. NL91 ABNA 0417 1643 00 → NL91ABNA0417164300)
+final _ibanRegex = RegExp(r'^[A-Z]{2}\d{2}[A-Z0-9]{4,30}$');
+
+bool isValidIban(String value) =>
+    _ibanRegex.hasMatch(value.replaceAll(' ', '').toUpperCase());

@@ -1104,6 +1104,37 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsStartersaftrek => 'Recht op startersaftrek';
 
   @override
+  String get settingsValidateName =>
+      'Voer je bedrijfsnaam in zoals die op facturen verschijnt.';
+
+  @override
+  String get settingsValidateVat =>
+      'Voer je BTW-nummer in, bijv. NL123456789B01.';
+
+  @override
+  String get settingsValidateVatFormat =>
+      'Ongeldig BTW-nummer. Formaat: NL + 9 cijfers + B + 2 cijfers, bijv. NL123456789B01.';
+
+  @override
+  String get settingsValidateKvk => 'Voer je KVK-nummer in.';
+
+  @override
+  String get settingsValidateKvkFormat =>
+      'KVK-nummer moet exact 8 cijfers bevatten.';
+
+  @override
+  String get settingsValidateAddress =>
+      'Voer je bedrijfsadres in zoals dat op facturen verschijnt.';
+
+  @override
+  String get settingsValidateIban =>
+      'Voer je IBAN in, bijv. NL91ABNA0417164300.';
+
+  @override
+  String get settingsValidateIbanFormat =>
+      'Ongeldig IBAN. Moet beginnen met een landcode van 2 letters, gevolgd door 2 cijfers en maximaal 30 alfanumerieke tekens.';
+
+  @override
   String get settingsSaved => 'Instellingen opgeslagen';
 
   @override
@@ -1215,6 +1246,9 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get settingsTaxParamsSaved => 'Belastingparameters opgeslagen';
+
+  @override
+  String get settingsTaxValidateField => 'Voer een geldig getal in.';
 
   @override
   String get firstLaunchWelcome => 'Welkom bij Florin';
