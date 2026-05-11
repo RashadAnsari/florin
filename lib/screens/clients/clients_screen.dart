@@ -343,6 +343,26 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
 
   Future<void> _delete() async {
     final l = AppLocalizations.of(context)!;
+    final hasInvoices = await ref
+        .read(invoiceDaoProvider)
+        .clientHasInvoices(widget.client!.id);
+    if (!mounted) return;
+    if (hasInvoices) {
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(l.clientsDeleteBlockedTitle),
+          content: Text(l.clientsDeleteBlockedMessage(_name.text)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
     final confirmed = await showConfirmationDialog(
       context,
       title: l.clientsDeleteTitle,
@@ -541,7 +561,8 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                         context,
                       )!.clientsFieldAddress,
                     ),
-                    maxLines: 2,
+                    maxLines: 4,
+                    minLines: 3,
                     validator: (v) => (v == null || v.trim().isEmpty)
                         ? AppLocalizations.of(context)!.clientsValidateAddress
                         : null,

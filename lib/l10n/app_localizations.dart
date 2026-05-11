@@ -434,6 +434,18 @@ abstract class AppLocalizations {
   /// **'Overdue'**
   String get invoiceStatusOverdue;
 
+  /// No description provided for @invoiceStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get invoiceStatusCancelled;
+
+  /// No description provided for @invoiceStatusRefunded.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded'**
+  String get invoiceStatusRefunded;
+
   /// No description provided for @invoiceTypeInvoice.
   ///
   /// In en, this message translates to:
@@ -607,6 +619,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Paid'**
   String get invoiceActionMarkPaid;
+
+  /// No description provided for @invoiceActionCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get invoiceActionCancel;
+
+  /// No description provided for @invoiceActionMarkRefunded.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded'**
+  String get invoiceActionMarkRefunded;
 
   /// No description provided for @invoiceActionExportPdf.
   ///
@@ -901,6 +925,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Are you sure you want to delete \"{name}\"?'**
   String clientsDeleteMessage(String name);
+
+  /// No description provided for @clientsDeleteBlockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot delete client'**
+  String get clientsDeleteBlockedTitle;
+
+  /// No description provided for @clientsDeleteBlockedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{name}\" has invoices and cannot be deleted.'**
+  String clientsDeleteBlockedMessage(String name);
 
   /// No description provided for @expensesTitle.
   ///

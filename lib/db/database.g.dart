@@ -2603,7 +2603,7 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultValue: const Constant(30),
+    defaultValue: const Constant(14),
   );
   static const VerificationMeta _dueDateMeta = const VerificationMeta(
     'dueDate',
@@ -2646,6 +2646,17 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     aliasedName,
     true,
     type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _refundDateMeta = const VerificationMeta(
+    'refundDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> refundDate = GeneratedColumn<DateTime>(
+    'refund_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
@@ -2772,6 +2783,7 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     status,
     paidDate,
     paymentMethod,
+    refundDate,
     notes,
     isReverseCharge,
     isIcp,
@@ -2921,6 +2933,12 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
         ),
       );
     }
+    if (data.containsKey('refund_date')) {
+      context.handle(
+        _refundDateMeta,
+        refundDate.isAcceptableOrUnknown(data['refund_date']!, _refundDateMeta),
+      );
+    }
     if (data.containsKey('notes')) {
       context.handle(
         _notesMeta,
@@ -3060,6 +3078,10 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
         DriftSqlType.string,
         data['${effectivePrefix}payment_method'],
       ),
+      refundDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}refund_date'],
+      ),
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
@@ -3121,6 +3143,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
   final String status;
   final DateTime? paidDate;
   final String? paymentMethod;
+  final DateTime? refundDate;
   final String? notes;
   final bool isReverseCharge;
   final bool isIcp;
@@ -3146,6 +3169,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     required this.status,
     this.paidDate,
     this.paymentMethod,
+    this.refundDate,
     this.notes,
     required this.isReverseCharge,
     required this.isIcp,
@@ -3179,6 +3203,9 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     }
     if (!nullToAbsent || paymentMethod != null) {
       map['payment_method'] = Variable<String>(paymentMethod);
+    }
+    if (!nullToAbsent || refundDate != null) {
+      map['refund_date'] = Variable<DateTime>(refundDate);
     }
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
@@ -3219,6 +3246,9 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       paymentMethod: paymentMethod == null && nullToAbsent
           ? const Value.absent()
           : Value(paymentMethod),
+      refundDate: refundDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(refundDate),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
@@ -3256,6 +3286,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       status: serializer.fromJson<String>(json['status']),
       paidDate: serializer.fromJson<DateTime?>(json['paidDate']),
       paymentMethod: serializer.fromJson<String?>(json['paymentMethod']),
+      refundDate: serializer.fromJson<DateTime?>(json['refundDate']),
       notes: serializer.fromJson<String?>(json['notes']),
       isReverseCharge: serializer.fromJson<bool>(json['isReverseCharge']),
       isIcp: serializer.fromJson<bool>(json['isIcp']),
@@ -3288,6 +3319,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       'status': serializer.toJson<String>(status),
       'paidDate': serializer.toJson<DateTime?>(paidDate),
       'paymentMethod': serializer.toJson<String?>(paymentMethod),
+      'refundDate': serializer.toJson<DateTime?>(refundDate),
       'notes': serializer.toJson<String?>(notes),
       'isReverseCharge': serializer.toJson<bool>(isReverseCharge),
       'isIcp': serializer.toJson<bool>(isIcp),
@@ -3316,6 +3348,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     String? status,
     Value<DateTime?> paidDate = const Value.absent(),
     Value<String?> paymentMethod = const Value.absent(),
+    Value<DateTime?> refundDate = const Value.absent(),
     Value<String?> notes = const Value.absent(),
     bool? isReverseCharge,
     bool? isIcp,
@@ -3343,6 +3376,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     paymentMethod: paymentMethod.present
         ? paymentMethod.value
         : this.paymentMethod,
+    refundDate: refundDate.present ? refundDate.value : this.refundDate,
     notes: notes.present ? notes.value : this.notes,
     isReverseCharge: isReverseCharge ?? this.isReverseCharge,
     isIcp: isIcp ?? this.isIcp,
@@ -3392,6 +3426,9 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       paymentMethod: data.paymentMethod.present
           ? data.paymentMethod.value
           : this.paymentMethod,
+      refundDate: data.refundDate.present
+          ? data.refundDate.value
+          : this.refundDate,
       notes: data.notes.present ? data.notes.value : this.notes,
       isReverseCharge: data.isReverseCharge.present
           ? data.isReverseCharge.value
@@ -3432,6 +3469,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
           ..write('status: $status, ')
           ..write('paidDate: $paidDate, ')
           ..write('paymentMethod: $paymentMethod, ')
+          ..write('refundDate: $refundDate, ')
           ..write('notes: $notes, ')
           ..write('isReverseCharge: $isReverseCharge, ')
           ..write('isIcp: $isIcp, ')
@@ -3462,6 +3500,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     status,
     paidDate,
     paymentMethod,
+    refundDate,
     notes,
     isReverseCharge,
     isIcp,
@@ -3491,6 +3530,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
           other.status == this.status &&
           other.paidDate == this.paidDate &&
           other.paymentMethod == this.paymentMethod &&
+          other.refundDate == this.refundDate &&
           other.notes == this.notes &&
           other.isReverseCharge == this.isReverseCharge &&
           other.isIcp == this.isIcp &&
@@ -3518,6 +3558,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
   final Value<String> status;
   final Value<DateTime?> paidDate;
   final Value<String?> paymentMethod;
+  final Value<DateTime?> refundDate;
   final Value<String?> notes;
   final Value<bool> isReverseCharge;
   final Value<bool> isIcp;
@@ -3543,6 +3584,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     this.status = const Value.absent(),
     this.paidDate = const Value.absent(),
     this.paymentMethod = const Value.absent(),
+    this.refundDate = const Value.absent(),
     this.notes = const Value.absent(),
     this.isReverseCharge = const Value.absent(),
     this.isIcp = const Value.absent(),
@@ -3569,6 +3611,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     this.status = const Value.absent(),
     this.paidDate = const Value.absent(),
     this.paymentMethod = const Value.absent(),
+    this.refundDate = const Value.absent(),
     this.notes = const Value.absent(),
     this.isReverseCharge = const Value.absent(),
     this.isIcp = const Value.absent(),
@@ -3604,6 +3647,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     Expression<String>? status,
     Expression<DateTime>? paidDate,
     Expression<String>? paymentMethod,
+    Expression<DateTime>? refundDate,
     Expression<String>? notes,
     Expression<bool>? isReverseCharge,
     Expression<bool>? isIcp,
@@ -3630,6 +3674,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
       if (status != null) 'status': status,
       if (paidDate != null) 'paid_date': paidDate,
       if (paymentMethod != null) 'payment_method': paymentMethod,
+      if (refundDate != null) 'refund_date': refundDate,
       if (notes != null) 'notes': notes,
       if (isReverseCharge != null) 'is_reverse_charge': isReverseCharge,
       if (isIcp != null) 'is_icp': isIcp,
@@ -3658,6 +3703,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     Value<String>? status,
     Value<DateTime?>? paidDate,
     Value<String?>? paymentMethod,
+    Value<DateTime?>? refundDate,
     Value<String?>? notes,
     Value<bool>? isReverseCharge,
     Value<bool>? isIcp,
@@ -3684,6 +3730,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
       status: status ?? this.status,
       paidDate: paidDate ?? this.paidDate,
       paymentMethod: paymentMethod ?? this.paymentMethod,
+      refundDate: refundDate ?? this.refundDate,
       notes: notes ?? this.notes,
       isReverseCharge: isReverseCharge ?? this.isReverseCharge,
       isIcp: isIcp ?? this.isIcp,
@@ -3744,6 +3791,9 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     if (paymentMethod.present) {
       map['payment_method'] = Variable<String>(paymentMethod.value);
     }
+    if (refundDate.present) {
+      map['refund_date'] = Variable<DateTime>(refundDate.value);
+    }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
@@ -3792,6 +3842,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
           ..write('status: $status, ')
           ..write('paidDate: $paidDate, ')
           ..write('paymentMethod: $paymentMethod, ')
+          ..write('refundDate: $refundDate, ')
           ..write('notes: $notes, ')
           ..write('isReverseCharge: $isReverseCharge, ')
           ..write('isIcp: $isIcp, ')
@@ -9439,6 +9490,7 @@ typedef $$InvoicesTableCreateCompanionBuilder =
       Value<String> status,
       Value<DateTime?> paidDate,
       Value<String?> paymentMethod,
+      Value<DateTime?> refundDate,
       Value<String?> notes,
       Value<bool> isReverseCharge,
       Value<bool> isIcp,
@@ -9466,6 +9518,7 @@ typedef $$InvoicesTableUpdateCompanionBuilder =
       Value<String> status,
       Value<DateTime?> paidDate,
       Value<String?> paymentMethod,
+      Value<DateTime?> refundDate,
       Value<String?> notes,
       Value<bool> isReverseCharge,
       Value<bool> isIcp,
@@ -9593,6 +9646,11 @@ class $$InvoicesTableFilterComposer
 
   ColumnFilters<String> get paymentMethod => $composableBuilder(
     column: $table.paymentMethod,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get refundDate => $composableBuilder(
+    column: $table.refundDate,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -9769,6 +9827,11 @@ class $$InvoicesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get refundDate => $composableBuilder(
+    column: $table.refundDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get notes => $composableBuilder(
     column: $table.notes,
     builder: (column) => ColumnOrderings(column),
@@ -9909,6 +9972,11 @@ class $$InvoicesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<DateTime> get refundDate => $composableBuilder(
+    column: $table.refundDate,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
 
@@ -10038,6 +10106,7 @@ class $$InvoicesTableTableManager
                 Value<String> status = const Value.absent(),
                 Value<DateTime?> paidDate = const Value.absent(),
                 Value<String?> paymentMethod = const Value.absent(),
+                Value<DateTime?> refundDate = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<bool> isReverseCharge = const Value.absent(),
                 Value<bool> isIcp = const Value.absent(),
@@ -10063,6 +10132,7 @@ class $$InvoicesTableTableManager
                 status: status,
                 paidDate: paidDate,
                 paymentMethod: paymentMethod,
+                refundDate: refundDate,
                 notes: notes,
                 isReverseCharge: isReverseCharge,
                 isIcp: isIcp,
@@ -10090,6 +10160,7 @@ class $$InvoicesTableTableManager
                 Value<String> status = const Value.absent(),
                 Value<DateTime?> paidDate = const Value.absent(),
                 Value<String?> paymentMethod = const Value.absent(),
+                Value<DateTime?> refundDate = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<bool> isReverseCharge = const Value.absent(),
                 Value<bool> isIcp = const Value.absent(),
@@ -10115,6 +10186,7 @@ class $$InvoicesTableTableManager
                 status: status,
                 paidDate: paidDate,
                 paymentMethod: paymentMethod,
+                refundDate: refundDate,
                 notes: notes,
                 isReverseCharge: isReverseCharge,
                 isIcp: isIcp,

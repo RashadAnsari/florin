@@ -17,6 +17,7 @@ class Invoices extends Table {
   TextColumn get status => text().withDefault(const Constant('Draft'))();
   DateTimeColumn get paidDate => dateTime().nullable()();
   TextColumn get paymentMethod => text().nullable()();
+  DateTimeColumn get refundDate => dateTime().nullable()();
   TextColumn get notes => text().nullable()();
   BoolColumn get isReverseCharge =>
       boolean().withDefault(const Constant(false))();

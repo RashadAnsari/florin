@@ -187,6 +187,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoiceStatusOverdue => 'Overdue';
 
   @override
+  String get invoiceStatusCancelled => 'Cancelled';
+
+  @override
+  String get invoiceStatusRefunded => 'Refunded';
+
+  @override
   String get invoiceTypeInvoice => 'Invoice';
 
   @override
@@ -277,6 +283,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invoiceActionMarkPaid => 'Paid';
+
+  @override
+  String get invoiceActionCancel => 'Cancel';
+
+  @override
+  String get invoiceActionMarkRefunded => 'Refunded';
 
   @override
   String get invoiceActionExportPdf => 'Export PDF';
@@ -433,6 +445,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String clientsDeleteMessage(String name) {
     return 'Are you sure you want to delete \"$name\"?';
+  }
+
+  @override
+  String get clientsDeleteBlockedTitle => 'Cannot delete client';
+
+  @override
+  String clientsDeleteBlockedMessage(String name) {
+    return '\"$name\" has invoices and cannot be deleted.';
   }
 
   @override

@@ -188,6 +188,12 @@ class AppLocalizationsNl extends AppLocalizations {
   String get invoiceStatusOverdue => 'Verlopen';
 
   @override
+  String get invoiceStatusCancelled => 'Geannuleerd';
+
+  @override
+  String get invoiceStatusRefunded => 'Terugbetaald';
+
+  @override
   String get invoiceTypeInvoice => 'Factuur';
 
   @override
@@ -277,6 +283,12 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get invoiceActionMarkPaid => 'Betaald';
+
+  @override
+  String get invoiceActionCancel => 'Annuleren';
+
+  @override
+  String get invoiceActionMarkRefunded => 'Terugbetaald';
 
   @override
   String get invoiceActionExportPdf => 'PDF exporteren';
@@ -433,6 +445,14 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String clientsDeleteMessage(String name) {
     return 'Weet je zeker dat je \"$name\" wilt verwijderen?';
+  }
+
+  @override
+  String get clientsDeleteBlockedTitle => 'Kan klant niet verwijderen';
+
+  @override
+  String clientsDeleteBlockedMessage(String name) {
+    return '\"$name\" heeft facturen en kan niet worden verwijderd.';
   }
 
   @override

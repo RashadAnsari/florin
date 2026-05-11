@@ -185,6 +185,8 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
   int get _totalVat => _lines.fold(0, (s, l) => s + l.vatAmount);
   int get _totalInclVat => _totalExclVat + _totalVat;
 
+  bool get _isEditable => _original == null || _original!.status == 'Draft';
+
   Map<String, int> get _vatByRate {
     final m = <String, int>{};
     for (final l in _lines) {
@@ -219,6 +221,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
       status: Value(_original?.status ?? 'Draft'),
       paidDate: Value(_original?.paidDate),
       paymentMethod: Value(_original?.paymentMethod),
+      refundDate: Value(_original?.refundDate),
       notes: Value(_notes.text.trim().isEmpty ? null : _notes.text.trim()),
       isReverseCharge: Value(_isReverseCharge),
       isIcp: Value(_isIcp),
@@ -273,6 +276,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
     String status, {
     DateTime? paidDate,
     String? paymentMethod,
+    DateTime? refundDate,
   }) async {
     if (_original == null) return;
     final dao = ref.read(invoiceDaoProvider);
@@ -292,6 +296,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
         status: Value(status),
         paidDate: Value(paidDate),
         paymentMethod: Value(paymentMethod),
+        refundDate: Value(refundDate),
         notes: Value(_original!.notes),
         isReverseCharge: Value(_original!.isReverseCharge),
         isIcp: Value(_original!.isIcp),
@@ -369,7 +374,10 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
               if (!isNew) ...[
                 _StatusBadge(status: status, dueDate: _original!.dueDate),
                 const SizedBox(width: 8),
-                if (status != 'Sent' && status != 'Paid')
+                if (status != 'Sent' &&
+                    status != 'Paid' &&
+                    status != 'Cancelled' &&
+                    status != 'Refunded')
                   OutlinedButton.icon(
                     icon: const Icon(Icons.send, size: 16),
                     label: Text(
@@ -377,7 +385,9 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                     ),
                     onPressed: () => _markStatus('Sent'),
                   ),
-                if (status != 'Paid')
+                if (status != 'Paid' &&
+                    status != 'Cancelled' &&
+                    status != 'Refunded')
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: OutlinedButton.icon(
@@ -389,32 +399,60 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                           _markStatus('Paid', paidDate: DateTime.now()),
                     ),
                   ),
+                if (status == 'Paid')
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.undo, size: 16),
+                      label: Text(
+                        AppLocalizations.of(context)!.invoiceActionMarkRefunded,
+                      ),
+                      onPressed: () =>
+                          _markStatus('Refunded', refundDate: DateTime.now()),
+                    ),
+                  ),
+                if (status != 'Draft' &&
+                    status != 'Cancelled' &&
+                    status != 'Paid' &&
+                    status != 'Refunded')
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.cancel_outlined, size: 16),
+                      label: Text(
+                        AppLocalizations.of(context)!.invoiceActionCancel,
+                      ),
+                      onPressed: () => _markStatus('Cancelled'),
+                    ),
+                  ),
                 const SizedBox(width: 8),
                 IconButton(
                   icon: const Icon(Icons.picture_as_pdf_outlined),
                   tooltip: AppLocalizations.of(context)!.invoiceActionExportPdf,
                   onPressed: _sharePdf,
                 ),
-                IconButton(
-                  icon: const Icon(Icons.delete_outline),
-                  tooltip: AppLocalizations.of(context)!.invoiceActionDelete,
-                  color: Theme.of(context).colorScheme.error,
-                  onPressed: _delete,
-                ),
+                if (_isEditable)
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline),
+                    tooltip: AppLocalizations.of(context)!.invoiceActionDelete,
+                    color: Theme.of(context).colorScheme.error,
+                    onPressed: _delete,
+                  ),
               ],
-              FilledButton.icon(
-                onPressed: _save,
-                style: FilledButton.styleFrom(
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.primaryContainer,
-                  foregroundColor: Theme.of(
-                    context,
-                  ).colorScheme.onPrimaryContainer,
+              if (_isEditable)
+                FilledButton.icon(
+                  onPressed: _save,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.primaryContainer,
+                    foregroundColor: Theme.of(
+                      context,
+                    ).colorScheme.onPrimaryContainer,
+                  ),
+                  icon: const Icon(Icons.save_outlined, size: 18),
+                  label: Text(AppLocalizations.of(context)!.actionSave),
                 ),
-                icon: const Icon(Icons.save_outlined, size: 18),
-                label: Text(AppLocalizations.of(context)!.actionSave),
-              ),
               const SizedBox(width: 8),
             ],
           ),
@@ -424,274 +462,278 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
         Expanded(
           child: Form(
             key: _formKey,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Invoice type + client + dates
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 150,
-                        child: DropdownButtonFormField<String>(
-                          initialValue: _invoiceType,
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                            labelText: AppLocalizations.of(
-                              context,
-                            )!.invoiceFieldType,
-                          ),
-                          items: [
-                            DropdownMenuItem(
-                              value: 'Invoice',
-                              child: Text(
-                                AppLocalizations.of(
-                                  context,
-                                )!.invoiceTypeInvoice,
-                              ),
+            child: AbsorbPointer(
+              absorbing: !_isEditable,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Invoice type + client + dates
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 150,
+                          child: DropdownButtonFormField<String>(
+                            initialValue: _invoiceType,
+                            isExpanded: true,
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.invoiceFieldType,
                             ),
-                            DropdownMenuItem(
-                              value: 'CreditNote',
-                              child: Text(
-                                AppLocalizations.of(
-                                  context,
-                                )!.invoiceTypeCreditNote,
-                              ),
-                            ),
-                          ],
-                          onChanged: (v) => setState(() => _invoiceType = v!),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: DropdownButtonFormField<int>(
-                          initialValue: clients.any((c) => c.id == _clientId)
-                              ? _clientId
-                              : null,
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                            labelText: AppLocalizations.of(
-                              context,
-                            )!.invoiceFieldClient,
-                          ),
-                          items: clients
-                              .map(
-                                (c) => DropdownMenuItem(
-                                  value: c.id,
-                                  child: Text(c.name),
+                            items: [
+                              DropdownMenuItem(
+                                value: 'Invoice',
+                                child: Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.invoiceTypeInvoice,
                                 ),
-                              )
-                              .toList(),
-                          onChanged: (v) => setState(() => _clientId = v),
-                          validator: (_) => _clientId == null
-                              ? AppLocalizations.of(
-                                  context,
-                                )!.invoiceValidateClient
-                              : null,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      SizedBox(
-                        width: 160,
-                        child: TextFormField(
-                          controller: _invoiceNumber,
-                          decoration: InputDecoration(
-                            labelText: AppLocalizations.of(
-                              context,
-                            )!.invoiceFieldNumber,
+                              ),
+                              DropdownMenuItem(
+                                value: 'CreditNote',
+                                child: Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.invoiceTypeCreditNote,
+                                ),
+                              ),
+                            ],
+                            onChanged: (v) => setState(() => _invoiceType = v!),
                           ),
-                          validator: (v) => (v == null || v.trim().isEmpty)
-                              ? AppLocalizations.of(
-                                  context,
-                                )!.invoiceValidateNumber
-                              : null,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: InkWell(
-                          onTap: () async {
-                            final d = await showDatePicker(
-                              context: context,
-                              initialDate: _invoiceDate,
-                              firstDate: DateTime(2020),
-                              lastDate: DateTime(2040),
-                            );
-                            if (d != null) setState(() => _invoiceDate = d);
-                          },
-                          child: InputDecorator(
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: DropdownButtonFormField<int>(
+                            initialValue: clients.any((c) => c.id == _clientId)
+                                ? _clientId
+                                : null,
+                            isExpanded: true,
                             decoration: InputDecoration(
                               labelText: AppLocalizations.of(
                                 context,
-                              )!.invoiceFieldInvoiceDate,
+                              )!.invoiceFieldClient,
                             ),
-                            child: Text(AppFormat.date(_invoiceDate)),
+                            items: clients
+                                .map(
+                                  (c) => DropdownMenuItem(
+                                    value: c.id,
+                                    child: Text(c.name),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (v) => setState(() => _clientId = v),
+                            validator: (_) => _clientId == null
+                                ? AppLocalizations.of(
+                                    context,
+                                  )!.invoiceValidateClient
+                                : null,
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: InkWell(
-                          onTap: () async {
-                            final d = await showDatePicker(
-                              context: context,
-                              initialDate: _supplyDate ?? _invoiceDate,
-                              firstDate: DateTime(2020),
-                              lastDate: DateTime(2040),
-                            );
-                            if (d != null) {
-                              setState(() => _supplyDate = d);
-                            }
-                          },
-                          child: InputDecorator(
+                        const SizedBox(width: 12),
+                        SizedBox(
+                          width: 160,
+                          child: TextFormField(
+                            controller: _invoiceNumber,
                             decoration: InputDecoration(
                               labelText: AppLocalizations.of(
                                 context,
-                              )!.invoiceFieldSupplyDate,
+                              )!.invoiceFieldNumber,
                             ),
-                            child: Text(
-                              _supplyDate != null
-                                  ? AppFormat.date(_supplyDate!)
-                                  : '-',
-                            ),
+                            validator: (v) => (v == null || v.trim().isEmpty)
+                                ? AppLocalizations.of(
+                                    context,
+                                  )!.invoiceValidateNumber
+                                : null,
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      SizedBox(
-                        width: 130,
-                        child: TextFormField(
-                          controller: _paymentTermDays,
-                          decoration: InputDecoration(
-                            labelText: AppLocalizations.of(
-                              context,
-                            )!.invoiceFieldPaymentTerm,
-                          ),
-                          keyboardType: TextInputType.number,
-                          onChanged: (_) => setState(() {}),
-                          validator: (v) {
-                            final n = int.tryParse(v ?? '');
-                            if (n == null || n < 0) {
-                              return AppLocalizations.of(
-                                context,
-                              )!.invoiceValidatePaymentTerm;
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: InputDecorator(
-                          decoration: InputDecoration(
-                            labelText: AppLocalizations.of(
-                              context,
-                            )!.invoiceFieldDueDate,
-                          ),
-                          child: Text(AppFormat.date(_dueDate)),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CheckboxListTile(
-                          value: _isIcp,
-                          onChanged: (v) => setState(() => _isIcp = v ?? false),
-                          title: Text(
-                            AppLocalizations.of(context)!.invoiceFieldIcp,
-                          ),
-                          contentPadding: EdgeInsets.zero,
-                          controlAffinity: ListTileControlAffinity.leading,
-                        ),
-                      ),
-                      const SizedBox(width: 24),
-                      Expanded(
-                        child: CheckboxListTile(
-                          value: _isReverseCharge,
-                          onChanged: (v) =>
-                              setState(() => _isReverseCharge = v ?? false),
-                          title: Text(
-                            AppLocalizations.of(
-                              context,
-                            )!.invoiceFieldBtwVerlegd,
-                          ),
-                          contentPadding: EdgeInsets.zero,
-                          controlAffinity: ListTileControlAffinity.leading,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  // ── Line items ─────────────────────────────────────────────
-                  Text(
-                    AppLocalizations.of(context)!.invoiceFieldLines,
-                    style: theme.textTheme.titleSmall,
-                  ),
-                  const SizedBox(height: 8),
-                  _buildLineHeader(theme),
-                  ..._lines.asMap().entries.map(
-                    (e) => _buildLineRow(e.key, e.value, theme),
-                  ),
-                  const SizedBox(height: 8),
-                  TextButton.icon(
-                    icon: const Icon(Icons.add, size: 16),
-                    label: Text(
-                      AppLocalizations.of(context)!.invoiceFieldAddLine,
+                      ],
                     ),
-                    onPressed: _addLine,
-                  ),
-                  const SizedBox(height: 20),
-                  // ── Totals ─────────────────────────────────────────────────
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: SizedBox(
-                      width: 280,
-                      child: Column(
-                        children: [
-                          _totalRow(
-                            AppLocalizations.of(context)!.invoiceSubtotal,
-                            AppFormat.cents(_totalExclVat),
-                            theme,
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              final d = await showDatePicker(
+                                context: context,
+                                initialDate: _invoiceDate,
+                                firstDate: DateTime(2020),
+                                lastDate: DateTime(2040),
+                              );
+                              if (d != null) setState(() => _invoiceDate = d);
+                            },
+                            child: InputDecorator(
+                              decoration: InputDecoration(
+                                labelText: AppLocalizations.of(
+                                  context,
+                                )!.invoiceFieldInvoiceDate,
+                              ),
+                              child: Text(AppFormat.date(_invoiceDate)),
+                            ),
                           ),
-                          ..._vatByRate.entries.map(
-                            (e) => _totalRow(
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              final d = await showDatePicker(
+                                context: context,
+                                initialDate: _supplyDate ?? _invoiceDate,
+                                firstDate: DateTime(2020),
+                                lastDate: DateTime(2040),
+                              );
+                              if (d != null) {
+                                setState(() => _supplyDate = d);
+                              }
+                            },
+                            child: InputDecorator(
+                              decoration: InputDecoration(
+                                labelText: AppLocalizations.of(
+                                  context,
+                                )!.invoiceFieldSupplyDate,
+                              ),
+                              child: Text(
+                                _supplyDate != null
+                                    ? AppFormat.date(_supplyDate!)
+                                    : '-',
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        SizedBox(
+                          width: 130,
+                          child: TextFormField(
+                            controller: _paymentTermDays,
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.invoiceFieldPaymentTerm,
+                            ),
+                            keyboardType: TextInputType.number,
+                            onChanged: (_) => setState(() {}),
+                            validator: (v) {
+                              final n = int.tryParse(v ?? '');
+                              if (n == null || n < 0) {
+                                return AppLocalizations.of(
+                                  context,
+                                )!.invoiceValidatePaymentTerm;
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.invoiceFieldDueDate,
+                            ),
+                            child: Text(AppFormat.date(_dueDate)),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CheckboxListTile(
+                            value: _isIcp,
+                            onChanged: (v) =>
+                                setState(() => _isIcp = v ?? false),
+                            title: Text(
+                              AppLocalizations.of(context)!.invoiceFieldIcp,
+                            ),
+                            contentPadding: EdgeInsets.zero,
+                            controlAffinity: ListTileControlAffinity.leading,
+                          ),
+                        ),
+                        const SizedBox(width: 24),
+                        Expanded(
+                          child: CheckboxListTile(
+                            value: _isReverseCharge,
+                            onChanged: (v) =>
+                                setState(() => _isReverseCharge = v ?? false),
+                            title: Text(
                               AppLocalizations.of(
                                 context,
-                              )!.invoiceVatLine(e.key),
-                              AppFormat.cents(e.value),
+                              )!.invoiceFieldBtwVerlegd,
+                            ),
+                            contentPadding: EdgeInsets.zero,
+                            controlAffinity: ListTileControlAffinity.leading,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    // ── Line items ─────────────────────────────────────────────
+                    Text(
+                      AppLocalizations.of(context)!.invoiceFieldLines,
+                      style: theme.textTheme.titleSmall,
+                    ),
+                    const SizedBox(height: 8),
+                    _buildLineHeader(theme),
+                    ..._lines.asMap().entries.map(
+                      (e) => _buildLineRow(e.key, e.value, theme),
+                    ),
+                    const SizedBox(height: 8),
+                    TextButton.icon(
+                      icon: const Icon(Icons.add, size: 16),
+                      label: Text(
+                        AppLocalizations.of(context)!.invoiceFieldAddLine,
+                      ),
+                      onPressed: _addLine,
+                    ),
+                    const SizedBox(height: 20),
+                    // ── Totals ─────────────────────────────────────────────────
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: SizedBox(
+                        width: 280,
+                        child: Column(
+                          children: [
+                            _totalRow(
+                              AppLocalizations.of(context)!.invoiceSubtotal,
+                              AppFormat.cents(_totalExclVat),
                               theme,
                             ),
-                          ),
-                          const Divider(),
-                          _totalRow(
-                            AppLocalizations.of(context)!.invoiceTotalInclVat,
-                            AppFormat.cents(_totalInclVat),
-                            theme,
-                            bold: true,
-                          ),
-                        ],
+                            ..._vatByRate.entries.map(
+                              (e) => _totalRow(
+                                AppLocalizations.of(
+                                  context,
+                                )!.invoiceVatLine(e.key),
+                                AppFormat.cents(e.value),
+                                theme,
+                              ),
+                            ),
+                            const Divider(),
+                            _totalRow(
+                              AppLocalizations.of(context)!.invoiceTotalInclVat,
+                              AppFormat.cents(_totalInclVat),
+                              theme,
+                              bold: true,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: _notes,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(
-                        context,
-                      )!.invoiceFieldRemarks,
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _notes,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.invoiceFieldRemarks,
+                      ),
+                      maxLines: 3,
                     ),
-                    maxLines: 3,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -927,7 +969,11 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isOverdue = status != 'Paid' && dueDate.isBefore(DateTime.now());
+    final isOverdue =
+        status != 'Paid' &&
+        status != 'Cancelled' &&
+        status != 'Refunded' &&
+        dueDate.isBefore(DateTime.now());
     final l = AppLocalizations.of(context)!;
     final (label, color) = isOverdue
         ? (l.invoiceStatusOverdue, AppColors.red)
@@ -938,6 +984,8 @@ class _StatusBadge extends StatelessWidget {
             ),
             'Sent' => (l.invoiceStatusSent, AppColors.action),
             'Paid' => (l.invoiceStatusPaid, AppColors.income),
+            'Cancelled' => (l.invoiceStatusCancelled, AppColors.red),
+            'Refunded' => (l.invoiceStatusRefunded, AppColors.red),
             _ => (status, Theme.of(context).colorScheme.outline),
           };
     return Container(

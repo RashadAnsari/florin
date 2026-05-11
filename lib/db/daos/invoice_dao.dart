@@ -71,6 +71,15 @@ class InvoiceDao extends DatabaseAccessor<AppDatabase> with _$InvoiceDaoMixin {
     return nums.reduce((a, b) => a > b ? a : b) + 1;
   }
 
+  Future<bool> clientHasInvoices(int clientId) async {
+    final result =
+        await (select(invoices)
+              ..where((i) => i.clientId.equals(clientId))
+              ..limit(1))
+            .get();
+    return result.isNotEmpty;
+  }
+
   Future<void> recalculateTotals(int invoiceId) async {
     final lines = await getLinesForInvoice(invoiceId);
     var exclVat = 0;
