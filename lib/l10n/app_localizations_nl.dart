@@ -345,6 +345,15 @@ class AppLocalizationsNl extends AppLocalizations {
   String get clientsHideInactive => 'Verberg inactief';
 
   @override
+  String get clientsFilterAll => 'Alle';
+
+  @override
+  String get clientsFilterActive => 'Actief';
+
+  @override
+  String get clientsFilterInactive => 'Inactief';
+
+  @override
   String get clientsInactive => 'Inactief';
 
   @override

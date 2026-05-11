@@ -734,6 +734,24 @@ abstract class AppLocalizations {
   /// **'Hide inactive'**
   String get clientsHideInactive;
 
+  /// No description provided for @clientsFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get clientsFilterAll;
+
+  /// No description provided for @clientsFilterActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get clientsFilterActive;
+
+  /// No description provided for @clientsFilterInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get clientsFilterInactive;
+
   /// No description provided for @clientsInactive.
   ///
   /// In en, this message translates to:

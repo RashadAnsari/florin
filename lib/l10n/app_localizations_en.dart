@@ -345,6 +345,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clientsHideInactive => 'Hide inactive';
 
   @override
+  String get clientsFilterAll => 'All';
+
+  @override
+  String get clientsFilterActive => 'Active';
+
+  @override
+  String get clientsFilterInactive => 'Inactive';
+
+  @override
   String get clientsInactive => 'Inactive';
 
   @override

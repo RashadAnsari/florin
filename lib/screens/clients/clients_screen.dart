@@ -22,7 +22,7 @@ class ClientsScreen extends ConsumerStatefulWidget {
 }
 
 class _ClientsScreenState extends ConsumerState<ClientsScreen> {
-  bool _showInactive = false;
+  String _clientFilter = 'all';
   final _searchCtrl = TextEditingController();
 
   @override
@@ -42,12 +42,42 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
   }
 
   List<Client> _filter(List<Client> all) {
-    var result = _showInactive ? all : all.where((c) => c.isActive).toList();
+    var result = switch (_clientFilter) {
+      'active' => all.where((c) => c.isActive).toList(),
+      'inactive' => all.where((c) => !c.isActive).toList(),
+      _ => all,
+    };
     final q = _searchCtrl.text.toLowerCase().trim();
     if (q.isNotEmpty) {
       result = result.where((c) => c.name.toLowerCase().contains(q)).toList();
     }
     return result;
+  }
+
+  Widget _buildFilters(AppLocalizations l) {
+    final filters = [
+      ('all', l.clientsFilterAll),
+      ('active', l.clientsFilterActive),
+      ('inactive', l.clientsFilterInactive),
+    ];
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
+      child: Row(
+        children: filters
+            .map(
+              (f) => Padding(
+                padding: const EdgeInsets.only(right: 4),
+                child: FilterChip(
+                  label: Text(f.$2),
+                  selected: _clientFilter == f.$1,
+                  onSelected: (_) => setState(() => _clientFilter = f.$1),
+                ),
+              ),
+            )
+            .toList(),
+      ),
+    );
   }
 
   Widget _buildSearch(AppLocalizations l) {
@@ -86,13 +116,6 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
         title: Text(l.clientsTitle),
         actions: [
           IconButton(
-            icon: Icon(_showInactive ? Icons.visibility_off : Icons.visibility),
-            tooltip: _showInactive
-                ? l.clientsHideInactive
-                : l.clientsShowInactive,
-            onPressed: () => setState(() => _showInactive = !_showInactive),
-          ),
-          IconButton(
             icon: const Icon(Icons.add),
             tooltip: l.clientsNewTooltip,
             onPressed: () => context.push('/clients/new'),
@@ -103,6 +126,7 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
       body: Column(
         children: [
           _buildSearch(l),
+          _buildFilters(l),
           const Divider(height: 1),
           Expanded(
             child: allAsync.when(

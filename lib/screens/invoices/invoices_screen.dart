@@ -18,7 +18,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
   final _searchCtrl = TextEditingController();
 
   static bool _isOverdue(Invoice inv) =>
-      inv.status != 'Paid' && inv.dueDate.isBefore(DateTime.now());
+      inv.status == 'Sent' && inv.dueDate.isBefore(DateTime.now());
 
   List<Invoice> _filter(
     List<Invoice> all,
@@ -131,6 +131,8 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
       ('Draft', l.invoiceStatusConcept),
       ('Sent', l.invoiceStatusSent),
       ('Paid', l.invoiceStatusPaid),
+      ('Cancelled', l.invoiceStatusCancelled),
+      ('Refunded', l.invoiceStatusRefunded),
       ('overdue', l.invoicesFilterOverdue),
     ];
     return SingleChildScrollView(
