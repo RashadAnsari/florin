@@ -1144,7 +1144,10 @@ class AppLocalizationsNl extends AppLocalizations {
       'Ongeldig IBAN. Moet beginnen met een landcode van 2 letters, gevolgd door 2 cijfers en maximaal 30 alfanumerieke tekens.';
 
   @override
-  String get settingsSaved => 'Instellingen opgeslagen';
+  String get actionOk => 'OK';
+
+  @override
+  String get settingsSaved => 'Bedrijfsgegevens opgeslagen';
 
   @override
   String get settingsDatabaseSection => 'Database';
@@ -1254,7 +1257,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsTaxSaveParams => 'Parameters opslaan';
 
   @override
-  String get settingsTaxParamsSaved => 'Belastingparameters opgeslagen';
+  String settingsTaxParamsSaved(int year) {
+    return 'Belastingparameters opgeslagen voor $year';
+  }
 
   @override
   String get settingsTaxValidateField => 'Voer een geldig getal in.';

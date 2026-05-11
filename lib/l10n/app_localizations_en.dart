@@ -1143,7 +1143,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Invalid IBAN. Must start with a 2-letter country code followed by 2 digits and up to 30 alphanumeric characters.';
 
   @override
-  String get settingsSaved => 'Settings saved';
+  String get actionOk => 'OK';
+
+  @override
+  String get settingsSaved => 'Business details saved';
 
   @override
   String get settingsDatabaseSection => 'Database';
@@ -1161,7 +1164,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String settingsDatabaseMoved(String path) {
-    return 'Database moved to $path';
+    return 'Database file moved to: $path';
   }
 
   @override
@@ -1182,7 +1185,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String settingsExported(String dir) {
-    return 'Exported to $dir';
+    return 'CSV files exported to: $dir';
   }
 
   @override
@@ -1253,7 +1256,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTaxSaveParams => 'Save parameters';
 
   @override
-  String get settingsTaxParamsSaved => 'Tax parameters saved';
+  String settingsTaxParamsSaved(int year) {
+    return 'Tax parameters saved for $year';
+  }
 
   @override
   String get settingsTaxValidateField => 'Enter a valid number.';

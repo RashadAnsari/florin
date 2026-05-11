@@ -103,15 +103,22 @@ class _NavPanel extends ConsumerWidget {
                   dropdownColor: primary,
                   style: const TextStyle(color: Colors.white, fontSize: 13),
                   underline: const SizedBox(),
-                  items: List.generate(5, (i) => DateTime.now().year - 1 + i)
+                  items: List.generate(6, (i) => 2025 + i)
                       .map((y) => DropdownMenuItem(value: y, child: Text('$y')))
                       .toList(),
-                  onChanged: (y) async {
+                  onChanged: (y) {
                     if (y == null) return;
                     ref.read(fiscalYearProvider.notifier).state = y;
-                    await ref
+                    ref
                         .read(sharedPreferencesProvider)
                         .setInt('fiscal_year', y);
+                    final segments = currentPath
+                        .split('/')
+                        .where((s) => s.isNotEmpty)
+                        .toList();
+                    if (segments.length > 1) {
+                      context.go('/${segments.first}');
+                    }
                   },
                 ),
               ],

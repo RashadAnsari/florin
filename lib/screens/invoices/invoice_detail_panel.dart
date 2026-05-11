@@ -285,6 +285,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
         id: Value(_original!.id),
         invoiceNumber: Value(_original!.invoiceNumber),
         invoiceDate: Value(_original!.invoiceDate),
+        supplyDate: Value(_original!.supplyDate),
         clientId: Value(_original!.clientId),
         invoiceType: Value(_original!.invoiceType),
         sellerName: Value(_original!.sellerName),
@@ -385,9 +386,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                     ),
                     onPressed: () => _markStatus('Sent'),
                   ),
-                if (status != 'Paid' &&
-                    status != 'Cancelled' &&
-                    status != 'Refunded')
+                if (status == 'Sent')
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: OutlinedButton.icon(
@@ -969,11 +968,7 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isOverdue =
-        status != 'Paid' &&
-        status != 'Cancelled' &&
-        status != 'Refunded' &&
-        dueDate.isBefore(DateTime.now());
+    final isOverdue = status == 'Sent' && dueDate.isBefore(DateTime.now());
     final l = AppLocalizations.of(context)!;
     final (label, color) = isOverdue
         ? (l.invoiceStatusOverdue, AppColors.red)

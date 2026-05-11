@@ -2186,10 +2186,16 @@ abstract class AppLocalizations {
   /// **'Invalid IBAN. Must start with a 2-letter country code followed by 2 digits and up to 30 alphanumeric characters.'**
   String get settingsValidateIbanFormat;
 
+  /// No description provided for @actionOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get actionOk;
+
   /// No description provided for @settingsSaved.
   ///
   /// In en, this message translates to:
-  /// **'Settings saved'**
+  /// **'Business details saved'**
   String get settingsSaved;
 
   /// No description provided for @settingsDatabaseSection.
@@ -2219,7 +2225,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsDatabaseMoved.
   ///
   /// In en, this message translates to:
-  /// **'Database moved to {path}'**
+  /// **'Database file moved to: {path}'**
   String settingsDatabaseMoved(String path);
 
   /// No description provided for @settingsExportSection.
@@ -2249,7 +2255,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsExported.
   ///
   /// In en, this message translates to:
-  /// **'Exported to {dir}'**
+  /// **'CSV files exported to: {dir}'**
   String settingsExported(String dir);
 
   /// No description provided for @settingsTaxSection.
@@ -2381,8 +2387,8 @@ abstract class AppLocalizations {
   /// No description provided for @settingsTaxParamsSaved.
   ///
   /// In en, this message translates to:
-  /// **'Tax parameters saved'**
-  String get settingsTaxParamsSaved;
+  /// **'Tax parameters saved for {year}'**
+  String settingsTaxParamsSaved(int year);
 
   /// No description provided for @settingsTaxValidateField.
   ///

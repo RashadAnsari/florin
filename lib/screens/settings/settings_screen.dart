@@ -282,7 +282,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
             Text(l.settingsTaxSection(year), style: theme.textTheme.titleLarge),
             const SizedBox(height: 8),
-            _TaxParamsEditor(params: params, year: year),
+            _TaxParamsEditor(key: ValueKey(year), params: params, year: year),
           ],
         ),
       ),
@@ -294,7 +294,7 @@ class _TaxParamsEditor extends ConsumerStatefulWidget {
   final TaxParam? params;
   final int year;
 
-  const _TaxParamsEditor({required this.params, required this.year});
+  const _TaxParamsEditor({super.key, required this.params, required this.year});
 
   @override
   ConsumerState<_TaxParamsEditor> createState() => _TaxParamsEditorState();
@@ -438,9 +438,9 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
     );
     if (mounted) {
       final l = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l.settingsTaxParamsSaved)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l.settingsTaxParamsSaved(widget.year))),
+      );
     }
   }
 

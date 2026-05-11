@@ -34,7 +34,7 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
   Map<int, int> _revenueMap(AsyncValue<List<Invoice>> inv) {
     final result = <int, int>{};
     for (final i in inv.valueOrNull ?? []) {
-      if (i.status != 'Draft') {
+      if (i.status == 'Sent' || i.status == 'Paid') {
         result[i.clientId] = (result[i.clientId] ?? 0) + i.totalInclVat as int;
       }
     }
@@ -381,7 +381,7 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('OK'),
+              child: Text(l.actionOk),
             ),
           ],
         ),

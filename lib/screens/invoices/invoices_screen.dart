@@ -168,7 +168,7 @@ class _InvoiceTile extends StatelessWidget {
   });
 
   bool get _isOverdue =>
-      invoice.status != 'Paid' && invoice.dueDate.isBefore(DateTime.now());
+      invoice.status == 'Sent' && invoice.dueDate.isBefore(DateTime.now());
 
   @override
   Widget build(BuildContext context) {
