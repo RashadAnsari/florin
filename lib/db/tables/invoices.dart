@@ -12,6 +12,7 @@ class Invoices extends Table {
   TextColumn get sellerVatNumber => text()();
   TextColumn get sellerKvkNumber => text()();
   TextColumn get sellerAddress => text()();
+  TextColumn get sellerIban => text().nullable()();
   IntColumn get paymentTermDays => integer().withDefault(const Constant(14))();
   DateTimeColumn get dueDate => dateTime()();
   TextColumn get status => text().withDefault(const Constant('Draft'))();

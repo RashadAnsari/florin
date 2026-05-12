@@ -2593,6 +2593,17 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _sellerIbanMeta = const VerificationMeta(
+    'sellerIban',
+  );
+  @override
+  late final GeneratedColumn<String> sellerIban = GeneratedColumn<String>(
+    'seller_iban',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _paymentTermDaysMeta = const VerificationMeta(
     'paymentTermDays',
   );
@@ -2778,6 +2789,7 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     sellerVatNumber,
     sellerKvkNumber,
     sellerAddress,
+    sellerIban,
     paymentTermDays,
     dueDate,
     status,
@@ -2894,6 +2906,12 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
       );
     } else if (isInserting) {
       context.missing(_sellerAddressMeta);
+    }
+    if (data.containsKey('seller_iban')) {
+      context.handle(
+        _sellerIbanMeta,
+        sellerIban.isAcceptableOrUnknown(data['seller_iban']!, _sellerIbanMeta),
+      );
     }
     if (data.containsKey('payment_term_days')) {
       context.handle(
@@ -3058,6 +3076,10 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
         DriftSqlType.string,
         data['${effectivePrefix}seller_address'],
       )!,
+      sellerIban: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}seller_iban'],
+      ),
       paymentTermDays: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}payment_term_days'],
@@ -3138,6 +3160,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
   final String sellerVatNumber;
   final String sellerKvkNumber;
   final String sellerAddress;
+  final String? sellerIban;
   final int paymentTermDays;
   final DateTime dueDate;
   final String status;
@@ -3164,6 +3187,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     required this.sellerVatNumber,
     required this.sellerKvkNumber,
     required this.sellerAddress,
+    this.sellerIban,
     required this.paymentTermDays,
     required this.dueDate,
     required this.status,
@@ -3195,6 +3219,9 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     map['seller_vat_number'] = Variable<String>(sellerVatNumber);
     map['seller_kvk_number'] = Variable<String>(sellerKvkNumber);
     map['seller_address'] = Variable<String>(sellerAddress);
+    if (!nullToAbsent || sellerIban != null) {
+      map['seller_iban'] = Variable<String>(sellerIban);
+    }
     map['payment_term_days'] = Variable<int>(paymentTermDays);
     map['due_date'] = Variable<DateTime>(dueDate);
     map['status'] = Variable<String>(status);
@@ -3237,6 +3264,9 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       sellerVatNumber: Value(sellerVatNumber),
       sellerKvkNumber: Value(sellerKvkNumber),
       sellerAddress: Value(sellerAddress),
+      sellerIban: sellerIban == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sellerIban),
       paymentTermDays: Value(paymentTermDays),
       dueDate: Value(dueDate),
       status: Value(status),
@@ -3281,6 +3311,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       sellerVatNumber: serializer.fromJson<String>(json['sellerVatNumber']),
       sellerKvkNumber: serializer.fromJson<String>(json['sellerKvkNumber']),
       sellerAddress: serializer.fromJson<String>(json['sellerAddress']),
+      sellerIban: serializer.fromJson<String?>(json['sellerIban']),
       paymentTermDays: serializer.fromJson<int>(json['paymentTermDays']),
       dueDate: serializer.fromJson<DateTime>(json['dueDate']),
       status: serializer.fromJson<String>(json['status']),
@@ -3314,6 +3345,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       'sellerVatNumber': serializer.toJson<String>(sellerVatNumber),
       'sellerKvkNumber': serializer.toJson<String>(sellerKvkNumber),
       'sellerAddress': serializer.toJson<String>(sellerAddress),
+      'sellerIban': serializer.toJson<String?>(sellerIban),
       'paymentTermDays': serializer.toJson<int>(paymentTermDays),
       'dueDate': serializer.toJson<DateTime>(dueDate),
       'status': serializer.toJson<String>(status),
@@ -3343,6 +3375,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     String? sellerVatNumber,
     String? sellerKvkNumber,
     String? sellerAddress,
+    Value<String?> sellerIban = const Value.absent(),
     int? paymentTermDays,
     DateTime? dueDate,
     String? status,
@@ -3369,6 +3402,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     sellerVatNumber: sellerVatNumber ?? this.sellerVatNumber,
     sellerKvkNumber: sellerKvkNumber ?? this.sellerKvkNumber,
     sellerAddress: sellerAddress ?? this.sellerAddress,
+    sellerIban: sellerIban.present ? sellerIban.value : this.sellerIban,
     paymentTermDays: paymentTermDays ?? this.paymentTermDays,
     dueDate: dueDate ?? this.dueDate,
     status: status ?? this.status,
@@ -3417,6 +3451,9 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       sellerAddress: data.sellerAddress.present
           ? data.sellerAddress.value
           : this.sellerAddress,
+      sellerIban: data.sellerIban.present
+          ? data.sellerIban.value
+          : this.sellerIban,
       paymentTermDays: data.paymentTermDays.present
           ? data.paymentTermDays.value
           : this.paymentTermDays,
@@ -3464,6 +3501,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
           ..write('sellerVatNumber: $sellerVatNumber, ')
           ..write('sellerKvkNumber: $sellerKvkNumber, ')
           ..write('sellerAddress: $sellerAddress, ')
+          ..write('sellerIban: $sellerIban, ')
           ..write('paymentTermDays: $paymentTermDays, ')
           ..write('dueDate: $dueDate, ')
           ..write('status: $status, ')
@@ -3495,6 +3533,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     sellerVatNumber,
     sellerKvkNumber,
     sellerAddress,
+    sellerIban,
     paymentTermDays,
     dueDate,
     status,
@@ -3525,6 +3564,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
           other.sellerVatNumber == this.sellerVatNumber &&
           other.sellerKvkNumber == this.sellerKvkNumber &&
           other.sellerAddress == this.sellerAddress &&
+          other.sellerIban == this.sellerIban &&
           other.paymentTermDays == this.paymentTermDays &&
           other.dueDate == this.dueDate &&
           other.status == this.status &&
@@ -3553,6 +3593,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
   final Value<String> sellerVatNumber;
   final Value<String> sellerKvkNumber;
   final Value<String> sellerAddress;
+  final Value<String?> sellerIban;
   final Value<int> paymentTermDays;
   final Value<DateTime> dueDate;
   final Value<String> status;
@@ -3579,6 +3620,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     this.sellerVatNumber = const Value.absent(),
     this.sellerKvkNumber = const Value.absent(),
     this.sellerAddress = const Value.absent(),
+    this.sellerIban = const Value.absent(),
     this.paymentTermDays = const Value.absent(),
     this.dueDate = const Value.absent(),
     this.status = const Value.absent(),
@@ -3606,6 +3648,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     required String sellerVatNumber,
     required String sellerKvkNumber,
     required String sellerAddress,
+    this.sellerIban = const Value.absent(),
     this.paymentTermDays = const Value.absent(),
     required DateTime dueDate,
     this.status = const Value.absent(),
@@ -3642,6 +3685,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     Expression<String>? sellerVatNumber,
     Expression<String>? sellerKvkNumber,
     Expression<String>? sellerAddress,
+    Expression<String>? sellerIban,
     Expression<int>? paymentTermDays,
     Expression<DateTime>? dueDate,
     Expression<String>? status,
@@ -3669,6 +3713,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
       if (sellerVatNumber != null) 'seller_vat_number': sellerVatNumber,
       if (sellerKvkNumber != null) 'seller_kvk_number': sellerKvkNumber,
       if (sellerAddress != null) 'seller_address': sellerAddress,
+      if (sellerIban != null) 'seller_iban': sellerIban,
       if (paymentTermDays != null) 'payment_term_days': paymentTermDays,
       if (dueDate != null) 'due_date': dueDate,
       if (status != null) 'status': status,
@@ -3698,6 +3743,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     Value<String>? sellerVatNumber,
     Value<String>? sellerKvkNumber,
     Value<String>? sellerAddress,
+    Value<String?>? sellerIban,
     Value<int>? paymentTermDays,
     Value<DateTime>? dueDate,
     Value<String>? status,
@@ -3725,6 +3771,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
       sellerVatNumber: sellerVatNumber ?? this.sellerVatNumber,
       sellerKvkNumber: sellerKvkNumber ?? this.sellerKvkNumber,
       sellerAddress: sellerAddress ?? this.sellerAddress,
+      sellerIban: sellerIban ?? this.sellerIban,
       paymentTermDays: paymentTermDays ?? this.paymentTermDays,
       dueDate: dueDate ?? this.dueDate,
       status: status ?? this.status,
@@ -3775,6 +3822,9 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     }
     if (sellerAddress.present) {
       map['seller_address'] = Variable<String>(sellerAddress.value);
+    }
+    if (sellerIban.present) {
+      map['seller_iban'] = Variable<String>(sellerIban.value);
     }
     if (paymentTermDays.present) {
       map['payment_term_days'] = Variable<int>(paymentTermDays.value);
@@ -3837,6 +3887,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
           ..write('sellerVatNumber: $sellerVatNumber, ')
           ..write('sellerKvkNumber: $sellerKvkNumber, ')
           ..write('sellerAddress: $sellerAddress, ')
+          ..write('sellerIban: $sellerIban, ')
           ..write('paymentTermDays: $paymentTermDays, ')
           ..write('dueDate: $dueDate, ')
           ..write('status: $status, ')
@@ -9485,6 +9536,7 @@ typedef $$InvoicesTableCreateCompanionBuilder =
       required String sellerVatNumber,
       required String sellerKvkNumber,
       required String sellerAddress,
+      Value<String?> sellerIban,
       Value<int> paymentTermDays,
       required DateTime dueDate,
       Value<String> status,
@@ -9513,6 +9565,7 @@ typedef $$InvoicesTableUpdateCompanionBuilder =
       Value<String> sellerVatNumber,
       Value<String> sellerKvkNumber,
       Value<String> sellerAddress,
+      Value<String?> sellerIban,
       Value<int> paymentTermDays,
       Value<DateTime> dueDate,
       Value<String> status,
@@ -9621,6 +9674,11 @@ class $$InvoicesTableFilterComposer
 
   ColumnFilters<String> get sellerAddress => $composableBuilder(
     column: $table.sellerAddress,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sellerIban => $composableBuilder(
+    column: $table.sellerIban,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -9802,6 +9860,11 @@ class $$InvoicesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get sellerIban => $composableBuilder(
+    column: $table.sellerIban,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get paymentTermDays => $composableBuilder(
     column: $table.paymentTermDays,
     builder: (column) => ColumnOrderings(column),
@@ -9953,6 +10016,11 @@ class $$InvoicesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get sellerIban => $composableBuilder(
+    column: $table.sellerIban,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<int> get paymentTermDays => $composableBuilder(
     column: $table.paymentTermDays,
     builder: (column) => column,
@@ -10101,6 +10169,7 @@ class $$InvoicesTableTableManager
                 Value<String> sellerVatNumber = const Value.absent(),
                 Value<String> sellerKvkNumber = const Value.absent(),
                 Value<String> sellerAddress = const Value.absent(),
+                Value<String?> sellerIban = const Value.absent(),
                 Value<int> paymentTermDays = const Value.absent(),
                 Value<DateTime> dueDate = const Value.absent(),
                 Value<String> status = const Value.absent(),
@@ -10127,6 +10196,7 @@ class $$InvoicesTableTableManager
                 sellerVatNumber: sellerVatNumber,
                 sellerKvkNumber: sellerKvkNumber,
                 sellerAddress: sellerAddress,
+                sellerIban: sellerIban,
                 paymentTermDays: paymentTermDays,
                 dueDate: dueDate,
                 status: status,
@@ -10155,6 +10225,7 @@ class $$InvoicesTableTableManager
                 required String sellerVatNumber,
                 required String sellerKvkNumber,
                 required String sellerAddress,
+                Value<String?> sellerIban = const Value.absent(),
                 Value<int> paymentTermDays = const Value.absent(),
                 required DateTime dueDate,
                 Value<String> status = const Value.absent(),
@@ -10181,6 +10252,7 @@ class $$InvoicesTableTableManager
                 sellerVatNumber: sellerVatNumber,
                 sellerKvkNumber: sellerKvkNumber,
                 sellerAddress: sellerAddress,
+                sellerIban: sellerIban,
                 paymentTermDays: paymentTermDays,
                 dueDate: dueDate,
                 status: status,

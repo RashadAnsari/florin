@@ -205,6 +205,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
     final sellerVat = prefs.getString('business_vat_number') ?? '';
     final sellerKvk = prefs.getString('business_kvk') ?? '';
     final sellerAddress = prefs.getString('business_address') ?? '';
+    final sellerIban = prefs.getString('business_iban');
     final companion = InvoicesCompanion(
       id: _original != null ? Value(_original!.id) : const Value.absent(),
       invoiceNumber: Value(_invoiceNumber.text.trim()),
@@ -216,6 +217,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
       sellerVatNumber: Value(sellerVat),
       sellerKvkNumber: Value(sellerKvk),
       sellerAddress: Value(sellerAddress),
+      sellerIban: Value(sellerIban?.isNotEmpty == true ? sellerIban : null),
       paymentTermDays: Value(int.tryParse(_paymentTermDays.text) ?? 0),
       dueDate: Value(_dueDate),
       status: Value(_original?.status ?? 'Draft'),

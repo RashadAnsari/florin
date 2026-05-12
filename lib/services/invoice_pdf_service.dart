@@ -246,6 +246,41 @@ class InvoicePdfService {
               ),
             ),
 
+            // ── Payment instructions (Invoice only) ────────────────────────
+            if (invoice.invoiceType == 'Invoice' &&
+                invoice.sellerIban != null &&
+                invoice.sellerIban!.isNotEmpty) ...[
+              pw.SizedBox(height: 16),
+              pw.Container(
+                padding: const pw.EdgeInsets.all(10),
+                decoration: pw.BoxDecoration(
+                  border: pw.Border.all(color: PdfColors.grey400, width: 0.5),
+                ),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(
+                      'Betaalinstructies',
+                      style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold,
+                        fontSize: 9,
+                      ),
+                    ),
+                    pw.SizedBox(height: 6),
+                    pw.Row(
+                      children: [
+                        _payRow('IBAN', invoice.sellerIban!),
+                        pw.SizedBox(width: 24),
+                        _payRow('T.n.v.', invoice.sellerName),
+                        pw.SizedBox(width: 24),
+                        _payRow('O.v.v.', invoice.invoiceNumber),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
             // ── Reverse charge note ─────────────────────────────────────────
             if (invoice.isReverseCharge) ...[
               pw.SizedBox(height: 12),
@@ -328,6 +363,17 @@ class InvoicePdfService {
           ),
         ],
       );
+
+  static pw.Widget _payRow(String label, String value) => pw.Column(
+    crossAxisAlignment: pw.CrossAxisAlignment.start,
+    children: [
+      pw.Text(
+        label,
+        style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
+      ),
+      pw.Text(value, style: const pw.TextStyle(fontSize: 10)),
+    ],
+  );
 
   static List<pw.Widget> _vatBreakdown(List<InvoiceLine> lines) {
     final Map<String, int> byRate = {};
