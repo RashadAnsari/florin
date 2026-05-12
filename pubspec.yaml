@@ -21,9 +21,7 @@ dependencies:
   window_manager: ^0.3.9
   intl: ^0.20.2
   csv: ^6.0.0
-  local_notifier: ^0.1.6
   shared_preferences: ^2.3.2
-  uuid: ^4.4.2
   google_fonts: ^6.2.1
   fl_chart: ^0.69.0
   path: ^1.9.0

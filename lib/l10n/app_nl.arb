@@ -104,6 +104,8 @@
     }
   },
   "invoiceValidateLineDescription": "Voer een omschrijving in voor deze regelpost",
+  "invoiceValidateLineQuantity": "Voer een geldig aantal groter dan nul in",
+  "invoiceValidateLinePrice": "Voer een geldige eenheidsprijs in",
   "invoiceSubtotal": "Subtotaal (excl. BTW)",
   "invoiceTotalInclVat": "Totaal (incl. BTW)",
   "invoiceFieldRemarks": "Opmerkingen",
@@ -239,11 +241,11 @@
   "hoursValidateHours": "Voer een aantal uren in dat groter is dan 0",
   "hoursValidateDescription": "Omschrijf het werk dat in deze sessie is uitgevoerd",
 
-  "workTypeBillable": "Billable",
-  "workTypeNonBillable": "Non-billable",
-  "workTypeAdministrative": "Administrative",
+  "workTypeBillable": "Factureerbaar",
+  "workTypeNonBillable": "Niet-factureerbaar",
+  "workTypeAdministrative": "Administratief",
   "workTypeWbso": "WBSO",
-  "workTypeOther": "Other",
+  "workTypeOther": "Overig",
 
   "mileageTitle": "Kilometerregistratie",
   "mileageNone": "Geen ritten geregistreerd",
@@ -271,9 +273,9 @@
   "mileageNewTrip": "Nieuwe rit",
   "mileageEditTrip": "Bewerk rit",
 
-  "tripTypeBusiness": "Business",
-  "tripTypeCommute": "Commute",
-  "tripTypePrivate": "Private",
+  "tripTypeBusiness": "Zakelijk",
+  "tripTypeCommute": "Woon-werkverkeer",
+  "tripTypePrivate": "Privé",
 
   "assetsTitle": "Vaste activa",
   "assetsNone": "Geen activa geregistreerd",
@@ -367,7 +369,7 @@
   },
   "plTaxDepreciation": "Afschrijvingen",
   "plTaxTotalCosts": "TOTAAL KOSTEN",
-  "plTaxGrossProfit": "BRUTOWEINST",
+  "plTaxGrossProfit": "BRUTOWINST",
   "plTaxDeductionsSection": "ONDERNEMERSAFTREK",
   "plTaxZelfstandigenaftrek": "Zelfstandigenaftrek {year}",
   "@plTaxZelfstandigenaftrek": { "placeholders": { "year": { "type": "int" } } },
@@ -407,8 +409,8 @@
       "suffix": { "type": "String" }
     }
   },
-  "plTaxUrenBannerSuffixDone": " — zelfstandigenaftrek vervalt",
-  "plTaxUrenBannerSuffixPending": " — nog niet bereikt",
+  "plTaxUrenBannerSuffixDone": ", zelfstandigenaftrek vervalt",
+  "plTaxUrenBannerSuffixPending": ", nog niet bereikt",
 
   "settingsLanguageSection": "Taal",
   "settingsLanguageNl": "Nederlands",

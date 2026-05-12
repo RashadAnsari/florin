@@ -270,6 +270,13 @@ class AppLocalizationsNl extends AppLocalizations {
       'Voer een omschrijving in voor deze regelpost';
 
   @override
+  String get invoiceValidateLineQuantity =>
+      'Voer een geldig aantal groter dan nul in';
+
+  @override
+  String get invoiceValidateLinePrice => 'Voer een geldige eenheidsprijs in';
+
+  @override
   String get invoiceSubtotal => 'Subtotaal (excl. BTW)';
 
   @override
@@ -649,19 +656,19 @@ class AppLocalizationsNl extends AppLocalizations {
       'Omschrijf het werk dat in deze sessie is uitgevoerd';
 
   @override
-  String get workTypeBillable => 'Billable';
+  String get workTypeBillable => 'Factureerbaar';
 
   @override
-  String get workTypeNonBillable => 'Non-billable';
+  String get workTypeNonBillable => 'Niet-factureerbaar';
 
   @override
-  String get workTypeAdministrative => 'Administrative';
+  String get workTypeAdministrative => 'Administratief';
 
   @override
   String get workTypeWbso => 'WBSO';
 
   @override
-  String get workTypeOther => 'Other';
+  String get workTypeOther => 'Overig';
 
   @override
   String get mileageTitle => 'Kilometerregistratie';
@@ -739,13 +746,13 @@ class AppLocalizationsNl extends AppLocalizations {
   String get mileageEditTrip => 'Bewerk rit';
 
   @override
-  String get tripTypeBusiness => 'Business';
+  String get tripTypeBusiness => 'Zakelijk';
 
   @override
-  String get tripTypeCommute => 'Commute';
+  String get tripTypeCommute => 'Woon-werkverkeer';
 
   @override
-  String get tripTypePrivate => 'Private';
+  String get tripTypePrivate => 'Privé';
 
   @override
   String get assetsTitle => 'Vaste activa';
@@ -979,7 +986,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get plTaxTotalCosts => 'TOTAAL KOSTEN';
 
   @override
-  String get plTaxGrossProfit => 'BRUTOWEINST';
+  String get plTaxGrossProfit => 'BRUTOWINST';
 
   @override
   String get plTaxDeductionsSection => 'ONDERNEMERSAFTREK';
@@ -1074,10 +1081,10 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get plTaxUrenBannerSuffixDone => ' — zelfstandigenaftrek vervalt';
+  String get plTaxUrenBannerSuffixDone => ', zelfstandigenaftrek vervalt';
 
   @override
-  String get plTaxUrenBannerSuffixPending => ' — nog niet bereikt';
+  String get plTaxUrenBannerSuffixPending => ', nog niet bereikt';
 
   @override
   String get settingsLanguageSection => 'Taal';

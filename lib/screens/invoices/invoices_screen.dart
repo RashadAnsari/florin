@@ -182,6 +182,8 @@ class _InvoiceTile extends StatelessWidget {
             'Draft' => (l.invoiceStatusConcept, outline),
             'Sent' => (l.invoiceStatusSent, AppColors.action),
             'Paid' => (l.invoiceStatusPaid, AppColors.income),
+            'Cancelled' => (l.invoiceStatusCancelled, outline),
+            'Refunded' => (l.invoiceStatusRefunded, outline),
             _ => (invoice.status, outline),
           };
 
@@ -236,6 +238,7 @@ class _InvoiceTile extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: 2),
             Text(
               AppFormat.date(invoice.invoiceDate),
               style: theme.textTheme.bodySmall?.copyWith(

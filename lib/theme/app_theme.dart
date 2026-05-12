@@ -38,6 +38,7 @@ class AppTheme {
     );
     return base.copyWith(
       scaffoldBackgroundColor: AppColors.bgLight,
+      appBarTheme: const AppBarTheme(centerTitle: false),
       textTheme: GoogleFonts.interTextTheme(base.textTheme),
       cardTheme: const CardThemeData(elevation: 1, margin: EdgeInsets.zero),
       inputDecorationTheme: const InputDecorationTheme(
@@ -61,6 +62,7 @@ class AppTheme {
     );
     return base.copyWith(
       scaffoldBackgroundColor: AppColors.bgDark,
+      appBarTheme: const AppBarTheme(centerTitle: false),
       textTheme: GoogleFonts.interTextTheme(base.textTheme),
       cardTheme: const CardThemeData(elevation: 1, margin: EdgeInsets.zero),
       inputDecorationTheme: const InputDecorationTheme(

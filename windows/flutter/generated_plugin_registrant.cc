@@ -6,7 +6,6 @@
 
 #include "generated_plugin_registrant.h"
 
-#include <local_notifier/local_notifier_plugin.h>
 #include <printing/printing_plugin.h>
 #include <screen_retriever/screen_retriever_plugin.h>
 #include <sqlite3_flutter_libs/sqlite3_flutter_libs_plugin.h>
@@ -14,8 +13,6 @@
 #include <window_manager/window_manager_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
-  LocalNotifierPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("LocalNotifierPlugin"));
   PrintingPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("PrintingPlugin"));
   ScreenRetrieverPluginRegisterWithRegistrar(

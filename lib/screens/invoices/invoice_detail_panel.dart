@@ -222,7 +222,6 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
       dueDate: Value(_dueDate),
       status: Value(_original?.status ?? 'Draft'),
       paidDate: Value(_original?.paidDate),
-      paymentMethod: Value(_original?.paymentMethod),
       refundDate: Value(_original?.refundDate),
       notes: Value(_notes.text.trim().isEmpty ? null : _notes.text.trim()),
       isReverseCharge: Value(_isReverseCharge),
@@ -241,28 +240,33 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
     } else {
       await dao.saveInvoice(companion);
       invoiceId = _original!.id;
-      final existing = await dao.getLinesForInvoice(invoiceId);
-      for (final l in existing) {
-        await dao.deleteLine(l.id);
-      }
     }
 
-    for (var i = 0; i < _lines.length; i++) {
-      final l = _lines[i];
-      final unitStr = l.unit.text.trim();
-      await dao.insertLine(
+    final lineCompanions = [
+      for (var i = 0; i < _lines.length; i++)
         InvoiceLinesCompanion(
           invoiceId: Value(invoiceId),
-          description: Value(l.description.text.trim()),
-          quantityUnit: Value(unitStr.isEmpty ? '1' : unitStr),
-          quantity: Value(l._qty),
-          unitPriceExclVat: Value(_inputToCents(l.unitPrice.text)),
-          vatRate: Value(l.vatRate),
-          vatAmount: Value(l.vatAmount),
-          lineTotalExclVat: Value(l.lineTotalExclVat),
+          description: Value(_lines[i].description.text.trim()),
+          quantityUnit: Value(
+            _lines[i].unit.text.trim().isEmpty
+                ? '1'
+                : _lines[i].unit.text.trim(),
+          ),
+          quantity: Value(_lines[i]._qty),
+          unitPriceExclVat: Value(_inputToCents(_lines[i].unitPrice.text)),
+          vatRate: Value(_lines[i].vatRate),
+          vatAmount: Value(_lines[i].vatAmount),
+          lineTotalExclVat: Value(_lines[i].lineTotalExclVat),
           sortOrder: Value(i),
         ),
-      );
+    ];
+
+    if (_original != null) {
+      await dao.replaceLines(invoiceId, lineCompanions);
+    } else {
+      for (final lc in lineCompanions) {
+        await dao.insertLine(lc);
+      }
     }
 
     if (_original == null) {
@@ -277,7 +281,6 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
   Future<void> _markStatus(
     String status, {
     DateTime? paidDate,
-    String? paymentMethod,
     DateTime? refundDate,
   }) async {
     if (_original == null) return;
@@ -294,15 +297,16 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
         sellerVatNumber: Value(_original!.sellerVatNumber),
         sellerKvkNumber: Value(_original!.sellerKvkNumber),
         sellerAddress: Value(_original!.sellerAddress),
+        sellerIban: Value(_original!.sellerIban),
         paymentTermDays: Value(_original!.paymentTermDays),
         dueDate: Value(_original!.dueDate),
         status: Value(status),
         paidDate: Value(paidDate),
-        paymentMethod: Value(paymentMethod),
         refundDate: Value(refundDate),
         notes: Value(_original!.notes),
         isReverseCharge: Value(_original!.isReverseCharge),
         isIcp: Value(_original!.isIcp),
+        reverseChargeNote: Value(_original!.reverseChargeNote),
         totalExclVat: Value(_original!.totalExclVat),
         totalVat: Value(_original!.totalVat),
         totalInclVat: Value(_original!.totalInclVat),
@@ -377,10 +381,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
               if (!isNew) ...[
                 _StatusBadge(status: status, dueDate: _original!.dueDate),
                 const SizedBox(width: 8),
-                if (status != 'Sent' &&
-                    status != 'Paid' &&
-                    status != 'Cancelled' &&
-                    status != 'Refunded')
+                if (status == 'Draft')
                   OutlinedButton.icon(
                     icon: const Icon(Icons.send, size: 16),
                     label: Text(
@@ -412,10 +413,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                           _markStatus('Refunded', refundDate: DateTime.now()),
                     ),
                   ),
-                if (status != 'Draft' &&
-                    status != 'Cancelled' &&
-                    status != 'Paid' &&
-                    status != 'Refunded')
+                if (status == 'Sent')
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: OutlinedButton.icon(
@@ -855,6 +853,12 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                 decimal: true,
               ),
               onChanged: (_) => setState(() {}),
+              validator: (v) {
+                final n = double.tryParse((v ?? '').replaceAll(',', '.'));
+                return (n == null || n <= 0)
+                    ? AppLocalizations.of(context)!.invoiceValidateLineQuantity
+                    : null;
+              },
             ),
           ),
           const SizedBox(width: 4),
@@ -883,6 +887,18 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                 decimal: true,
               ),
               onChanged: (_) => setState(() {}),
+              validator: (v) {
+                final parsed = double.tryParse(
+                  (v ?? '')
+                      .replaceAll('€', '')
+                      .replaceAll(' ', '')
+                      .replaceAll('.', '')
+                      .replaceAll(',', '.'),
+                );
+                return parsed == null
+                    ? AppLocalizations.of(context)!.invoiceValidateLinePrice
+                    : null;
+              },
             ),
           ),
           const SizedBox(width: 4),

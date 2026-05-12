@@ -103,6 +103,8 @@
     }
   },
   "invoiceValidateLineDescription": "Enter a description for this line item",
+  "invoiceValidateLineQuantity": "Enter a valid quantity greater than zero",
+  "invoiceValidateLinePrice": "Enter a valid unit price",
   "invoiceSubtotal": "Subtotal (excl. VAT)",
   "invoiceTotalInclVat": "Total (incl. VAT)",
   "invoiceFieldRemarks": "Remarks",
@@ -406,8 +408,8 @@
       "suffix": { "type": "String" }
     }
   },
-  "plTaxUrenBannerSuffixDone": " — zelfstandigenaftrek lapses",
-  "plTaxUrenBannerSuffixPending": " — not yet reached",
+  "plTaxUrenBannerSuffixDone": ", zelfstandigenaftrek lapses",
+  "plTaxUrenBannerSuffixPending": ", not yet reached",
 
   "settingsLanguageSection": "Language",
   "settingsLanguageNl": "Dutch",

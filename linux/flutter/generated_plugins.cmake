@@ -3,7 +3,6 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  local_notifier
   printing
   screen_retriever
   sqlite3_flutter_libs

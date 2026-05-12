@@ -590,6 +590,18 @@ abstract class AppLocalizations {
   /// **'Enter a description for this line item'**
   String get invoiceValidateLineDescription;
 
+  /// No description provided for @invoiceValidateLineQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid quantity greater than zero'**
+  String get invoiceValidateLineQuantity;
+
+  /// No description provided for @invoiceValidateLinePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid unit price'**
+  String get invoiceValidateLinePrice;
+
   /// No description provided for @invoiceSubtotal.
   ///
   /// In en, this message translates to:
@@ -2063,13 +2075,13 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxUrenBannerSuffixDone.
   ///
   /// In en, this message translates to:
-  /// **' — zelfstandigenaftrek lapses'**
+  /// **', zelfstandigenaftrek lapses'**
   String get plTaxUrenBannerSuffixDone;
 
   /// No description provided for @plTaxUrenBannerSuffixPending.
   ///
   /// In en, this message translates to:
-  /// **' — not yet reached'**
+  /// **', not yet reached'**
   String get plTaxUrenBannerSuffixPending;
 
   /// No description provided for @settingsLanguageSection.

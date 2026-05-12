@@ -270,6 +270,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enter a description for this line item';
 
   @override
+  String get invoiceValidateLineQuantity =>
+      'Enter a valid quantity greater than zero';
+
+  @override
+  String get invoiceValidateLinePrice => 'Enter a valid unit price';
+
+  @override
   String get invoiceSubtotal => 'Subtotal (excl. VAT)';
 
   @override
@@ -1073,10 +1080,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get plTaxUrenBannerSuffixDone => ' — zelfstandigenaftrek lapses';
+  String get plTaxUrenBannerSuffixDone => ', zelfstandigenaftrek lapses';
 
   @override
-  String get plTaxUrenBannerSuffixPending => ' — not yet reached';
+  String get plTaxUrenBannerSuffixPending => ', not yet reached';
 
   @override
   String get settingsLanguageSection => 'Language';

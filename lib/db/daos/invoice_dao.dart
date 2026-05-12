@@ -52,6 +52,16 @@ class InvoiceDao extends DatabaseAccessor<AppDatabase> with _$InvoiceDaoMixin {
   Future<int> deleteLine(int id) =>
       (delete(invoiceLines)..where((l) => l.id.equals(id))).go();
 
+  Future<void> replaceLines(int invoiceId, List<InvoiceLinesCompanion> lines) =>
+      transaction(() async {
+        await (delete(
+          invoiceLines,
+        )..where((l) => l.invoiceId.equals(invoiceId))).go();
+        for (final l in lines) {
+          await into(invoiceLines).insert(l);
+        }
+      });
+
   Future<void> deleteInvoice(int id) async {
     await (delete(invoiceLines)..where((l) => l.invoiceId.equals(id))).go();
     await (delete(invoices)..where((i) => i.id.equals(id))).go();
