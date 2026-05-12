@@ -314,7 +314,12 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
               Row(
                 children: [
                   Expanded(
-                    child: InkWell(
+                    child: TextFormField(
+                      key: ValueKey(_date.toString()),
+                      initialValue: AppFormat.date(_date),
+                      readOnly: true,
+                      strutStyle: StrutStyle.disabled,
+                      decoration: InputDecoration(labelText: l.hoursFieldDate),
                       onTap: () async {
                         final d = await showDatePicker(
                           context: context,
@@ -324,12 +329,6 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
                         );
                         if (d != null) setState(() => _date = d);
                       },
-                      child: InputDecorator(
-                        decoration: InputDecoration(
-                          labelText: l.hoursFieldDate,
-                        ),
-                        child: Text(AppFormat.date(_date)),
-                      ),
                     ),
                   ),
                   const SizedBox(width: 12),

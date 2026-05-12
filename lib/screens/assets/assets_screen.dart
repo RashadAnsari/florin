@@ -322,7 +322,16 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                 )!.assetsValidateCost,
               ),
               const SizedBox(height: 12),
-              InkWell(
+              TextFormField(
+                key: ValueKey(_purchaseDate.toString()),
+                initialValue: AppFormat.date(_purchaseDate),
+                readOnly: true,
+                strutStyle: StrutStyle.disabled,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(
+                    context,
+                  )!.assetsFieldPurchaseDate,
+                ),
                 onTap: () async {
                   final d = await showDatePicker(
                     context: context,
@@ -332,14 +341,6 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                   );
                   if (d != null) setState(() => _purchaseDate = d);
                 },
-                child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(
-                      context,
-                    )!.assetsFieldPurchaseDate,
-                  ),
-                  child: Text(AppFormat.date(_purchaseDate)),
-                ),
               ),
               const SizedBox(height: 12),
               Row(
@@ -423,7 +424,18 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                 style: Theme.of(context).textTheme.titleSmall,
               ),
               const SizedBox(height: 8),
-              InkWell(
+              TextFormField(
+                key: ValueKey(_disposalDate?.toString() ?? 'null'),
+                initialValue: _disposalDate != null
+                    ? AppFormat.date(_disposalDate!)
+                    : '-',
+                readOnly: true,
+                strutStyle: StrutStyle.disabled,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(
+                    context,
+                  )!.assetsFieldDisposalDate,
+                ),
                 onTap: () async {
                   final d = await showDatePicker(
                     context: context,
@@ -433,18 +445,6 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                   );
                   setState(() => _disposalDate = d);
                 },
-                child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(
-                      context,
-                    )!.assetsFieldDisposalDate,
-                  ),
-                  child: Text(
-                    _disposalDate != null
-                        ? AppFormat.date(_disposalDate!)
-                        : '—',
-                  ),
-                ),
               ),
               if (_disposalDate != null) ...[
                 const SizedBox(height: 12),

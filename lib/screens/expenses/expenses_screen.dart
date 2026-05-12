@@ -514,7 +514,14 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                   Row(
                     children: [
                       Expanded(
-                        child: InkWell(
+                        child: TextFormField(
+                          key: ValueKey(_date.toString()),
+                          initialValue: AppFormat.date(_date),
+                          readOnly: true,
+                          strutStyle: StrutStyle.disabled,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(context)!.labelDate,
+                          ),
                           onTap: () async {
                             final d = await showDatePicker(
                               context: context,
@@ -524,14 +531,6 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                             );
                             if (d != null) setState(() => _date = d);
                           },
-                          child: InputDecorator(
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.labelDate,
-                            ),
-                            child: Text(AppFormat.date(_date)),
-                          ),
                         ),
                       ),
                       const SizedBox(width: 12),

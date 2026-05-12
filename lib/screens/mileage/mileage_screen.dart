@@ -296,7 +296,14 @@ class _TripFormState extends ConsumerState<_TripForm> {
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 20),
-              InkWell(
+              TextFormField(
+                key: ValueKey(_date.toString()),
+                initialValue: AppFormat.date(_date),
+                readOnly: true,
+                strutStyle: StrutStyle.disabled,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.mileageFieldDate,
+                ),
                 onTap: () async {
                   final d = await showDatePicker(
                     context: context,
@@ -306,12 +313,6 @@ class _TripFormState extends ConsumerState<_TripForm> {
                   );
                   if (d != null) setState(() => _date = d);
                 },
-                child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.mileageFieldDate,
-                  ),
-                  child: Text(AppFormat.date(_date)),
-                ),
               ),
               const SizedBox(height: 12),
               Row(

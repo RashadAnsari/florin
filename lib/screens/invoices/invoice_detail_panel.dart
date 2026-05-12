@@ -553,7 +553,16 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                     Row(
                       children: [
                         Expanded(
-                          child: InkWell(
+                          child: TextFormField(
+                            key: ValueKey(_invoiceDate.toString()),
+                            initialValue: AppFormat.date(_invoiceDate),
+                            readOnly: true,
+                            strutStyle: StrutStyle.disabled,
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.invoiceFieldInvoiceDate,
+                            ),
                             onTap: () async {
                               final d = await showDatePicker(
                                 context: context,
@@ -563,19 +572,22 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                               );
                               if (d != null) setState(() => _invoiceDate = d);
                             },
-                            child: InputDecorator(
-                              decoration: InputDecoration(
-                                labelText: AppLocalizations.of(
-                                  context,
-                                )!.invoiceFieldInvoiceDate,
-                              ),
-                              child: Text(AppFormat.date(_invoiceDate)),
-                            ),
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: InkWell(
+                          child: TextFormField(
+                            key: ValueKey(_supplyDate?.toString() ?? 'null'),
+                            initialValue: _supplyDate != null
+                                ? AppFormat.date(_supplyDate!)
+                                : '-',
+                            readOnly: true,
+                            strutStyle: StrutStyle.disabled,
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.invoiceFieldSupplyDate,
+                            ),
                             onTap: () async {
                               final d = await showDatePicker(
                                 context: context,
@@ -583,29 +595,15 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                                 firstDate: DateTime(2020),
                                 lastDate: DateTime(2040),
                               );
-                              if (d != null) {
-                                setState(() => _supplyDate = d);
-                              }
+                              if (d != null) setState(() => _supplyDate = d);
                             },
-                            child: InputDecorator(
-                              decoration: InputDecoration(
-                                labelText: AppLocalizations.of(
-                                  context,
-                                )!.invoiceFieldSupplyDate,
-                              ),
-                              child: Text(
-                                _supplyDate != null
-                                    ? AppFormat.date(_supplyDate!)
-                                    : '-',
-                              ),
-                            ),
                           ),
                         ),
                         const SizedBox(width: 12),
-                        SizedBox(
-                          width: 130,
+                        Expanded(
                           child: TextFormField(
                             controller: _paymentTermDays,
+                            strutStyle: StrutStyle.disabled,
                             decoration: InputDecoration(
                               labelText: AppLocalizations.of(
                                 context,
@@ -626,13 +624,16 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: InputDecorator(
+                          child: TextFormField(
+                            key: ValueKey(_dueDate.toString()),
+                            initialValue: AppFormat.date(_dueDate),
+                            readOnly: true,
+                            strutStyle: StrutStyle.disabled,
                             decoration: InputDecoration(
                               labelText: AppLocalizations.of(
                                 context,
                               )!.invoiceFieldDueDate,
                             ),
-                            child: Text(AppFormat.date(_dueDate)),
                           ),
                         ),
                       ],

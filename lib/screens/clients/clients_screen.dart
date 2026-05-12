@@ -695,7 +695,18 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: InkWell(
+                        child: TextFormField(
+                          key: ValueKey(_contractExpiry?.toString() ?? 'null'),
+                          initialValue: _contractExpiry != null
+                              ? AppFormat.date(_contractExpiry!)
+                              : '-',
+                          readOnly: true,
+                          strutStyle: StrutStyle.disabled,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.clientsContractExpiry,
+                          ),
                           onTap: () async {
                             final d = await showDatePicker(
                               context: context,
@@ -709,18 +720,6 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                               setState(() => _contractExpiry = d);
                             }
                           },
-                          child: InputDecorator(
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.clientsContractExpiry,
-                            ),
-                            child: Text(
-                              _contractExpiry != null
-                                  ? AppFormat.date(_contractExpiry!)
-                                  : '-',
-                            ),
-                          ),
                         ),
                       ),
                     ],
