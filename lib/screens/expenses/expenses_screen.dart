@@ -695,6 +695,7 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                           value: _businessUsePct,
                           onChanged: (v) {
                             _businessUsePct = v;
+                            _isMixedCost = v < 1.0;
                             _compute();
                           },
                           divisions: 20,
@@ -761,8 +762,7 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                             Expanded(
                               child: CheckboxListTile(
                                 value: _isMixedCost,
-                                onChanged: (v) =>
-                                    setState(() => _isMixedCost = v ?? false),
+                                onChanged: null,
                                 title: Text(
                                   AppLocalizations.of(
                                     context,
