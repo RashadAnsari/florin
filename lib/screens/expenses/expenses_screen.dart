@@ -151,36 +151,22 @@ class _Filters extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Wrap(
-            spacing: 4,
-            children: [
-              FilterChip(
-                label: Text(AppLocalizations.of(context)!.labelAll),
-                selected: qFilter == null,
-                onSelected: (_) => onQChanged(null),
-              ),
-              ..._kQuarters.map(
-                (q) => FilterChip(
-                  label: Text(q),
-                  selected: qFilter == q,
-                  onSelected: (_) => onQChanged(qFilter == q ? null : q),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
           DropdownButtonFormField<String?>(
             initialValue: catFilter,
+            isExpanded: true,
             decoration: InputDecoration(
               labelText: AppLocalizations.of(context)!.labelCategory,
               isDense: true,
             ),
             items: [
-              const DropdownMenuItem(value: null, child: Text('Alle')),
+              DropdownMenuItem(
+                value: null,
+                child: Text(AppLocalizations.of(context)!.labelAll),
+              ),
               ...() {
                 final l = AppLocalizations.of(context)!;
                 final labels = expenseCategoryLabels(l);
@@ -195,6 +181,28 @@ class _Filters extends StatelessWidget {
               }(),
             ],
             onChanged: onCatChanged,
+          ),
+          const SizedBox(height: 4),
+          SizedBox(
+            width: double.infinity,
+            child: Wrap(
+              spacing: 4,
+              alignment: WrapAlignment.center,
+              children: [
+                FilterChip(
+                  label: Text(AppLocalizations.of(context)!.labelAll),
+                  selected: qFilter == null,
+                  onSelected: (_) => onQChanged(null),
+                ),
+                ..._kQuarters.map(
+                  (q) => FilterChip(
+                    label: Text(q),
+                    selected: qFilter == q,
+                    onSelected: (_) => onQChanged(qFilter == q ? null : q),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -245,7 +253,10 @@ class _ExpenseTile extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    expense.category,
+                    expenseCategoryLabels(
+                          AppLocalizations.of(context)!,
+                        )[expense.category] ??
+                        expense.category,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -295,7 +306,7 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
   late final TextEditingController _notes;
 
   DateTime _date = DateTime.now();
-  String _category = kExpenseCategories.first;
+  String? _category;
   String _vatRate = '21%';
   int _amountExclVat = 0;
   int _vatAmount = 0;
@@ -366,7 +377,7 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
       date: Value(_date),
       supplier: Value(_supplier.text.trim()),
       description: Value(_description.text.trim()),
-      category: Value(_category),
+      category: Value(_category!),
       receiptAttached: Value(_receiptAttached),
       amountExclVat: Value(_amountExclVat),
       vatRate: Value(_vatRate),
@@ -387,24 +398,12 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
       final id = await dao.insertExpense(companion);
       final all = await dao.getByYear(widget.fiscalYear);
       final created = all.firstWhere((e) => e.id == id);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.expensesCreated),
-          ),
-        );
-        widget.onSaved(created);
-      }
+      if (mounted) widget.onSaved(created);
     } else {
       await dao.saveExpense(companion);
       final all = await dao.getByYear(widget.fiscalYear);
       final updated = all.firstWhere((e) => e.id == orig.id);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.expensesSaved)),
-        );
-        widget.onSaved(updated);
-      }
+      if (mounted) widget.onSaved(updated);
     }
   }
 
@@ -422,7 +421,7 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
   }
 
   bool get _showBuaWarning =>
-      _category == 'Maaltijden & entertainment' && _amountExclVat > 22700;
+      _category == kExpenseCategoriesLegacy[2] && _amountExclVat > 22700;
 
   @override
   Widget build(BuildContext context) {
@@ -479,321 +478,364 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
             padding: const EdgeInsets.all(24),
             child: Form(
               key: _formKey,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 700),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (_showBuaWarning) ...[
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: AppColors.expense.withValues(alpha: 0.08),
-                          border: Border.all(color: AppColors.expense),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.info_outline,
-                              color: AppColors.expense,
-                              size: 18,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                AppLocalizations.of(
-                                  context,
-                                )!.expensesBuaWarning,
-                                style: const TextStyle(
-                                  color: AppColors.expense,
-                                  fontSize: 13,
-                                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (_showBuaWarning) ...[
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.expense.withValues(alpha: 0.08),
+                        border: Border.all(color: AppColors.expense),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.info_outline,
+                            color: AppColors.expense,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              AppLocalizations.of(context)!.expensesBuaWarning,
+                              style: const TextStyle(
+                                color: AppColors.expense,
+                                fontSize: 13,
                               ),
                             ),
-                          ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () async {
+                            final d = await showDatePicker(
+                              context: context,
+                              initialDate: _date,
+                              firstDate: DateTime(2020),
+                              lastDate: DateTime(2040),
+                            );
+                            if (d != null) setState(() => _date = d);
+                          },
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(
+                                context,
+                              )!.labelDate,
+                            ),
+                            child: Text(AppFormat.date(_date)),
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 16),
-                    ],
-                    Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () async {
-                              final d = await showDatePicker(
-                                context: context,
-                                initialDate: _date,
-                                firstDate: DateTime(2020),
-                                lastDate: DateTime(2040),
-                              );
-                              if (d != null) setState(() => _date = d);
-                            },
-                            child: InputDecorator(
-                              decoration: InputDecoration(
-                                labelText: AppLocalizations.of(
+                      const SizedBox(width: 12),
+                      Expanded(
+                        flex: 2,
+                        child: DropdownButtonFormField<String?>(
+                          initialValue: _category,
+                          isExpanded: true,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.expensesFieldCategory,
+                          ),
+                          items: kExpenseCategories.map((c) {
+                            final l = AppLocalizations.of(context)!;
+                            final labels = expenseCategoryLabels(l);
+                            return DropdownMenuItem<String?>(
+                              value: c,
+                              child: Text(labels[c] ?? c),
+                            );
+                          }).toList(),
+                          onChanged: (v) => setState(() => _category = v),
+                          validator: (v) => v == null
+                              ? AppLocalizations.of(
                                   context,
-                                )!.labelDate,
-                              ),
-                              child: Text(AppFormat.date(_date)),
-                            ),
-                          ),
+                                )!.expensesValidateCategory
+                              : null,
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          flex: 2,
-                          child: DropdownButtonFormField<String>(
-                            initialValue: _category,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.labelCategory,
-                            ),
-                            items: kExpenseCategories.map((c) {
-                              final l = AppLocalizations.of(context)!;
-                              final labels = expenseCategoryLabels(l);
-                              return DropdownMenuItem(
-                                value: c,
-                                child: Text(labels[c] ?? c),
-                              );
-                            }).toList(),
-                            onChanged: (v) => setState(() => _category = v!),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _supplier,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.expensesFieldSupplier,
+                            hintText: AppLocalizations.of(
+                              context,
+                            )!.expensesHintSupplier,
                           ),
+                          validator: (v) => (v == null || v.trim().isEmpty)
+                              ? AppLocalizations.of(
+                                  context,
+                                )!.expensesValidateSupplier
+                              : null,
                         ),
-                      ],
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _description,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.expensesFieldDescription,
+                          ),
+                          validator: (v) => (v == null || v.trim().isEmpty)
+                              ? AppLocalizations.of(
+                                  context,
+                                )!.expensesValidateDescription
+                              : null,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: AmountField(
+                          initialValueCents: _amountExclVat,
+                          label: AppLocalizations.of(
+                            context,
+                          )!.expensesFieldAmountExcl,
+                          required: true,
+                          validatorMessage: AppLocalizations.of(
+                            context,
+                          )!.expensesValidateAmount,
+                          onChanged: (v) {
+                            _amountExclVat = v;
+                            _compute();
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: VatRateSelector(
+                          value: _vatRate,
+                          onChanged: (v) {
+                            if (v != null) {
+                              _vatRate = v;
+                              _compute();
+                            }
+                          },
+                          label: AppLocalizations.of(
+                            context,
+                          )!.expensesFieldVatRate,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: AmountField(
+                          key: ValueKey('vat_$_vatAmount'),
+                          initialValueCents: _vatAmount,
+                          label: AppLocalizations.of(context)!.expensesFieldVat,
+                          readOnly: true,
+                          onChanged: (_) {},
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: AmountField(
+                          key: ValueKey('total_$_totalInclVat'),
+                          initialValueCents: _totalInclVat,
+                          label: AppLocalizations.of(
+                            context,
+                          )!.expensesFieldTotalIncl,
+                          readOnly: true,
+                          onChanged: (_) {},
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: theme.colorScheme.outlineVariant,
+                      ),
                     ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: _supplier,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.expensesFieldSupplier,
-                            ),
-                            validator: (v) => (v == null || v.trim().isEmpty)
-                                ? AppLocalizations.of(
-                                    context,
-                                  )!.expensesValidateSupplier
-                                : null,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            controller: _description,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.expensesFieldDescription,
-                            ),
-                            validator: (v) => (v == null || v.trim().isEmpty)
-                                ? AppLocalizations.of(
-                                    context,
-                                  )!.expensesValidateDescription
-                                : null,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: AmountField(
-                            initialValueCents: _amountExclVat,
-                            label: AppLocalizations.of(
-                              context,
-                            )!.expensesFieldAmountExcl,
-                            required: true,
-                            onChanged: (v) {
-                              _amountExclVat = v;
-                              _compute();
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: VatRateSelector(
-                            value: _vatRate,
-                            onChanged: (v) {
-                              if (v != null) {
-                                _vatRate = v;
-                                _compute();
-                              }
-                            },
-                            label: AppLocalizations.of(
-                              context,
-                            )!.expensesFieldVatRate,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: AmountField(
-                            initialValueCents: _vatAmount,
-                            label: AppLocalizations.of(
-                              context,
-                            )!.expensesFieldVat,
-                            readOnly: true,
-                            onChanged: (_) {},
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: AmountField(
-                            initialValueCents: _totalInclVat,
-                            label: AppLocalizations.of(
-                              context,
-                            )!.expensesFieldTotalIncl,
-                            readOnly: true,
-                            onChanged: (_) {},
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      AppLocalizations.of(context)!.expensesBusinessUse,
-                      style: theme.textTheme.titleSmall,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppLocalizations.of(
-                                  context,
-                                )!.expensesBusinessUsePct(
-                                  (_businessUsePct * 100).round(),
-                                ),
-                                style: theme.textTheme.bodySmall,
-                              ),
-                              Slider(
-                                value: _businessUsePct,
-                                onChanged: (v) {
-                                  _businessUsePct = v;
-                                  _compute();
-                                },
-                                divisions: 20,
-                                label: '${(_businessUsePct * 100).round()}%',
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
                           children: [
                             Text(
-                              AppLocalizations.of(context)!.expensesDeductible,
-                              style: theme.textTheme.bodySmall,
+                              AppLocalizations.of(context)!.expensesBusinessUse,
+                              style: theme.textTheme.titleSmall,
                             ),
+                            const Spacer(),
                             Text(
-                              AppFormat.cents(_deductibleAmount),
+                              AppLocalizations.of(
+                                context,
+                              )!.expensesBusinessUsePct(
+                                (_businessUsePct * 100).round(),
+                              ),
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(width: 16),
-                        Column(
+                        Slider(
+                          value: _businessUsePct,
+                          onChanged: (v) {
+                            _businessUsePct = v;
+                            _compute();
+                          },
+                          divisions: 20,
+                          label: '${(_businessUsePct * 100).round()}%',
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            CheckboxListTile(
-                              value: _vatReclaimable,
-                              onChanged: (v) {
-                                _vatReclaimable = v ?? true;
-                                _compute();
-                              },
-                              title: Text(
-                                AppLocalizations.of(
-                                  context,
-                                )!.expensesReclaimVat,
-                              ),
-                              contentPadding: EdgeInsets.zero,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.expensesDeductible,
+                                  style: theme.textTheme.bodySmall,
+                                ),
+                                Text(
+                                  AppFormat.cents(_deductibleAmount),
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              AppLocalizations.of(context)!.expensesVatBack(
-                                AppFormat.cents(_vatToReclaim),
+                            const SizedBox(width: 24),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context)!.expensesVatBack,
+                                  style: theme.textTheme.bodySmall,
+                                ),
+                                Text(
+                                  AppFormat.cents(_vatToReclaim),
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CheckboxListTile(
+                                value: _vatReclaimable,
+                                onChanged: (v) {
+                                  _vatReclaimable = v ?? true;
+                                  _compute();
+                                },
+                                title: Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.expensesReclaimVat,
+                                ),
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                                contentPadding: EdgeInsets.zero,
                               ),
-                              style: theme.textTheme.bodySmall,
+                            ),
+                            Expanded(
+                              child: CheckboxListTile(
+                                value: _isMixedCost,
+                                onChanged: (v) =>
+                                    setState(() => _isMixedCost = v ?? false),
+                                title: Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.expensesMixedCosts,
+                                ),
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                            ),
+                            Expanded(
+                              child: CheckboxListTile(
+                                value: _receiptAttached,
+                                onChanged: (v) => setState(
+                                  () => _receiptAttached = v ?? false,
+                                ),
+                                title: Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.expensesReceiptAttached,
+                                ),
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                                contentPadding: EdgeInsets.zero,
+                              ),
                             ),
                           ],
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CheckboxListTile(
-                            value: _isMixedCost,
-                            onChanged: (v) =>
-                                setState(() => _isMixedCost = v ?? false),
-                            title: Text(
-                              AppLocalizations.of(context)!.expensesMixedCosts,
-                            ),
-                            contentPadding: EdgeInsets.zero,
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _paidFrom,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.expensesFieldPaidFrom,
+                            hintText: AppLocalizations.of(
+                              context,
+                            )!.expensesHintPaidFrom,
                           ),
                         ),
-                        const SizedBox(width: 24),
-                        Expanded(
-                          child: CheckboxListTile(
-                            value: _receiptAttached,
-                            onChanged: (v) =>
-                                setState(() => _receiptAttached = v ?? false),
-                            title: Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.expensesReceiptAttached,
-                            ),
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: _paidFrom,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.expensesFieldPaidFrom,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            controller: _paymentRef,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.expensesFieldPaymentRef,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _notes,
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.labelNotes,
                       ),
-                      maxLines: 2,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _paymentRef,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.expensesFieldPaymentRef,
+                            hintText: AppLocalizations.of(
+                              context,
+                            )!.expensesHintPaymentRef,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _notes,
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.labelNotes,
                     ),
-                  ],
-                ),
+                    maxLines: 2,
+                  ),
+                ],
               ),
             ),
           ),

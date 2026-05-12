@@ -491,7 +491,17 @@ class AppLocalizationsNl extends AppLocalizations {
   String get expensesFieldSupplier => 'Leverancier *';
 
   @override
+  String get expensesHintSupplier => 'bijv. Albert Heijn, Amazon, KPN';
+
+  @override
   String get expensesValidateSupplier => 'Voer de naam van de leverancier in';
+
+  @override
+  String get expensesFieldCategory => 'Categorie *';
+
+  @override
+  String get expensesValidateCategory =>
+      'Selecteer een categorie voor deze uitgave';
 
   @override
   String get expensesFieldDescription => 'Omschrijving *';
@@ -502,6 +512,9 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get expensesFieldAmountExcl => 'Bedrag (excl. BTW) *';
+
+  @override
+  String get expensesValidateAmount => 'Voer het bedrag exclusief BTW in';
 
   @override
   String get expensesFieldVatRate => 'BTW-tarief';
@@ -516,7 +529,14 @@ class AppLocalizationsNl extends AppLocalizations {
   String get expensesFieldPaidFrom => 'Betaald van';
 
   @override
+  String get expensesHintPaidFrom => 'bijv. ING zakelijke rekening, Visa-kaart';
+
+  @override
   String get expensesFieldPaymentRef => 'Betalingsreferentie';
+
+  @override
+  String get expensesHintPaymentRef =>
+      'bijv. INV-2024-0042, SEPA-kenmerk 123456';
 
   @override
   String get expensesBusinessUse => 'Zakelijk gebruik';
@@ -533,7 +553,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get expensesReclaimVat => 'BTW terugvragen';
 
   @override
-  String expensesVatBack(String amount) {
+  String get expensesVatBack => 'BTW terug';
+
+  @override
+  String expensesVatBackAmount(String amount) {
     return 'BTW terug: $amount';
   }
 
@@ -797,6 +820,9 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get assetsValidateName => 'Voer de naam van dit vaste activum in';
+
+  @override
+  String get assetsValidateCost => 'Voer de aanschafwaarde exclusief BTW in';
 
   @override
   String get assetsFieldKia => 'KIA-aanspraak';
@@ -1344,7 +1370,4 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get vatRateSelectorLabel => 'BTW-tarief';
-
-  @override
-  String get amountFieldRequired => 'Verplicht';
 }

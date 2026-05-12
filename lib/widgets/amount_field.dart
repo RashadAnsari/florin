@@ -8,6 +8,7 @@ class AmountField extends StatefulWidget {
   final String? helperText;
   final bool readOnly;
   final bool required;
+  final String? validatorMessage;
 
   const AmountField({
     super.key,
@@ -17,6 +18,7 @@ class AmountField extends StatefulWidget {
     this.helperText,
     this.readOnly = false,
     this.required = false,
+    this.validatorMessage,
   });
 
   @override
@@ -97,7 +99,7 @@ class _AmountFieldState extends State<AmountField> {
         prefixIconConstraints: const BoxConstraints(minWidth: 32),
       ),
       validator: widget.required
-          ? (v) => (v == null || v.isEmpty) ? 'Required' : null
+          ? (v) => (v == null || v.isEmpty) ? widget.validatorMessage : null
           : null,
     );
   }

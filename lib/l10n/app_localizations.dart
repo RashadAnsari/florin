@@ -1004,11 +1004,29 @@ abstract class AppLocalizations {
   /// **'Supplier *'**
   String get expensesFieldSupplier;
 
+  /// No description provided for @expensesHintSupplier.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Albert Heijn, Amazon, KPN'**
+  String get expensesHintSupplier;
+
   /// No description provided for @expensesValidateSupplier.
   ///
   /// In en, this message translates to:
   /// **'Enter the supplier name'**
   String get expensesValidateSupplier;
+
+  /// No description provided for @expensesFieldCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category *'**
+  String get expensesFieldCategory;
+
+  /// No description provided for @expensesValidateCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a category for this expense'**
+  String get expensesValidateCategory;
 
   /// No description provided for @expensesFieldDescription.
   ///
@@ -1027,6 +1045,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Amount (excl. VAT) *'**
   String get expensesFieldAmountExcl;
+
+  /// No description provided for @expensesValidateAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the amount excluding VAT'**
+  String get expensesValidateAmount;
 
   /// No description provided for @expensesFieldVatRate.
   ///
@@ -1052,11 +1076,23 @@ abstract class AppLocalizations {
   /// **'Paid from'**
   String get expensesFieldPaidFrom;
 
+  /// No description provided for @expensesHintPaidFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. ING business account, Visa card'**
+  String get expensesHintPaidFrom;
+
   /// No description provided for @expensesFieldPaymentRef.
   ///
   /// In en, this message translates to:
   /// **'Payment reference'**
   String get expensesFieldPaymentRef;
+
+  /// No description provided for @expensesHintPaymentRef.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. INV-2024-0042, SEPA ref 123456'**
+  String get expensesHintPaymentRef;
 
   /// No description provided for @expensesBusinessUse.
   ///
@@ -1085,8 +1121,14 @@ abstract class AppLocalizations {
   /// No description provided for @expensesVatBack.
   ///
   /// In en, this message translates to:
+  /// **'VAT back'**
+  String get expensesVatBack;
+
+  /// No description provided for @expensesVatBackAmount.
+  ///
+  /// In en, this message translates to:
   /// **'VAT back: {amount}'**
-  String expensesVatBack(String amount);
+  String expensesVatBackAmount(String amount);
 
   /// No description provided for @expensesMixedCosts.
   ///
@@ -1579,6 +1621,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter the name of this fixed asset'**
   String get assetsValidateName;
+
+  /// No description provided for @assetsValidateCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the cost excluding VAT'**
+  String get assetsValidateCost;
 
   /// No description provided for @assetsFieldKia.
   ///
@@ -2545,12 +2593,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'VAT Rate'**
   String get vatRateSelectorLabel;
-
-  /// No description provided for @amountFieldRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Required'**
-  String get amountFieldRequired;
 }
 
 class _AppLocalizationsDelegate

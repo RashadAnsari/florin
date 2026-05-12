@@ -490,7 +490,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expensesFieldSupplier => 'Supplier *';
 
   @override
+  String get expensesHintSupplier => 'e.g. Albert Heijn, Amazon, KPN';
+
+  @override
   String get expensesValidateSupplier => 'Enter the supplier name';
+
+  @override
+  String get expensesFieldCategory => 'Category *';
+
+  @override
+  String get expensesValidateCategory => 'Select a category for this expense';
 
   @override
   String get expensesFieldDescription => 'Description *';
@@ -501,6 +510,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expensesFieldAmountExcl => 'Amount (excl. VAT) *';
+
+  @override
+  String get expensesValidateAmount => 'Enter the amount excluding VAT';
 
   @override
   String get expensesFieldVatRate => 'VAT rate';
@@ -515,7 +527,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expensesFieldPaidFrom => 'Paid from';
 
   @override
+  String get expensesHintPaidFrom => 'e.g. ING business account, Visa card';
+
+  @override
   String get expensesFieldPaymentRef => 'Payment reference';
+
+  @override
+  String get expensesHintPaymentRef => 'e.g. INV-2024-0042, SEPA ref 123456';
 
   @override
   String get expensesBusinessUse => 'Business use';
@@ -532,7 +550,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expensesReclaimVat => 'Reclaim VAT';
 
   @override
-  String expensesVatBack(String amount) {
+  String get expensesVatBack => 'VAT back';
+
+  @override
+  String expensesVatBackAmount(String amount) {
     return 'VAT back: $amount';
   }
 
@@ -796,6 +817,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assetsValidateName => 'Enter the name of this fixed asset';
+
+  @override
+  String get assetsValidateCost => 'Enter the cost excluding VAT';
 
   @override
   String get assetsFieldKia => 'KIA-aanspraak';
@@ -1343,7 +1367,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get vatRateSelectorLabel => 'VAT Rate';
-
-  @override
-  String get amountFieldRequired => 'Required';
 }

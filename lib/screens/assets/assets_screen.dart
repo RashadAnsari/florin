@@ -317,6 +317,9 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                 initialValueCents: _costExclVat,
                 onChanged: (v) => setState(() => _costExclVat = v),
                 required: true,
+                validatorMessage: AppLocalizations.of(
+                  context,
+                )!.assetsValidateCost,
               ),
               const SizedBox(height: 12),
               InkWell(
