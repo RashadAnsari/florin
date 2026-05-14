@@ -47,7 +47,7 @@ class PensionService {
         (grondslag * params.jaarruimtePct -
                 params.factorAMultiplier * factorA * 100)
             .round();
-    final jaarruimte = jaarruimteRaw.clamp(0, jaarruimteRaw);
+    final jaarruimte = jaarruimteRaw < 0 ? 0 : jaarruimteRaw;
     final jaarruimteCapped = jaarruimte.clamp(0, params.jaarruimteMax);
 
     final reserveringsruimte = unusedPriorYears.clamp(

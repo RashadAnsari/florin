@@ -113,40 +113,16 @@ class _PlTaxScreenState extends ConsumerState<PlTaxScreen> {
     required PensionEntry? pension,
     required TaxParam params,
   }) {
-    final grossRevenue = invoices
-        .where((i) => i.invoiceType == 'Invoice' && i.status != 'Draft')
-        .fold<int>(0, (s, i) => s + i.totalExclVat);
-    final creditNotes = invoices
-        .where((i) => i.invoiceType == 'CreditNote' && i.status != 'Draft')
-        .fold<int>(0, (s, i) => s + i.totalExclVat);
-    final totalDeductible = expenses.fold<int>(
-      0,
-      (s, e) => s + e.deductibleAmount,
-    );
-
-    final businessKm = mileage
-        .where((m) => m.tripType == 'Business')
-        .fold<int>(0, (s, m) => s + m.distanceKm);
+    final grossRevenue = TaxService.computeGrossRevenue(invoices);
+    final creditNotes = TaxService.computeCreditNotes(invoices);
+    final totalDeductible = TaxService.computeDeductibleExpenses(expenses);
+    final businessKm = TaxService.computeBusinessKm(mileage);
     final mileageAllowance = TaxService.computeMileageAllowance(
       businessKm,
       params.mileageRatePerKm,
     );
-
-    final totalDepreciation = assets.fold<int>(0, (s, a) {
-      if (a.disposalDate != null) return s;
-      final yrs = (year - a.purchaseDate.year).clamp(0, a.usefulLifeYears);
-      if (yrs >= a.usefulLifeYears) return s;
-      return s +
-          _service.computeAnnualDepreciation(
-            costExclVat: a.costExclVat,
-            usefulLifeYears: a.usefulLifeYears,
-            businessUsePct: a.businessUsePct,
-          );
-    });
-
-    final kiaTotal = assets
-        .where((a) => a.kiaEligible && a.fiscalYear == year)
-        .fold<int>(0, (s, a) => s + a.costExclVat);
+    final totalDepreciation = TaxService.computeTotalDepreciation(assets, year);
+    final kiaTotal = TaxService.computeKiaTotal(assets, year);
     final kiaDeduction = _service.computeKia(params, kiaTotal);
     final lijrente = pension?.plannedContribution ?? 0;
 

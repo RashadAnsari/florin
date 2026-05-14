@@ -44,9 +44,7 @@ class MileageScreen extends ConsumerWidget {
     final paramsAsync = ref.watch(taxParamsStreamProvider(year));
     final params = paramsAsync.valueOrNull;
 
-    final businessKm = trips
-        .where((t) => t.tripType == 'Business')
-        .fold<int>(0, (s, t) => s + t.distanceKm);
+    final businessKm = TaxService.computeBusinessKm(trips);
     final totalKm = trips.fold<int>(0, (s, t) => s + t.distanceKm);
     final allowance = params != null
         ? TaxService.computeMileageAllowance(

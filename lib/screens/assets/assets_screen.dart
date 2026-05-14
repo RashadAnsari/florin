@@ -23,23 +23,11 @@ class AssetsScreen extends ConsumerWidget {
     final params = paramsAsync.valueOrNull;
 
     final service = const TaxService();
-    final kiaTotal = assets
-        .where((a) => a.kiaEligible && a.fiscalYear == year)
-        .fold<int>(0, (s, a) => s + a.costExclVat);
+    final kiaTotal = TaxService.computeKiaTotal(assets, year);
     final kiaDeduction = params != null
         ? service.computeKia(params, kiaTotal)
         : 0;
-    final totalDepreciation = assets.fold<int>(0, (s, a) {
-      if (a.disposalDate != null) return s;
-      final yrs = (year - a.purchaseDate.year).clamp(0, a.usefulLifeYears);
-      if (yrs >= a.usefulLifeYears) return s;
-      return s +
-          service.computeAnnualDepreciation(
-            costExclVat: a.costExclVat,
-            usefulLifeYears: a.usefulLifeYears,
-            businessUsePct: a.businessUsePct,
-          );
-    });
+    final totalDepreciation = TaxService.computeTotalDepreciation(assets, year);
 
     return Scaffold(
       appBar: AppBar(
@@ -65,7 +53,6 @@ class AssetsScreen extends ConsumerWidget {
               data: (data) => _AssetList(
                 assets: data,
                 year: year,
-                service: service,
                 onTap: (a) => context.push('/assets/${a.id}', extra: a),
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
@@ -150,13 +137,11 @@ class _SummaryBar extends StatelessWidget {
 class _AssetList extends StatelessWidget {
   final List<FixedAsset> assets;
   final int year;
-  final TaxService service;
   final ValueChanged<FixedAsset> onTap;
 
   const _AssetList({
     required this.assets,
     required this.year,
-    required this.service,
     required this.onTap,
   });
 
@@ -173,7 +158,7 @@ class _AssetList extends StatelessWidget {
         final a = assets[i];
         final disposed = a.disposalDate != null;
         final yearsElapsed = year - a.purchaseDate.year;
-        final bookValue = service.computeBookValue(
+        final bookValue = TaxService.computeBookValue(
           costExclVat: a.costExclVat,
           usefulLifeYears: a.usefulLifeYears,
           businessUsePct: a.businessUsePct,

@@ -27,12 +27,8 @@ class DashboardScreen extends ConsumerWidget {
     final vatService = const VatService();
 
     // Revenue
-    final grossRevenue = invoices
-        .where((i) => i.invoiceType == 'Invoice' && i.status != 'Draft')
-        .fold<int>(0, (s, i) => s + i.totalExclVat);
-    final creditNotes = invoices
-        .where((i) => i.invoiceType == 'CreditNote' && i.status != 'Draft')
-        .fold<int>(0, (s, i) => s + i.totalExclVat);
+    final grossRevenue = TaxService.computeGrossRevenue(invoices);
+    final creditNotes = TaxService.computeCreditNotes(invoices);
     final netRevenue = grossRevenue - creditNotes;
 
     // Unpaid invoices
@@ -44,10 +40,7 @@ class DashboardScreen extends ConsumerWidget {
         .fold<int>(0, (s, i) => s + i.totalInclVat);
 
     // Expenses
-    final totalExpenses = expenses.fold<int>(
-      0,
-      (s, e) => s + e.deductibleAmount,
-    );
+    final totalExpenses = TaxService.computeDeductibleExpenses(expenses);
 
     // Hours
     final totalHours = hours.fold<double>(0.0, (s, h) => s + h.hours);
@@ -59,29 +52,15 @@ class DashboardScreen extends ConsumerWidget {
     final urenOk = totalHours >= hoursTarget;
 
     // Tax estimate
-    final businessKm = mileage
-        .where((m) => m.tripType == 'Business')
-        .fold<int>(0, (s, m) => s + m.distanceKm);
+    final businessKm = TaxService.computeBusinessKm(mileage);
     final mileageAllowance = params != null
         ? TaxService.computeMileageAllowance(
             businessKm,
             params.mileageRatePerKm,
           )
         : 0;
-    final totalDepreciation = assets.fold<int>(0, (s, a) {
-      if (a.disposalDate != null) return s;
-      final yrs = (year - a.purchaseDate.year).clamp(0, a.usefulLifeYears);
-      if (yrs >= a.usefulLifeYears) return s;
-      return s +
-          taxService.computeAnnualDepreciation(
-            costExclVat: a.costExclVat,
-            usefulLifeYears: a.usefulLifeYears,
-            businessUsePct: a.businessUsePct,
-          );
-    });
-    final kiaTotal = assets
-        .where((a) => a.kiaEligible && a.fiscalYear == year)
-        .fold<int>(0, (s, a) => s + a.costExclVat);
+    final totalDepreciation = TaxService.computeTotalDepreciation(assets, year);
+    final kiaTotal = TaxService.computeKiaTotal(assets, year);
     final kiaDeduction = params != null
         ? taxService.computeKia(params, kiaTotal)
         : 0;

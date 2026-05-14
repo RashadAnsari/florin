@@ -63,8 +63,44 @@ class TaxService {
   static const double defaultMileageRatePerKm = 0.23;
   static const double kiaDecreaseRate = 0.0756;
 
+  // ── Aggregation helpers ───────────────────────────────────────────────────
+
+  static int computeGrossRevenue(List<Invoice> invoices) => invoices
+      .where((i) => i.invoiceType == 'Invoice' && i.status != 'Draft')
+      .fold<int>(0, (s, i) => s + i.totalExclVat);
+
+  static int computeCreditNotes(List<Invoice> invoices) => invoices
+      .where((i) => i.invoiceType == 'CreditNote' && i.status != 'Draft')
+      .fold<int>(0, (s, i) => s + i.totalExclVat);
+
+  static int computeDeductibleExpenses(List<Expense> expenses) =>
+      expenses.fold<int>(0, (s, e) => s + e.deductibleAmount);
+
+  static int computeBusinessKm(List<MileageTrip> trips) => trips
+      .where((t) => t.tripType == 'Business')
+      .fold<int>(0, (s, t) => s + t.distanceKm);
+
   static int computeMileageAllowance(int businessKm, double ratePerKm) =>
       (businessKm * ratePerKm * 100).round();
+
+  static int computeKiaTotal(List<FixedAsset> assets, int year) => assets
+      .where((a) => a.kiaEligible && a.fiscalYear == year)
+      .fold<int>(0, (s, a) => s + a.costExclVat);
+
+  static int computeTotalDepreciation(List<FixedAsset> assets, int year) =>
+      assets.fold<int>(0, (s, a) {
+        if (a.disposalDate != null) return s;
+        final yrs = (year - a.purchaseDate.year).clamp(0, a.usefulLifeYears);
+        if (yrs >= a.usefulLifeYears) return s;
+        return s +
+            computeAnnualDepreciation(
+              costExclVat: a.costExclVat,
+              usefulLifeYears: a.usefulLifeYears,
+              businessUsePct: a.businessUsePct,
+            );
+      });
+
+  // ── Tax calculations ──────────────────────────────────────────────────────
 
   TaxResult calculate({
     required TaxParam params,
@@ -92,12 +128,13 @@ class TaxService {
     final ondernemersaftrekTotal = zelfs + starters + wbsoCents;
     final profitAfterOndernemer = grossProfit + ondernemersaftrekTotal;
 
-    final mkb = profitAfterOndernemer > 0
-        ? (profitAfterOndernemer * params.mkbWinstvrijstellingPct).round()
+    // MKB base is winst after ondernemersaftrek AND KIA (Dutch IB form order).
+    final mkbBase = profitAfterOndernemer - kiaDeduction;
+    final mkb = mkbBase > 0
+        ? (mkbBase * params.mkbWinstvrijstellingPct).round()
         : 0;
 
-    final taxableProfit =
-        profitAfterOndernemer - mkb - kiaDeduction - lijrenteDeduction;
+    final taxableProfit = mkbBase - mkb - lijrenteDeduction;
 
     final b1 = _bracket1Tax(params, taxableProfit);
     final b2 = _bracket2Tax(params, taxableProfit);
@@ -176,9 +213,9 @@ class TaxService {
     return (taxableProfit * params.zvwRate).round().clamp(0, params.zvwMax);
   }
 
-  int computeMkb(TaxParam params, int profitAfterOndernemer) {
-    if (profitAfterOndernemer <= 0) return 0;
-    return (profitAfterOndernemer * params.mkbWinstvrijstellingPct).round();
+  int computeMkb(TaxParam params, int mkbBase) {
+    if (mkbBase <= 0) return 0;
+    return (mkbBase * params.mkbWinstvrijstellingPct).round();
   }
 
   int computeKia(TaxParam params, int totalQualifyingInvestments) {
@@ -186,12 +223,13 @@ class TaxService {
     if (v < params.kiaLowerThreshold) return 0;
     if (v <= params.kiaUpperThreshold) return (v * params.kiaRate).round();
     if (v <= params.kiaFlatThreshold) return params.kiaFlatAmount;
-    final reduction = ((v - params.kiaUpperThreshold) * params.kiaDecreaseRate)
+    // Decrease zone: 7.56% of amount above kiaFlatThreshold (Dutch law Art. 3.41).
+    final reduction = ((v - params.kiaFlatThreshold) * params.kiaDecreaseRate)
         .round();
     return (params.kiaFlatAmount - reduction).clamp(0, params.kiaFlatAmount);
   }
 
-  int computeAnnualDepreciation({
+  static int computeAnnualDepreciation({
     required int costExclVat,
     required int usefulLifeYears,
     required double businessUsePct,
@@ -200,7 +238,7 @@ class TaxService {
     return ((costExclVat * businessUsePct) / usefulLifeYears).round();
   }
 
-  int computeBookValue({
+  static int computeBookValue({
     required int costExclVat,
     required int usefulLifeYears,
     required double businessUsePct,
