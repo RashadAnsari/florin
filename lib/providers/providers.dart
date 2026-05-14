@@ -94,11 +94,6 @@ final expensesStreamProvider = StreamProvider.family<List<Expense>, int>((
   return ref.watch(expenseDaoProvider).watchByYear(year);
 });
 
-final invoiceLinesStreamProvider =
-    StreamProvider.family<List<InvoiceLine>, int>((ref, invoiceId) {
-      return ref.watch(invoiceDaoProvider).watchLinesForInvoice(invoiceId);
-    });
-
 final invoiceLinesByYearStreamProvider =
     StreamProvider.family<List<InvoiceLine>, int>((ref, year) {
       return ref.watch(invoiceDaoProvider).watchLinesByYear(year);
