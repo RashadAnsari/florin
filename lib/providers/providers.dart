@@ -126,8 +126,10 @@ final assetsStreamProvider = StreamProvider.family<List<FixedAsset>, int>((
 final taxParamsStreamProvider = StreamProvider.family<TaxParam?, int>((
   ref,
   year,
-) {
-  return ref.watch(taxParamsDaoProvider).watchByYear(year);
+) async* {
+  final dao = ref.watch(taxParamsDaoProvider);
+  await dao.ensureExistsForYear(year);
+  yield* dao.watchByYear(year);
 });
 
 final pensionStreamProvider = StreamProvider.family<PensionEntry?, int>((
