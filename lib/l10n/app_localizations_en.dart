@@ -905,27 +905,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pensionTitle => 'Pension';
 
   @override
-  String get pensionJaarruimte => 'JAARRUIMTEBEREKENING';
+  String pensionLoadError(String error) {
+    return 'Could not load pension data: $error';
+  }
+
+  @override
+  String get pensionJaarruimte => 'Annual allowance calculation';
 
   @override
   String get pensionTaxableProfit => 'Taxable profit';
 
   @override
-  String get pensionAowFranchise => 'AOW-franchise';
+  String get pensionAowFranchise => 'AOW franchise';
 
   @override
-  String get pensionPensioengrondslag => 'Pensioengrondslag';
+  String get pensionPensioengrondslag => 'Pension base';
 
   @override
-  String get pensionJaarruimte30 => 'Jaarruimte (30%)';
+  String get pensionJaarruimte30 => 'Annual allowance (30%)';
 
   @override
   String pensionJaarruimteMax(String max) {
-    return 'Jaarruimte (max $max)';
+    return 'Annual allowance (max $max)';
   }
 
   @override
-  String get pensionReserveringsruimte => 'Reserveringsruimte';
+  String get pensionReserveringsruimte => 'Unused annual allowance';
 
   @override
   String get pensionTotalBudget => 'Total available';
@@ -934,33 +939,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pensionEstimatedTaxSaving => 'Estimated tax saving';
 
   @override
-  String get pensionInputSection => 'INPUT';
+  String get pensionInputSection => 'Input';
 
   @override
-  String get pensionFactorA => 'Factor A (euros)';
+  String get pensionFactorA => 'Factor A';
 
   @override
-  String get pensionFactorAHelper => 'Pension accrual with employer/BV';
+  String get pensionFactorAHelper => 'Pension accrual with employer / BV';
 
   @override
   String get pensionReserveringsruimteLabel =>
-      'Reserveringsruimte (unused years)';
+      'Unused annual allowance from prior years';
 
   @override
-  String get pensionPlannedSection => 'PLANNED CONTRIBUTION';
+  String get pensionPlannedSection => 'Planned contribution';
 
   @override
-  String get pensionLijfrente => 'Lijfrentepremie / AOV-premie';
+  String get pensionLijfrente => 'Annuity premium / AOV premium';
 
   @override
   String get pensionLijfrenteHelper =>
       'Included as deduction in tax calculation';
 
   @override
-  String get pensionAovSection => 'AOV (ARBEIDSONGESCHIKTHEIDSVERZEKERING)';
+  String get pensionAovSection => 'AOV disability insurance';
 
   @override
-  String get pensionAovInsured => 'AOV afgesloten';
+  String get pensionAovInsured => 'AOV insured';
 
   @override
   String get pensionMonthlyPremium => 'Monthly premium';
@@ -971,7 +976,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get vatReturnTitle => 'BTW-aangifte';
+  String get vatReturnTitle => 'VAT return';
 
   @override
   String get vatReturnRevenueSection => 'Revenue';
@@ -980,7 +985,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vatReturnCalculationSection => 'VAT calculation';
 
   @override
-  String get vatReturnIcpSection => 'ICP-opgaaf';
+  String get vatReturnIcpSection => 'ICP report';
 
   @override
   String vatReturnIcpDeadline(String date) {
@@ -1002,6 +1007,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String vatReturnLoadError(String error) {
+    return 'Could not load VAT return data: $error';
+  }
+
+  @override
   String get vatReturnDue => 'VAT due';
 
   @override
@@ -1009,20 +1019,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String vatReturnKorWarning(String ytd, String max) {
-    return 'KOR threshold reached ($ytd of $max) — charge VAT from next transaction.';
+    return 'KOR threshold reached ($ytd of $max). Charge VAT from next transaction.';
   }
 
   @override
-  String get vatRow1a => '1a  Supplies/services taxed at 21%';
+  String get vatRow1a => '1a  Supplies / services taxed at 21%';
 
   @override
-  String get vatRow1b => '1b  Supplies/services taxed at 9%';
+  String get vatRow1b => '1b  Supplies / services taxed at 9%';
 
   @override
-  String get vatRow1c => '1c  Supplies/services taxed at 0% (export)';
+  String get vatRow1c => '1c  Supplies / services taxed at 0% (export)';
 
   @override
-  String get vatRow3a => '3a  Supplies to EU businesses (ICP/RC)';
+  String get vatRow3a => '3a  Supplies to EU businesses (ICP / RC)';
 
   @override
   String get vatRow5a => '5a  VAT on revenue';
@@ -1034,7 +1044,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get plTaxTitle => 'P&L / Tax';
 
   @override
-  String get plTaxRevenuSection => 'REVENUE';
+  String plTaxLoadError(String error) {
+    return 'Could not load P&L / tax data: $error';
+  }
+
+  @override
+  String get plTaxRevenuSection => 'Revenue';
 
   @override
   String get plTaxGrossRevenue => 'Gross revenue (excl. VAT)';
@@ -1043,10 +1058,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get plTaxCreditNotes => 'Less: credit notes';
 
   @override
-  String get plTaxNetRevenue => 'NET REVENUE';
+  String get plTaxNetRevenue => 'Net revenue';
 
   @override
-  String get plTaxCostsSection => 'COSTS';
+  String get plTaxCostsSection => 'Costs';
 
   @override
   String plTaxMileageAllowance(int km, String rate) {
@@ -1057,38 +1072,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get plTaxDepreciation => 'Depreciation';
 
   @override
-  String get plTaxTotalCosts => 'TOTAL COSTS';
+  String get plTaxTotalCosts => 'Total costs';
 
   @override
-  String get plTaxGrossProfit => 'GROSS PROFIT';
+  String get plTaxGrossProfit => 'Gross profit';
 
   @override
-  String get plTaxDeductionsSection => 'ONDERNEMERSAFTREK';
+  String get plTaxDeductionsSection => 'Entrepreneur deductions';
 
   @override
   String plTaxZelfstandigenaftrek(int year) {
-    return 'Zelfstandigenaftrek $year';
+    return 'Self-employed deduction $year';
   }
 
   @override
-  String get plTaxStartersaftrek => 'Startersaftrek';
+  String get plTaxStartersaftrek => 'Starter deduction';
 
   @override
   String plTaxMkb(String pct) {
-    return 'MKB-winstvrijstelling ($pct%)';
+    return 'SME profit exemption ($pct%)';
   }
 
   @override
-  String get plTaxKia => 'KIA-aftrek';
+  String get plTaxKia => 'KIA deduction';
 
   @override
-  String get plTaxLijrente => 'Lijfrenteaftrek';
+  String get plTaxLijrente => 'Annuity deduction';
 
   @override
-  String get plTaxTaxableProfit => 'TAXABLE PROFIT';
+  String get plTaxTaxableProfit => 'Taxable profit';
 
   @override
-  String get plTaxBox1Section => 'INKOMSTENBELASTING BOX 1';
+  String get plTaxBox1Section => 'Income tax box 1';
 
   @override
   String plTaxBracket1(String pct) {
@@ -1106,10 +1121,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get plTaxAlgHeffing => 'Algemene heffingskorting';
+  String get plTaxAlgHeffing => 'General tax credit';
 
   @override
-  String get plTaxArbeidskorting => 'Arbeidskorting';
+  String get plTaxArbeidskorting => 'Labour tax credit';
 
   @override
   String plTaxDeduct(String label) {
@@ -1122,7 +1137,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get plTaxInkomsten => 'INCOME TAX';
+  String get plTaxInkomsten => 'Income tax';
 
   @override
   String plTaxZvw(String pct) {
@@ -1130,10 +1145,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get plTaxTotalTax => 'TOTAL TAX';
+  String get plTaxTotalTax => 'Total tax';
 
   @override
-  String get plTaxNetProfit => 'NET PROFIT AFTER TAX';
+  String get plTaxNetProfit => 'Net profit after tax';
 
   @override
   String plTaxEffectiveRate(String rate) {
@@ -1141,13 +1156,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get plTaxSettingsSection => 'SETTINGS';
+  String get plTaxSettingsSection => 'Settings';
 
   @override
-  String get plTaxClaimZelfs => 'Claim zelfstandigenaftrek';
+  String get plTaxClaimZelfs => 'Claim self-employed deduction';
 
   @override
-  String get plTaxClaimStarters => 'Claim startersaftrek';
+  String get plTaxClaimStarters => 'Claim starter deduction';
 
   @override
   String plTaxUrenBanner(String hours, String suffix) {

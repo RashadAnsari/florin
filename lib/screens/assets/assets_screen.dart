@@ -439,17 +439,44 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  Text(
-                    l.assetsFieldBusinessUse((_businessUsePct * 100).round()),
-                    style: theme.textTheme.bodySmall,
-                  ),
-                  Slider(
-                    value: _businessUsePct,
-                    min: 0,
-                    max: 1,
-                    divisions: 20,
-                    label: '${(_businessUsePct * 100).round()}%',
-                    onChanged: (v) => setState(() => _businessUsePct = v),
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: theme.colorScheme.outlineVariant,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              l.expensesBusinessUse,
+                              style: theme.textTheme.titleSmall,
+                            ),
+                            const Spacer(),
+                            Text(
+                              l.expensesBusinessUsePct(
+                                (_businessUsePct * 100).round(),
+                              ),
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Slider(
+                          value: _businessUsePct,
+                          min: 0,
+                          max: 1,
+                          divisions: 20,
+                          label: '${(_businessUsePct * 100).round()}%',
+                          onChanged: (v) => setState(() => _businessUsePct = v),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Row(

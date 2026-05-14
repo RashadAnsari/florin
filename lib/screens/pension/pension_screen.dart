@@ -22,6 +22,7 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
 
   double _factorA = 0.0;
   int _unusedPriorYears = 0;
+  int? _loadedPensionYear;
 
   @override
   Widget build(BuildContext context) {
@@ -29,23 +30,61 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
     final year = ref.watch(fiscalYearProvider);
     final paramsAsync = ref.watch(taxParamsStreamProvider(year));
     final pensionAsync = ref.watch(pensionStreamProvider(year));
-    final invoices = ref.watch(invoicesStreamProvider(year)).valueOrNull ?? [];
-    final expenses = ref.watch(expensesStreamProvider(year)).valueOrNull ?? [];
-    final assets = ref.watch(assetsStreamProvider(year)).valueOrNull ?? [];
-    final hours = ref.watch(hourEntriesStreamProvider(year)).valueOrNull ?? [];
-    final mileage =
-        ref.watch(mileageTripsStreamProvider(year)).valueOrNull ?? [];
+    final invoicesAsync = ref.watch(invoicesStreamProvider(year));
+    final expensesAsync = ref.watch(expensesStreamProvider(year));
+    final assetsAsync = ref.watch(assetsStreamProvider(year));
+    final hoursAsync = ref.watch(hourEntriesStreamProvider(year));
+    final mileageAsync = ref.watch(mileageTripsStreamProvider(year));
+
+    final invoices = invoicesAsync.valueOrNull ?? [];
+    final expenses = expensesAsync.valueOrNull ?? [];
+    final assets = assetsAsync.valueOrNull ?? [];
+    final hours = hoursAsync.valueOrNull ?? [];
+    final mileage = mileageAsync.valueOrNull ?? [];
+    final loadError = paramsAsync.hasError
+        ? paramsAsync.error
+        : pensionAsync.hasError
+        ? pensionAsync.error
+        : invoicesAsync.hasError
+        ? invoicesAsync.error
+        : expensesAsync.hasError
+        ? expensesAsync.error
+        : assetsAsync.hasError
+        ? assetsAsync.error
+        : hoursAsync.hasError
+        ? hoursAsync.error
+        : mileageAsync.hasError
+        ? mileageAsync.error
+        : null;
+    final isLoading =
+        paramsAsync.isLoading ||
+        pensionAsync.isLoading ||
+        invoicesAsync.isLoading ||
+        expensesAsync.isLoading ||
+        assetsAsync.isLoading ||
+        hoursAsync.isLoading ||
+        mileageAsync.isLoading;
 
     final params = paramsAsync.valueOrNull;
-    if (params == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (loadError != null) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l.pensionTitle)),
+        body: Center(child: Text(l.pensionLoadError('$loadError'))),
+      );
+    }
+    if (isLoading || params == null) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l.pensionTitle)),
+        body: const Center(child: CircularProgressIndicator()),
+      );
     }
 
     final pension = pensionAsync.valueOrNull;
 
-    if (pension != null && _factorA == 0.0 && pension.factorA > 0) {
-      _factorA = pension.factorA;
-      _unusedPriorYears = pension.unusedPriorYearsSpace;
+    if (_loadedPensionYear != year) {
+      _factorA = pension?.factorA ?? 0.0;
+      _unusedPriorYears = pension?.unusedPriorYearsSpace ?? 0;
+      _loadedPensionYear = year;
     }
 
     final grossRevenue = invoices
@@ -113,102 +152,115 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
       appBar: AppBar(title: Text(l.pensionTitle)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 700),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _head(l.pensionJaarruimte, context),
-              _row(
-                l.pensionTaxableProfit,
-                AppFormat.cents(taxResult.taxableProfit),
-              ),
-              _row(l.pensionAowFranchise, AppFormat.cents(params.aowFranchise)),
-              _row(
-                l.pensionPensioengrondslag,
-                AppFormat.cents(jaarruimteResult.pensioengrondsdag),
-                bold: true,
-              ),
-              const SizedBox(height: 8),
-              _row(
-                l.pensionJaarruimte30,
-                AppFormat.cents(jaarruimteResult.jaarruimte),
-              ),
-              _row(
-                l.pensionJaarruimteMax(AppFormat.cents(params.jaarruimteMax)),
-                AppFormat.cents(jaarruimteResult.jaarruimteCapped),
-                bold: true,
-              ),
-              const SizedBox(height: 8),
-              _row(
-                l.pensionReserveringsruimte,
-                AppFormat.cents(jaarruimteResult.reserveringsruimte),
-              ),
-              _row(
-                l.pensionTotalBudget,
-                AppFormat.cents(jaarruimteResult.totalBudget),
-                bold: true,
-                valueColor: AppColors.income,
-              ),
-              _row(
-                l.pensionEstimatedTaxSaving,
-                AppFormat.cents(jaarruimteResult.estimatedTaxSaving),
-                valueColor: AppColors.income,
-              ),
-              const Divider(height: 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _head(l.pensionJaarruimte, context),
+            _row(
+              l.pensionTaxableProfit,
+              AppFormat.cents(taxResult.taxableProfit),
+            ),
+            _row(l.pensionAowFranchise, AppFormat.cents(params.aowFranchise)),
+            _row(
+              l.pensionPensioengrondslag,
+              AppFormat.cents(jaarruimteResult.pensioengrondsdag),
+              bold: true,
+            ),
+            const SizedBox(height: 8),
+            _row(
+              l.pensionJaarruimte30,
+              AppFormat.cents(jaarruimteResult.jaarruimte),
+            ),
+            _row(
+              l.pensionJaarruimteMax(AppFormat.cents(params.jaarruimteMax)),
+              AppFormat.cents(jaarruimteResult.jaarruimteCapped),
+              bold: true,
+            ),
+            const SizedBox(height: 8),
+            _row(
+              l.pensionReserveringsruimte,
+              AppFormat.cents(jaarruimteResult.reserveringsruimte),
+            ),
+            _row(
+              l.pensionTotalBudget,
+              AppFormat.cents(jaarruimteResult.totalBudget),
+              bold: true,
+              valueColor: AppColors.income,
+            ),
+            _row(
+              l.pensionEstimatedTaxSaving,
+              AppFormat.cents(jaarruimteResult.estimatedTaxSaving),
+              valueColor: AppColors.income,
+            ),
+            const Divider(height: 32),
 
-              _head(l.pensionInputSection, context),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      initialValue: _factorA
-                          .toStringAsFixed(2)
-                          .replaceAll('.', ','),
-                      decoration: InputDecoration(
-                        labelText: l.pensionFactorA,
-                        helperText: l.pensionFactorAHelper,
-                      ),
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      onChanged: (v) {
-                        final d = double.tryParse(v.replaceAll(',', '.'));
-                        if (d != null) setState(() => _factorA = d);
-                      },
-                    ),
+            _head(l.pensionInputSection, context),
+            const SizedBox(height: 8),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: AmountField(
+                    key: ValueKey('factor_a_$year'),
+                    label: l.pensionFactorA,
+                    initialValueCents: (_factorA * 100).round(),
+                    helperText: l.pensionFactorAHelper,
+                    onChanged: (v) {
+                      setState(() => _factorA = v / 100);
+                      _savePensionInputs();
+                    },
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: AmountField(
-                      key: const ValueKey('reserveringsruimte'),
-                      label: l.pensionReserveringsruimteLabel,
-                      initialValueCents: _unusedPriorYears,
-                      onChanged: (v) => setState(() => _unusedPriorYears = v),
-                    ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: AmountField(
+                    key: const ValueKey('reserveringsruimte'),
+                    label: l.pensionReserveringsruimteLabel,
+                    initialValueCents: _unusedPriorYears,
+                    helperText: ' ',
+                    onChanged: (v) {
+                      setState(() => _unusedPriorYears = v);
+                      _savePensionInputs();
+                    },
                   ),
-                ],
-              ),
-              const SizedBox(height: 24),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
 
-              _head(l.pensionPlannedSection, context),
-              const SizedBox(height: 8),
-              AmountField(
-                key: ValueKey('lijfrente_$year'),
-                label: l.pensionLijfrente,
-                initialValueCents: pension?.plannedContribution ?? 0,
-                helperText: l.pensionLijfrenteHelper,
-                onChanged: (v) => _savePlannedContribution(v),
-              ),
-              const SizedBox(height: 24),
+            _head(l.pensionPlannedSection, context),
+            const SizedBox(height: 8),
+            AmountField(
+              key: ValueKey('lijfrente_$year'),
+              label: l.pensionLijfrente,
+              initialValueCents: pension?.plannedContribution ?? 0,
+              helperText: l.pensionLijfrenteHelper,
+              onChanged: (v) => _savePlannedContribution(v),
+            ),
+            const SizedBox(height: 24),
 
-              _head(l.pensionAovSection, context),
-              const SizedBox(height: 8),
-              _AovSection(pension: pension, year: year),
-            ],
-          ),
+            _head(l.pensionAovSection, context),
+            const SizedBox(height: 8),
+            _AovSection(pension: pension, year: year),
+          ],
         ),
+      ),
+    );
+  }
+
+  Future<void> _savePensionInputs() async {
+    final year = ref.read(fiscalYearProvider);
+    final dao = ref.read(taxParamsDaoProvider);
+    final pension = await dao.getPensionByYear(year);
+    await dao.upsertPension(
+      PensionEntriesCompanion(
+        fiscalYear: Value(year),
+        factorA: Value(_factorA),
+        unusedPriorYearsSpace: Value(_unusedPriorYears),
+        plannedContribution: Value(pension?.plannedContribution ?? 0),
+        aovInsured: Value(pension?.aovInsured ?? false),
+        monthlyAovPremium: Value(pension?.monthlyAovPremium ?? 0),
+        notes: Value(pension?.notes),
       ),
     );
   }
@@ -247,9 +299,10 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
     bool bold = false,
     Color? valueColor,
   }) {
-    final style = bold
-        ? TextStyle(fontWeight: FontWeight.w700, color: valueColor)
-        : TextStyle(color: valueColor);
+    final style = Theme.of(context).textTheme.bodyMedium?.copyWith(
+      fontWeight: bold ? FontWeight.w700 : null,
+      color: valueColor,
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
@@ -312,26 +365,22 @@ class _AovSectionState extends ConsumerState<_AovSection> {
             _save();
           },
           title: Text(l.pensionAovInsured),
+          controlAffinity: ListTileControlAffinity.leading,
           contentPadding: EdgeInsets.zero,
         ),
         if (_insured) ...[
-          const SizedBox(height: 8),
-          SizedBox(
-            width: 280,
-            child: AmountField(
-              key: ValueKey('aov_premium_${widget.year}'),
-              label: l.pensionMonthlyPremium,
-              initialValueCents: _monthlyPremium,
-              onChanged: (v) {
-                setState(() => _monthlyPremium = v);
-                _save();
-              },
+          const SizedBox(height: 12),
+          AmountField(
+            key: ValueKey('aov_premium_${widget.year}'),
+            label: l.pensionMonthlyPremium,
+            initialValueCents: _monthlyPremium,
+            helperText: l.pensionAnnualPremium(
+              AppFormat.cents(_monthlyPremium * 12),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            l.pensionAnnualPremium(AppFormat.cents(_monthlyPremium * 12)),
-            style: Theme.of(context).textTheme.bodySmall,
+            onChanged: (v) {
+              setState(() => _monthlyPremium = v);
+              _save();
+            },
           ),
         ],
       ],

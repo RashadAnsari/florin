@@ -1778,10 +1778,16 @@ abstract class AppLocalizations {
   /// **'Pension'**
   String get pensionTitle;
 
+  /// No description provided for @pensionLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load pension data: {error}'**
+  String pensionLoadError(String error);
+
   /// No description provided for @pensionJaarruimte.
   ///
   /// In en, this message translates to:
-  /// **'JAARRUIMTEBEREKENING'**
+  /// **'Annual allowance calculation'**
   String get pensionJaarruimte;
 
   /// No description provided for @pensionTaxableProfit.
@@ -1793,31 +1799,31 @@ abstract class AppLocalizations {
   /// No description provided for @pensionAowFranchise.
   ///
   /// In en, this message translates to:
-  /// **'AOW-franchise'**
+  /// **'AOW franchise'**
   String get pensionAowFranchise;
 
   /// No description provided for @pensionPensioengrondslag.
   ///
   /// In en, this message translates to:
-  /// **'Pensioengrondslag'**
+  /// **'Pension base'**
   String get pensionPensioengrondslag;
 
   /// No description provided for @pensionJaarruimte30.
   ///
   /// In en, this message translates to:
-  /// **'Jaarruimte (30%)'**
+  /// **'Annual allowance (30%)'**
   String get pensionJaarruimte30;
 
   /// No description provided for @pensionJaarruimteMax.
   ///
   /// In en, this message translates to:
-  /// **'Jaarruimte (max {max})'**
+  /// **'Annual allowance (max {max})'**
   String pensionJaarruimteMax(String max);
 
   /// No description provided for @pensionReserveringsruimte.
   ///
   /// In en, this message translates to:
-  /// **'Reserveringsruimte'**
+  /// **'Unused annual allowance'**
   String get pensionReserveringsruimte;
 
   /// No description provided for @pensionTotalBudget.
@@ -1835,37 +1841,37 @@ abstract class AppLocalizations {
   /// No description provided for @pensionInputSection.
   ///
   /// In en, this message translates to:
-  /// **'INPUT'**
+  /// **'Input'**
   String get pensionInputSection;
 
   /// No description provided for @pensionFactorA.
   ///
   /// In en, this message translates to:
-  /// **'Factor A (euros)'**
+  /// **'Factor A'**
   String get pensionFactorA;
 
   /// No description provided for @pensionFactorAHelper.
   ///
   /// In en, this message translates to:
-  /// **'Pension accrual with employer/BV'**
+  /// **'Pension accrual with employer / BV'**
   String get pensionFactorAHelper;
 
   /// No description provided for @pensionReserveringsruimteLabel.
   ///
   /// In en, this message translates to:
-  /// **'Reserveringsruimte (unused years)'**
+  /// **'Unused annual allowance from prior years'**
   String get pensionReserveringsruimteLabel;
 
   /// No description provided for @pensionPlannedSection.
   ///
   /// In en, this message translates to:
-  /// **'PLANNED CONTRIBUTION'**
+  /// **'Planned contribution'**
   String get pensionPlannedSection;
 
   /// No description provided for @pensionLijfrente.
   ///
   /// In en, this message translates to:
-  /// **'Lijfrentepremie / AOV-premie'**
+  /// **'Annuity premium / AOV premium'**
   String get pensionLijfrente;
 
   /// No description provided for @pensionLijfrenteHelper.
@@ -1877,13 +1883,13 @@ abstract class AppLocalizations {
   /// No description provided for @pensionAovSection.
   ///
   /// In en, this message translates to:
-  /// **'AOV (ARBEIDSONGESCHIKTHEIDSVERZEKERING)'**
+  /// **'AOV disability insurance'**
   String get pensionAovSection;
 
   /// No description provided for @pensionAovInsured.
   ///
   /// In en, this message translates to:
-  /// **'AOV afgesloten'**
+  /// **'AOV insured'**
   String get pensionAovInsured;
 
   /// No description provided for @pensionMonthlyPremium.
@@ -1901,7 +1907,7 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnTitle.
   ///
   /// In en, this message translates to:
-  /// **'BTW-aangifte'**
+  /// **'VAT return'**
   String get vatReturnTitle;
 
   /// No description provided for @vatReturnRevenueSection.
@@ -1919,7 +1925,7 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnIcpSection.
   ///
   /// In en, this message translates to:
-  /// **'ICP-opgaaf'**
+  /// **'ICP report'**
   String get vatReturnIcpSection;
 
   /// No description provided for @vatReturnIcpDeadline.
@@ -1952,6 +1958,12 @@ abstract class AppLocalizations {
   /// **'YTD revenue: {amount}'**
   String vatReturnYtdRevenue(String amount);
 
+  /// No description provided for @vatReturnLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load VAT return data: {error}'**
+  String vatReturnLoadError(String error);
+
   /// No description provided for @vatReturnDue.
   ///
   /// In en, this message translates to:
@@ -1967,31 +1979,31 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnKorWarning.
   ///
   /// In en, this message translates to:
-  /// **'KOR threshold reached ({ytd} of {max}) — charge VAT from next transaction.'**
+  /// **'KOR threshold reached ({ytd} of {max}). Charge VAT from next transaction.'**
   String vatReturnKorWarning(String ytd, String max);
 
   /// No description provided for @vatRow1a.
   ///
   /// In en, this message translates to:
-  /// **'1a  Supplies/services taxed at 21%'**
+  /// **'1a  Supplies / services taxed at 21%'**
   String get vatRow1a;
 
   /// No description provided for @vatRow1b.
   ///
   /// In en, this message translates to:
-  /// **'1b  Supplies/services taxed at 9%'**
+  /// **'1b  Supplies / services taxed at 9%'**
   String get vatRow1b;
 
   /// No description provided for @vatRow1c.
   ///
   /// In en, this message translates to:
-  /// **'1c  Supplies/services taxed at 0% (export)'**
+  /// **'1c  Supplies / services taxed at 0% (export)'**
   String get vatRow1c;
 
   /// No description provided for @vatRow3a.
   ///
   /// In en, this message translates to:
-  /// **'3a  Supplies to EU businesses (ICP/RC)'**
+  /// **'3a  Supplies to EU businesses (ICP / RC)'**
   String get vatRow3a;
 
   /// No description provided for @vatRow5a.
@@ -2012,10 +2024,16 @@ abstract class AppLocalizations {
   /// **'P&L / Tax'**
   String get plTaxTitle;
 
+  /// No description provided for @plTaxLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load P&L / tax data: {error}'**
+  String plTaxLoadError(String error);
+
   /// No description provided for @plTaxRevenuSection.
   ///
   /// In en, this message translates to:
-  /// **'REVENUE'**
+  /// **'Revenue'**
   String get plTaxRevenuSection;
 
   /// No description provided for @plTaxGrossRevenue.
@@ -2033,13 +2051,13 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxNetRevenue.
   ///
   /// In en, this message translates to:
-  /// **'NET REVENUE'**
+  /// **'Net revenue'**
   String get plTaxNetRevenue;
 
   /// No description provided for @plTaxCostsSection.
   ///
   /// In en, this message translates to:
-  /// **'COSTS'**
+  /// **'Costs'**
   String get plTaxCostsSection;
 
   /// No description provided for @plTaxMileageAllowance.
@@ -2057,61 +2075,61 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxTotalCosts.
   ///
   /// In en, this message translates to:
-  /// **'TOTAL COSTS'**
+  /// **'Total costs'**
   String get plTaxTotalCosts;
 
   /// No description provided for @plTaxGrossProfit.
   ///
   /// In en, this message translates to:
-  /// **'GROSS PROFIT'**
+  /// **'Gross profit'**
   String get plTaxGrossProfit;
 
   /// No description provided for @plTaxDeductionsSection.
   ///
   /// In en, this message translates to:
-  /// **'ONDERNEMERSAFTREK'**
+  /// **'Entrepreneur deductions'**
   String get plTaxDeductionsSection;
 
   /// No description provided for @plTaxZelfstandigenaftrek.
   ///
   /// In en, this message translates to:
-  /// **'Zelfstandigenaftrek {year}'**
+  /// **'Self-employed deduction {year}'**
   String plTaxZelfstandigenaftrek(int year);
 
   /// No description provided for @plTaxStartersaftrek.
   ///
   /// In en, this message translates to:
-  /// **'Startersaftrek'**
+  /// **'Starter deduction'**
   String get plTaxStartersaftrek;
 
   /// No description provided for @plTaxMkb.
   ///
   /// In en, this message translates to:
-  /// **'MKB-winstvrijstelling ({pct}%)'**
+  /// **'SME profit exemption ({pct}%)'**
   String plTaxMkb(String pct);
 
   /// No description provided for @plTaxKia.
   ///
   /// In en, this message translates to:
-  /// **'KIA-aftrek'**
+  /// **'KIA deduction'**
   String get plTaxKia;
 
   /// No description provided for @plTaxLijrente.
   ///
   /// In en, this message translates to:
-  /// **'Lijfrenteaftrek'**
+  /// **'Annuity deduction'**
   String get plTaxLijrente;
 
   /// No description provided for @plTaxTaxableProfit.
   ///
   /// In en, this message translates to:
-  /// **'TAXABLE PROFIT'**
+  /// **'Taxable profit'**
   String get plTaxTaxableProfit;
 
   /// No description provided for @plTaxBox1Section.
   ///
   /// In en, this message translates to:
-  /// **'INKOMSTENBELASTING BOX 1'**
+  /// **'Income tax box 1'**
   String get plTaxBox1Section;
 
   /// No description provided for @plTaxBracket1.
@@ -2135,13 +2153,13 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxAlgHeffing.
   ///
   /// In en, this message translates to:
-  /// **'Algemene heffingskorting'**
+  /// **'General tax credit'**
   String get plTaxAlgHeffing;
 
   /// No description provided for @plTaxArbeidskorting.
   ///
   /// In en, this message translates to:
-  /// **'Arbeidskorting'**
+  /// **'Labour tax credit'**
   String get plTaxArbeidskorting;
 
   /// No description provided for @plTaxDeduct.
@@ -2159,7 +2177,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxInkomsten.
   ///
   /// In en, this message translates to:
-  /// **'INCOME TAX'**
+  /// **'Income tax'**
   String get plTaxInkomsten;
 
   /// No description provided for @plTaxZvw.
@@ -2171,13 +2189,13 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxTotalTax.
   ///
   /// In en, this message translates to:
-  /// **'TOTAL TAX'**
+  /// **'Total tax'**
   String get plTaxTotalTax;
 
   /// No description provided for @plTaxNetProfit.
   ///
   /// In en, this message translates to:
-  /// **'NET PROFIT AFTER TAX'**
+  /// **'Net profit after tax'**
   String get plTaxNetProfit;
 
   /// No description provided for @plTaxEffectiveRate.
@@ -2189,19 +2207,19 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxSettingsSection.
   ///
   /// In en, this message translates to:
-  /// **'SETTINGS'**
+  /// **'Settings'**
   String get plTaxSettingsSection;
 
   /// No description provided for @plTaxClaimZelfs.
   ///
   /// In en, this message translates to:
-  /// **'Claim zelfstandigenaftrek'**
+  /// **'Claim self-employed deduction'**
   String get plTaxClaimZelfs;
 
   /// No description provided for @plTaxClaimStarters.
   ///
   /// In en, this message translates to:
-  /// **'Claim startersaftrek'**
+  /// **'Claim starter deduction'**
   String get plTaxClaimStarters;
 
   /// No description provided for @plTaxUrenBanner.

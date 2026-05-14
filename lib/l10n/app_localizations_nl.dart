@@ -912,6 +912,11 @@ class AppLocalizationsNl extends AppLocalizations {
   String get pensionTitle => 'Pensioen';
 
   @override
+  String pensionLoadError(String error) {
+    return 'Kan pensioengegevens niet laden: $error';
+  }
+
+  @override
   String get pensionJaarruimte => 'JAARRUIMTEBEREKENING';
 
   @override
@@ -944,10 +949,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get pensionInputSection => 'INVOER';
 
   @override
-  String get pensionFactorA => 'Factor A (euro\'s)';
+  String get pensionFactorA => 'Factor A';
 
   @override
-  String get pensionFactorAHelper => 'Pensioenopbouw bij werkgever/BV';
+  String get pensionFactorAHelper => 'Pensioenopbouw bij werkgever / BV';
 
   @override
   String get pensionReserveringsruimteLabel =>
@@ -1009,6 +1014,11 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
+  String vatReturnLoadError(String error) {
+    return 'Kan BTW-aangiftegegevens niet laden: $error';
+  }
+
+  @override
   String get vatReturnDue => 'Te betalen BTW';
 
   @override
@@ -1016,20 +1026,20 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String vatReturnKorWarning(String ytd, String max) {
-    return 'KOR-drempel bereikt ($ytd van $max) — factureer BTW vanaf volgende transactie.';
+    return 'KOR-drempel bereikt ($ytd van $max). Factureer BTW vanaf de volgende transactie.';
   }
 
   @override
-  String get vatRow1a => '1a  Leveringen/diensten belast met 21%';
+  String get vatRow1a => '1a  Leveringen / diensten belast met 21%';
 
   @override
-  String get vatRow1b => '1b  Leveringen/diensten belast met 9%';
+  String get vatRow1b => '1b  Leveringen / diensten belast met 9%';
 
   @override
-  String get vatRow1c => '1c  Leveringen/diensten belast met 0% (export)';
+  String get vatRow1c => '1c  Leveringen / diensten belast met 0% (export)';
 
   @override
-  String get vatRow3a => '3a  Leveringen naar EU-ondernemers (ICP/RC)';
+  String get vatRow3a => '3a  Leveringen naar EU-ondernemers (ICP / RC)';
 
   @override
   String get vatRow5a => '5a  BTW over omzet';
@@ -1039,6 +1049,11 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get plTaxTitle => 'W&V / Belasting';
+
+  @override
+  String plTaxLoadError(String error) {
+    return 'Kan W&V / belastinggegevens niet laden: $error';
+  }
 
   @override
   String get plTaxRevenuSection => 'OMZET';
