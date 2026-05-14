@@ -521,8 +521,10 @@
   "firstLaunchAddress": "Bedrijfsadres",
   "firstLaunchIban": "IBAN",
   "firstLaunchStarters": "Recht op startersaftrek",
-  "firstLaunchStartersSubtitle": "Eerste 3 jaar — €2.123 extra aftrek",
+  "firstLaunchStartersSubtitle": "Eerste 3 jaar: €2.123 extra aftrek",
   "firstLaunchGetStarted": "Aan de slag",
+  "firstLaunchSaveError": "Kan setup niet afronden: {error}",
+  "@firstLaunchSaveError": { "placeholders": { "error": { "type": "String" } } },
 
   "confirmDeleteTitle": "Verwijderen",
   "confirmDeleteCancel": "Annuleren",

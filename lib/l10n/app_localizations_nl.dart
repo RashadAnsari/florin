@@ -1413,10 +1413,15 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get firstLaunchStartersSubtitle =>
-      'Eerste 3 jaar — €2.123 extra aftrek';
+      'Eerste 3 jaar: €2.123 extra aftrek';
 
   @override
   String get firstLaunchGetStarted => 'Aan de slag';
+
+  @override
+  String firstLaunchSaveError(String error) {
+    return 'Kan setup niet afronden: $error';
+  }
 
   @override
   String get confirmDeleteTitle => 'Verwijderen';

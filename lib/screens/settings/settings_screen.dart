@@ -220,6 +220,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     value: _isStarter,
                     onChanged: (v) => setState(() => _isStarter = v ?? false),
                     title: Text(l.settingsStartersaftrek),
+                    subtitle: Text(l.firstLaunchStartersSubtitle),
                     contentPadding: EdgeInsets.zero,
                     controlAffinity: ListTileControlAffinity.leading,
                   ),

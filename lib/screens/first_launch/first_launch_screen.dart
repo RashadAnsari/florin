@@ -4,6 +4,7 @@ import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../services/db_location_service.dart';
+import '../../services/vat_service.dart';
 
 class FirstLaunchScreen extends ConsumerStatefulWidget {
   const FirstLaunchScreen({super.key});
@@ -22,6 +23,7 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
   bool _isStarter = false;
   String? _customPath;
   bool _saving = false;
+  String? _saveError;
 
   @override
   void dispose() {
@@ -41,7 +43,10 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() => _saving = true);
+    setState(() {
+      _saving = true;
+      _saveError = null;
+    });
     try {
       final prefs = ref.read(sharedPreferencesProvider);
       await prefs.setString('business_name', _name.text.trim());
@@ -61,9 +66,9 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
       await ref.read(dbPathNotifierProvider).setPath(path);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        setState(() {
+          _saveError = AppLocalizations.of(context)!.firstLaunchSaveError('$e');
+        });
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -151,17 +156,17 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
                     const SizedBox(height: 28),
 
                     Text(
-                      l.firstLaunchBusinessSection,
+                      l.settingsBusinessSection,
                       style: theme.textTheme.titleSmall,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _name,
                       decoration: InputDecoration(
-                        labelText: l.firstLaunchBusinessName,
+                        labelText: '${l.settingsBusinessName} *',
                       ),
                       validator: (v) => (v == null || v.trim().isEmpty)
-                          ? l.firstLaunchValidateBusinessName
+                          ? l.settingsValidateName
                           : null,
                     ),
                     const SizedBox(height: 12),
@@ -171,8 +176,16 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
                           child: TextFormField(
                             controller: _vat,
                             decoration: InputDecoration(
-                              labelText: l.firstLaunchVat,
+                              labelText: '${l.settingsVatNumber} *',
                             ),
+                            validator: (s) {
+                              final v = s?.trim() ?? '';
+                              if (v.isEmpty) return l.settingsValidateVat;
+                              if (!isValidDutchVatNumber(v)) {
+                                return l.settingsValidateVatFormat;
+                              }
+                              return null;
+                            },
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -180,8 +193,16 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
                           child: TextFormField(
                             controller: _kvk,
                             decoration: InputDecoration(
-                              labelText: l.firstLaunchKvk,
+                              labelText: '${l.settingsKvkNumber} *',
                             ),
+                            validator: (s) {
+                              final v = s?.trim() ?? '';
+                              if (v.isEmpty) return l.settingsValidateKvk;
+                              if (!isValidKvkNumber(v)) {
+                                return l.settingsValidateKvkFormat;
+                              }
+                              return null;
+                            },
                           ),
                         ),
                       ],
@@ -190,38 +211,67 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
                     TextFormField(
                       controller: _address,
                       decoration: InputDecoration(
-                        labelText: l.firstLaunchAddress,
+                        labelText: '${l.settingsBusinessAddress} *',
                       ),
-                      maxLines: 2,
+                      maxLines: 4,
+                      minLines: 3,
+                      validator: (s) => (s == null || s.trim().isEmpty)
+                          ? l.settingsValidateAddress
+                          : null,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _iban,
-                      decoration: InputDecoration(labelText: l.firstLaunchIban),
+                      decoration: InputDecoration(
+                        labelText: '${l.settingsIban} *',
+                      ),
+                      validator: (s) {
+                        final v = s?.trim() ?? '';
+                        if (v.isEmpty) return l.settingsValidateIban;
+                        if (!isValidIban(v)) {
+                          return l.settingsValidateIbanFormat;
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 16),
                     CheckboxListTile(
                       value: _isStarter,
                       onChanged: (v) => setState(() => _isStarter = v ?? false),
-                      title: Text(l.firstLaunchStarters),
+                      title: Text(l.settingsStartersaftrek),
                       subtitle: Text(l.firstLaunchStartersSubtitle),
+                      controlAffinity: ListTileControlAffinity.leading,
                       contentPadding: EdgeInsets.zero,
                     ),
+                    if (_saveError != null) ...[
+                      const SizedBox(height: 12),
+                      Text(
+                        _saveError!,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.error,
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 28),
                     SizedBox(
                       width: double.infinity,
-                      child: FilledButton(
+                      child: FilledButton.icon(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: theme.colorScheme.primaryContainer,
+                          foregroundColor: theme.colorScheme.onPrimaryContainer,
+                        ),
                         onPressed: _saving ? null : _save,
-                        child: _saving
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
+                        icon: _saving
+                            ? SizedBox(
+                                height: 18,
+                                width: 18,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: Colors.white,
+                                  color: theme.colorScheme.onPrimaryContainer,
                                 ),
                               )
-                            : Text(l.firstLaunchGetStarted),
+                            : const Icon(Icons.arrow_forward),
+                        label: Text(l.firstLaunchGetStarted),
                       ),
                     ),
                   ],

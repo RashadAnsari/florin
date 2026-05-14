@@ -1406,10 +1406,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get firstLaunchStartersSubtitle =>
-      'First 3 years of business — €2,123 additional deduction';
+      'First 3 years of business: €2,123 additional deduction';
 
   @override
   String get firstLaunchGetStarted => 'Get started';
+
+  @override
+  String firstLaunchSaveError(String error) {
+    return 'Could not finish setup: $error';
+  }
 
   @override
   String get confirmDeleteTitle => 'Delete';

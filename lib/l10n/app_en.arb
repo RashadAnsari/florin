@@ -521,8 +521,10 @@
   "firstLaunchAddress": "Business address",
   "firstLaunchIban": "IBAN",
   "firstLaunchStarters": "Eligible for startersaftrek",
-  "firstLaunchStartersSubtitle": "First 3 years of business — €2,123 additional deduction",
+  "firstLaunchStartersSubtitle": "First 3 years of business: €2,123 additional deduction",
   "firstLaunchGetStarted": "Get started",
+  "firstLaunchSaveError": "Could not finish setup: {error}",
+  "@firstLaunchSaveError": { "placeholders": { "error": { "type": "String" } } },
 
   "confirmDeleteTitle": "Delete",
   "confirmDeleteCancel": "Cancel",

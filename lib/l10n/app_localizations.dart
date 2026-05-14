@@ -2651,7 +2651,7 @@ abstract class AppLocalizations {
   /// No description provided for @firstLaunchStartersSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'First 3 years of business — €2,123 additional deduction'**
+  /// **'First 3 years of business: €2,123 additional deduction'**
   String get firstLaunchStartersSubtitle;
 
   /// No description provided for @firstLaunchGetStarted.
@@ -2659,6 +2659,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Get started'**
   String get firstLaunchGetStarted;
+
+  /// No description provided for @firstLaunchSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not finish setup: {error}'**
+  String firstLaunchSaveError(String error);
 
   /// No description provided for @confirmDeleteTitle.
   ///
