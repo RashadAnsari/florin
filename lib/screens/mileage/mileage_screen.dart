@@ -545,7 +545,7 @@ class _TripFormState extends ConsumerState<_TripForm> {
                         ? l.mileageValidatePurpose
                         : null,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   CheckboxListTile(
                     value: _routeDeviation,
                     onChanged: (v) =>

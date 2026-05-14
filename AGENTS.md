@@ -25,10 +25,27 @@ These rules are the source of truth for working in this repository. Always read 
 ## UI rules
 
 - **List screen structure**: list screens use a stable structure: controls/search area, `Divider(height: 1)`, then `Expanded(ListView)`. Do not put `ListView` directly as the page body when the screen has controls above it.
+- **Spacing scale**: use only values from this table. Never invent off-scale values such as `6`, `20`, or `28`.
+
+  | SizedBox | Use |
+  |---|---|
+  | `height: 2` | Gap between rows inside list tiles |
+  | `height: 4` | Tight inline nudge (icon, badge, dense layout) |
+  | `height: 8` | Between a section heading and its first field |
+  | `height: 12` | Between form fields within a section; between adjacent inline fields (horizontal) |
+  | `height: 16` | Between sub-groups within a section |
+  | `height: 24` | Between major sections on scrollable detail screens |
+  | `height: 32` | Between major sections on the dashboard |
+  | `height: 40` | Between top-level sections in Settings only |
+  | `width: 12` | Horizontal gap between adjacent inline form fields |
+  | `width: 16` | Horizontal gap between peer cards (KPI cards, etc.) |
+
+  Screen body padding: `EdgeInsets.all(24)` for all scrollable screens; `EdgeInsets.all(32)` for Settings only.
+
 - **Tile spacing**: use `SizedBox(height: 2)` between text rows inside list tiles.
 - **Field spacing**: keep standard vertical spacing between adjacent form fields. When removing fields, checkboxes, buttons, banners, or other UI elements, re-check the surrounding layout and restore the spacing between the remaining elements.
 - **Detail/form width**: detail panels and forms must fill all available width. Do not wrap form content in `ConstrainedBox`, `SizedBox(width:)`, or fixed-width containers unless there is a domain-specific layout requirement.
-- **Checkboxes**: use `controlAffinity: ListTileControlAffinity.leading` on `CheckboxListTile`. Put checkboxes on their own rows, not in a `Row` with form fields.
+- **Checkboxes**: use `controlAffinity: ListTileControlAffinity.leading` on `CheckboxListTile`. Put checkboxes on their own rows, not in a `Row` with form fields. Spacing rules: `height: 12` before the first checkbox when a field or container precedes it; `height: 8` when a section heading precedes it (heading already provides `bottom: 4–8` padding, but add explicit `height: 8` if the heading widget does not); no `SizedBox` between consecutive checkboxes; `height: 12` after the last checkbox before the next field.
 - **Dropdowns in flexible layouts**: add `isExpanded: true` to `DropdownButtonFormField` when it is inside `Expanded`, `Flexible`, or any flexible parent.
 - **maxLength fields**: add `counterText: ''` to `InputDecoration` when using `maxLength`.
 - **Destructive actions**: delete `IconButton` widgets must use `color: theme.colorScheme.error`.

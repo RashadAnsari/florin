@@ -653,7 +653,7 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
                   Text(
                     AppLocalizations.of(context)!.clientsWetDba,
                     style: theme.textTheme.titleSmall,
@@ -724,7 +724,7 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 12),
                   CheckboxListTile(
                     value: _contractSigned,
                     onChanged: (v) =>
@@ -735,7 +735,6 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                     controlAffinity: ListTileControlAffinity.leading,
                     contentPadding: EdgeInsets.zero,
                   ),
-                  const SizedBox(height: 12),
                   CheckboxListTile(
                     value: _isActive,
                     onChanged: (v) => setState(() => _isActive = v ?? true),

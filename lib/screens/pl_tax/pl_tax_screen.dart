@@ -289,9 +289,10 @@ class _PlTaxScreenState extends ConsumerState<PlTaxScreen> {
             ),
             style: Theme.of(context).textTheme.bodySmall,
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
 
           _head(l.plTaxSettingsSection, context),
+          const SizedBox(height: 8),
           CheckboxListTile(
             value: _claimZelfs,
             onChanged: (v) => setState(() => _claimZelfs = v ?? true),

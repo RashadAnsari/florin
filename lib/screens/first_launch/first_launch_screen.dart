@@ -156,7 +156,7 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 24),
 
                     Text(
                       l.settingsBusinessSection,
@@ -255,7 +255,7 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
                         ),
                       ),
                     ],
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 24),
                     SizedBox(
                       width: double.infinity,
                       child: FilledButton.icon(

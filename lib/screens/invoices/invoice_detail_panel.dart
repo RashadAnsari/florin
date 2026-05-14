@@ -659,7 +659,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                       contentPadding: EdgeInsets.zero,
                       controlAffinity: ListTileControlAffinity.leading,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     // ── Line items ─────────────────────────────────────────────
                     Text(
                       AppLocalizations.of(context)!.invoiceFieldLines,
@@ -678,7 +678,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                       ),
                       onPressed: _addLine,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     // ── Totals ─────────────────────────────────────────────────
                     Align(
                       alignment: Alignment.centerRight,
@@ -711,7 +711,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     TextFormField(
                       controller: _notes,
                       decoration: InputDecoration(

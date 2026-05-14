@@ -550,7 +550,7 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
             ),
             const SizedBox(),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           FilledButton.icon(
             onPressed: _save,
             style: FilledButton.styleFrom(

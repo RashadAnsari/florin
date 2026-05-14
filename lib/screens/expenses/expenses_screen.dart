@@ -665,7 +665,7 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
                   Container(
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
                     decoration: BoxDecoration(
@@ -744,7 +744,7 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 12),
                         CheckboxListTile(
                           value: _vatReclaimable,
                           onChanged: (v) {

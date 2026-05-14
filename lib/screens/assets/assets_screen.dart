@@ -479,7 +479,7 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   CheckboxListTile(
                     value: _kiaEligible,
                     onChanged: (v) =>
