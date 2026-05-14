@@ -105,23 +105,27 @@ class _SummaryBar extends StatelessWidget {
     final theme = Theme.of(context);
     final l = AppLocalizations.of(context)!;
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            _stat(l.mileageBusiness, '$businessKm ${l.mileageUnitKm}', theme),
-            const SizedBox(width: 32),
-            _stat(l.mileageTotal, '$totalKm ${l.mileageUnitKm}', theme),
-            const SizedBox(width: 32),
-            _stat(
-              l.mileageAllowance(ratePerKm.toStringAsFixed(2)),
-              AppFormat.cents(allowance),
-              theme,
-              valueColor: AppColors.income,
-            ),
-          ],
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              _stat(l.mileageBusiness, '$businessKm ${l.mileageUnitKm}', theme),
+              const SizedBox(width: 32),
+              _stat(l.mileageTotal, '$totalKm ${l.mileageUnitKm}', theme),
+              const SizedBox(width: 32),
+              _stat(
+                l.mileageAllowance(ratePerKm.toStringAsFixed(2)),
+                AppFormat.cents(allowance),
+                theme,
+                valueColor: AppColors.income,
+              ),
+            ],
+          ),
         ),
       ),
     );

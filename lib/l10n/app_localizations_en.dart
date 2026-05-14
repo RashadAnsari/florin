@@ -830,21 +830,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assetsDepreciationThisYear => 'Depreciation this year';
 
   @override
-  String get assetsFieldName => 'Asset name';
+  String get assetsFieldName => 'Asset name *';
 
   @override
-  String get assetsFieldCost => 'Cost excl. VAT';
+  String get assetsFieldCost => 'Cost excl. VAT *';
 
   @override
-  String get assetsFieldPurchaseDate => 'Purchase date';
+  String get assetsFieldPurchaseDate => 'Purchase date *';
 
   @override
   String assetsFieldBusinessUse(int pct) {
-    return 'Business use: $pct%';
+    return 'Business use: $pct% *';
   }
 
   @override
-  String get assetsFieldUsefulLife => 'Useful life';
+  String get assetsFieldUsefulLife => 'Useful life *';
 
   @override
   String get assetsFieldUsefulLifeUnit => 'yrs';
@@ -859,7 +859,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assetsValidateCost => 'Enter the cost excluding VAT';
 
   @override
-  String get assetsFieldKia => 'KIA-aanspraak';
+  String get assetsFieldKia => 'KIA eligible';
+
+  @override
+  String get assetsKiaBadge => 'KIA';
 
   @override
   String get assetsFieldEiaMia => 'EIA / MIA';
@@ -875,6 +878,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assetsFieldDisposalProceeds => 'Proceeds excl. VAT';
+
+  @override
+  String get assetsClearDisposalDate => 'Clear disposal date';
+
+  @override
+  String get assetsDeleteTitle => 'Delete asset';
+
+  @override
+  String assetsDeleteMessage(String name) {
+    return 'Are you sure you want to delete \"$name\"?';
+  }
 
   @override
   String get assetsNewAsset => 'New asset';

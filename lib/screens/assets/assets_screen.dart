@@ -8,14 +8,17 @@ import '../../providers/providers.dart';
 import '../../services/tax_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/amount_field.dart';
+import '../../widgets/confirmation_dialog.dart';
 
 class AssetsScreen extends ConsumerWidget {
   const AssetsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context)!;
     final year = ref.watch(fiscalYearProvider);
-    final assets = ref.watch(assetsStreamProvider(year)).valueOrNull ?? [];
+    final assetsAsync = ref.watch(assetsStreamProvider(year));
+    final assets = assetsAsync.valueOrNull ?? [];
     final paramsAsync = ref.watch(taxParamsStreamProvider(year));
     final params = paramsAsync.valueOrNull;
 
@@ -40,10 +43,11 @@ class AssetsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.assetsTitle),
+        title: Text(l.assetsTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
+            tooltip: l.assetsNewAsset,
             onPressed: () => context.push('/assets/new'),
           ),
         ],
@@ -55,12 +59,17 @@ class AssetsScreen extends ConsumerWidget {
             kiaDeduction: kiaDeduction,
             totalDepreciation: totalDepreciation,
           ),
+          const Divider(height: 1),
           Expanded(
-            child: _AssetList(
-              assets: assets,
-              year: year,
-              service: service,
-              onTap: (a) => context.push('/assets/${a.id}', extra: a),
+            child: assetsAsync.when(
+              data: (data) => _AssetList(
+                assets: data,
+                year: year,
+                service: service,
+                onTap: (a) => context.push('/assets/${a.id}', extra: a),
+              ),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stackTrace) => Center(child: Text('$error')),
             ),
           ),
         ],
@@ -82,31 +91,35 @@ class _SummaryBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-      child: Row(
-        children: [
-          _stat(
-            AppLocalizations.of(context)!.assetsKiaInvestments,
-            AppFormat.cents(kiaTotal),
-            theme,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              _stat(l.assetsKiaInvestments, AppFormat.cents(kiaTotal), theme),
+              const SizedBox(width: 32),
+              _stat(
+                l.assetsKiaDeduction,
+                AppFormat.cents(kiaDeduction),
+                theme,
+                valueColor: AppColors.income,
+              ),
+              const SizedBox(width: 32),
+              _stat(
+                l.assetsDepreciationThisYear,
+                AppFormat.cents(totalDepreciation),
+                theme,
+              ),
+            ],
           ),
-          const SizedBox(width: 32),
-          _stat(
-            AppLocalizations.of(context)!.assetsKiaDeduction,
-            AppFormat.cents(kiaDeduction),
-            theme,
-            valueColor: AppColors.income,
-          ),
-          const SizedBox(width: 32),
-          _stat(
-            AppLocalizations.of(context)!.assetsDepreciationThisYear,
-            AppFormat.cents(totalDepreciation),
-            theme,
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -148,8 +161,10 @@ class _AssetList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     if (assets.isEmpty) {
-      return Center(child: Text(AppLocalizations.of(context)!.assetsNone));
+      return Center(child: Text(l.assetsNone));
     }
     return ListView.builder(
       itemCount: assets.length,
@@ -167,15 +182,27 @@ class _AssetList extends StatelessWidget {
           title: Text(
             a.assetName,
             style: disposed
-                ? const TextStyle(
+                ? theme.textTheme.bodyLarge?.copyWith(
                     decoration: TextDecoration.lineThrough,
-                    color: Colors.grey,
+                    color: theme.colorScheme.outline,
                   )
                 : null,
           ),
-          subtitle: Text(
-            '${AppFormat.cents(a.costExclVat)}  ·  ${AppLocalizations.of(context)!.assetsYears(a.usefulLifeYears)}',
-            style: Theme.of(context).textTheme.bodySmall,
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppFormat.cents(a.costExclVat),
+                style: theme.textTheme.bodySmall,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                l.assetsYears(a.usefulLifeYears),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.outline,
+                ),
+              ),
+            ],
           ),
           trailing: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -186,9 +213,9 @@ class _AssetList extends StatelessWidget {
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
               if (a.kiaEligible)
-                const Text(
-                  'KIA',
-                  style: TextStyle(color: AppColors.income, fontSize: 11),
+                Text(
+                  l.assetsKiaBadge,
+                  style: const TextStyle(color: AppColors.income, fontSize: 11),
                 ),
             ],
           ),
@@ -202,12 +229,14 @@ class _AssetList extends StatelessWidget {
 class _AssetForm extends ConsumerStatefulWidget {
   final FixedAsset? asset;
   final int year;
+  final VoidCallback? onBack;
   final VoidCallback onSaved;
   final VoidCallback onDeleted;
 
   const _AssetForm({
     required this.asset,
     required this.year,
+    this.onBack,
     required this.onSaved,
     required this.onDeleted,
   });
@@ -278,216 +307,230 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
   }
 
   Future<void> _delete() async {
-    final dao = ref.read(assetDaoProvider);
-    await dao.deleteAsset(widget.asset!.id);
-    widget.onDeleted();
+    if (widget.asset == null) return;
+    final l = AppLocalizations.of(context)!;
+    final confirmed = await showConfirmationDialog(
+      context,
+      title: l.assetsDeleteTitle,
+      message: l.assetsDeleteMessage(widget.asset!.assetName),
+      isDestructive: true,
+    );
+    if (!confirmed || !mounted) return;
+    await ref.read(assetDaoProvider).deleteAsset(widget.asset!.id);
+    if (mounted) widget.onDeleted();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 600),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    final l = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isNew = widget.asset == null;
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 6, 8, 6),
+          child: Row(
             children: [
-              Text(
-                widget.asset == null
-                    ? AppLocalizations.of(context)!.assetsNewAsset
-                    : AppLocalizations.of(context)!.assetsEditAsset,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _name,
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.assetsFieldName,
+              if (widget.onBack != null)
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: widget.onBack,
                 ),
-                validator: (v) => (v == null || v.trim().isEmpty)
-                    ? AppLocalizations.of(context)!.assetsValidateName
-                    : null,
-              ),
-              const SizedBox(height: 12),
-              AmountField(
-                key: ValueKey('cost_${widget.asset?.id}'),
-                label: AppLocalizations.of(context)!.assetsFieldCost,
-                initialValueCents: _costExclVat,
-                onChanged: (v) => setState(() => _costExclVat = v),
-                required: true,
-                validatorMessage: AppLocalizations.of(
-                  context,
-                )!.assetsValidateCost,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                key: ValueKey(_purchaseDate.toString()),
-                initialValue: AppFormat.date(_purchaseDate),
-                readOnly: true,
-                strutStyle: StrutStyle.disabled,
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(
-                    context,
-                  )!.assetsFieldPurchaseDate,
+              Expanded(
+                child: Text(
+                  isNew ? l.assetsNewAsset : _name.text,
+                  style: theme.textTheme.titleMedium,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                onTap: () async {
-                  final d = await showDatePicker(
-                    context: context,
-                    initialDate: _purchaseDate,
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(widget.year, 12, 31),
-                  );
-                  if (d != null) setState(() => _purchaseDate = d);
-                },
               ),
-              const SizedBox(height: 12),
-              Row(
+              if (!isNew)
+                IconButton(
+                  icon: const Icon(Icons.delete_outline),
+                  tooltip: l.actionDelete,
+                  color: theme.colorScheme.error,
+                  onPressed: _delete,
+                ),
+              FilledButton.icon(
+                onPressed: _save,
+                style: FilledButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primaryContainer,
+                  foregroundColor: theme.colorScheme.onPrimaryContainer,
+                ),
+                icon: const Icon(Icons.save_outlined, size: 18),
+                label: Text(l.actionSave),
+              ),
+              const SizedBox(width: 8),
+            ],
+          ),
+        ),
+        const Divider(height: 1),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          AppLocalizations.of(context)!.assetsFieldBusinessUse(
-                            (_businessUsePct * 100).round(),
+                  TextFormField(
+                    controller: _name,
+                    decoration: InputDecoration(labelText: l.assetsFieldName),
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? l.assetsValidateName
+                        : null,
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: AmountField(
+                          key: ValueKey('cost_${widget.asset?.id}'),
+                          label: l.assetsFieldCost,
+                          initialValueCents: _costExclVat,
+                          onChanged: (v) => setState(() => _costExclVat = v),
+                          required: true,
+                          validatorMessage: l.assetsValidateCost,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextFormField(
+                          key: ValueKey(_purchaseDate.toString()),
+                          initialValue: AppFormat.date(_purchaseDate),
+                          readOnly: true,
+                          strutStyle: StrutStyle.disabled,
+                          decoration: InputDecoration(
+                            labelText: l.assetsFieldPurchaseDate,
                           ),
-                          style: Theme.of(context).textTheme.bodySmall,
+                          onTap: () async {
+                            final d = await showDatePicker(
+                              context: context,
+                              initialDate: _purchaseDate,
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(widget.year, 12, 31),
+                            );
+                            if (d != null) setState(() => _purchaseDate = d);
+                          },
                         ),
-                        Slider(
-                          value: _businessUsePct,
-                          min: 0,
-                          max: 1,
-                          divisions: 20,
-                          label: '${(_businessUsePct * 100).round()}%',
-                          onChanged: (v) => setState(() => _businessUsePct = v),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextFormField(
+                          initialValue: _usefulLifeYears.toString(),
+                          decoration: InputDecoration(
+                            labelText: l.assetsFieldUsefulLife,
+                            suffixText: l.assetsFieldUsefulLifeUnit,
+                          ),
+                          keyboardType: TextInputType.number,
+                          onChanged: (v) => setState(
+                            () => _usefulLifeYears = int.tryParse(v) ?? 5,
+                          ),
+                          validator: (v) {
+                            final y = int.tryParse(v ?? '');
+                            if (y == null || y < 1) {
+                              return l.assetsFieldUsefulLifeMin;
+                            }
+                            return null;
+                          },
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  SizedBox(
-                    width: 120,
-                    child: TextFormField(
-                      initialValue: _usefulLifeYears.toString(),
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(
-                          context,
-                        )!.assetsFieldUsefulLife,
-                        suffixText: AppLocalizations.of(
-                          context,
-                        )!.assetsFieldUsefulLifeUnit,
                       ),
-                      keyboardType: TextInputType.number,
-                      onChanged: (v) => setState(
-                        () => _usefulLifeYears = int.tryParse(v) ?? 5,
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    l.assetsFieldBusinessUse((_businessUsePct * 100).round()),
+                    style: theme.textTheme.bodySmall,
+                  ),
+                  Slider(
+                    value: _businessUsePct,
+                    min: 0,
+                    max: 1,
+                    divisions: 20,
+                    label: '${(_businessUsePct * 100).round()}%',
+                    onChanged: (v) => setState(() => _businessUsePct = v),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CheckboxListTile(
+                          value: _kiaEligible,
+                          onChanged: (v) =>
+                              setState(() => _kiaEligible = v ?? _kiaEligible),
+                          title: Text(l.assetsFieldKia),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
+                        ),
                       ),
-                      validator: (v) {
-                        final y = int.tryParse(v ?? '');
-                        if (y == null || y < 1) {
-                          return AppLocalizations.of(
-                            context,
-                          )!.assetsFieldUsefulLifeMin;
-                        }
-                        return null;
-                      },
-                    ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: CheckboxListTile(
+                          value: _eiaOrMia,
+                          onChanged: (v) =>
+                              setState(() => _eiaOrMia = v ?? _eiaOrMia),
+                          title: Text(l.assetsFieldEiaMia),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              CheckboxListTile(
-                value: _kiaEligible,
-                onChanged: (v) =>
-                    setState(() => _kiaEligible = v ?? _kiaEligible),
-                title: Text(AppLocalizations.of(context)!.assetsFieldKia),
-                contentPadding: EdgeInsets.zero,
-              ),
-              CheckboxListTile(
-                value: _eiaOrMia,
-                onChanged: (v) => setState(() => _eiaOrMia = v ?? _eiaOrMia),
-                title: Text(AppLocalizations.of(context)!.assetsFieldEiaMia),
-                contentPadding: EdgeInsets.zero,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _notes,
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.assetsFieldNotes,
-                ),
-                maxLines: 2,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                AppLocalizations.of(context)!.assetsDisposal,
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                key: ValueKey(_disposalDate?.toString() ?? 'null'),
-                initialValue: _disposalDate != null
-                    ? AppFormat.date(_disposalDate!)
-                    : '-',
-                readOnly: true,
-                strutStyle: StrutStyle.disabled,
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(
-                    context,
-                  )!.assetsFieldDisposalDate,
-                ),
-                onTap: () async {
-                  final d = await showDatePicker(
-                    context: context,
-                    initialDate: _disposalDate ?? DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2099),
-                  );
-                  setState(() => _disposalDate = d);
-                },
-              ),
-              if (_disposalDate != null) ...[
-                const SizedBox(height: 12),
-                AmountField(
-                  key: ValueKey('proceeds_${widget.asset?.id}'),
-                  label: AppLocalizations.of(
-                    context,
-                  )!.assetsFieldDisposalProceeds,
-                  initialValueCents: _disposalProceeds,
-                  onChanged: (v) => setState(() => _disposalProceeds = v),
-                ),
-              ],
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  FilledButton.icon(
-                    onPressed: _save,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: Theme.of(
-                        context,
-                      ).colorScheme.primaryContainer,
-                      foregroundColor: Theme.of(
-                        context,
-                      ).colorScheme.onPrimaryContainer,
-                    ),
-                    icon: const Icon(Icons.save_outlined, size: 18),
-                    label: Text(AppLocalizations.of(context)!.actionSave),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _notes,
+                    decoration: InputDecoration(labelText: l.assetsFieldNotes),
+                    maxLines: 2,
                   ),
-                  if (widget.asset != null) ...[
-                    const SizedBox(width: 12),
-                    IconButton(
-                      icon: const Icon(Icons.delete_outline),
-                      tooltip: AppLocalizations.of(context)!.actionDelete,
-                      color: Theme.of(context).colorScheme.error,
-                      onPressed: _delete,
+                  const SizedBox(height: 16),
+                  Text(l.assetsDisposal, style: theme.textTheme.titleSmall),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    key: ValueKey(_disposalDate?.toString() ?? 'null'),
+                    initialValue: _disposalDate != null
+                        ? AppFormat.date(_disposalDate!)
+                        : '',
+                    readOnly: true,
+                    strutStyle: StrutStyle.disabled,
+                    decoration: InputDecoration(
+                      labelText: l.assetsFieldDisposalDate,
+                      suffixIcon: _disposalDate == null
+                          ? null
+                          : IconButton(
+                              icon: const Icon(Icons.clear),
+                              tooltip: l.assetsClearDisposalDate,
+                              onPressed: () => setState(() {
+                                _disposalDate = null;
+                                _disposalProceeds = 0;
+                              }),
+                            ),
+                    ),
+                    onTap: () async {
+                      final d = await showDatePicker(
+                        context: context,
+                        initialDate: _disposalDate ?? _purchaseDate,
+                        firstDate: _purchaseDate,
+                        lastDate: DateTime(2099),
+                      );
+                      if (d != null) setState(() => _disposalDate = d);
+                    },
+                  ),
+                  if (_disposalDate != null) ...[
+                    const SizedBox(height: 12),
+                    AmountField(
+                      key: ValueKey('proceeds_${widget.asset?.id}'),
+                      label: l.assetsFieldDisposalProceeds,
+                      initialValueCents: _disposalProceeds,
+                      onChanged: (v) => setState(() => _disposalProceeds = v),
                     ),
                   ],
                 ],
               ),
-            ],
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -499,15 +542,12 @@ class AssetDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context)!;
     final year = ref.watch(fiscalYearProvider);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(asset == null ? l.assetsNewAsset : l.assetsEditAsset),
-      ),
       body: _AssetForm(
         asset: asset,
         year: asset?.fiscalYear ?? year,
+        onBack: () => context.pop(),
         onSaved: () => context.pop(),
         onDeleted: () => context.pop(),
       ),

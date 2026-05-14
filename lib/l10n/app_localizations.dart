@@ -1643,31 +1643,31 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldName.
   ///
   /// In en, this message translates to:
-  /// **'Asset name'**
+  /// **'Asset name *'**
   String get assetsFieldName;
 
   /// No description provided for @assetsFieldCost.
   ///
   /// In en, this message translates to:
-  /// **'Cost excl. VAT'**
+  /// **'Cost excl. VAT *'**
   String get assetsFieldCost;
 
   /// No description provided for @assetsFieldPurchaseDate.
   ///
   /// In en, this message translates to:
-  /// **'Purchase date'**
+  /// **'Purchase date *'**
   String get assetsFieldPurchaseDate;
 
   /// No description provided for @assetsFieldBusinessUse.
   ///
   /// In en, this message translates to:
-  /// **'Business use: {pct}%'**
+  /// **'Business use: {pct}% *'**
   String assetsFieldBusinessUse(int pct);
 
   /// No description provided for @assetsFieldUsefulLife.
   ///
   /// In en, this message translates to:
-  /// **'Useful life'**
+  /// **'Useful life *'**
   String get assetsFieldUsefulLife;
 
   /// No description provided for @assetsFieldUsefulLifeUnit.
@@ -1697,8 +1697,14 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldKia.
   ///
   /// In en, this message translates to:
-  /// **'KIA-aanspraak'**
+  /// **'KIA eligible'**
   String get assetsFieldKia;
+
+  /// No description provided for @assetsKiaBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'KIA'**
+  String get assetsKiaBadge;
 
   /// No description provided for @assetsFieldEiaMia.
   ///
@@ -1729,6 +1735,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Proceeds excl. VAT'**
   String get assetsFieldDisposalProceeds;
+
+  /// No description provided for @assetsClearDisposalDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear disposal date'**
+  String get assetsClearDisposalDate;
+
+  /// No description provided for @assetsDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete asset'**
+  String get assetsDeleteTitle;
+
+  /// No description provided for @assetsDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{name}\"?'**
+  String assetsDeleteMessage(String name);
 
   /// No description provided for @assetsNewAsset.
   ///

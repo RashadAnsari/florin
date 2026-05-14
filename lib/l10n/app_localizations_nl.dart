@@ -837,21 +837,21 @@ class AppLocalizationsNl extends AppLocalizations {
   String get assetsDepreciationThisYear => 'Afschrijving dit jaar';
 
   @override
-  String get assetsFieldName => 'Naam activum';
+  String get assetsFieldName => 'Naam activum *';
 
   @override
-  String get assetsFieldCost => 'Kosten excl. BTW';
+  String get assetsFieldCost => 'Kosten excl. BTW *';
 
   @override
-  String get assetsFieldPurchaseDate => 'Aankoopdatum';
+  String get assetsFieldPurchaseDate => 'Aankoopdatum *';
 
   @override
   String assetsFieldBusinessUse(int pct) {
-    return 'Zakelijk gebruik: $pct%';
+    return 'Zakelijk gebruik: $pct% *';
   }
 
   @override
-  String get assetsFieldUsefulLife => 'Levensduur';
+  String get assetsFieldUsefulLife => 'Levensduur *';
 
   @override
   String get assetsFieldUsefulLifeUnit => 'jaar';
@@ -869,6 +869,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get assetsFieldKia => 'KIA-aanspraak';
 
   @override
+  String get assetsKiaBadge => 'KIA';
+
+  @override
   String get assetsFieldEiaMia => 'EIA / MIA';
 
   @override
@@ -882,6 +885,17 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get assetsFieldDisposalProceeds => 'Opbrengst excl. BTW';
+
+  @override
+  String get assetsClearDisposalDate => 'Vervreemdingsdatum wissen';
+
+  @override
+  String get assetsDeleteTitle => 'Activum verwijderen';
+
+  @override
+  String assetsDeleteMessage(String name) {
+    return 'Weet je zeker dat je \"$name\" wilt verwijderen?';
+  }
 
   @override
   String get assetsNewAsset => 'Nieuw activum';

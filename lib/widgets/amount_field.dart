@@ -28,7 +28,7 @@ class AmountField extends StatefulWidget {
 class _AmountFieldState extends State<AmountField> {
   late final TextEditingController _controller;
   late final FocusNode _focusNode;
-  static final _fmt = NumberFormat.currency(locale: 'nl_NL', symbol: '€');
+  var _normalizationScheduled = false;
 
   @override
   void initState() {
@@ -48,7 +48,27 @@ class _AmountFieldState extends State<AmountField> {
 
   String _display(int? cents) {
     if (cents == null) return '';
-    return _fmt.format(cents / 100);
+    final formatter = NumberFormat.decimalPattern('nl_NL')
+      ..minimumFractionDigits = 2
+      ..maximumFractionDigits = 2;
+    return formatter.format(cents / 100);
+  }
+
+  void _normalizeDisplayedTextAfterFrame() {
+    if (_normalizationScheduled ||
+        _focusNode.hasFocus ||
+        !_controller.text.contains('€')) {
+      return;
+    }
+    _normalizationScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _normalizationScheduled = false;
+      if (!mounted || _focusNode.hasFocus) return;
+      final cents = _parse(_controller.text);
+      if (cents != null) {
+        _controller.text = _display(cents);
+      }
+    });
   }
 
   int? _parse(String text) {
@@ -83,11 +103,12 @@ class _AmountFieldState extends State<AmountField> {
 
   @override
   Widget build(BuildContext context) {
+    _normalizeDisplayedTextAfterFrame();
     return TextFormField(
       controller: _controller,
       focusNode: _focusNode,
       readOnly: widget.readOnly,
-      textAlign: TextAlign.right,
+      textAlign: TextAlign.left,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       decoration: InputDecoration(
         labelText: widget.label,
