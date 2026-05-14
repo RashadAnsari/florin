@@ -99,6 +99,11 @@ final invoiceLinesStreamProvider =
       return ref.watch(invoiceDaoProvider).watchLinesForInvoice(invoiceId);
     });
 
+final invoiceLinesByYearStreamProvider =
+    StreamProvider.family<List<InvoiceLine>, int>((ref, year) {
+      return ref.watch(invoiceDaoProvider).watchLinesByYear(year);
+    });
+
 final hourEntriesStreamProvider = StreamProvider.family<List<HourEntry>, int>((
   ref,
   year,

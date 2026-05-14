@@ -163,7 +163,7 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
             _row(l.pensionAowFranchise, AppFormat.cents(params.aowFranchise)),
             _row(
               l.pensionPensioengrondslag,
-              AppFormat.cents(jaarruimteResult.pensioengrondsdag),
+              AppFormat.cents(jaarruimteResult.pensioengrondslag),
               bold: true,
             ),
             const SizedBox(height: 8),

@@ -36,8 +36,11 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
   }
 
   Future<void> _pickFolder() async {
+    final l = AppLocalizations.of(context)!;
     final service = DbLocationService(ref.read(sharedPreferencesProvider));
-    final path = await service.pickAndSetLocation();
+    final path = await service.pickAndSetLocation(
+      dialogTitle: l.dbLocationChooseFolderDialog,
+    );
     if (path != null) setState(() => _customPath = path);
   }
 

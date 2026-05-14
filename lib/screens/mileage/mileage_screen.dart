@@ -78,7 +78,7 @@ class MileageScreen extends ConsumerWidget {
                 onTap: (t) => context.push('/mileage/${t.id}', extra: t),
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text('$e')),
+              error: (e, _) => Center(child: Text(l.genericLoadError('$e'))),
             ),
           ),
         ],

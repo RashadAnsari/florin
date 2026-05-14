@@ -31,9 +31,9 @@ class DbLocationService {
     return path;
   }
 
-  Future<String?> pickAndSetLocation() async {
+  Future<String?> pickAndSetLocation({required String dialogTitle}) async {
     final dir = await FilePicker.platform.getDirectoryPath(
-      dialogTitle: 'Choose folder to store Florin database',
+      dialogTitle: dialogTitle,
     );
     if (dir == null) return null;
     final path = p.join(dir, _dbFileName);

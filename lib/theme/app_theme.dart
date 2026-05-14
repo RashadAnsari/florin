@@ -31,6 +31,7 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.navy,
         primary: AppColors.navy,
+        onPrimary: Colors.white,
         secondary: AppColors.teal,
         surface: AppColors.surfaceLight,
         brightness: Brightness.light,
@@ -55,6 +56,7 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.navy,
         primary: AppColors.teal,
+        onPrimary: Colors.white,
         secondary: AppColors.navy,
         surface: AppColors.surfaceDark,
         brightness: Brightness.dark,
@@ -72,12 +74,6 @@ class AppTheme {
       ),
     );
   }
-
-  static TextStyle get wordmark => GoogleFonts.sourceSerif4(
-    fontSize: 22,
-    fontWeight: FontWeight.w700,
-    color: Colors.white,
-  );
 }
 
 class AppFormat {

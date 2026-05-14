@@ -29,19 +29,24 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
     final theme = Theme.of(context);
     final year = ref.watch(fiscalYearProvider);
     final invoicesAsync = ref.watch(invoicesStreamProvider(year));
+    final invoiceLinesAsync = ref.watch(invoiceLinesByYearStreamProvider(year));
     final expensesAsync = ref.watch(expensesStreamProvider(year));
     final paramsAsync = ref.watch(taxParamsStreamProvider(year));
     final prefs = ref.read(sharedPreferencesProvider);
 
     final invoices = invoicesAsync.valueOrNull ?? [];
+    final invoiceLines = invoiceLinesAsync.valueOrNull ?? [];
     final expenses = expensesAsync.valueOrNull ?? [];
     final params = paramsAsync.valueOrNull;
     final isLoading =
         invoicesAsync.isLoading ||
+        invoiceLinesAsync.isLoading ||
         expensesAsync.isLoading ||
         paramsAsync.isLoading;
     final loadError = invoicesAsync.hasError
         ? invoicesAsync.error
+        : invoiceLinesAsync.hasError
+        ? invoiceLinesAsync.error
         : expensesAsync.hasError
         ? expensesAsync.error
         : paramsAsync.hasError
@@ -50,6 +55,7 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
     final result = params != null
         ? _service.calculateQuarter(
             allYearInvoices: invoices,
+            allYearInvoiceLines: invoiceLines,
             allYearExpenses: expenses,
             fiscalYear: year,
             quarter: _quarter,

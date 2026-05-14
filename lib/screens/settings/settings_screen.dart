@@ -8,6 +8,7 @@ import '../../providers/providers.dart';
 import '../../services/csv_export_service.dart';
 import '../../services/db_location_service.dart';
 import '../../services/vat_service.dart';
+import '../../widgets/amount_field.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -61,24 +62,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await prefs.setString('business_address', _address.text.trim());
     await prefs.setString('business_iban', _iban.text.trim());
     await prefs.setBool('is_starter', _isStarter);
-    if (mounted) {
-      final l = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l.settingsSaved)));
-    }
   }
 
   Future<void> _moveDb() async {
+    final l = AppLocalizations.of(context)!;
     final service = DbLocationService(ref.read(sharedPreferencesProvider));
-    final result = await service.pickAndSetLocation();
+    final result = await service.pickAndSetLocation(
+      dialogTitle: l.dbLocationChooseFolderDialog,
+    );
     if (result != null && mounted) {
       await ref.read(dbPathNotifierProvider).setPath(result);
-      if (!mounted) return;
-      final l = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l.settingsDatabaseMoved(result))));
     }
   }
 
@@ -88,12 +81,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     setState(() => _exportRunning = true);
     try {
       final dir = await CsvExportService(db).exportYear(year);
-      if (dir != null && mounted) {
-        final l = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(l.settingsExported(dir))));
-      }
+      if (dir == null) return;
     } finally {
       if (mounted) setState(() => _exportRunning = false);
     }
@@ -303,31 +291,27 @@ class _TaxParamsEditor extends ConsumerStatefulWidget {
 
 class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _zelfs;
-  late TextEditingController _starters;
+  late int _zelfs;
+  late int _starters;
   late TextEditingController _mkbPct;
   late TextEditingController _b1Rate;
-  late TextEditingController _b1Thresh;
+  late int _b1Thresh;
   late TextEditingController _b2Rate;
-  late TextEditingController _b2Thresh;
+  late int _b2Thresh;
   late TextEditingController _b3Rate;
-  late TextEditingController _algHeff;
-  late TextEditingController _arbeids;
+  late int _algHeff;
+  late int _arbeids;
   late TextEditingController _zvwRate;
-  late TextEditingController _zvwMax;
+  late int _zvwMax;
   late TextEditingController _mileageRate;
-  late TextEditingController _korThresh;
+  late int _korThresh;
 
   @override
   void initState() {
     super.initState();
     final p = widget.params;
-    _zelfs = TextEditingController(
-      text: p == null ? '' : (-p.zelfstandigenaftrek / 100).toStringAsFixed(2),
-    );
-    _starters = TextEditingController(
-      text: p == null ? '' : (-p.startersaftrek / 100).toStringAsFixed(2),
-    );
+    _zelfs = p == null ? 0 : -p.zelfstandigenaftrek;
+    _starters = p == null ? 0 : -p.startersaftrek;
     _mkbPct = TextEditingController(
       text: p == null
           ? ''
@@ -336,55 +320,35 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
     _b1Rate = TextEditingController(
       text: p == null ? '' : (p.bracket1Rate * 100).toStringAsFixed(2),
     );
-    _b1Thresh = TextEditingController(
-      text: p == null ? '' : (p.bracket1Threshold / 100).toStringAsFixed(2),
-    );
+    _b1Thresh = p?.bracket1Threshold ?? 0;
     _b2Rate = TextEditingController(
       text: p == null ? '' : (p.bracket2Rate * 100).toStringAsFixed(2),
     );
-    _b2Thresh = TextEditingController(
-      text: p == null ? '' : (p.bracket2Threshold / 100).toStringAsFixed(2),
-    );
+    _b2Thresh = p?.bracket2Threshold ?? 0;
     _b3Rate = TextEditingController(
       text: p == null ? '' : (p.bracket3Rate * 100).toStringAsFixed(2),
     );
-    _algHeff = TextEditingController(
-      text: p == null ? '' : (p.algHeffingskortingMax / 100).toStringAsFixed(2),
-    );
-    _arbeids = TextEditingController(
-      text: p == null ? '' : (p.arbeidskortingMax / 100).toStringAsFixed(2),
-    );
+    _algHeff = p?.algHeffingskortingMax ?? 0;
+    _arbeids = p?.arbeidskortingMax ?? 0;
     _zvwRate = TextEditingController(
       text: p == null ? '' : (p.zvwRate * 100).toStringAsFixed(2),
     );
-    _zvwMax = TextEditingController(
-      text: p == null ? '' : (p.zvwMax / 100).toStringAsFixed(2),
-    );
+    _zvwMax = p?.zvwMax ?? 0;
     _mileageRate = TextEditingController(
       text: p == null ? '' : p.mileageRatePerKm.toStringAsFixed(2),
     );
-    _korThresh = TextEditingController(
-      text: p == null ? '' : (p.korThreshold / 100).toStringAsFixed(2),
-    );
+    _korThresh = p?.korThreshold ?? 0;
   }
 
   @override
   void dispose() {
     for (final c in [
-      _zelfs,
-      _starters,
       _mkbPct,
       _b1Rate,
-      _b1Thresh,
       _b2Rate,
-      _b2Thresh,
       _b3Rate,
-      _algHeff,
-      _arbeids,
       _zvwRate,
-      _zvwMax,
       _mileageRate,
-      _korThresh,
     ]) {
       c.dispose();
     }
@@ -393,9 +357,6 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
 
   double _pct(TextEditingController c) =>
       (double.tryParse(c.text.replaceAll(',', '.')) ?? 0) / 100;
-  int _euros(TextEditingController c) =>
-      ((double.tryParse(c.text.replaceAll(',', '.')) ?? 0) * 100).round();
-
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     final dao = ref.read(taxParamsDaoProvider);
@@ -403,18 +364,18 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
     await dao.upsert(
       TaxParamsCompanion(
         year: Value(widget.year),
-        zelfstandigenaftrek: Value(-_euros(_zelfs)),
-        startersaftrek: Value(-_euros(_starters)),
+        zelfstandigenaftrek: Value(-_zelfs),
+        startersaftrek: Value(-_starters),
         mkbWinstvrijstellingPct: Value(_pct(_mkbPct)),
         bracket1Rate: Value(_pct(_b1Rate)),
-        bracket1Threshold: Value(_euros(_b1Thresh)),
+        bracket1Threshold: Value(_b1Thresh),
         bracket2Rate: Value(_pct(_b2Rate)),
-        bracket2Threshold: Value(_euros(_b2Thresh)),
+        bracket2Threshold: Value(_b2Thresh),
         bracket3Rate: Value(_pct(_b3Rate)),
-        algHeffingskortingMax: Value(_euros(_algHeff)),
-        arbeidskortingMax: Value(_euros(_arbeids)),
+        algHeffingskortingMax: Value(_algHeff),
+        arbeidskortingMax: Value(_arbeids),
         zvwRate: Value(_pct(_zvwRate)),
-        zvwMax: Value(_euros(_zvwMax)),
+        zvwMax: Value(_zvwMax),
         mixedCostsThreshold: Value(p?.mixedCostsThreshold ?? 0),
         mixedCosts80Pct: Value(p?.mixedCosts80Pct ?? 0.0),
         jaarruimtePct: Value(p?.jaarruimtePct ?? 0.0),
@@ -432,17 +393,11 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
               p?.mileageRatePerKm ??
               0.0,
         ),
-        korThreshold: Value(_euros(_korThresh)),
+        korThreshold: Value(_korThresh),
         ossThreshold: Value(p?.ossThreshold ?? 0),
         belastingrentePct: Value(p?.belastingrentePct ?? 0.0),
       ),
     );
-    if (mounted) {
-      final l = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l.settingsTaxParamsSaved(widget.year))),
-      );
-    }
   }
 
   @override
@@ -457,8 +412,13 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
           Text(l.settingsTaxRates, style: theme.textTheme.titleSmall),
           const SizedBox(height: 12),
           _row2(
-            _field(l, l.settingsTaxZelfs, _zelfs),
-            _field(l, l.settingsTaxStarters, _starters),
+            _amountField(l, l.settingsTaxZelfs, _zelfs, (v) => _zelfs = v),
+            _amountField(
+              l,
+              l.settingsTaxStarters,
+              _starters,
+              (v) => _starters = v,
+            ),
           ),
           _row2(
             _field(l, l.settingsTaxMkb, _mkbPct),
@@ -469,29 +429,54 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
           const SizedBox(height: 12),
           _row2(
             _field(l, l.settingsTaxB1Rate, _b1Rate),
-            _field(l, l.settingsTaxB1Thresh, _b1Thresh),
+            _amountField(
+              l,
+              l.settingsTaxB1Thresh,
+              _b1Thresh,
+              (v) => _b1Thresh = v,
+            ),
           ),
           _row2(
             _field(l, l.settingsTaxB2Rate, _b2Rate),
-            _field(l, l.settingsTaxB2Thresh, _b2Thresh),
+            _amountField(
+              l,
+              l.settingsTaxB2Thresh,
+              _b2Thresh,
+              (v) => _b2Thresh = v,
+            ),
           ),
           _row2(_field(l, l.settingsTaxB3Rate, _b3Rate), const SizedBox()),
           const SizedBox(height: 16),
           Text(l.settingsTaxKortingen, style: theme.textTheme.titleSmall),
           const SizedBox(height: 12),
           _row2(
-            _field(l, l.settingsTaxAlgHeff, _algHeff),
-            _field(l, l.settingsTaxArbeids, _arbeids),
+            _amountField(
+              l,
+              l.settingsTaxAlgHeff,
+              _algHeff,
+              (v) => _algHeff = v,
+            ),
+            _amountField(
+              l,
+              l.settingsTaxArbeids,
+              _arbeids,
+              (v) => _arbeids = v,
+            ),
           ),
           _row2(
             _field(l, l.settingsTaxZvwRate, _zvwRate),
-            _field(l, l.settingsTaxZvwMax, _zvwMax),
+            _amountField(l, l.settingsTaxZvwMax, _zvwMax, (v) => _zvwMax = v),
           ),
           const SizedBox(height: 16),
           Text(l.settingsTaxKor, style: theme.textTheme.titleSmall),
           const SizedBox(height: 12),
           _row2(
-            _field(l, l.settingsTaxKorThresh, _korThresh),
+            _amountField(
+              l,
+              l.settingsTaxKorThresh,
+              _korThresh,
+              (v) => _korThresh = v,
+            ),
             const SizedBox(),
           ),
           const SizedBox(height: 20),
@@ -525,6 +510,22 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
         }
         return null;
       },
+    );
+  }
+
+  Widget _amountField(
+    AppLocalizations l,
+    String label,
+    int value,
+    ValueChanged<int> onChanged,
+  ) {
+    return AmountField(
+      key: ValueKey('${widget.year}_$label'),
+      label: '$label *',
+      initialValueCents: value,
+      required: true,
+      validatorMessage: l.settingsTaxValidateField,
+      onChanged: onChanged,
     );
   }
 

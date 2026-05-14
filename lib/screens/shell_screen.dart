@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/providers.dart';
-import '../theme/app_theme.dart';
 
 class ShellScreen extends ConsumerWidget {
   final Widget child;
@@ -52,7 +51,11 @@ class _NavPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context)!;
-    final primary = Theme.of(context).colorScheme.primary;
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+    final onPrimary = theme.colorScheme.onPrimary;
+    final onPrimaryMuted = onPrimary.withValues(alpha: 0.7);
+    final dividerColor = onPrimary.withValues(alpha: 0.24);
     final year = ref.watch(fiscalYearProvider);
     final mainItems = _buildMainItems();
 
@@ -63,9 +66,15 @@ class _NavPanel extends ConsumerWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
-            child: Text('Florin', style: AppTheme.wordmark),
+            child: Text(
+              'Florin',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: onPrimary,
+              ),
+            ),
           ),
-          const Divider(color: Colors.white24, height: 1),
+          Divider(color: dividerColor, height: 1),
           const SizedBox(height: 4),
           Expanded(
             child: ListView(
@@ -82,26 +91,26 @@ class _NavPanel extends ConsumerWidget {
                   .toList(),
             ),
           ),
-          const Divider(color: Colors.white24, height: 1),
+          Divider(color: dividerColor, height: 1),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.calendar_today_outlined,
                   size: 15,
-                  color: Colors.white70,
+                  color: onPrimaryMuted,
                 ),
                 const SizedBox(width: 8),
                 Text(
                   l.navYear,
-                  style: const TextStyle(color: Colors.white70, fontSize: 13),
+                  style: TextStyle(color: onPrimaryMuted, fontSize: 13),
                 ),
                 const SizedBox(width: 4),
                 DropdownButton<int>(
                   value: year,
                   dropdownColor: primary,
-                  style: const TextStyle(color: Colors.white, fontSize: 13),
+                  style: TextStyle(color: onPrimary, fontSize: 13),
                   underline: const SizedBox(),
                   items: List.generate(6, (i) => 2025 + i)
                       .map((y) => DropdownMenuItem(value: y, child: Text('$y')))
@@ -151,6 +160,9 @@ class _NavTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final onPrimary = Theme.of(context).colorScheme.onPrimary;
+    final selectedColor = onPrimary;
+    final defaultColor = onPrimary.withValues(alpha: 0.7);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
       child: InkWell(
@@ -160,7 +172,7 @@ class _NavTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: isSelected
               ? BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.15),
+                  color: onPrimary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 )
               : null,
@@ -169,13 +181,13 @@ class _NavTile extends StatelessWidget {
               Icon(
                 icon,
                 size: 20,
-                color: isSelected ? Colors.white : Colors.white70,
+                color: isSelected ? selectedColor : defaultColor,
               ),
               const SizedBox(width: 12),
               Text(
                 label,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.white70,
+                  color: isSelected ? selectedColor : defaultColor,
                   fontSize: 14,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),

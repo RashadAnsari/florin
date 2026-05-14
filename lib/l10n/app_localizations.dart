@@ -218,12 +218,6 @@ abstract class AppLocalizations {
   /// **'Required'**
   String get labelRequired;
 
-  /// No description provided for @labelOptional.
-  ///
-  /// In en, this message translates to:
-  /// **'optional'**
-  String get labelOptional;
-
   /// No description provided for @labelDate.
   ///
   /// In en, this message translates to:
@@ -368,6 +362,12 @@ abstract class AppLocalizations {
   /// **'{days} d'**
   String deadlineDaysLeft(int days);
 
+  /// No description provided for @genericLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load data: {error}'**
+  String genericLoadError(String error);
+
   /// No description provided for @invoicesTitle.
   ///
   /// In en, this message translates to:
@@ -479,7 +479,7 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceFieldInvoiceDate.
   ///
   /// In en, this message translates to:
-  /// **'Invoice date'**
+  /// **'Invoice date *'**
   String get invoiceFieldInvoiceDate;
 
   /// No description provided for @invoiceFieldSupplyDate.
@@ -491,7 +491,7 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceFieldPaymentTerm.
   ///
   /// In en, this message translates to:
-  /// **'Term (days)'**
+  /// **'Term (days) *'**
   String get invoiceFieldPaymentTerm;
 
   /// No description provided for @invoiceValidatePaymentTerm.
@@ -533,7 +533,7 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceFieldDescription.
   ///
   /// In en, this message translates to:
-  /// **'Description'**
+  /// **'Description *'**
   String get invoiceFieldDescription;
 
   /// No description provided for @invoiceHintDescription.
@@ -545,7 +545,7 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceFieldQuantity.
   ///
   /// In en, this message translates to:
-  /// **'Qty'**
+  /// **'Qty *'**
   String get invoiceFieldQuantity;
 
   /// No description provided for @invoiceFieldUnit.
@@ -557,7 +557,7 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceFieldPrice.
   ///
   /// In en, this message translates to:
-  /// **'Price (excl.)'**
+  /// **'Price (excl.) *'**
   String get invoiceFieldPrice;
 
   /// No description provided for @invoiceFieldVat.
@@ -920,12 +920,6 @@ abstract class AppLocalizations {
   /// **'High Wet DBA risk: ensure a valid assignment agreement is in place.'**
   String get clientsHighRiskWarning;
 
-  /// No description provided for @clientsCheckVies.
-  ///
-  /// In en, this message translates to:
-  /// **'VIES'**
-  String get clientsCheckVies;
-
   /// No description provided for @clientsViesEmptyVat.
   ///
   /// In en, this message translates to:
@@ -1145,7 +1139,7 @@ abstract class AppLocalizations {
   /// No description provided for @expensesBuaWarning.
   ///
   /// In en, this message translates to:
-  /// **'BUA: meals & entertainment above €227 — VAT deduction may be restricted (Besluit Uitsluiting Aftrek).'**
+  /// **'BUA: meals & entertainment above €227. VAT deduction may be restricted (Besluit Uitsluiting Aftrek).'**
   String get expensesBuaWarning;
 
   /// No description provided for @expensesCreated.
@@ -2447,13 +2441,13 @@ abstract class AppLocalizations {
   /// No description provided for @settingsTaxZelfs.
   ///
   /// In en, this message translates to:
-  /// **'Zelfstandigenaftrek (€)'**
+  /// **'Self-employed deduction'**
   String get settingsTaxZelfs;
 
   /// No description provided for @settingsTaxStarters.
   ///
   /// In en, this message translates to:
-  /// **'Startersaftrek (€)'**
+  /// **'Starter deduction'**
   String get settingsTaxStarters;
 
   /// No description provided for @settingsTaxMkb.
@@ -2483,7 +2477,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsTaxB1Thresh.
   ///
   /// In en, this message translates to:
-  /// **'Bracket 1 threshold (€)'**
+  /// **'Bracket 1 threshold'**
   String get settingsTaxB1Thresh;
 
   /// No description provided for @settingsTaxB2Rate.
@@ -2495,7 +2489,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsTaxB2Thresh.
   ///
   /// In en, this message translates to:
-  /// **'Bracket 2 threshold (€)'**
+  /// **'Bracket 2 threshold'**
   String get settingsTaxB2Thresh;
 
   /// No description provided for @settingsTaxB3Rate.
@@ -2513,13 +2507,13 @@ abstract class AppLocalizations {
   /// No description provided for @settingsTaxAlgHeff.
   ///
   /// In en, this message translates to:
-  /// **'General tax credit max (€)'**
+  /// **'General tax credit max'**
   String get settingsTaxAlgHeff;
 
   /// No description provided for @settingsTaxArbeids.
   ///
   /// In en, this message translates to:
-  /// **'Labour credit max (€)'**
+  /// **'Labour credit max'**
   String get settingsTaxArbeids;
 
   /// No description provided for @settingsTaxZvwRate.
@@ -2531,7 +2525,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsTaxZvwMax.
   ///
   /// In en, this message translates to:
-  /// **'ZVW max (€)'**
+  /// **'ZVW max'**
   String get settingsTaxZvwMax;
 
   /// No description provided for @settingsTaxKor.
@@ -2543,7 +2537,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsTaxKorThresh.
   ///
   /// In en, this message translates to:
-  /// **'KOR threshold (€)'**
+  /// **'KOR threshold'**
   String get settingsTaxKorThresh;
 
   /// No description provided for @settingsTaxSaveParams.
@@ -2606,48 +2600,6 @@ abstract class AppLocalizations {
   /// **'Business identity'**
   String get firstLaunchBusinessSection;
 
-  /// No description provided for @firstLaunchBusinessName.
-  ///
-  /// In en, this message translates to:
-  /// **'Business name *'**
-  String get firstLaunchBusinessName;
-
-  /// No description provided for @firstLaunchValidateBusinessName.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your business or trading name'**
-  String get firstLaunchValidateBusinessName;
-
-  /// No description provided for @firstLaunchVat.
-  ///
-  /// In en, this message translates to:
-  /// **'VAT number (BTW-ID)'**
-  String get firstLaunchVat;
-
-  /// No description provided for @firstLaunchKvk.
-  ///
-  /// In en, this message translates to:
-  /// **'KVK number'**
-  String get firstLaunchKvk;
-
-  /// No description provided for @firstLaunchAddress.
-  ///
-  /// In en, this message translates to:
-  /// **'Business address'**
-  String get firstLaunchAddress;
-
-  /// No description provided for @firstLaunchIban.
-  ///
-  /// In en, this message translates to:
-  /// **'IBAN'**
-  String get firstLaunchIban;
-
-  /// No description provided for @firstLaunchStarters.
-  ///
-  /// In en, this message translates to:
-  /// **'Eligible for startersaftrek'**
-  String get firstLaunchStarters;
-
   /// No description provided for @firstLaunchStartersSubtitle.
   ///
   /// In en, this message translates to:
@@ -2705,8 +2657,44 @@ abstract class AppLocalizations {
   /// No description provided for @vatRateSelectorLabel.
   ///
   /// In en, this message translates to:
-  /// **'VAT Rate'**
+  /// **'VAT rate'**
   String get vatRateSelectorLabel;
+
+  /// No description provided for @vatRate21.
+  ///
+  /// In en, this message translates to:
+  /// **'21%'**
+  String get vatRate21;
+
+  /// No description provided for @vatRate9.
+  ///
+  /// In en, this message translates to:
+  /// **'9%'**
+  String get vatRate9;
+
+  /// No description provided for @vatRate0.
+  ///
+  /// In en, this message translates to:
+  /// **'0%'**
+  String get vatRate0;
+
+  /// No description provided for @vatRateEuReverseCharge.
+  ///
+  /// In en, this message translates to:
+  /// **'0% EU reverse charge'**
+  String get vatRateEuReverseCharge;
+
+  /// No description provided for @vatRateExempt.
+  ///
+  /// In en, this message translates to:
+  /// **'Exempt'**
+  String get vatRateExempt;
+
+  /// No description provided for @dbLocationChooseFolderDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose folder to store Florin database'**
+  String get dbLocationChooseFolderDialog;
 }
 
 class _AppLocalizationsDelegate

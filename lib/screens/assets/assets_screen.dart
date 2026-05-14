@@ -69,7 +69,8 @@ class AssetsScreen extends ConsumerWidget {
                 onTap: (a) => context.push('/assets/${a.id}', extra: a),
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stackTrace) => Center(child: Text('$error')),
+              error: (error, stackTrace) =>
+                  Center(child: Text(l.genericLoadError('$error'))),
             ),
           ),
         ],
@@ -479,30 +480,21 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CheckboxListTile(
-                          value: _kiaEligible,
-                          onChanged: (v) =>
-                              setState(() => _kiaEligible = v ?? _kiaEligible),
-                          title: Text(l.assetsFieldKia),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: CheckboxListTile(
-                          value: _eiaOrMia,
-                          onChanged: (v) =>
-                              setState(() => _eiaOrMia = v ?? _eiaOrMia),
-                          title: Text(l.assetsFieldEiaMia),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                    ],
+                  CheckboxListTile(
+                    value: _kiaEligible,
+                    onChanged: (v) =>
+                        setState(() => _kiaEligible = v ?? _kiaEligible),
+                    title: Text(l.assetsFieldKia),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  CheckboxListTile(
+                    value: _eiaOrMia,
+                    onChanged: (v) =>
+                        setState(() => _eiaOrMia = v ?? _eiaOrMia),
+                    title: Text(l.assetsFieldEiaMia),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(

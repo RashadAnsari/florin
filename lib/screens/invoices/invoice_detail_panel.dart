@@ -639,36 +639,24 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CheckboxListTile(
-                            value: _isIcp,
-                            onChanged: (v) =>
-                                setState(() => _isIcp = v ?? false),
-                            title: Text(
-                              AppLocalizations.of(context)!.invoiceFieldIcp,
-                            ),
-                            contentPadding: EdgeInsets.zero,
-                            controlAffinity: ListTileControlAffinity.leading,
-                          ),
-                        ),
-                        const SizedBox(width: 24),
-                        Expanded(
-                          child: CheckboxListTile(
-                            value: _isReverseCharge,
-                            onChanged: (v) =>
-                                setState(() => _isReverseCharge = v ?? false),
-                            title: Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.invoiceFieldBtwVerlegd,
-                            ),
-                            contentPadding: EdgeInsets.zero,
-                            controlAffinity: ListTileControlAffinity.leading,
-                          ),
-                        ),
-                      ],
+                    CheckboxListTile(
+                      value: _isIcp,
+                      onChanged: (v) => setState(() => _isIcp = v ?? false),
+                      title: Text(
+                        AppLocalizations.of(context)!.invoiceFieldIcp,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      controlAffinity: ListTileControlAffinity.leading,
+                    ),
+                    CheckboxListTile(
+                      value: _isReverseCharge,
+                      onChanged: (v) =>
+                          setState(() => _isReverseCharge = v ?? false),
+                      title: Text(
+                        AppLocalizations.of(context)!.invoiceFieldBtwVerlegd,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      controlAffinity: ListTileControlAffinity.leading,
                     ),
                     const SizedBox(height: 20),
                     // ── Line items ─────────────────────────────────────────────
@@ -914,7 +902,10 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                   .map(
                     (r) => DropdownMenuItem(
                       value: r,
-                      child: Text(r, style: theme.textTheme.bodySmall),
+                      child: Text(
+                        vatRateLabel(AppLocalizations.of(context)!, r),
+                        style: theme.textTheme.bodySmall,
+                      ),
                     ),
                   )
                   .toList(),

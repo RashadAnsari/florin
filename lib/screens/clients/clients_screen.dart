@@ -149,7 +149,7 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text('$e')),
+              error: (e, _) => Center(child: Text(l.genericLoadError('$e'))),
             ),
           ),
         ],

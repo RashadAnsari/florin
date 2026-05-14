@@ -126,7 +126,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text('$e')),
+              error: (e, _) => Center(
+                child: Text(
+                  AppLocalizations.of(context)!.genericLoadError('$e'),
+                ),
+              ),
             ),
           ),
         ],
@@ -520,7 +524,8 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                           readOnly: true,
                           strutStyle: StrutStyle.disabled,
                           decoration: InputDecoration(
-                            labelText: AppLocalizations.of(context)!.labelDate,
+                            labelText:
+                                '${AppLocalizations.of(context)!.labelDate} *',
                           ),
                           onTap: () async {
                             final d = await showDatePicker(
@@ -740,56 +745,38 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
                           ],
                         ),
                         const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: CheckboxListTile(
-                                value: _vatReclaimable,
-                                onChanged: (v) {
-                                  _vatReclaimable = v ?? true;
-                                  _compute();
-                                },
-                                title: Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  )!.expensesReclaimVat,
-                                ),
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
-                                contentPadding: EdgeInsets.zero,
-                              ),
-                            ),
-                            Expanded(
-                              child: CheckboxListTile(
-                                value: _isMixedCost,
-                                onChanged: null,
-                                title: Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  )!.expensesMixedCosts,
-                                ),
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
-                                contentPadding: EdgeInsets.zero,
-                              ),
-                            ),
-                            Expanded(
-                              child: CheckboxListTile(
-                                value: _receiptAttached,
-                                onChanged: (v) => setState(
-                                  () => _receiptAttached = v ?? false,
-                                ),
-                                title: Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  )!.expensesReceiptAttached,
-                                ),
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
-                                contentPadding: EdgeInsets.zero,
-                              ),
-                            ),
-                          ],
+                        CheckboxListTile(
+                          value: _vatReclaimable,
+                          onChanged: (v) {
+                            _vatReclaimable = v ?? true;
+                            _compute();
+                          },
+                          title: Text(
+                            AppLocalizations.of(context)!.expensesReclaimVat,
+                          ),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                        CheckboxListTile(
+                          value: _isMixedCost,
+                          onChanged: null,
+                          title: Text(
+                            AppLocalizations.of(context)!.expensesMixedCosts,
+                          ),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                        CheckboxListTile(
+                          value: _receiptAttached,
+                          onChanged: (v) =>
+                              setState(() => _receiptAttached = v ?? false),
+                          title: Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.expensesReceiptAttached,
+                          ),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
                         ),
                       ],
                     ),

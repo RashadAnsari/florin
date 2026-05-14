@@ -10,6 +10,7 @@ These rules are the source of truth for working in this repository. Always read 
 - **Abstractions**: only add a helper, service, widget, or shared constant when logic is reused across files or clearly belongs to an existing shared module. If logic is local to one screen or form, keep it as a private local helper.
 - **Scope control**: make the requested change at the layer where it belongs. Do not update downstream readers, exports, reports, or unrelated screens unless the request requires it.
 - **Translations**: all user-facing strings must go through `AppLocalizations`. Never hardcode visible text. Add or update keys in both `app_en.arb` and `app_nl.arb`.
+- **Dutch statutory outputs**: invoice PDFs and CSV exports must always stay in Dutch. Do not localize invoice PDF copy, CSV headers, or export file content unless the user explicitly changes this product requirement.
 - **Punctuation**: no period on short labels, headings, button text, or single-phrase descriptions. Use a period on full sentences, especially multi-clause text such as FAQs, warnings, and longer descriptions.
 - **Slash spacing**: in user-facing labels and copy, put spaces around slashes between words, such as `Make / model`. Do not apply this to paths, URLs, units, or technical tokens such as `€/km`.
 - **Em dash**: never use the em dash character (`—`) in user-facing text, copy, labels, or metadata. Use a colon, comma, or period instead.

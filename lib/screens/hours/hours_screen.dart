@@ -75,7 +75,7 @@ class HoursScreen extends ConsumerWidget {
                 onTap: (e) => context.push('/hours/${e.id}', extra: e),
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text('$e')),
+              error: (e, _) => Center(child: Text(l.genericLoadError('$e'))),
             ),
           ),
         ],

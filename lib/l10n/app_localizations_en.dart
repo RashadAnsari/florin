@@ -69,9 +69,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labelRequired => 'Required';
 
   @override
-  String get labelOptional => 'optional';
-
-  @override
   String get labelDate => 'Date';
 
   @override
@@ -154,6 +151,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String genericLoadError(String error) {
+    return 'Could not load data: $error';
+  }
+
+  @override
   String get invoicesTitle => 'Invoices';
 
   @override
@@ -208,13 +210,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoiceFieldNumber => 'Invoice number *';
 
   @override
-  String get invoiceFieldInvoiceDate => 'Invoice date';
+  String get invoiceFieldInvoiceDate => 'Invoice date *';
 
   @override
   String get invoiceFieldSupplyDate => 'Supply date';
 
   @override
-  String get invoiceFieldPaymentTerm => 'Term (days)';
+  String get invoiceFieldPaymentTerm => 'Term (days) *';
 
   @override
   String get invoiceValidatePaymentTerm =>
@@ -236,20 +238,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoiceFieldAddLine => 'Add line';
 
   @override
-  String get invoiceFieldDescription => 'Description';
+  String get invoiceFieldDescription => 'Description *';
 
   @override
   String get invoiceHintDescription =>
       'e.g. Consulting services, web design...';
 
   @override
-  String get invoiceFieldQuantity => 'Qty';
+  String get invoiceFieldQuantity => 'Qty *';
 
   @override
   String get invoiceFieldUnit => 'Unit';
 
   @override
-  String get invoiceFieldPrice => 'Price (excl.)';
+  String get invoiceFieldPrice => 'Price (excl.) *';
 
   @override
   String get invoiceFieldVat => 'VAT';
@@ -444,9 +446,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'High Wet DBA risk: ensure a valid assignment agreement is in place.';
 
   @override
-  String get clientsCheckVies => 'VIES';
-
-  @override
   String get clientsViesEmptyVat => 'Please enter a VAT number first';
 
   @override
@@ -565,7 +564,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expensesBuaWarning =>
-      'BUA: meals & entertainment above €227 — VAT deduction may be restricted (Besluit Uitsluiting Aftrek).';
+      'BUA: meals & entertainment above €227. VAT deduction may be restricted (Besluit Uitsluiting Aftrek).';
 
   @override
   String get expensesCreated => 'Expense created';
@@ -1299,10 +1298,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTaxRates => 'Rates & brackets';
 
   @override
-  String get settingsTaxZelfs => 'Zelfstandigenaftrek (€)';
+  String get settingsTaxZelfs => 'Self-employed deduction';
 
   @override
-  String get settingsTaxStarters => 'Startersaftrek (€)';
+  String get settingsTaxStarters => 'Starter deduction';
 
   @override
   String get settingsTaxMkb => 'MKB-winstvrijstelling (%)';
@@ -1317,13 +1316,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTaxB1Rate => 'Bracket 1 rate (%)';
 
   @override
-  String get settingsTaxB1Thresh => 'Bracket 1 threshold (€)';
+  String get settingsTaxB1Thresh => 'Bracket 1 threshold';
 
   @override
   String get settingsTaxB2Rate => 'Bracket 2 rate (%)';
 
   @override
-  String get settingsTaxB2Thresh => 'Bracket 2 threshold (€)';
+  String get settingsTaxB2Thresh => 'Bracket 2 threshold';
 
   @override
   String get settingsTaxB3Rate => 'Bracket 3 rate (%)';
@@ -1332,22 +1331,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTaxKortingen => 'Discounts & ZVW';
 
   @override
-  String get settingsTaxAlgHeff => 'General tax credit max (€)';
+  String get settingsTaxAlgHeff => 'General tax credit max';
 
   @override
-  String get settingsTaxArbeids => 'Labour credit max (€)';
+  String get settingsTaxArbeids => 'Labour credit max';
 
   @override
   String get settingsTaxZvwRate => 'ZVW rate (%)';
 
   @override
-  String get settingsTaxZvwMax => 'ZVW max (€)';
+  String get settingsTaxZvwMax => 'ZVW max';
 
   @override
   String get settingsTaxKor => 'KOR threshold';
 
   @override
-  String get settingsTaxKorThresh => 'KOR threshold (€)';
+  String get settingsTaxKorThresh => 'KOR threshold';
 
   @override
   String get settingsTaxSaveParams => 'Save parameters';
@@ -1383,28 +1382,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get firstLaunchBusinessSection => 'Business identity';
 
   @override
-  String get firstLaunchBusinessName => 'Business name *';
-
-  @override
-  String get firstLaunchValidateBusinessName =>
-      'Enter your business or trading name';
-
-  @override
-  String get firstLaunchVat => 'VAT number (BTW-ID)';
-
-  @override
-  String get firstLaunchKvk => 'KVK number';
-
-  @override
-  String get firstLaunchAddress => 'Business address';
-
-  @override
-  String get firstLaunchIban => 'IBAN';
-
-  @override
-  String get firstLaunchStarters => 'Eligible for startersaftrek';
-
-  @override
   String get firstLaunchStartersSubtitle =>
       'First 3 years of business: €2,123 additional deduction';
 
@@ -1437,5 +1414,24 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get vatRateSelectorLabel => 'VAT Rate';
+  String get vatRateSelectorLabel => 'VAT rate';
+
+  @override
+  String get vatRate21 => '21%';
+
+  @override
+  String get vatRate9 => '9%';
+
+  @override
+  String get vatRate0 => '0%';
+
+  @override
+  String get vatRateEuReverseCharge => '0% EU reverse charge';
+
+  @override
+  String get vatRateExempt => 'Exempt';
+
+  @override
+  String get dbLocationChooseFolderDialog =>
+      'Choose folder to store Florin database';
 }

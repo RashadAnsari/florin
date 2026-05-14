@@ -69,9 +69,6 @@ class AppLocalizationsNl extends AppLocalizations {
   String get labelRequired => 'Verplicht';
 
   @override
-  String get labelOptional => 'optioneel';
-
-  @override
   String get labelDate => 'Datum';
 
   @override
@@ -154,6 +151,11 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
+  String genericLoadError(String error) {
+    return 'Kan gegevens niet laden: $error';
+  }
+
+  @override
   String get invoicesTitle => 'Facturen';
 
   @override
@@ -209,13 +211,13 @@ class AppLocalizationsNl extends AppLocalizations {
   String get invoiceFieldNumber => 'Factuurnummer *';
 
   @override
-  String get invoiceFieldInvoiceDate => 'Factuurdatum';
+  String get invoiceFieldInvoiceDate => 'Factuurdatum *';
 
   @override
   String get invoiceFieldSupplyDate => 'Leveringsdatum';
 
   @override
-  String get invoiceFieldPaymentTerm => 'Termijn (dagen)';
+  String get invoiceFieldPaymentTerm => 'Termijn (dagen) *';
 
   @override
   String get invoiceValidatePaymentTerm =>
@@ -237,19 +239,19 @@ class AppLocalizationsNl extends AppLocalizations {
   String get invoiceFieldAddLine => 'Regel toevoegen';
 
   @override
-  String get invoiceFieldDescription => 'Omschrijving';
+  String get invoiceFieldDescription => 'Omschrijving *';
 
   @override
   String get invoiceHintDescription => 'bijv. Advieswerk, webdesign...';
 
   @override
-  String get invoiceFieldQuantity => 'Aantal';
+  String get invoiceFieldQuantity => 'Aantal *';
 
   @override
   String get invoiceFieldUnit => 'Eenheid';
 
   @override
-  String get invoiceFieldPrice => 'Prijs (excl.)';
+  String get invoiceFieldPrice => 'Prijs (excl.) *';
 
   @override
   String get invoiceFieldVat => 'BTW';
@@ -444,9 +446,6 @@ class AppLocalizationsNl extends AppLocalizations {
       'Hoog Wet DBA-risico: zorg voor een geldige overeenkomst van opdracht.';
 
   @override
-  String get clientsCheckVies => 'VIES';
-
-  @override
   String get clientsViesEmptyVat => 'Voer eerst een BTW-nummer in';
 
   @override
@@ -568,7 +567,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get expensesBuaWarning =>
-      'BUA: maaltijden & entertainment boven €227 — BTW-aftrek mogelijk beperkt (Besluit Uitsluiting Aftrek).';
+      'BUA: maaltijden & entertainment boven €227. BTW-aftrek mogelijk beperkt (Besluit Uitsluiting Aftrek).';
 
   @override
   String get expensesCreated => 'Uitgave aangemaakt';
@@ -917,7 +916,7 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get pensionJaarruimte => 'JAARRUIMTEBEREKENING';
+  String get pensionJaarruimte => 'Jaarruimteberekening';
 
   @override
   String get pensionTaxableProfit => 'Belastbare winst';
@@ -946,7 +945,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get pensionEstimatedTaxSaving => 'Geschatte belastingbesparing';
 
   @override
-  String get pensionInputSection => 'INVOER';
+  String get pensionInputSection => 'Invoer';
 
   @override
   String get pensionFactorA => 'Factor A';
@@ -959,7 +958,7 @@ class AppLocalizationsNl extends AppLocalizations {
       'Reserveringsruimte (ongebruikte jaren)';
 
   @override
-  String get pensionPlannedSection => 'VOORGENOMEN INLEG';
+  String get pensionPlannedSection => 'Voorgenomen inleg';
 
   @override
   String get pensionLijfrente => 'Lijfrentepremie / AOV-premie';
@@ -969,7 +968,7 @@ class AppLocalizationsNl extends AppLocalizations {
       'Wordt als aftrekpost meegenomen in belastingberekening';
 
   @override
-  String get pensionAovSection => 'AOV (ARBEIDSONGESCHIKTHEIDSVERZEKERING)';
+  String get pensionAovSection => 'AOV arbeidsongeschiktheidsverzekering';
 
   @override
   String get pensionAovInsured => 'AOV afgesloten';
@@ -1056,7 +1055,7 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get plTaxRevenuSection => 'OMZET';
+  String get plTaxRevenuSection => 'Omzet';
 
   @override
   String get plTaxGrossRevenue => 'Bruto omzet (excl. BTW)';
@@ -1065,10 +1064,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get plTaxCreditNotes => 'Af: creditnota\'s';
 
   @override
-  String get plTaxNetRevenue => 'NETTO OMZET';
+  String get plTaxNetRevenue => 'Netto omzet';
 
   @override
-  String get plTaxCostsSection => 'KOSTEN';
+  String get plTaxCostsSection => 'Kosten';
 
   @override
   String plTaxMileageAllowance(int km, String rate) {
@@ -1079,13 +1078,13 @@ class AppLocalizationsNl extends AppLocalizations {
   String get plTaxDepreciation => 'Afschrijvingen';
 
   @override
-  String get plTaxTotalCosts => 'TOTAAL KOSTEN';
+  String get plTaxTotalCosts => 'Totaal kosten';
 
   @override
-  String get plTaxGrossProfit => 'BRUTOWINST';
+  String get plTaxGrossProfit => 'Brutowinst';
 
   @override
-  String get plTaxDeductionsSection => 'ONDERNEMERSAFTREK';
+  String get plTaxDeductionsSection => 'Ondernemersaftrek';
 
   @override
   String plTaxZelfstandigenaftrek(int year) {
@@ -1107,10 +1106,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get plTaxLijrente => 'Lijfrenteaftrek';
 
   @override
-  String get plTaxTaxableProfit => 'BELASTBARE WINST';
+  String get plTaxTaxableProfit => 'Belastbare winst';
 
   @override
-  String get plTaxBox1Section => 'INKOMSTENBELASTING BOX 1';
+  String get plTaxBox1Section => 'Inkomstenbelasting box 1';
 
   @override
   String plTaxBracket1(String pct) {
@@ -1144,7 +1143,7 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get plTaxInkomsten => 'INKOMSTENBELASTING';
+  String get plTaxInkomsten => 'Inkomstenbelasting';
 
   @override
   String plTaxZvw(String pct) {
@@ -1152,10 +1151,10 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get plTaxTotalTax => 'TOTAAL BELASTING';
+  String get plTaxTotalTax => 'Totaal belasting';
 
   @override
-  String get plTaxNetProfit => 'NETTO WINST NA BELASTING';
+  String get plTaxNetProfit => 'Netto winst na belasting';
 
   @override
   String plTaxEffectiveRate(String rate) {
@@ -1163,7 +1162,7 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get plTaxSettingsSection => 'INSTELLINGEN';
+  String get plTaxSettingsSection => 'Instellingen';
 
   @override
   String get plTaxClaimZelfs => 'Zelfstandigenaftrek claimen';
@@ -1306,10 +1305,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsTaxRates => 'Tarieven & schijven';
 
   @override
-  String get settingsTaxZelfs => 'Zelfstandigenaftrek (€)';
+  String get settingsTaxZelfs => 'Zelfstandigenaftrek';
 
   @override
-  String get settingsTaxStarters => 'Startersaftrek (€)';
+  String get settingsTaxStarters => 'Startersaftrek';
 
   @override
   String get settingsTaxMkb => 'MKB-winstvrijstelling (%)';
@@ -1324,13 +1323,13 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsTaxB1Rate => 'Schijf 1 tarief (%)';
 
   @override
-  String get settingsTaxB1Thresh => 'Schijf 1 grens (€)';
+  String get settingsTaxB1Thresh => 'Schijf 1 grens';
 
   @override
   String get settingsTaxB2Rate => 'Schijf 2 tarief (%)';
 
   @override
-  String get settingsTaxB2Thresh => 'Schijf 2 grens (€)';
+  String get settingsTaxB2Thresh => 'Schijf 2 grens';
 
   @override
   String get settingsTaxB3Rate => 'Schijf 3 tarief (%)';
@@ -1339,22 +1338,22 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsTaxKortingen => 'Kortingen & ZVW';
 
   @override
-  String get settingsTaxAlgHeff => 'Alg. heffingskorting max (€)';
+  String get settingsTaxAlgHeff => 'Alg. heffingskorting max';
 
   @override
-  String get settingsTaxArbeids => 'Arbeidskorting max (€)';
+  String get settingsTaxArbeids => 'Arbeidskorting max';
 
   @override
   String get settingsTaxZvwRate => 'ZVW tarief (%)';
 
   @override
-  String get settingsTaxZvwMax => 'ZVW max (€)';
+  String get settingsTaxZvwMax => 'ZVW max';
 
   @override
   String get settingsTaxKor => 'KOR drempel';
 
   @override
-  String get settingsTaxKorThresh => 'KOR drempel (€)';
+  String get settingsTaxKorThresh => 'KOR drempel';
 
   @override
   String get settingsTaxSaveParams => 'Parameters opslaan';
@@ -1390,28 +1389,6 @@ class AppLocalizationsNl extends AppLocalizations {
   String get firstLaunchBusinessSection => 'Bedrijfsgegevens';
 
   @override
-  String get firstLaunchBusinessName => 'Bedrijfsnaam *';
-
-  @override
-  String get firstLaunchValidateBusinessName =>
-      'Voer je bedrijfs- of handelsnaam in';
-
-  @override
-  String get firstLaunchVat => 'BTW-nummer (BTW-ID)';
-
-  @override
-  String get firstLaunchKvk => 'KVK-nummer';
-
-  @override
-  String get firstLaunchAddress => 'Bedrijfsadres';
-
-  @override
-  String get firstLaunchIban => 'IBAN';
-
-  @override
-  String get firstLaunchStarters => 'Recht op startersaftrek';
-
-  @override
   String get firstLaunchStartersSubtitle =>
       'Eerste 3 jaar: €2.123 extra aftrek';
 
@@ -1445,4 +1422,22 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get vatRateSelectorLabel => 'BTW-tarief';
+
+  @override
+  String get vatRate21 => '21%';
+
+  @override
+  String get vatRate9 => '9%';
+
+  @override
+  String get vatRate0 => '0%';
+
+  @override
+  String get vatRateEuReverseCharge => '0% EU btw verlegd';
+
+  @override
+  String get vatRateExempt => 'Vrijgesteld';
+
+  @override
+  String get dbLocationChooseFolderDialog => 'Kies map voor de Florin-database';
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:florin/l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 
 class DeadlineBadge extends StatelessWidget {
@@ -9,13 +10,14 @@ class DeadlineBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     if (filed) {
-      return _badge('Filed', AppColors.income);
+      return _badge(l.deadlineBadgeFiled, AppColors.income);
     }
     final days = deadline.difference(DateTime.now()).inDays;
-    if (days < 0) return _badge('Overdue', AppColors.red);
-    if (days <= 14) return _badge('$days days', AppColors.vat);
-    return _badge('$days days', AppColors.income);
+    if (days < 0) return _badge(l.deadlineBadgeOverdue, AppColors.red);
+    if (days <= 14) return _badge(l.deadlineBadgeDays(days), AppColors.vat);
+    return _badge(l.deadlineBadgeDays(days), AppColors.income);
   }
 
   Widget _badge(String label, Color color) {

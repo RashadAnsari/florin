@@ -37,6 +37,18 @@ class InvoiceDao extends DatabaseAccessor<AppDatabase> with _$InvoiceDaoMixin {
             ..orderBy([(l) => OrderingTerm.asc(l.sortOrder)]))
           .watch();
 
+  Stream<List<InvoiceLine>> watchLinesByYear(int year) {
+    final query =
+        select(invoiceLines).join([
+            innerJoin(invoices, invoices.id.equalsExp(invoiceLines.invoiceId)),
+          ])
+          ..where(invoices.fiscalYear.equals(year))
+          ..orderBy([OrderingTerm.asc(invoiceLines.sortOrder)]);
+    return query.watch().map(
+      (rows) => rows.map((row) => row.readTable(invoiceLines)).toList(),
+    );
+  }
+
   Future<int> insertInvoice(InvoicesCompanion entry) =>
       into(invoices).insert(entry);
 

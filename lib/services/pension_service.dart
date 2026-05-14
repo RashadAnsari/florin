@@ -1,7 +1,7 @@
 import '../db/database.dart';
 
 class JaarruimteResult {
-  final int pensioengrondsdag; // cents (can be negative)
+  final int pensioengrondslag; // cents (can be negative)
   final int jaarruimte; // cents (0 if grondslag <= 0)
   final int jaarruimteCapped; // min(jaarruimte, jaarruimteMax)
   final int reserveringsruimte; // cents (user-supplied, capped)
@@ -9,7 +9,7 @@ class JaarruimteResult {
   final int estimatedTaxSaving; // cents
 
   const JaarruimteResult({
-    required this.pensioengrondsdag,
+    required this.pensioengrondslag,
     required this.jaarruimte,
     required this.jaarruimteCapped,
     required this.reserveringsruimte,
@@ -32,7 +32,7 @@ class PensionService {
 
     if (grondslag <= 0) {
       return JaarruimteResult(
-        pensioengrondsdag: grondslag,
+        pensioengrondslag: grondslag,
         jaarruimte: 0,
         jaarruimteCapped: 0,
         reserveringsruimte: 0,
@@ -58,7 +58,7 @@ class PensionService {
     final saving = (totalBudget * marginalRate).round();
 
     return JaarruimteResult(
-      pensioengrondsdag: grondslag,
+      pensioengrondslag: grondslag,
       jaarruimte: jaarruimte,
       jaarruimteCapped: jaarruimteCapped,
       reserveringsruimte: reserveringsruimte,

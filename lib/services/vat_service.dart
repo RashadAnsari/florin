@@ -37,6 +37,7 @@ class VatService {
 
   VatQuarterResult calculateQuarter({
     required List<Invoice> allYearInvoices,
+    required List<InvoiceLine> allYearInvoiceLines,
     required List<Expense> allYearExpenses,
     required int fiscalYear,
     required String quarter,
@@ -49,54 +50,17 @@ class VatService {
         .where((e) => e.quarter == quarter)
         .toList();
 
-    var rev21 = 0, rev9 = 0, rev0 = 0, revIcp = 0;
-    var vat21 = 0, vat9 = 0;
-    final icpList = <Invoice>[];
-
-    for (final inv in qInvoices) {
-      if (inv.invoiceType == 'CreditNote') {
-        // Credit notes reduce revenue in the same period
-        final lines = _rateBreakdown(inv);
-        rev21 -= lines.$1;
-        rev9 -= lines.$2;
-        vat21 -= lines.$3;
-        vat9 -= lines.$4;
-        continue;
-      }
-      final lines = _rateBreakdown(inv);
-      rev21 += lines.$1;
-      rev9 += lines.$2;
-      vat21 += lines.$3;
-      vat9 += lines.$4;
-
-      // ICP / reverse charge
-      if (inv.isIcp || inv.isReverseCharge) {
-        revIcp += inv.totalExclVat;
-        icpList.add(inv);
-      } else if (!inv.isIcp && !inv.isReverseCharge) {
-        // Check if any 0% EU RC is in the invoice (approximate via total)
-        // For detailed breakdown, server would need line-level info
-        // Use invoice-level flags as proxy
-      }
-
-      // Non-EU export (0%, not ICP, field 1c)
-      if (!inv.isIcp && !inv.isReverseCharge && inv.totalVat == 0) {
-        rev0 += inv.totalExclVat;
-        // Rev already counted above, subtract from rev21/rev9 and add to rev0
-        // Actually: rev0 is invoices with 0% VAT that are not ICP
-        // We already added to rev21/rev9 above — refine below
-      }
-    }
-
-    // Simpler approach: re-bucket revenues
-    // Reset and re-compute cleanly
-    rev21 = 0;
-    rev9 = 0;
-    rev0 = 0;
-    revIcp = 0;
-    vat21 = 0;
-    vat9 = 0;
+    var rev21 = 0;
+    var rev9 = 0;
+    var rev0 = 0;
+    var revIcp = 0;
+    var vat21 = 0;
+    var vat9 = 0;
     final icpInvoices2 = <Invoice>[];
+    final linesByInvoiceId = <int, List<InvoiceLine>>{};
+    for (final line in allYearInvoiceLines) {
+      linesByInvoiceId.putIfAbsent(line.invoiceId, () => []).add(line);
+    }
 
     for (final inv in qInvoices) {
       final sign = inv.invoiceType == 'CreditNote' ? -1 : 1;
@@ -105,19 +69,34 @@ class VatService {
         if (sign == 1) icpInvoices2.add(inv);
         continue;
       }
-      if (inv.totalVat == 0 && inv.totalExclVat > 0) {
-        rev0 += sign * inv.totalExclVat;
+      final lines = linesByInvoiceId[inv.id] ?? const <InvoiceLine>[];
+      if (lines.isEmpty) {
+        if (inv.totalVat == 0) {
+          rev0 += sign * inv.totalExclVat;
+        } else {
+          rev21 += sign * inv.totalExclVat;
+          vat21 += sign * inv.totalVat;
+        }
         continue;
       }
-      // Mix of 21% and 9% — approximate from totalVat
-      // For exact breakdown we'd need lines, but use total VAT rate proxy
-      final rate = inv.totalExclVat > 0 ? inv.totalVat / inv.totalExclVat : 0.0;
-      if (rate >= 0.15) {
-        rev21 += sign * inv.totalExclVat;
-        vat21 += sign * inv.totalVat;
-      } else if (rate > 0) {
-        rev9 += sign * inv.totalExclVat;
-        vat9 += sign * inv.totalVat;
+      for (final line in lines) {
+        final revenue = sign * line.lineTotalExclVat;
+        final vat = sign * line.vatAmount;
+        switch (line.vatRate) {
+          case '21%':
+            rev21 += revenue;
+            vat21 += vat;
+          case '9%':
+            rev9 += revenue;
+            vat9 += vat;
+          case '0% EU Reverse Charge':
+            revIcp += revenue;
+          case '0%':
+          case 'Exempt':
+            rev0 += revenue;
+          default:
+            rev0 += revenue;
+        }
       }
     }
 
@@ -134,8 +113,8 @@ class VatService {
       revenue9: rev9,
       revenue0: rev0,
       reverseChargeRevenue: revIcp,
-      outputVat21: vat21.clamp(0, vat21.abs()),
-      outputVat9: vat9.clamp(0, vat9.abs()),
+      outputVat21: vat21,
+      outputVat9: vat9,
       inputVatReclaimable: inputVat,
       netVatDue: netVat,
       suppressionNeeded: false,
@@ -143,11 +122,6 @@ class VatService {
       korRisk: ytd >= params.korThreshold,
       icpInvoices: icpInvoices2,
     );
-  }
-
-  // Returns (rev21, rev9, vat21, vat9)
-  (int, int, int, int) _rateBreakdown(Invoice inv) {
-    return (inv.totalExclVat, 0, inv.totalVat, 0);
   }
 
   String quarterFromDate(DateTime date) => 'Q${((date.month - 1) ~/ 3) + 1}';
