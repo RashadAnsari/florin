@@ -1262,6 +1262,12 @@ abstract class AppLocalizations {
   /// **'Billable: {hours} hrs'**
   String hoursBillable(String hours);
 
+  /// No description provided for @hoursUnitShort.
+  ///
+  /// In en, this message translates to:
+  /// **'hrs'**
+  String get hoursUnitShort;
+
   /// No description provided for @hoursProgress.
   ///
   /// In en, this message translates to:
@@ -1283,31 +1289,31 @@ abstract class AppLocalizations {
   /// No description provided for @hoursFieldDate.
   ///
   /// In en, this message translates to:
-  /// **'Date'**
+  /// **'Date *'**
   String get hoursFieldDate;
 
   /// No description provided for @hoursFieldHours.
   ///
   /// In en, this message translates to:
-  /// **'Hours'**
+  /// **'Hours *'**
   String get hoursFieldHours;
 
   /// No description provided for @hoursFieldDescription.
   ///
   /// In en, this message translates to:
-  /// **'Description'**
+  /// **'Description *'**
   String get hoursFieldDescription;
 
   /// No description provided for @hoursFieldWorkType.
   ///
   /// In en, this message translates to:
-  /// **'Work type'**
+  /// **'Work type *'**
   String get hoursFieldWorkType;
 
   /// No description provided for @hoursFieldClientProject.
   ///
   /// In en, this message translates to:
-  /// **'Client / project (optional)'**
+  /// **'Client / project'**
   String get hoursFieldClientProject;
 
   /// No description provided for @hoursFieldBillable.
@@ -1319,7 +1325,7 @@ abstract class AppLocalizations {
   /// No description provided for @hoursFieldNotes.
   ///
   /// In en, this message translates to:
-  /// **'Notes (optional)'**
+  /// **'Notes'**
   String get hoursFieldNotes;
 
   /// No description provided for @hoursNewEntry.
@@ -1333,6 +1339,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit entry'**
   String get hoursEditEntry;
+
+  /// No description provided for @hoursDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete hour entry'**
+  String get hoursDeleteTitle;
+
+  /// No description provided for @hoursDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{description}\"?'**
+  String hoursDeleteMessage(String description);
 
   /// No description provided for @hoursValidateHours.
   ///
@@ -1505,7 +1523,7 @@ abstract class AppLocalizations {
   /// No description provided for @mileageFieldNotes.
   ///
   /// In en, this message translates to:
-  /// **'Notes (optional)'**
+  /// **'Notes'**
   String get mileageFieldNotes;
 
   /// No description provided for @mileageNewTrip.
@@ -1643,7 +1661,7 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldNotes.
   ///
   /// In en, this message translates to:
-  /// **'Notes (optional)'**
+  /// **'Notes'**
   String get assetsFieldNotes;
 
   /// No description provided for @assetsDisposal.
@@ -2471,7 +2489,7 @@ abstract class AppLocalizations {
   /// No description provided for @firstLaunchDbSection.
   ///
   /// In en, this message translates to:
-  /// **'Database location (optional)'**
+  /// **'Database location'**
   String get firstLaunchDbSection;
 
   /// No description provided for @firstLaunchDbDescription.

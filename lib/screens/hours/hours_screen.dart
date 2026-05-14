@@ -6,6 +6,7 @@ import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/confirmation_dialog.dart';
 
 const _kWorkTypes = [
   'Billable',
@@ -14,6 +15,20 @@ const _kWorkTypes = [
   'WBSO',
   'Other',
 ];
+
+bool _isBillableWorkType(String workType) => workType == 'Billable';
+
+bool _isWbsoWorkType(String workType) => workType == 'WBSO';
+
+String _workTypeLabel(AppLocalizations l, String workType) =>
+    switch (workType) {
+      'Billable' => l.workTypeBillable,
+      'Non-billable' => l.workTypeNonBillable,
+      'Administrative' => l.workTypeAdministrative,
+      'WBSO' => l.workTypeWbso,
+      'Other' => l.workTypeOther,
+      _ => l.workTypeOther,
+    };
 
 class HoursScreen extends ConsumerWidget {
   const HoursScreen({super.key});
@@ -51,6 +66,7 @@ class HoursScreen extends ConsumerWidget {
             target: target,
             yearDone: yearDone,
           ),
+          const Divider(height: 1),
           Expanded(
             child: _EntryList(
               entries: entries,
@@ -175,11 +191,11 @@ class _EntryList extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           subtitle: Text(
-            '${AppFormat.date(e.date)}  ·  ${e.workType}',
+            '${AppFormat.date(e.date)}  ·  ${_workTypeLabel(l, e.workType)}',
             style: Theme.of(context).textTheme.bodySmall,
           ),
           trailing: Text(
-            '${e.hours.toStringAsFixed(1)}u',
+            '${e.hours.toStringAsFixed(1)} ${l.hoursUnitShort}',
             style: TextStyle(
               fontWeight: FontWeight.w600,
               color: e.billable ? AppColors.income : null,
@@ -195,12 +211,14 @@ class _EntryList extends StatelessWidget {
 class _EntryForm extends ConsumerStatefulWidget {
   final HourEntry? entry;
   final int year;
+  final VoidCallback? onBack;
   final VoidCallback onSaved;
   final VoidCallback onDeleted;
 
   const _EntryForm({
     required this.entry,
     required this.year,
+    required this.onBack,
     required this.onSaved,
     required this.onDeleted,
   });
@@ -217,8 +235,6 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
   late TextEditingController _clientProject;
   late TextEditingController _notes;
   late String _workType;
-  late bool _billable;
-  late bool _isWbso;
 
   @override
   void initState() {
@@ -232,8 +248,6 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
     _clientProject = TextEditingController(text: e?.clientProject ?? '');
     _notes = TextEditingController(text: e?.notes ?? '');
     _workType = e?.workType ?? 'Billable';
-    _billable = e?.billable ?? true;
-    _isWbso = e?.isWbso ?? false;
   }
 
   @override
@@ -263,11 +277,11 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
       description: Value(_description.text.trim()),
       workType: Value(_workType),
       hours: Value(_parsedHours),
-      billable: Value(_billable),
+      billable: Value(_isBillableWorkType(_workType)),
       clientProject: Value(
         _clientProject.text.trim().isEmpty ? null : _clientProject.text.trim(),
       ),
-      isWbso: Value(_isWbso),
+      isWbso: Value(_isWbsoWorkType(_workType)),
       notes: Value(_notes.text.trim().isEmpty ? null : _notes.text.trim()),
       fiscalYear: Value(widget.year),
       weekNumber: Value(_weekNumber(_date)),
@@ -281,162 +295,164 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
   }
 
   Future<void> _delete() async {
-    final dao = ref.read(hourDaoProvider);
-    await dao.deleteEntry(widget.entry!.id);
-    widget.onDeleted();
+    final l = AppLocalizations.of(context)!;
+    final confirmed = await showConfirmationDialog(
+      context,
+      title: l.hoursDeleteTitle,
+      message: l.hoursDeleteMessage(widget.entry!.description),
+      isDestructive: true,
+    );
+    if (!confirmed || !mounted) return;
+    await ref.read(hourDaoProvider).deleteEntry(widget.entry!.id);
+    if (mounted) widget.onDeleted();
   }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
-    final Map<String, String> workTypeLabels = {
-      'Billable': l.workTypeBillable,
-      'Non-billable': l.workTypeNonBillable,
-      'Administrative': l.workTypeAdministrative,
-      'WBSO': l.workTypeWbso,
-      'Other': l.workTypeOther,
-    };
+    final theme = Theme.of(context);
+    final isNew = widget.entry == null;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 600),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 6, 8, 6),
+          child: Row(
             children: [
-              Text(
-                widget.entry == null ? l.hoursNewEntry : l.hoursEditEntry,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      key: ValueKey(_date.toString()),
-                      initialValue: AppFormat.date(_date),
-                      readOnly: true,
-                      strutStyle: StrutStyle.disabled,
-                      decoration: InputDecoration(labelText: l.hoursFieldDate),
-                      onTap: () async {
-                        final d = await showDatePicker(
-                          context: context,
-                          initialDate: _date,
-                          firstDate: DateTime(widget.year, 1, 1),
-                          lastDate: DateTime(widget.year, 12, 31),
-                        );
-                        if (d != null) setState(() => _date = d);
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  SizedBox(
-                    width: 120,
-                    child: TextFormField(
-                      controller: _hours,
-                      decoration: InputDecoration(
-                        labelText: l.hoursFieldHours,
-                        suffixText: 'u',
-                      ),
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      validator: (v) {
-                        final h = double.tryParse(
-                          (v ?? '').replaceAll(',', '.'),
-                        );
-                        if (h == null || h <= 0) return l.hoursValidateHours;
-                        return null;
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _description,
-                decoration: InputDecoration(labelText: l.hoursFieldDescription),
-                validator: (v) => (v == null || v.trim().isEmpty)
-                    ? l.hoursValidateDescription
-                    : null,
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                initialValue: _workType,
-                decoration: InputDecoration(labelText: l.hoursFieldWorkType),
-                items: _kWorkTypes
-                    .map(
-                      (t) => DropdownMenuItem(
-                        value: t,
-                        child: Text(workTypeLabels[t] ?? t),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (v) => setState(() {
-                  _workType = v ?? _workType;
-                  if (_workType == 'Billable') _billable = true;
-                  if (_workType != 'Billable') _billable = false;
-                }),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _clientProject,
-                decoration: InputDecoration(
-                  labelText: l.hoursFieldClientProject,
+              if (widget.onBack != null)
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: widget.onBack,
+                ),
+              Expanded(
+                child: Text(
+                  isNew ? l.hoursNewEntry : _description.text,
+                  style: theme.textTheme.titleMedium,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(height: 8),
-              CheckboxListTile(
-                value: _billable,
-                onChanged: (v) => setState(() => _billable = v ?? _billable),
-                title: Text(l.hoursFieldBillable),
-                contentPadding: EdgeInsets.zero,
+              if (!isNew)
+                IconButton(
+                  icon: const Icon(Icons.delete_outline),
+                  tooltip: l.actionDelete,
+                  color: theme.colorScheme.error,
+                  onPressed: _delete,
+                ),
+              FilledButton.icon(
+                onPressed: _save,
+                icon: const Icon(Icons.save_outlined, size: 18),
+                label: Text(l.actionSave),
+                style: FilledButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primaryContainer,
+                  foregroundColor: theme.colorScheme.onPrimaryContainer,
+                ),
               ),
-              CheckboxListTile(
-                value: _isWbso,
-                onChanged: (v) => setState(() => _isWbso = v ?? _isWbso),
-                title: const Text('WBSO'),
-                contentPadding: EdgeInsets.zero,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _notes,
-                decoration: InputDecoration(labelText: l.hoursFieldNotes),
-                maxLines: 2,
-              ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  FilledButton.icon(
-                    onPressed: _save,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: Theme.of(
-                        context,
-                      ).colorScheme.primaryContainer,
-                      foregroundColor: Theme.of(
-                        context,
-                      ).colorScheme.onPrimaryContainer,
-                    ),
-                    icon: const Icon(Icons.save_outlined, size: 18),
-                    label: Text(l.actionSave),
-                  ),
-                  if (widget.entry != null) ...[
-                    const SizedBox(width: 12),
-                    IconButton(
-                      icon: const Icon(Icons.delete_outline),
-                      tooltip: l.actionDelete,
-                      color: Theme.of(context).colorScheme.error,
-                      onPressed: _delete,
-                    ),
-                  ],
-                ],
-              ),
+              const SizedBox(width: 8),
             ],
           ),
         ),
-      ),
+        const Divider(height: 1),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          key: ValueKey(_date.toString()),
+                          initialValue: AppFormat.date(_date),
+                          readOnly: true,
+                          strutStyle: StrutStyle.disabled,
+                          decoration: InputDecoration(
+                            labelText: l.hoursFieldDate,
+                          ),
+                          onTap: () async {
+                            final d = await showDatePicker(
+                              context: context,
+                              initialDate: _date,
+                              firstDate: DateTime(widget.year, 1, 1),
+                              lastDate: DateTime(widget.year, 12, 31),
+                            );
+                            if (d != null) setState(() => _date = d);
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _hours,
+                          decoration: InputDecoration(
+                            labelText: l.hoursFieldHours,
+                            suffixText: l.hoursUnitShort,
+                          ),
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          validator: (v) {
+                            final h = double.tryParse(
+                              (v ?? '').replaceAll(',', '.'),
+                            );
+                            if (h == null || h <= 0) {
+                              return l.hoursValidateHours;
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _description,
+                    decoration: InputDecoration(
+                      labelText: l.hoursFieldDescription,
+                    ),
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? l.hoursValidateDescription
+                        : null,
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    initialValue: _workType,
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      labelText: l.hoursFieldWorkType,
+                    ),
+                    items: _kWorkTypes
+                        .map(
+                          (t) => DropdownMenuItem(
+                            value: t,
+                            child: Text(_workTypeLabel(l, t)),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (v) =>
+                        setState(() => _workType = v ?? _workType),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _clientProject,
+                    decoration: InputDecoration(
+                      labelText: l.hoursFieldClientProject,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _notes,
+                    decoration: InputDecoration(labelText: l.hoursFieldNotes),
+                    maxLines: 2,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -448,15 +464,12 @@ class HourDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context)!;
     final year = ref.watch(fiscalYearProvider);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(entry == null ? l.hoursNewEntry : l.hoursEditEntry),
-      ),
       body: _EntryForm(
         entry: entry,
         year: entry?.fiscalYear ?? year,
+        onBack: () => context.pop(),
         onSaved: () => context.pop(),
         onDeleted: () => context.pop(),
       ),

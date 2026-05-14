@@ -628,6 +628,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get hoursUnitShort => 'hrs';
+
+  @override
   String hoursProgress(String total, String target) {
     return '$total / $target hrs';
   }
@@ -641,31 +644,39 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get hoursFieldDate => 'Date';
+  String get hoursFieldDate => 'Date *';
 
   @override
-  String get hoursFieldHours => 'Hours';
+  String get hoursFieldHours => 'Hours *';
 
   @override
-  String get hoursFieldDescription => 'Description';
+  String get hoursFieldDescription => 'Description *';
 
   @override
-  String get hoursFieldWorkType => 'Work type';
+  String get hoursFieldWorkType => 'Work type *';
 
   @override
-  String get hoursFieldClientProject => 'Client / project (optional)';
+  String get hoursFieldClientProject => 'Client / project';
 
   @override
   String get hoursFieldBillable => 'Billable';
 
   @override
-  String get hoursFieldNotes => 'Notes (optional)';
+  String get hoursFieldNotes => 'Notes';
 
   @override
   String get hoursNewEntry => 'New entry';
 
   @override
   String get hoursEditEntry => 'Edit entry';
+
+  @override
+  String get hoursDeleteTitle => 'Delete hour entry';
+
+  @override
+  String hoursDeleteMessage(String description) {
+    return 'Are you sure you want to delete \"$description\"?';
+  }
 
   @override
   String get hoursValidateHours => 'Enter a number of hours greater than 0';
@@ -757,7 +768,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mileageFieldRouteDeviation => 'Detour';
 
   @override
-  String get mileageFieldNotes => 'Notes (optional)';
+  String get mileageFieldNotes => 'Notes';
 
   @override
   String get mileageNewTrip => 'New trip';
@@ -828,7 +839,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assetsFieldEiaMia => 'EIA / MIA';
 
   @override
-  String get assetsFieldNotes => 'Notes (optional)';
+  String get assetsFieldNotes => 'Notes';
 
   @override
   String get assetsDisposal => 'Disposal';
@@ -1301,7 +1312,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get firstLaunchSubtitle => 'Set up your bookkeeping workspace.';
 
   @override
-  String get firstLaunchDbSection => 'Database location (optional)';
+  String get firstLaunchDbSection => 'Database location';
 
   @override
   String get firstLaunchDbDescription =>

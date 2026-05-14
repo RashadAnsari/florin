@@ -631,6 +631,9 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
+  String get hoursUnitShort => 'u';
+
+  @override
   String hoursProgress(String total, String target) {
     return '$total / $target uur';
   }
@@ -644,31 +647,39 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get hoursFieldDate => 'Datum';
+  String get hoursFieldDate => 'Datum *';
 
   @override
-  String get hoursFieldHours => 'Uren';
+  String get hoursFieldHours => 'Uren *';
 
   @override
-  String get hoursFieldDescription => 'Omschrijving';
+  String get hoursFieldDescription => 'Omschrijving *';
 
   @override
-  String get hoursFieldWorkType => 'Type werk';
+  String get hoursFieldWorkType => 'Type werk *';
 
   @override
-  String get hoursFieldClientProject => 'Klant / project (optioneel)';
+  String get hoursFieldClientProject => 'Klant / project';
 
   @override
   String get hoursFieldBillable => 'Facturabel';
 
   @override
-  String get hoursFieldNotes => 'Notities (optioneel)';
+  String get hoursFieldNotes => 'Notities';
 
   @override
   String get hoursNewEntry => 'Nieuwe invoer';
 
   @override
   String get hoursEditEntry => 'Bewerk invoer';
+
+  @override
+  String get hoursDeleteTitle => 'Ureninvoer verwijderen';
+
+  @override
+  String hoursDeleteMessage(String description) {
+    return 'Weet je zeker dat je \"$description\" wilt verwijderen?';
+  }
 
   @override
   String get hoursValidateHours =>
@@ -760,7 +771,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get mileageFieldRouteDeviation => 'Omrijden';
 
   @override
-  String get mileageFieldNotes => 'Notities (optioneel)';
+  String get mileageFieldNotes => 'Notities';
 
   @override
   String get mileageNewTrip => 'Nieuwe rit';
@@ -831,7 +842,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get assetsFieldEiaMia => 'EIA / MIA';
 
   @override
-  String get assetsFieldNotes => 'Notities (optioneel)';
+  String get assetsFieldNotes => 'Notities';
 
   @override
   String get assetsDisposal => 'Vervreemding';
@@ -1304,7 +1315,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get firstLaunchSubtitle => 'Stel je boekhoudwerkruimte in.';
 
   @override
-  String get firstLaunchDbSection => 'Databaselocatie (optioneel)';
+  String get firstLaunchDbSection => 'Databaselocatie';
 
   @override
   String get firstLaunchDbDescription =>
