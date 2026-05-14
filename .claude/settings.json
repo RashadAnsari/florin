@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "f=\"${CLAUDE_PROJECT_DIR:-.}/CLAUDE.md\"; content=$(head -80 \"$f\" 2>/dev/null); jq -n --arg c \"CLAUDE.md:\\n$content\" '{hookSpecificOutput:{hookEventName:\"UserPromptSubmit\",additionalContext:$c}}'",
+            "command": "f=\"${CLAUDE_PROJECT_DIR:-.}/AGENTS.md\"; content=$(head -80 \"$f\" 2>/dev/null); jq -n --arg c \"AGENTS.md:\\n$content\" '{hookSpecificOutput:{hookEventName:\"UserPromptSubmit\",additionalContext:$c}}'",
             "timeout": 5
           }
         ]
