@@ -35,6 +35,8 @@ class VatQuarterResult {
 class VatService {
   const VatService();
 
+  static const int urgentDeadlineDays = 14;
+
   VatQuarterResult calculateQuarter({
     required List<Invoice> allYearInvoices,
     required List<InvoiceLine> allYearInvoiceLines,

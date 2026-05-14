@@ -59,6 +59,13 @@ class TaxResult {
 class TaxService {
   const TaxService();
 
+  static const double urencriteriumThreshold = 1225;
+  static const double defaultMileageRatePerKm = 0.23;
+  static const double kiaDecreaseRate = 0.0756;
+
+  static int computeMileageAllowance(int businessKm, double ratePerKm) =>
+      (businessKm * ratePerKm * 100).round();
+
   TaxResult calculate({
     required TaxParam params,
     required int grossRevenue,
@@ -179,9 +186,8 @@ class TaxService {
     if (v < params.kiaLowerThreshold) return 0;
     if (v <= params.kiaUpperThreshold) return (v * params.kiaRate).round();
     if (v <= params.kiaFlatThreshold) return params.kiaFlatAmount;
-    // Above flat threshold: degressive, ~7.56% per euro of excess
-    const decreaseRate = 0.0756;
-    final reduction = ((v - params.kiaUpperThreshold) * decreaseRate).round();
+    final reduction = ((v - params.kiaUpperThreshold) * params.kiaDecreaseRate)
+        .round();
     return (params.kiaFlatAmount - reduction).clamp(0, params.kiaFlatAmount);
   }
 

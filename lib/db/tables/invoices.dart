@@ -1,6 +1,8 @@
 import 'package:drift/drift.dart';
 import 'clients.dart';
 
+const kDefaultPaymentTermDays = 14;
+
 class Invoices extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get invoiceNumber => text().unique()();
@@ -13,7 +15,8 @@ class Invoices extends Table {
   TextColumn get sellerKvkNumber => text()();
   TextColumn get sellerAddress => text()();
   TextColumn get sellerIban => text().nullable()();
-  IntColumn get paymentTermDays => integer().withDefault(const Constant(14))();
+  IntColumn get paymentTermDays =>
+      integer().withDefault(const Constant(kDefaultPaymentTermDays))();
   DateTimeColumn get dueDate => dateTime()();
   TextColumn get status => text().withDefault(const Constant('Draft'))();
   DateTimeColumn get paidDate => dateTime().nullable()();

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
+import '../../services/tax_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/confirmation_dialog.dart';
 
@@ -39,11 +40,14 @@ class HoursScreen extends ConsumerWidget {
     final year = ref.watch(fiscalYearProvider);
     final entriesAsync = ref.watch(hourEntriesStreamProvider(year));
     final entries = entriesAsync.valueOrNull ?? [];
+    final params = ref.watch(taxParamsStreamProvider(year)).valueOrNull;
     final totalHours = entries.fold<double>(0.0, (s, e) => s + e.hours);
     final billableHours = entries
         .where((e) => e.billable)
         .fold<double>(0.0, (s, e) => s + e.hours);
-    const target = 1225.0;
+    final target =
+        (params?.urencriteriumThreshold ?? TaxService.urencriteriumThreshold)
+            .toDouble();
     final progress = (totalHours / target).clamp(0.0, 1.0);
     final yearDone = year < DateTime.now().year;
 

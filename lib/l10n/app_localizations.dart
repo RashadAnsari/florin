@@ -2528,6 +2528,54 @@ abstract class AppLocalizations {
   /// **'ZVW max'**
   String get settingsTaxZvwMax;
 
+  /// No description provided for @settingsTaxUrencriterium.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours criterion'**
+  String get settingsTaxUrencriterium;
+
+  /// No description provided for @settingsTaxKia.
+  ///
+  /// In en, this message translates to:
+  /// **'KIA deduction'**
+  String get settingsTaxKia;
+
+  /// No description provided for @settingsTaxKiaLowerThresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower threshold'**
+  String get settingsTaxKiaLowerThresh;
+
+  /// No description provided for @settingsTaxKiaUpperThresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Upper threshold'**
+  String get settingsTaxKiaUpperThresh;
+
+  /// No description provided for @settingsTaxKiaFlatThresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Flat threshold'**
+  String get settingsTaxKiaFlatThresh;
+
+  /// No description provided for @settingsTaxKiaRate.
+  ///
+  /// In en, this message translates to:
+  /// **'KIA rate (%)'**
+  String get settingsTaxKiaRate;
+
+  /// No description provided for @settingsTaxKiaFlatAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Flat amount'**
+  String get settingsTaxKiaFlatAmount;
+
+  /// No description provided for @settingsTaxKiaDecreaseRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease rate (%)'**
+  String get settingsTaxKiaDecreaseRate;
+
   /// No description provided for @settingsTaxKor.
   ///
   /// In en, this message translates to:

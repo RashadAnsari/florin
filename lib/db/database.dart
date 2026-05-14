@@ -36,7 +36,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -59,6 +59,10 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 5) {
         await m.alterTable(TableMigration(invoices));
+      }
+      if (from < 6) {
+        await m.addColumn(taxParams, taxParams.kiaDecreaseRate);
+        await m.addColumn(taxParams, taxParams.urencriteriumThreshold);
       }
     },
   );
@@ -95,6 +99,8 @@ class AppDatabase extends _$AppDatabase {
         kiaFlatThreshold: Value(13274600),
         kiaRate: Value(0.28),
         kiaFlatAmount: Value(2007200),
+        kiaDecreaseRate: Value(0.0756),
+        urencriteriumThreshold: Value(1225),
         mileageRatePerKm: Value(0.23),
         korThreshold: Value(2000000),
         ossThreshold: Value(1000000),

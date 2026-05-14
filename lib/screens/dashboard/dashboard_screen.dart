@@ -51,7 +51,9 @@ class DashboardScreen extends ConsumerWidget {
 
     // Hours
     final totalHours = hours.fold<double>(0.0, (s, h) => s + h.hours);
-    const hoursTarget = 1225.0;
+    final hoursTarget =
+        (params?.urencriteriumThreshold ?? TaxService.urencriteriumThreshold)
+            .toDouble();
     final hoursProgress = (totalHours / hoursTarget).clamp(0.0, 1.0);
     final yearDone = year < DateTime.now().year;
     final urenOk = totalHours >= hoursTarget;
@@ -61,7 +63,10 @@ class DashboardScreen extends ConsumerWidget {
         .where((m) => m.tripType == 'Business')
         .fold<int>(0, (s, m) => s + m.distanceKm);
     final mileageAllowance = params != null
-        ? (businessKm * params.mileageRatePerKm * 100).round()
+        ? TaxService.computeMileageAllowance(
+            businessKm,
+            params.mileageRatePerKm,
+          )
         : 0;
     final totalDepreciation = assets.fold<int>(0, (s, a) {
       if (a.disposalDate != null) return s;
@@ -101,7 +106,8 @@ class DashboardScreen extends ConsumerWidget {
     }
 
     // VAT deadlines
-    final currentQ = 'Q${((DateTime.now().month - 1) ~/ 3) + 1}';
+    final now = DateTime.now();
+    final currentQ = year == now.year ? 'Q${((now.month - 1) ~/ 3) + 1}' : null;
 
     // Monthly revenue chart data
     final monthlyRevenue = List<int>.filled(12, 0);
@@ -122,57 +128,58 @@ class DashboardScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // KPI row
-            Wrap(
-              spacing: 16,
-              runSpacing: 16,
-              children: [
-                SizedBox(
-                  width: 220,
-                  child: StatCard(
-                    label: l.dashboardNetRevenue,
-                    value: AppFormat.cents(netRevenue),
-                  ),
-                ),
-                SizedBox(
-                  width: 220,
-                  child: StatCard(
-                    label: l.dashboardDeductibleCosts,
-                    value: AppFormat.cents(totalExpenses),
-                  ),
-                ),
-                if (taxResult != null)
-                  SizedBox(
-                    width: 220,
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
                     child: StatCard(
-                      label: l.dashboardEstimatedTax,
-                      value: AppFormat.cents(taxResult.totalTax),
-                      delta: l.dashboardEffectiveRate(
-                        (taxResult.effectiveTaxRate / 100).toStringAsFixed(1),
+                      label: l.dashboardNetRevenue,
+                      value: AppFormat.cents(netRevenue),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: StatCard(
+                      label: l.dashboardDeductibleCosts,
+                      value: AppFormat.cents(totalExpenses),
+                    ),
+                  ),
+                  if (taxResult != null) ...[
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: StatCard(
+                        label: l.dashboardEstimatedTax,
+                        value: AppFormat.cents(taxResult.totalTax),
+                        delta: l.dashboardEffectiveRate(
+                          (taxResult.effectiveTaxRate / 100).toStringAsFixed(1),
+                        ),
                       ),
                     ),
-                  ),
-                if (taxResult != null)
-                  SizedBox(
-                    width: 220,
-                    child: StatCard(
-                      label: l.dashboardNetProfitAfterTax,
-                      value: AppFormat.cents(taxResult.netProfitAfterTax),
-                      deltaColor: taxResult.netProfitAfterTax >= 0
-                          ? AppColors.income
-                          : AppColors.red,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: StatCard(
+                        label: l.dashboardNetProfitAfterTax,
+                        value: AppFormat.cents(taxResult.netProfitAfterTax),
+                        deltaColor: taxResult.netProfitAfterTax >= 0
+                            ? AppColors.income
+                            : AppColors.red,
+                      ),
                     ),
-                  ),
-                if (unpaidCount > 0)
-                  SizedBox(
-                    width: 220,
-                    child: StatCard(
-                      label: l.dashboardOutstandingInvoices,
-                      value: AppFormat.cents(unpaidAmount),
-                      delta: l.dashboardInvoiceCount(unpaidCount),
-                      deltaColor: AppColors.expense,
+                  ],
+                  if (unpaidCount > 0) ...[
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: StatCard(
+                        label: l.dashboardOutstandingInvoices,
+                        value: AppFormat.cents(unpaidAmount),
+                        delta: l.dashboardInvoiceCount(unpaidCount),
+                        deltaColor: AppColors.expense,
+                      ),
                     ),
-                  ),
-              ],
+                  ],
+                ],
+              ),
             ),
             const SizedBox(height: 32),
 
@@ -228,7 +235,7 @@ class DashboardScreen extends ConsumerWidget {
               runSpacing: 8,
               children: ['Q1', 'Q2', 'Q3', 'Q4'].map((q) {
                 final dl = vatService.filingDeadline(year, q);
-                final isCurrent = q == currentQ;
+                final isCurrent = currentQ != null && q == currentQ;
                 return _DeadlineChip(
                   quarter: q,
                   deadline: dl,
@@ -283,7 +290,8 @@ class _DeadlineChip extends ConsumerWidget {
     final now = DateTime.now();
     final daysLeft = deadline.difference(now).inDays;
     final overdue = now.isAfter(deadline) && !filed;
-    final urgent = !filed && daysLeft <= 14 && daysLeft >= 0;
+    final urgent =
+        !filed && daysLeft <= VatService.urgentDeadlineDays && daysLeft >= 0;
 
     Color chipColor;
     if (filed) {

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
+import '../../db/tables/invoices.dart' show kDefaultPaymentTermDays;
 import '../../providers/providers.dart';
 import '../../services/invoice_pdf_service.dart';
 import '../../theme/app_theme.dart';
@@ -96,7 +97,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
   void initState() {
     super.initState();
     _invoiceNumber = TextEditingController();
-    _paymentTermDays = TextEditingController(text: '14');
+    _paymentTermDays = TextEditingController(text: '$kDefaultPaymentTermDays');
     _notes = TextEditingController();
     _load();
   }

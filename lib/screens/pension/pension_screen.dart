@@ -100,8 +100,10 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
     final businessKm = mileage
         .where((m) => m.tripType == 'Business')
         .fold<int>(0, (s, m) => s + m.distanceKm);
-    final mileageAllowance = (businessKm * params.mileageRatePerKm * 100)
-        .round();
+    final mileageAllowance = TaxService.computeMileageAllowance(
+      businessKm,
+      params.mileageRatePerKm,
+    );
     final totalDepreciation = assets.fold<int>(0, (s, a) {
       if (a.disposalDate != null) return s;
       final yrs = (year - a.purchaseDate.year).clamp(0, a.usefulLifeYears);
@@ -118,7 +120,7 @@ class _PensionScreenState extends ConsumerState<PensionScreen> {
         .fold<int>(0, (s, a) => s + a.costExclVat);
     final kiaDeduction = _taxService.computeKia(params, kiaTotal);
     final totalHours = hours.fold<double>(0.0, (s, h) => s + h.hours);
-    final urenOk = totalHours >= 1225;
+    final urenOk = totalHours >= params.urencriteriumThreshold;
 
     final taxResult = _taxService.calculate(
       params: params,

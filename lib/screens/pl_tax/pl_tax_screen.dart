@@ -127,8 +127,10 @@ class _PlTaxScreenState extends ConsumerState<PlTaxScreen> {
     final businessKm = mileage
         .where((m) => m.tripType == 'Business')
         .fold<int>(0, (s, m) => s + m.distanceKm);
-    final mileageAllowance = (businessKm * params.mileageRatePerKm * 100)
-        .round();
+    final mileageAllowance = TaxService.computeMileageAllowance(
+      businessKm,
+      params.mileageRatePerKm,
+    );
 
     final totalDepreciation = assets.fold<int>(0, (s, a) {
       if (a.disposalDate != null) return s;
@@ -150,7 +152,7 @@ class _PlTaxScreenState extends ConsumerState<PlTaxScreen> {
 
     final totalHours = hours.fold<double>(0.0, (s, h) => s + h.hours);
     final yearDone = year < DateTime.now().year;
-    final urenOk = totalHours >= 1225;
+    final urenOk = totalHours >= params.urencriteriumThreshold;
     final claimZelfs = _claimZelfs && (urenOk || !yearDone);
 
     final algHeffing = _algHeffingOverride ?? params.algHeffingskortingMax;

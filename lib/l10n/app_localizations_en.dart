@@ -1343,6 +1343,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTaxZvwMax => 'ZVW max';
 
   @override
+  String get settingsTaxUrencriterium => 'Hours criterion';
+
+  @override
+  String get settingsTaxKia => 'KIA deduction';
+
+  @override
+  String get settingsTaxKiaLowerThresh => 'Lower threshold';
+
+  @override
+  String get settingsTaxKiaUpperThresh => 'Upper threshold';
+
+  @override
+  String get settingsTaxKiaFlatThresh => 'Flat threshold';
+
+  @override
+  String get settingsTaxKiaRate => 'KIA rate (%)';
+
+  @override
+  String get settingsTaxKiaFlatAmount => 'Flat amount';
+
+  @override
+  String get settingsTaxKiaDecreaseRate => 'Decrease rate (%)';
+
+  @override
   String get settingsTaxKor => 'KOR threshold';
 
   @override

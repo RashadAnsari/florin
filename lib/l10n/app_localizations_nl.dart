@@ -1350,6 +1350,30 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsTaxZvwMax => 'ZVW max';
 
   @override
+  String get settingsTaxUrencriterium => 'Urencriterium';
+
+  @override
+  String get settingsTaxKia => 'KIA-aftrek';
+
+  @override
+  String get settingsTaxKiaLowerThresh => 'Ondergrens';
+
+  @override
+  String get settingsTaxKiaUpperThresh => 'Bovengrens';
+
+  @override
+  String get settingsTaxKiaFlatThresh => 'Vlakke drempel';
+
+  @override
+  String get settingsTaxKiaRate => 'KIA-percentage (%)';
+
+  @override
+  String get settingsTaxKiaFlatAmount => 'Vast bedrag';
+
+  @override
+  String get settingsTaxKiaDecreaseRate => 'Afnamerate (%)';
+
+  @override
   String get settingsTaxKor => 'KOR drempel';
 
   @override

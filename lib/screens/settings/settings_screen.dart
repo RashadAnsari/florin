@@ -7,6 +7,7 @@ import '../../app.dart' show localeProvider, kSupportedLocales;
 import '../../providers/providers.dart';
 import '../../services/csv_export_service.dart';
 import '../../services/db_location_service.dart';
+import '../../services/tax_service.dart';
 import '../../services/vat_service.dart';
 import '../../widgets/amount_field.dart';
 
@@ -305,6 +306,13 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
   late int _zvwMax;
   late TextEditingController _mileageRate;
   late int _korThresh;
+  late TextEditingController _urenThresh;
+  late int _kiaLowerThresh;
+  late int _kiaUpperThresh;
+  late int _kiaFlatThresh;
+  late TextEditingController _kiaRate;
+  late int _kiaFlatAmount;
+  late TextEditingController _kiaDecreaseRate;
 
   @override
   void initState() {
@@ -338,6 +346,22 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
       text: p == null ? '' : p.mileageRatePerKm.toStringAsFixed(2),
     );
     _korThresh = p?.korThreshold ?? 0;
+    _urenThresh = TextEditingController(
+      text:
+          (p?.urencriteriumThreshold ??
+                  TaxService.urencriteriumThreshold.toInt())
+              .toString(),
+    );
+    _kiaLowerThresh = p?.kiaLowerThreshold ?? 0;
+    _kiaUpperThresh = p?.kiaUpperThreshold ?? 0;
+    _kiaFlatThresh = p?.kiaFlatThreshold ?? 0;
+    _kiaRate = TextEditingController(
+      text: p == null ? '' : (p.kiaRate * 100).toStringAsFixed(2),
+    );
+    _kiaFlatAmount = p?.kiaFlatAmount ?? 0;
+    _kiaDecreaseRate = TextEditingController(
+      text: p == null ? '' : (p.kiaDecreaseRate * 100).toStringAsFixed(4),
+    );
   }
 
   @override
@@ -349,6 +373,9 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
       _b3Rate,
       _zvwRate,
       _mileageRate,
+      _urenThresh,
+      _kiaRate,
+      _kiaDecreaseRate,
     ]) {
       c.dispose();
     }
@@ -383,11 +410,16 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
         aowFranchise: Value(p?.aowFranchise ?? 0),
         reserveringsruimteMax: Value(p?.reserveringsruimteMax ?? 0),
         factorAMultiplier: Value(p?.factorAMultiplier ?? 0.0),
-        kiaLowerThreshold: Value(p?.kiaLowerThreshold ?? 0),
-        kiaUpperThreshold: Value(p?.kiaUpperThreshold ?? 0),
-        kiaFlatThreshold: Value(p?.kiaFlatThreshold ?? 0),
-        kiaRate: Value(p?.kiaRate ?? 0.0),
-        kiaFlatAmount: Value(p?.kiaFlatAmount ?? 0),
+        urencriteriumThreshold: Value(
+          int.tryParse(_urenThresh.text) ??
+              TaxService.urencriteriumThreshold.toInt(),
+        ),
+        kiaLowerThreshold: Value(_kiaLowerThresh),
+        kiaUpperThreshold: Value(_kiaUpperThresh),
+        kiaFlatThreshold: Value(_kiaFlatThresh),
+        kiaRate: Value(_pct(_kiaRate)),
+        kiaFlatAmount: Value(_kiaFlatAmount),
+        kiaDecreaseRate: Value(_pct(_kiaDecreaseRate)),
         mileageRatePerKm: Value(
           double.tryParse(_mileageRate.text.replaceAll(',', '.')) ??
               p?.mileageRatePerKm ??
@@ -423,6 +455,10 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
           _row2(
             _field(l, l.settingsTaxMkb, _mkbPct),
             _field(l, l.settingsTaxMileage, _mileageRate),
+          ),
+          _row2(
+            _field(l, l.settingsTaxUrencriterium, _urenThresh),
+            const SizedBox(),
           ),
           const SizedBox(height: 16),
           Text(l.settingsTaxBrackets, style: theme.textTheme.titleSmall),
@@ -466,6 +502,41 @@ class _TaxParamsEditorState extends ConsumerState<_TaxParamsEditor> {
           _row2(
             _field(l, l.settingsTaxZvwRate, _zvwRate),
             _amountField(l, l.settingsTaxZvwMax, _zvwMax, (v) => _zvwMax = v),
+          ),
+          const SizedBox(height: 16),
+          Text(l.settingsTaxKia, style: theme.textTheme.titleSmall),
+          const SizedBox(height: 12),
+          _row2(
+            _amountField(
+              l,
+              l.settingsTaxKiaLowerThresh,
+              _kiaLowerThresh,
+              (v) => _kiaLowerThresh = v,
+            ),
+            _amountField(
+              l,
+              l.settingsTaxKiaUpperThresh,
+              _kiaUpperThresh,
+              (v) => _kiaUpperThresh = v,
+            ),
+          ),
+          _row2(
+            _amountField(
+              l,
+              l.settingsTaxKiaFlatThresh,
+              _kiaFlatThresh,
+              (v) => _kiaFlatThresh = v,
+            ),
+            _amountField(
+              l,
+              l.settingsTaxKiaFlatAmount,
+              _kiaFlatAmount,
+              (v) => _kiaFlatAmount = v,
+            ),
+          ),
+          _row2(
+            _field(l, l.settingsTaxKiaRate, _kiaRate),
+            _field(l, l.settingsTaxKiaDecreaseRate, _kiaDecreaseRate),
           ),
           const SizedBox(height: 16),
           Text(l.settingsTaxKor, style: theme.textTheme.titleSmall),

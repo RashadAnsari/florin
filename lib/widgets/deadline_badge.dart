@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:florin/l10n/app_localizations.dart';
+import '../services/vat_service.dart';
 import '../theme/app_theme.dart';
 
 class DeadlineBadge extends StatelessWidget {
@@ -16,7 +17,9 @@ class DeadlineBadge extends StatelessWidget {
     }
     final days = deadline.difference(DateTime.now()).inDays;
     if (days < 0) return _badge(l.deadlineBadgeOverdue, AppColors.red);
-    if (days <= 14) return _badge(l.deadlineBadgeDays(days), AppColors.vat);
+    if (days <= VatService.urgentDeadlineDays) {
+      return _badge(l.deadlineBadgeDays(days), AppColors.vat);
+    }
     return _badge(l.deadlineBadgeDays(days), AppColors.income);
   }
 

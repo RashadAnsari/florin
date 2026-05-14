@@ -277,6 +277,29 @@ class $TaxParamsTable extends TaxParams
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _kiaDecreaseRateMeta = const VerificationMeta(
+    'kiaDecreaseRate',
+  );
+  @override
+  late final GeneratedColumn<double> kiaDecreaseRate = GeneratedColumn<double>(
+    'kia_decrease_rate',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0.0756),
+  );
+  static const VerificationMeta _urencriteriumThresholdMeta =
+      const VerificationMeta('urencriteriumThreshold');
+  @override
+  late final GeneratedColumn<int> urencriteriumThreshold = GeneratedColumn<int>(
+    'urencriterium_threshold',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1225),
+  );
   static const VerificationMeta _mileageRatePerKmMeta = const VerificationMeta(
     'mileageRatePerKm',
   );
@@ -349,6 +372,8 @@ class $TaxParamsTable extends TaxParams
     kiaFlatThreshold,
     kiaRate,
     kiaFlatAmount,
+    kiaDecreaseRate,
+    urencriteriumThreshold,
     mileageRatePerKm,
     korThreshold,
     ossThreshold,
@@ -627,6 +652,24 @@ class $TaxParamsTable extends TaxParams
     } else if (isInserting) {
       context.missing(_kiaFlatAmountMeta);
     }
+    if (data.containsKey('kia_decrease_rate')) {
+      context.handle(
+        _kiaDecreaseRateMeta,
+        kiaDecreaseRate.isAcceptableOrUnknown(
+          data['kia_decrease_rate']!,
+          _kiaDecreaseRateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('urencriterium_threshold')) {
+      context.handle(
+        _urencriteriumThresholdMeta,
+        urencriteriumThreshold.isAcceptableOrUnknown(
+          data['urencriterium_threshold']!,
+          _urencriteriumThresholdMeta,
+        ),
+      );
+    }
     if (data.containsKey('mileage_rate_per_km')) {
       context.handle(
         _mileageRatePerKmMeta,
@@ -780,6 +823,14 @@ class $TaxParamsTable extends TaxParams
         DriftSqlType.int,
         data['${effectivePrefix}kia_flat_amount'],
       )!,
+      kiaDecreaseRate: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}kia_decrease_rate'],
+      )!,
+      urencriteriumThreshold: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}urencriterium_threshold'],
+      )!,
       mileageRatePerKm: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}mileage_rate_per_km'],
@@ -831,6 +882,8 @@ class TaxParam extends DataClass implements Insertable<TaxParam> {
   final int kiaFlatThreshold;
   final double kiaRate;
   final int kiaFlatAmount;
+  final double kiaDecreaseRate;
+  final int urencriteriumThreshold;
   final double mileageRatePerKm;
   final int korThreshold;
   final int ossThreshold;
@@ -861,6 +914,8 @@ class TaxParam extends DataClass implements Insertable<TaxParam> {
     required this.kiaFlatThreshold,
     required this.kiaRate,
     required this.kiaFlatAmount,
+    required this.kiaDecreaseRate,
+    required this.urencriteriumThreshold,
     required this.mileageRatePerKm,
     required this.korThreshold,
     required this.ossThreshold,
@@ -896,6 +951,8 @@ class TaxParam extends DataClass implements Insertable<TaxParam> {
     map['kia_flat_threshold'] = Variable<int>(kiaFlatThreshold);
     map['kia_rate'] = Variable<double>(kiaRate);
     map['kia_flat_amount'] = Variable<int>(kiaFlatAmount);
+    map['kia_decrease_rate'] = Variable<double>(kiaDecreaseRate);
+    map['urencriterium_threshold'] = Variable<int>(urencriteriumThreshold);
     map['mileage_rate_per_km'] = Variable<double>(mileageRatePerKm);
     map['kor_threshold'] = Variable<int>(korThreshold);
     map['oss_threshold'] = Variable<int>(ossThreshold);
@@ -930,6 +987,8 @@ class TaxParam extends DataClass implements Insertable<TaxParam> {
       kiaFlatThreshold: Value(kiaFlatThreshold),
       kiaRate: Value(kiaRate),
       kiaFlatAmount: Value(kiaFlatAmount),
+      kiaDecreaseRate: Value(kiaDecreaseRate),
+      urencriteriumThreshold: Value(urencriteriumThreshold),
       mileageRatePerKm: Value(mileageRatePerKm),
       korThreshold: Value(korThreshold),
       ossThreshold: Value(ossThreshold),
@@ -978,6 +1037,10 @@ class TaxParam extends DataClass implements Insertable<TaxParam> {
       kiaFlatThreshold: serializer.fromJson<int>(json['kiaFlatThreshold']),
       kiaRate: serializer.fromJson<double>(json['kiaRate']),
       kiaFlatAmount: serializer.fromJson<int>(json['kiaFlatAmount']),
+      kiaDecreaseRate: serializer.fromJson<double>(json['kiaDecreaseRate']),
+      urencriteriumThreshold: serializer.fromJson<int>(
+        json['urencriteriumThreshold'],
+      ),
       mileageRatePerKm: serializer.fromJson<double>(json['mileageRatePerKm']),
       korThreshold: serializer.fromJson<int>(json['korThreshold']),
       ossThreshold: serializer.fromJson<int>(json['ossThreshold']),
@@ -1015,6 +1078,8 @@ class TaxParam extends DataClass implements Insertable<TaxParam> {
       'kiaFlatThreshold': serializer.toJson<int>(kiaFlatThreshold),
       'kiaRate': serializer.toJson<double>(kiaRate),
       'kiaFlatAmount': serializer.toJson<int>(kiaFlatAmount),
+      'kiaDecreaseRate': serializer.toJson<double>(kiaDecreaseRate),
+      'urencriteriumThreshold': serializer.toJson<int>(urencriteriumThreshold),
       'mileageRatePerKm': serializer.toJson<double>(mileageRatePerKm),
       'korThreshold': serializer.toJson<int>(korThreshold),
       'ossThreshold': serializer.toJson<int>(ossThreshold),
@@ -1048,6 +1113,8 @@ class TaxParam extends DataClass implements Insertable<TaxParam> {
     int? kiaFlatThreshold,
     double? kiaRate,
     int? kiaFlatAmount,
+    double? kiaDecreaseRate,
+    int? urencriteriumThreshold,
     double? mileageRatePerKm,
     int? korThreshold,
     int? ossThreshold,
@@ -1079,6 +1146,9 @@ class TaxParam extends DataClass implements Insertable<TaxParam> {
     kiaFlatThreshold: kiaFlatThreshold ?? this.kiaFlatThreshold,
     kiaRate: kiaRate ?? this.kiaRate,
     kiaFlatAmount: kiaFlatAmount ?? this.kiaFlatAmount,
+    kiaDecreaseRate: kiaDecreaseRate ?? this.kiaDecreaseRate,
+    urencriteriumThreshold:
+        urencriteriumThreshold ?? this.urencriteriumThreshold,
     mileageRatePerKm: mileageRatePerKm ?? this.mileageRatePerKm,
     korThreshold: korThreshold ?? this.korThreshold,
     ossThreshold: ossThreshold ?? this.ossThreshold,
@@ -1153,6 +1223,12 @@ class TaxParam extends DataClass implements Insertable<TaxParam> {
       kiaFlatAmount: data.kiaFlatAmount.present
           ? data.kiaFlatAmount.value
           : this.kiaFlatAmount,
+      kiaDecreaseRate: data.kiaDecreaseRate.present
+          ? data.kiaDecreaseRate.value
+          : this.kiaDecreaseRate,
+      urencriteriumThreshold: data.urencriteriumThreshold.present
+          ? data.urencriteriumThreshold.value
+          : this.urencriteriumThreshold,
       mileageRatePerKm: data.mileageRatePerKm.present
           ? data.mileageRatePerKm.value
           : this.mileageRatePerKm,
@@ -1196,6 +1272,8 @@ class TaxParam extends DataClass implements Insertable<TaxParam> {
           ..write('kiaFlatThreshold: $kiaFlatThreshold, ')
           ..write('kiaRate: $kiaRate, ')
           ..write('kiaFlatAmount: $kiaFlatAmount, ')
+          ..write('kiaDecreaseRate: $kiaDecreaseRate, ')
+          ..write('urencriteriumThreshold: $urencriteriumThreshold, ')
           ..write('mileageRatePerKm: $mileageRatePerKm, ')
           ..write('korThreshold: $korThreshold, ')
           ..write('ossThreshold: $ossThreshold, ')
@@ -1231,6 +1309,8 @@ class TaxParam extends DataClass implements Insertable<TaxParam> {
     kiaFlatThreshold,
     kiaRate,
     kiaFlatAmount,
+    kiaDecreaseRate,
+    urencriteriumThreshold,
     mileageRatePerKm,
     korThreshold,
     ossThreshold,
@@ -1265,6 +1345,8 @@ class TaxParam extends DataClass implements Insertable<TaxParam> {
           other.kiaFlatThreshold == this.kiaFlatThreshold &&
           other.kiaRate == this.kiaRate &&
           other.kiaFlatAmount == this.kiaFlatAmount &&
+          other.kiaDecreaseRate == this.kiaDecreaseRate &&
+          other.urencriteriumThreshold == this.urencriteriumThreshold &&
           other.mileageRatePerKm == this.mileageRatePerKm &&
           other.korThreshold == this.korThreshold &&
           other.ossThreshold == this.ossThreshold &&
@@ -1297,6 +1379,8 @@ class TaxParamsCompanion extends UpdateCompanion<TaxParam> {
   final Value<int> kiaFlatThreshold;
   final Value<double> kiaRate;
   final Value<int> kiaFlatAmount;
+  final Value<double> kiaDecreaseRate;
+  final Value<int> urencriteriumThreshold;
   final Value<double> mileageRatePerKm;
   final Value<int> korThreshold;
   final Value<int> ossThreshold;
@@ -1327,6 +1411,8 @@ class TaxParamsCompanion extends UpdateCompanion<TaxParam> {
     this.kiaFlatThreshold = const Value.absent(),
     this.kiaRate = const Value.absent(),
     this.kiaFlatAmount = const Value.absent(),
+    this.kiaDecreaseRate = const Value.absent(),
+    this.urencriteriumThreshold = const Value.absent(),
     this.mileageRatePerKm = const Value.absent(),
     this.korThreshold = const Value.absent(),
     this.ossThreshold = const Value.absent(),
@@ -1358,6 +1444,8 @@ class TaxParamsCompanion extends UpdateCompanion<TaxParam> {
     required int kiaFlatThreshold,
     required double kiaRate,
     required int kiaFlatAmount,
+    this.kiaDecreaseRate = const Value.absent(),
+    this.urencriteriumThreshold = const Value.absent(),
     required double mileageRatePerKm,
     required int korThreshold,
     required int ossThreshold,
@@ -1416,6 +1504,8 @@ class TaxParamsCompanion extends UpdateCompanion<TaxParam> {
     Expression<int>? kiaFlatThreshold,
     Expression<double>? kiaRate,
     Expression<int>? kiaFlatAmount,
+    Expression<double>? kiaDecreaseRate,
+    Expression<int>? urencriteriumThreshold,
     Expression<double>? mileageRatePerKm,
     Expression<int>? korThreshold,
     Expression<int>? ossThreshold,
@@ -1452,6 +1542,9 @@ class TaxParamsCompanion extends UpdateCompanion<TaxParam> {
       if (kiaFlatThreshold != null) 'kia_flat_threshold': kiaFlatThreshold,
       if (kiaRate != null) 'kia_rate': kiaRate,
       if (kiaFlatAmount != null) 'kia_flat_amount': kiaFlatAmount,
+      if (kiaDecreaseRate != null) 'kia_decrease_rate': kiaDecreaseRate,
+      if (urencriteriumThreshold != null)
+        'urencriterium_threshold': urencriteriumThreshold,
       if (mileageRatePerKm != null) 'mileage_rate_per_km': mileageRatePerKm,
       if (korThreshold != null) 'kor_threshold': korThreshold,
       if (ossThreshold != null) 'oss_threshold': ossThreshold,
@@ -1485,6 +1578,8 @@ class TaxParamsCompanion extends UpdateCompanion<TaxParam> {
     Value<int>? kiaFlatThreshold,
     Value<double>? kiaRate,
     Value<int>? kiaFlatAmount,
+    Value<double>? kiaDecreaseRate,
+    Value<int>? urencriteriumThreshold,
     Value<double>? mileageRatePerKm,
     Value<int>? korThreshold,
     Value<int>? ossThreshold,
@@ -1519,6 +1614,9 @@ class TaxParamsCompanion extends UpdateCompanion<TaxParam> {
       kiaFlatThreshold: kiaFlatThreshold ?? this.kiaFlatThreshold,
       kiaRate: kiaRate ?? this.kiaRate,
       kiaFlatAmount: kiaFlatAmount ?? this.kiaFlatAmount,
+      kiaDecreaseRate: kiaDecreaseRate ?? this.kiaDecreaseRate,
+      urencriteriumThreshold:
+          urencriteriumThreshold ?? this.urencriteriumThreshold,
       mileageRatePerKm: mileageRatePerKm ?? this.mileageRatePerKm,
       korThreshold: korThreshold ?? this.korThreshold,
       ossThreshold: ossThreshold ?? this.ossThreshold,
@@ -1610,6 +1708,14 @@ class TaxParamsCompanion extends UpdateCompanion<TaxParam> {
     if (kiaFlatAmount.present) {
       map['kia_flat_amount'] = Variable<int>(kiaFlatAmount.value);
     }
+    if (kiaDecreaseRate.present) {
+      map['kia_decrease_rate'] = Variable<double>(kiaDecreaseRate.value);
+    }
+    if (urencriteriumThreshold.present) {
+      map['urencriterium_threshold'] = Variable<int>(
+        urencriteriumThreshold.value,
+      );
+    }
     if (mileageRatePerKm.present) {
       map['mileage_rate_per_km'] = Variable<double>(mileageRatePerKm.value);
     }
@@ -1653,6 +1759,8 @@ class TaxParamsCompanion extends UpdateCompanion<TaxParam> {
           ..write('kiaFlatThreshold: $kiaFlatThreshold, ')
           ..write('kiaRate: $kiaRate, ')
           ..write('kiaFlatAmount: $kiaFlatAmount, ')
+          ..write('kiaDecreaseRate: $kiaDecreaseRate, ')
+          ..write('urencriteriumThreshold: $urencriteriumThreshold, ')
           ..write('mileageRatePerKm: $mileageRatePerKm, ')
           ..write('korThreshold: $korThreshold, ')
           ..write('ossThreshold: $ossThreshold, ')
@@ -2614,7 +2722,7 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultValue: const Constant(14),
+    defaultValue: const Constant(kDefaultPaymentTermDays),
   );
   static const VerificationMeta _dueDateMeta = const VerificationMeta(
     'dueDate',
@@ -8334,6 +8442,8 @@ typedef $$TaxParamsTableCreateCompanionBuilder =
       required int kiaFlatThreshold,
       required double kiaRate,
       required int kiaFlatAmount,
+      Value<double> kiaDecreaseRate,
+      Value<int> urencriteriumThreshold,
       required double mileageRatePerKm,
       required int korThreshold,
       required int ossThreshold,
@@ -8366,6 +8476,8 @@ typedef $$TaxParamsTableUpdateCompanionBuilder =
       Value<int> kiaFlatThreshold,
       Value<double> kiaRate,
       Value<int> kiaFlatAmount,
+      Value<double> kiaDecreaseRate,
+      Value<int> urencriteriumThreshold,
       Value<double> mileageRatePerKm,
       Value<int> korThreshold,
       Value<int> ossThreshold,
@@ -8503,6 +8615,16 @@ class $$TaxParamsTableFilterComposer
 
   ColumnFilters<int> get kiaFlatAmount => $composableBuilder(
     column: $table.kiaFlatAmount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get kiaDecreaseRate => $composableBuilder(
+    column: $table.kiaDecreaseRate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get urencriteriumThreshold => $composableBuilder(
+    column: $table.urencriteriumThreshold,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -8661,6 +8783,16 @@ class $$TaxParamsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<double> get kiaDecreaseRate => $composableBuilder(
+    column: $table.kiaDecreaseRate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get urencriteriumThreshold => $composableBuilder(
+    column: $table.urencriteriumThreshold,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<double> get mileageRatePerKm => $composableBuilder(
     column: $table.mileageRatePerKm,
     builder: (column) => ColumnOrderings(column),
@@ -8808,6 +8940,16 @@ class $$TaxParamsTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<double> get kiaDecreaseRate => $composableBuilder(
+    column: $table.kiaDecreaseRate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get urencriteriumThreshold => $composableBuilder(
+    column: $table.urencriteriumThreshold,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<double> get mileageRatePerKm => $composableBuilder(
     column: $table.mileageRatePerKm,
     builder: (column) => column,
@@ -8882,6 +9024,8 @@ class $$TaxParamsTableTableManager
                 Value<int> kiaFlatThreshold = const Value.absent(),
                 Value<double> kiaRate = const Value.absent(),
                 Value<int> kiaFlatAmount = const Value.absent(),
+                Value<double> kiaDecreaseRate = const Value.absent(),
+                Value<int> urencriteriumThreshold = const Value.absent(),
                 Value<double> mileageRatePerKm = const Value.absent(),
                 Value<int> korThreshold = const Value.absent(),
                 Value<int> ossThreshold = const Value.absent(),
@@ -8912,6 +9056,8 @@ class $$TaxParamsTableTableManager
                 kiaFlatThreshold: kiaFlatThreshold,
                 kiaRate: kiaRate,
                 kiaFlatAmount: kiaFlatAmount,
+                kiaDecreaseRate: kiaDecreaseRate,
+                urencriteriumThreshold: urencriteriumThreshold,
                 mileageRatePerKm: mileageRatePerKm,
                 korThreshold: korThreshold,
                 ossThreshold: ossThreshold,
@@ -8944,6 +9090,8 @@ class $$TaxParamsTableTableManager
                 required int kiaFlatThreshold,
                 required double kiaRate,
                 required int kiaFlatAmount,
+                Value<double> kiaDecreaseRate = const Value.absent(),
+                Value<int> urencriteriumThreshold = const Value.absent(),
                 required double mileageRatePerKm,
                 required int korThreshold,
                 required int ossThreshold,
@@ -8974,6 +9122,8 @@ class $$TaxParamsTableTableManager
                 kiaFlatThreshold: kiaFlatThreshold,
                 kiaRate: kiaRate,
                 kiaFlatAmount: kiaFlatAmount,
+                kiaDecreaseRate: kiaDecreaseRate,
+                urencriteriumThreshold: urencriteriumThreshold,
                 mileageRatePerKm: mileageRatePerKm,
                 korThreshold: korThreshold,
                 ossThreshold: ossThreshold,

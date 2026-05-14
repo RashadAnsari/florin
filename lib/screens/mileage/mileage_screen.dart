@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
+import '../../services/tax_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/confirmation_dialog.dart';
 
@@ -48,7 +49,10 @@ class MileageScreen extends ConsumerWidget {
         .fold<int>(0, (s, t) => s + t.distanceKm);
     final totalKm = trips.fold<int>(0, (s, t) => s + t.distanceKm);
     final allowance = params != null
-        ? (businessKm * params.mileageRatePerKm * 100).round()
+        ? TaxService.computeMileageAllowance(
+            businessKm,
+            params.mileageRatePerKm,
+          )
         : 0;
 
     return Scaffold(
@@ -68,7 +72,8 @@ class MileageScreen extends ConsumerWidget {
             businessKm: businessKm,
             totalKm: totalKm,
             allowance: allowance,
-            ratePerKm: params?.mileageRatePerKm ?? 0.23,
+            ratePerKm:
+                params?.mileageRatePerKm ?? TaxService.defaultMileageRatePerKm,
           ),
           const Divider(height: 1),
           Expanded(

@@ -26,6 +26,10 @@ class TaxParams extends Table {
   IntColumn get kiaFlatThreshold => integer()();
   RealColumn get kiaRate => real()();
   IntColumn get kiaFlatAmount => integer()();
+  RealColumn get kiaDecreaseRate =>
+      real().withDefault(const Constant(0.0756))();
+  IntColumn get urencriteriumThreshold =>
+      integer().withDefault(const Constant(1225))();
   RealColumn get mileageRatePerKm => real()();
   IntColumn get korThreshold => integer()();
   IntColumn get ossThreshold => integer()();
