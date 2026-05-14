@@ -3,16 +3,16 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../constants/prefs_keys.dart';
 
 class DbLocationService {
-  static const _dbPathKey = 'db_path';
   static const _dbFileName = 'florin.db';
 
   final SharedPreferences _prefs;
 
   DbLocationService(this._prefs);
 
-  String? get currentPath => _prefs.getString(_dbPathKey);
+  String? get currentPath => _prefs.getString(PrefsKeys.dbPath);
 
   bool get hasPath => currentPath != null;
 
@@ -27,7 +27,7 @@ class DbLocationService {
   Future<String> ensurePath() async {
     if (currentPath != null) return currentPath!;
     final path = await defaultPath();
-    await _prefs.setString(_dbPathKey, path);
+    await _prefs.setString(PrefsKeys.dbPath, path);
     return path;
   }
 
@@ -37,7 +37,7 @@ class DbLocationService {
     );
     if (dir == null) return null;
     final path = p.join(dir, _dbFileName);
-    await _prefs.setString(_dbPathKey, path);
+    await _prefs.setString(PrefsKeys.dbPath, path);
     return path;
   }
 
@@ -50,7 +50,7 @@ class DbLocationService {
       await oldFile.copy(newPath);
       await oldFile.delete();
     }
-    await _prefs.setString(_dbPathKey, newPath);
+    await _prefs.setString(PrefsKeys.dbPath, newPath);
     return newPath;
   }
 }

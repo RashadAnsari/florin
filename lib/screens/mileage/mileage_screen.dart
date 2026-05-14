@@ -315,12 +315,23 @@ class _TripFormState extends ConsumerState<_TripForm> {
       notes: Value(_notes.text.trim().isEmpty ? null : _notes.text.trim()),
       fiscalYear: Value(widget.year),
     );
-    if (widget.trip == null) {
-      await dao.insertTrip(companion);
-    } else {
-      await dao.saveTrip(companion);
+    try {
+      if (widget.trip == null) {
+        await dao.insertTrip(companion);
+      } else {
+        await dao.saveTrip(companion);
+      }
+      widget.onSaved();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.genericSaveError(e.toString()),
+          ),
+        ),
+      );
     }
-    widget.onSaved();
   }
 
   Future<void> _delete() async {
@@ -335,8 +346,19 @@ class _TripFormState extends ConsumerState<_TripForm> {
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
-    await ref.read(mileageDaoProvider).deleteTrip(widget.trip!.id);
-    if (mounted) widget.onDeleted();
+    try {
+      await ref.read(mileageDaoProvider).deleteTrip(widget.trip!.id);
+      if (mounted) widget.onDeleted();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.genericSaveError(e.toString()),
+          ),
+        ),
+      );
+    }
   }
 
   @override

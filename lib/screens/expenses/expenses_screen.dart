@@ -398,16 +398,27 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
       fiscalYear: Value(widget.fiscalYear),
       quarter: Value(AppFormat.quarter(_date)),
     );
-    if (orig == null) {
-      final id = await dao.insertExpense(companion);
-      final all = await dao.getByYear(widget.fiscalYear);
-      final created = all.firstWhere((e) => e.id == id);
-      if (mounted) widget.onSaved(created);
-    } else {
-      await dao.saveExpense(companion);
-      final all = await dao.getByYear(widget.fiscalYear);
-      final updated = all.firstWhere((e) => e.id == orig.id);
-      if (mounted) widget.onSaved(updated);
+    try {
+      if (orig == null) {
+        final id = await dao.insertExpense(companion);
+        final all = await dao.getByYear(widget.fiscalYear);
+        final created = all.firstWhere((e) => e.id == id);
+        if (mounted) widget.onSaved(created);
+      } else {
+        await dao.saveExpense(companion);
+        final all = await dao.getByYear(widget.fiscalYear);
+        final updated = all.firstWhere((e) => e.id == orig.id);
+        if (mounted) widget.onSaved(updated);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.genericSaveError(e.toString()),
+          ),
+        ),
+      );
     }
   }
 
@@ -420,8 +431,19 @@ class _ExpenseFormState extends ConsumerState<_ExpenseForm> {
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
-    await ref.read(expenseDaoProvider).deleteExpense(widget.expense!.id);
-    if (mounted) widget.onDeleted();
+    try {
+      await ref.read(expenseDaoProvider).deleteExpense(widget.expense!.id);
+      if (mounted) widget.onDeleted();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.genericSaveError(e.toString()),
+          ),
+        ),
+      );
+    }
   }
 
   bool get _showBuaWarning =>

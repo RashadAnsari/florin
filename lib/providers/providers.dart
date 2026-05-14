@@ -9,17 +9,17 @@ import '../db/daos/hour_dao.dart';
 import '../db/daos/mileage_dao.dart';
 import '../db/daos/asset_dao.dart';
 import '../db/daos/tax_params_dao.dart';
+import '../constants/prefs_keys.dart';
 
 class DbPathNotifier extends ChangeNotifier {
-  static const _key = 'db_path';
   final SharedPreferences _prefs;
 
   DbPathNotifier(this._prefs);
 
-  String? get path => _prefs.getString(_key);
+  String? get path => _prefs.getString(PrefsKeys.dbPath);
 
   Future<void> setPath(String newPath) async {
-    await _prefs.setString(_key, newPath);
+    await _prefs.setString(PrefsKeys.dbPath, newPath);
     notifyListeners();
   }
 }
@@ -71,7 +71,7 @@ final taxParamsDaoProvider = Provider<TaxParamsDao>((ref) {
 
 final fiscalYearProvider = StateProvider<int>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
-  return prefs.getInt('fiscal_year') ?? DateTime.now().year;
+  return prefs.getInt(PrefsKeys.fiscalYear) ?? DateTime.now().year;
 });
 
 // ── Phase 2 stream providers ──────────────────────────────────────────────────

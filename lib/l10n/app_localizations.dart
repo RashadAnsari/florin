@@ -2738,6 +2738,12 @@ abstract class AppLocalizations {
   /// **'Exempt'**
   String get vatRateExempt;
 
+  /// No description provided for @genericSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save: {error}'**
+  String genericSaveError(String error);
+
   /// No description provided for @dbLocationChooseFolderDialog.
   ///
   /// In en, this message translates to:

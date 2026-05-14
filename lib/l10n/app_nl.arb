@@ -542,5 +542,7 @@
   "vatRate0": "0%",
   "vatRateEuReverseCharge": "0% EU BTW verlegd",
   "vatRateExempt": "Vrijgesteld",
+  "genericSaveError": "Kan niet opslaan: {error}",
+  "@genericSaveError": { "placeholders": { "error": { "type": "String" } } },
   "dbLocationChooseFolderDialog": "Kies map voor de Florin-database"
 }

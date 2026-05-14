@@ -319,12 +319,23 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
       fiscalYear: Value(widget.year),
       weekNumber: Value(_weekNumber(_date)),
     );
-    if (widget.entry == null) {
-      await dao.insertEntry(companion);
-    } else {
-      await dao.saveEntry(companion);
+    try {
+      if (widget.entry == null) {
+        await dao.insertEntry(companion);
+      } else {
+        await dao.saveEntry(companion);
+      }
+      widget.onSaved();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.genericSaveError(e.toString()),
+          ),
+        ),
+      );
     }
-    widget.onSaved();
   }
 
   Future<void> _delete() async {
@@ -336,8 +347,19 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
-    await ref.read(hourDaoProvider).deleteEntry(widget.entry!.id);
-    if (mounted) widget.onDeleted();
+    try {
+      await ref.read(hourDaoProvider).deleteEntry(widget.entry!.id);
+      if (mounted) widget.onDeleted();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.genericSaveError(e.toString()),
+          ),
+        ),
+      );
+    }
   }
 
   @override

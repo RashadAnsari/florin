@@ -284,12 +284,23 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
       disposalDate: Value(_disposalDate),
       disposalProceeds: Value(_disposalDate != null ? _disposalProceeds : null),
     );
-    if (widget.asset == null) {
-      await dao.insertAsset(companion);
-    } else {
-      await dao.saveAsset(companion);
+    try {
+      if (widget.asset == null) {
+        await dao.insertAsset(companion);
+      } else {
+        await dao.saveAsset(companion);
+      }
+      widget.onSaved();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.genericSaveError(e.toString()),
+          ),
+        ),
+      );
     }
-    widget.onSaved();
   }
 
   Future<void> _delete() async {
@@ -302,8 +313,19 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
-    await ref.read(assetDaoProvider).deleteAsset(widget.asset!.id);
-    if (mounted) widget.onDeleted();
+    try {
+      await ref.read(assetDaoProvider).deleteAsset(widget.asset!.id);
+      if (mounted) widget.onDeleted();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.genericSaveError(e.toString()),
+          ),
+        ),
+      );
+    }
   }
 
   @override

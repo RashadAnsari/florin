@@ -22,6 +22,7 @@ import 'screens/mileage/mileage_screen.dart';
 import 'screens/assets/assets_screen.dart';
 import 'screens/pension/pension_screen.dart';
 import 'screens/settings/settings_screen.dart';
+import 'constants/prefs_keys.dart';
 
 /// Supported locales.
 const kSupportedLocales = [Locale('nl'), Locale('en')];
@@ -29,7 +30,7 @@ const kSupportedLocales = [Locale('nl'), Locale('en')];
 /// Active locale provider — persisted in shared_preferences.
 final localeProvider = StateProvider<Locale>((ref) {
   final prefs = ref.read(sharedPreferencesProvider);
-  final tag = prefs.getString('app_locale');
+  final tag = prefs.getString(PrefsKeys.appLocale);
   if (tag != null) {
     try {
       return kSupportedLocales.firstWhere((l) => l.languageCode == tag);
@@ -87,6 +88,10 @@ class _FlorinAppState extends ConsumerState<FlorinApp> {
                 ),
                 GoRoute(
                   path: ':id',
+                  redirect: (c, s) =>
+                      int.tryParse(s.pathParameters['id'] ?? '') == null
+                      ? '/invoices'
+                      : null,
                   builder: (c, s) => Scaffold(
                     body: InvoiceDetailPanel(
                       invoiceId: int.parse(s.pathParameters['id']!),

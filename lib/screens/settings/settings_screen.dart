@@ -9,6 +9,7 @@ import '../../services/csv_export_service.dart';
 import '../../services/db_location_service.dart';
 import '../../services/tax_service.dart';
 import '../../services/vat_service.dart';
+import '../../constants/prefs_keys.dart';
 import '../../widgets/amount_field.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -32,16 +33,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   void initState() {
     super.initState();
     final prefs = ref.read(sharedPreferencesProvider);
-    _name = TextEditingController(text: prefs.getString('business_name') ?? '');
+    _name = TextEditingController(
+      text: prefs.getString(PrefsKeys.businessName) ?? '',
+    );
     _vat = TextEditingController(
-      text: prefs.getString('business_vat_number') ?? '',
+      text: prefs.getString(PrefsKeys.businessVatNumber) ?? '',
     );
-    _kvk = TextEditingController(text: prefs.getString('business_kvk') ?? '');
+    _kvk = TextEditingController(
+      text: prefs.getString(PrefsKeys.businessKvk) ?? '',
+    );
     _address = TextEditingController(
-      text: prefs.getString('business_address') ?? '',
+      text: prefs.getString(PrefsKeys.businessAddress) ?? '',
     );
-    _iban = TextEditingController(text: prefs.getString('business_iban') ?? '');
-    _isStarter = prefs.getBool('is_starter') ?? false;
+    _iban = TextEditingController(
+      text: prefs.getString(PrefsKeys.businessIban) ?? '',
+    );
+    _isStarter = prefs.getBool(PrefsKeys.isStarter) ?? false;
   }
 
   @override
@@ -57,12 +64,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     final prefs = ref.read(sharedPreferencesProvider);
-    await prefs.setString('business_name', _name.text.trim());
-    await prefs.setString('business_vat_number', _vat.text.trim());
-    await prefs.setString('business_kvk', _kvk.text.trim());
-    await prefs.setString('business_address', _address.text.trim());
-    await prefs.setString('business_iban', _iban.text.trim());
-    await prefs.setBool('is_starter', _isStarter);
+    await prefs.setString(PrefsKeys.businessName, _name.text.trim());
+    await prefs.setString(PrefsKeys.businessVatNumber, _vat.text.trim());
+    await prefs.setString(PrefsKeys.businessKvk, _kvk.text.trim());
+    await prefs.setString(PrefsKeys.businessAddress, _address.text.trim());
+    await prefs.setString(PrefsKeys.businessIban, _iban.text.trim());
+    await prefs.setBool(PrefsKeys.isStarter, _isStarter);
   }
 
   Future<void> _moveDb() async {
@@ -77,12 +84,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _exportCsv() async {
+    final l = AppLocalizations.of(context)!;
     final year = ref.read(fiscalYearProvider);
     final db = ref.read(databaseProvider);
     setState(() => _exportRunning = true);
     try {
       final dir = await CsvExportService(db).exportYear(year);
-      if (dir == null) return;
+      if (dir != null && mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l.settingsExported(dir))));
+      }
     } finally {
       if (mounted) setState(() => _exportRunning = false);
     }

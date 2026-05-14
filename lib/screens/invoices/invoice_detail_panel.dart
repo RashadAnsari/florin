@@ -8,6 +8,7 @@ import '../../db/tables/invoices.dart' show kDefaultPaymentTermDays;
 import '../../providers/providers.dart';
 import '../../services/invoice_pdf_service.dart';
 import '../../theme/app_theme.dart';
+import '../../constants/prefs_keys.dart';
 import '../../widgets/confirmation_dialog.dart';
 import '../../widgets/vat_rate_selector.dart';
 
@@ -202,11 +203,11 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
     final dao = ref.read(invoiceDaoProvider);
     final year = ref.read(fiscalYearProvider);
     final prefs = await SharedPreferences.getInstance();
-    final sellerName = prefs.getString('business_name') ?? '';
-    final sellerVat = prefs.getString('business_vat_number') ?? '';
-    final sellerKvk = prefs.getString('business_kvk') ?? '';
-    final sellerAddress = prefs.getString('business_address') ?? '';
-    final sellerIban = prefs.getString('business_iban');
+    final sellerName = prefs.getString(PrefsKeys.businessName) ?? '';
+    final sellerVat = prefs.getString(PrefsKeys.businessVatNumber) ?? '';
+    final sellerKvk = prefs.getString(PrefsKeys.businessKvk) ?? '';
+    final sellerAddress = prefs.getString(PrefsKeys.businessAddress) ?? '';
+    final sellerIban = prefs.getString(PrefsKeys.businessIban);
     final companion = InvoicesCompanion(
       id: _original != null ? Value(_original!.id) : const Value.absent(),
       invoiceNumber: Value(_invoiceNumber.text.trim()),
@@ -235,48 +236,59 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
       quarter: Value(AppFormat.quarter(_invoiceDate)),
     );
 
-    int invoiceId;
-    if (_original == null) {
-      invoiceId = await dao.insertInvoice(companion);
-    } else {
-      await dao.saveInvoice(companion);
-      invoiceId = _original!.id;
-    }
+    try {
+      int invoiceId;
+      if (_original == null) {
+        invoiceId = await dao.insertInvoice(companion);
+      } else {
+        await dao.saveInvoice(companion);
+        invoiceId = _original!.id;
+      }
 
-    final lineCompanions = [
-      for (var i = 0; i < _lines.length; i++)
-        InvoiceLinesCompanion(
-          invoiceId: Value(invoiceId),
-          description: Value(_lines[i].description.text.trim()),
-          quantityUnit: Value(
-            _lines[i].unit.text.trim().isEmpty
-                ? '1'
-                : _lines[i].unit.text.trim(),
+      final lineCompanions = [
+        for (var i = 0; i < _lines.length; i++)
+          InvoiceLinesCompanion(
+            invoiceId: Value(invoiceId),
+            description: Value(_lines[i].description.text.trim()),
+            quantityUnit: Value(
+              _lines[i].unit.text.trim().isEmpty
+                  ? '1'
+                  : _lines[i].unit.text.trim(),
+            ),
+            quantity: Value(_lines[i]._qty),
+            unitPriceExclVat: Value(_inputToCents(_lines[i].unitPrice.text)),
+            vatRate: Value(_lines[i].vatRate),
+            vatAmount: Value(_lines[i].vatAmount),
+            lineTotalExclVat: Value(_lines[i].lineTotalExclVat),
+            sortOrder: Value(i),
           ),
-          quantity: Value(_lines[i]._qty),
-          unitPriceExclVat: Value(_inputToCents(_lines[i].unitPrice.text)),
-          vatRate: Value(_lines[i].vatRate),
-          vatAmount: Value(_lines[i].vatAmount),
-          lineTotalExclVat: Value(_lines[i].lineTotalExclVat),
-          sortOrder: Value(i),
+      ];
+
+      if (_original != null) {
+        await dao.replaceLines(invoiceId, lineCompanions);
+      } else {
+        for (final lc in lineCompanions) {
+          await dao.insertLine(lc);
+        }
+      }
+
+      if (_original == null) {
+        final newInv = await dao.getById(invoiceId);
+        if (mounted && newInv != null) {
+          widget.onCreated?.call(invoiceId);
+        }
+      }
+      if (mounted) widget.onBack?.call();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.genericSaveError(e.toString()),
+          ),
         ),
-    ];
-
-    if (_original != null) {
-      await dao.replaceLines(invoiceId, lineCompanions);
-    } else {
-      for (final lc in lineCompanions) {
-        await dao.insertLine(lc);
-      }
+      );
     }
-
-    if (_original == null) {
-      final newInv = await dao.getById(invoiceId);
-      if (mounted && newInv != null) {
-        widget.onCreated?.call(invoiceId);
-      }
-    }
-    if (mounted) widget.onBack?.call();
   }
 
   Future<void> _markStatus(

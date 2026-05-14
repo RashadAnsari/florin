@@ -542,5 +542,7 @@
   "vatRate0": "0%",
   "vatRateEuReverseCharge": "0% EU reverse charge",
   "vatRateExempt": "Exempt",
+  "genericSaveError": "Could not save: {error}",
+  "@genericSaveError": { "placeholders": { "error": { "type": "String" } } },
   "dbLocationChooseFolderDialog": "Choose folder to store Florin database"
 }

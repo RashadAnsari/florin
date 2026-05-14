@@ -5,6 +5,7 @@ import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../services/tax_service.dart';
 import '../../theme/app_theme.dart';
+import '../../constants/prefs_keys.dart';
 import '../../widgets/amount_field.dart';
 import '../expenses/expenses_screen.dart' show expenseCategoryLabels;
 
@@ -26,7 +27,7 @@ class _PlTaxScreenState extends ConsumerState<PlTaxScreen> {
   void initState() {
     super.initState();
     final prefs = ref.read(sharedPreferencesProvider);
-    _claimStarters = prefs.getBool('is_starter') ?? false;
+    _claimStarters = prefs.getBool(PrefsKeys.isStarter) ?? false;
   }
 
   @override

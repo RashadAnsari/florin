@@ -4,6 +4,7 @@ import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../services/db_location_service.dart';
+import '../../constants/prefs_keys.dart';
 import '../../services/vat_service.dart';
 
 class FirstLaunchScreen extends ConsumerStatefulWidget {
@@ -52,12 +53,12 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
     });
     try {
       final prefs = ref.read(sharedPreferencesProvider);
-      await prefs.setString('business_name', _name.text.trim());
-      await prefs.setString('business_vat_number', _vat.text.trim());
-      await prefs.setString('business_kvk', _kvk.text.trim());
-      await prefs.setString('business_address', _address.text.trim());
-      await prefs.setString('business_iban', _iban.text.trim());
-      await prefs.setBool('is_starter', _isStarter);
+      await prefs.setString(PrefsKeys.businessName, _name.text.trim());
+      await prefs.setString(PrefsKeys.businessVatNumber, _vat.text.trim());
+      await prefs.setString(PrefsKeys.businessKvk, _kvk.text.trim());
+      await prefs.setString(PrefsKeys.businessAddress, _address.text.trim());
+      await prefs.setString(PrefsKeys.businessIban, _iban.text.trim());
+      await prefs.setBool(PrefsKeys.isStarter, _isStarter);
 
       final service = DbLocationService(prefs);
       final path = _customPath ?? await service.ensurePath();

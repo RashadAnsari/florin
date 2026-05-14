@@ -4,6 +4,7 @@ import 'package:florin/l10n/app_localizations.dart';
 import '../../providers/providers.dart';
 import '../../services/vat_service.dart';
 import '../../theme/app_theme.dart';
+import '../../constants/prefs_keys.dart';
 import '../../widgets/deadline_badge.dart';
 
 class VatReturnScreen extends ConsumerStatefulWidget {
@@ -20,8 +21,9 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
   static String _currentQuarter() =>
       'Q${((DateTime.now().month - 1) ~/ 3) + 1}';
 
-  String _prefKey(int year, String field) =>
-      'vat_${year}_${_quarter.toLowerCase()}_$field';
+  String _prefKey(int year, String field) => field == 'filed'
+      ? PrefsKeys.vatFiled(year, _quarter)
+      : PrefsKeys.vatPaid(year, _quarter);
 
   @override
   Widget build(BuildContext context) {

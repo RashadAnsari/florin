@@ -41,8 +41,15 @@ class InvoicePdfService {
     required List<InvoiceLine> lines,
     required Client client,
   }) async {
-    final regular = await PdfGoogleFonts.notoSansRegular();
-    final bold = await PdfGoogleFonts.notoSansBold();
+    pw.Font regular;
+    pw.Font bold;
+    try {
+      regular = await PdfGoogleFonts.notoSansRegular();
+      bold = await PdfGoogleFonts.notoSansBold();
+    } catch (_) {
+      regular = pw.Font.helvetica();
+      bold = pw.Font.helveticaBold();
+    }
     final doc = pw.Document(
       theme: pw.ThemeData.withFont(base: regular, bold: bold),
     );

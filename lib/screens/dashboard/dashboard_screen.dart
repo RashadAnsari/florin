@@ -5,6 +5,7 @@ import '../../providers/providers.dart';
 import '../../services/tax_service.dart';
 import '../../services/vat_service.dart';
 import '../../theme/app_theme.dart';
+import '../../constants/prefs_keys.dart';
 import '../../widgets/stat_card.dart';
 
 class DashboardScreen extends ConsumerWidget {
@@ -262,8 +263,7 @@ class _DeadlineChip extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context)!;
     final prefs = ref.read(sharedPreferencesProvider);
-    final filed =
-        prefs.getBool('vat_${year}_${quarter.toLowerCase()}_filed') ?? false;
+    final filed = prefs.getBool(PrefsKeys.vatFiled(year, quarter)) ?? false;
 
     final theme = Theme.of(context);
     final now = DateTime.now();

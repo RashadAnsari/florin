@@ -1,3 +1,5 @@
+import 'dart:ui' show PlatformDispatcher;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -8,6 +10,12 @@ import 'providers/providers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  FlutterError.onError = FlutterError.presentError;
+  PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrint('Unhandled error: $error\n$stack');
+    return true;
+  };
 
   await initializeDateFormatting('nl_NL');
 

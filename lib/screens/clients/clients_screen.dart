@@ -351,18 +351,29 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
       notes: Value(n(_notes.text)),
       isActive: Value(_isActive),
     );
-    if (orig == null) {
-      final id = await dao.insertClient(companion);
-      final created = await dao.getById(id);
-      if (mounted && created != null) {
-        widget.onSaved(created);
+    try {
+      if (orig == null) {
+        final id = await dao.insertClient(companion);
+        final created = await dao.getById(id);
+        if (mounted && created != null) {
+          widget.onSaved(created);
+        }
+      } else {
+        await dao.saveClient(companion);
+        final updated = await dao.getById(orig.id);
+        if (mounted && updated != null) {
+          widget.onSaved(updated);
+        }
       }
-    } else {
-      await dao.saveClient(companion);
-      final updated = await dao.getById(orig.id);
-      if (mounted && updated != null) {
-        widget.onSaved(updated);
-      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.genericSaveError(e.toString()),
+          ),
+        ),
+      );
     }
   }
 
@@ -395,8 +406,19 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
-    await ref.read(clientDaoProvider).deleteClient(widget.client!.id);
-    if (mounted) widget.onDeleted();
+    try {
+      await ref.read(clientDaoProvider).deleteClient(widget.client!.id);
+      if (mounted) widget.onDeleted();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.genericSaveError(e.toString()),
+          ),
+        ),
+      );
+    }
   }
 
   @override

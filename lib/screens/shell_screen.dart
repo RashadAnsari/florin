@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/providers.dart';
+import '../constants/prefs_keys.dart';
 
 class ShellScreen extends ConsumerWidget {
   final Widget child;
@@ -120,7 +121,7 @@ class _NavPanel extends ConsumerWidget {
                     ref.read(fiscalYearProvider.notifier).state = y;
                     ref
                         .read(sharedPreferencesProvider)
-                        .setInt('fiscal_year', y);
+                        .setInt(PrefsKeys.fiscalYear, y);
                     final segments = currentPath
                         .split('/')
                         .where((s) => s.isNotEmpty)

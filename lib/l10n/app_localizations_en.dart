@@ -1450,6 +1450,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vatRateExempt => 'Exempt';
 
   @override
+  String genericSaveError(String error) {
+    return 'Could not save: $error';
+  }
+
+  @override
   String get dbLocationChooseFolderDialog =>
       'Choose folder to store Florin database';
 }

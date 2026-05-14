@@ -1456,5 +1456,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get vatRateExempt => 'Vrijgesteld';
 
   @override
+  String genericSaveError(String error) {
+    return 'Kan niet opslaan: $error';
+  }
+
+  @override
   String get dbLocationChooseFolderDialog => 'Kies map voor de Florin-database';
 }
