@@ -268,12 +268,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get invoiceValidateLineDescription =>
-      'Enter a description for this line item';
+  String get invoiceValidateLineDescription => 'Enter a line description';
 
   @override
   String get invoiceValidateLineQuantity =>
-      'Enter a valid quantity greater than zero';
+      'Enter a quantity greater than zero';
 
   @override
   String get invoiceValidateLinePrice => 'Enter a valid unit price';
@@ -408,8 +407,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enter a valid email address (e.g. name@company.nl)';
 
   @override
-  String get clientsValidatePhone =>
-      'Enter a valid phone number (digits, spaces, +, or dashes only)';
+  String get clientsValidatePhone => 'Digits, spaces, + and dashes only';
 
   @override
   String get clientsFieldPhone => 'Phone';
@@ -678,11 +676,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hoursValidateHours => 'Enter a number of hours greater than 0';
 
   @override
-  String get hoursValidateDescription =>
-      'Describe the work performed in this session';
+  String get hoursValidateDescription => 'Describe the work done';
 
   @override
-  String get hoursValidateWorkType => 'Select the type of work for this entry';
+  String get hoursValidateWorkType => 'Select a work type';
 
   @override
   String get workTypeBillable => 'Billable';
@@ -769,8 +766,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mileageValidateTripType => 'Select the type of trip';
 
   @override
-  String get mileageValidatePurpose =>
-      'Describe the business purpose of this trip';
+  String get mileageValidatePurpose => 'Describe the purpose of this trip';
 
   @override
   String get mileageFieldDistance => 'Distance';
@@ -849,10 +845,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assetsFieldUsefulLifeUnit => 'yrs';
 
   @override
-  String get assetsFieldUsefulLifeMin => 'Enter at least 1 year of useful life';
+  String get assetsFieldUsefulLifeMin => 'Minimum 1 year';
 
   @override
-  String get assetsValidateName => 'Enter the name of this fixed asset';
+  String get assetsValidateName => 'Enter the asset name';
 
   @override
   String get assetsValidateCost => 'Enter the cost excluding VAT';
@@ -1169,7 +1165,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get plTaxUrenBannerSuffixDone => ', zelfstandigenaftrek lapses';
+  String get plTaxUrenBannerSuffixDone => ', self-employed deduction lapses';
 
   @override
   String get plTaxUrenBannerSuffixPending => ', not yet reached';
@@ -1208,8 +1204,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsStartersaftrek => 'Eligible for startersaftrek';
 
   @override
-  String get settingsValidateName =>
-      'Enter your business name as it appears on invoices.';
+  String get settingsValidateName => 'Enter your business name';
 
   @override
   String get settingsValidateVat =>
@@ -1217,7 +1212,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsValidateVatFormat =>
-      'Invalid BTW number. Format must be NL + 9 digits + B + 2 digits, e.g. NL123456789B01.';
+      'Invalid VAT number. Format: NL + 9 digits + B + 2 digits, e.g. NL123456789B01.';
 
   @override
   String get settingsValidateKvk => 'Enter your KVK number.';
@@ -1227,8 +1222,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'KVK number must be exactly 8 digits.';
 
   @override
-  String get settingsValidateAddress =>
-      'Enter your business address as it appears on invoices.';
+  String get settingsValidateAddress => 'Enter your business address';
 
   @override
   String get settingsValidateIban =>
@@ -1236,7 +1230,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsValidateIbanFormat =>
-      'Invalid IBAN. Must start with a 2-letter country code followed by 2 digits and up to 30 alphanumeric characters.';
+      'Invalid IBAN format (e.g. NL91ABNA0417164300).';
 
   @override
   String get actionOk => 'OK';

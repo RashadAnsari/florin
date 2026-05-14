@@ -1,5 +1,9 @@
 # Run formatter and linter together (use before committing)
-local: format lint
+local: gen-l10n format lint
+
+# Generate localization files (e.g., .arb) from the source code
+gen-l10n:
+	flutter gen-l10n
 
 # Auto-format all Dart source files in lib/
 format:

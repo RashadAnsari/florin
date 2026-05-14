@@ -268,12 +268,10 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get invoiceValidateLineDescription =>
-      'Voer een omschrijving in voor deze regelpost';
+  String get invoiceValidateLineDescription => 'Voer een regelomschrijving in';
 
   @override
-  String get invoiceValidateLineQuantity =>
-      'Voer een geldig aantal groter dan nul in';
+  String get invoiceValidateLineQuantity => 'Voer een aantal groter dan nul in';
 
   @override
   String get invoiceValidateLinePrice => 'Voer een geldige eenheidsprijs in';
@@ -409,7 +407,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get clientsValidatePhone =>
-      'Voer een geldig telefoonnummer in (alleen cijfers, spaties, + of koppeltekens)';
+      'Alleen cijfers, spaties, + en koppeltekens';
 
   @override
   String get clientsFieldPhone => 'Telefoon';
@@ -682,12 +680,10 @@ class AppLocalizationsNl extends AppLocalizations {
       'Voer een aantal uren in dat groter is dan 0';
 
   @override
-  String get hoursValidateDescription =>
-      'Omschrijf het werk dat in deze sessie is uitgevoerd';
+  String get hoursValidateDescription => 'Omschrijf het uitgevoerde werk';
 
   @override
-  String get hoursValidateWorkType =>
-      'Selecteer het type werk voor deze invoer';
+  String get hoursValidateWorkType => 'Selecteer een type werk';
 
   @override
   String get workTypeBillable => 'Factureerbaar';
@@ -776,8 +772,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get mileageValidateTripType => 'Selecteer het type rit';
 
   @override
-  String get mileageValidatePurpose =>
-      'Omschrijf het zakelijke doel van de rit';
+  String get mileageValidatePurpose => 'Omschrijf het doel van de rit';
 
   @override
   String get mileageFieldDistance => 'Afstand';
@@ -856,10 +851,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get assetsFieldUsefulLifeUnit => 'jaar';
 
   @override
-  String get assetsFieldUsefulLifeMin => 'Voer minimaal 1 jaar gebruiksduur in';
+  String get assetsFieldUsefulLifeMin => 'Minimaal 1 jaar';
 
   @override
-  String get assetsValidateName => 'Voer de naam van dit vaste activum in';
+  String get assetsValidateName => 'Voer de naam van het activum in';
 
   @override
   String get assetsValidateCost => 'Voer de aanschafwaarde exclusief BTW in';
@@ -1215,8 +1210,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsStartersaftrek => 'Recht op startersaftrek';
 
   @override
-  String get settingsValidateName =>
-      'Voer je bedrijfsnaam in zoals die op facturen verschijnt.';
+  String get settingsValidateName => 'Voer je bedrijfsnaam in';
 
   @override
   String get settingsValidateVat =>
@@ -1234,8 +1228,7 @@ class AppLocalizationsNl extends AppLocalizations {
       'KVK-nummer moet exact 8 cijfers bevatten.';
 
   @override
-  String get settingsValidateAddress =>
-      'Voer je bedrijfsadres in zoals dat op facturen verschijnt.';
+  String get settingsValidateAddress => 'Voer je bedrijfsadres in';
 
   @override
   String get settingsValidateIban =>
@@ -1243,7 +1236,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get settingsValidateIbanFormat =>
-      'Ongeldig IBAN. Moet beginnen met een landcode van 2 letters, gevolgd door 2 cijfers en maximaal 30 alfanumerieke tekens.';
+      'Ongeldig IBAN-formaat (bijv. NL91ABNA0417164300).';
 
   @override
   String get actionOk => 'OK';
@@ -1344,7 +1337,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsTaxArbeids => 'Arbeidskorting max';
 
   @override
-  String get settingsTaxZvwRate => 'ZVW tarief (%)';
+  String get settingsTaxZvwRate => 'ZVW-tarief (%)';
 
   @override
   String get settingsTaxZvwMax => 'ZVW max';
@@ -1374,10 +1367,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsTaxKiaDecreaseRate => 'Afnamerate (%)';
 
   @override
-  String get settingsTaxKor => 'KOR drempel';
+  String get settingsTaxKor => 'KOR-drempel';
 
   @override
-  String get settingsTaxKorThresh => 'KOR drempel';
+  String get settingsTaxKorThresh => 'KOR-drempel';
 
   @override
   String get settingsTaxSaveParams => 'Parameters opslaan';
@@ -1457,7 +1450,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get vatRate0 => '0%';
 
   @override
-  String get vatRateEuReverseCharge => '0% EU btw verlegd';
+  String get vatRateEuReverseCharge => '0% EU BTW verlegd';
 
   @override
   String get vatRateExempt => 'Vrijgesteld';

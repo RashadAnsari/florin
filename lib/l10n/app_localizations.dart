@@ -587,13 +587,13 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceValidateLineDescription.
   ///
   /// In en, this message translates to:
-  /// **'Enter a description for this line item'**
+  /// **'Enter a line description'**
   String get invoiceValidateLineDescription;
 
   /// No description provided for @invoiceValidateLineQuantity.
   ///
   /// In en, this message translates to:
-  /// **'Enter a valid quantity greater than zero'**
+  /// **'Enter a quantity greater than zero'**
   String get invoiceValidateLineQuantity;
 
   /// No description provided for @invoiceValidateLinePrice.
@@ -851,7 +851,7 @@ abstract class AppLocalizations {
   /// No description provided for @clientsValidatePhone.
   ///
   /// In en, this message translates to:
-  /// **'Enter a valid phone number (digits, spaces, +, or dashes only)'**
+  /// **'Digits, spaces, + and dashes only'**
   String get clientsValidatePhone;
 
   /// No description provided for @clientsFieldPhone.
@@ -1349,13 +1349,13 @@ abstract class AppLocalizations {
   /// No description provided for @hoursValidateDescription.
   ///
   /// In en, this message translates to:
-  /// **'Describe the work performed in this session'**
+  /// **'Describe the work done'**
   String get hoursValidateDescription;
 
   /// No description provided for @hoursValidateWorkType.
   ///
   /// In en, this message translates to:
-  /// **'Select the type of work for this entry'**
+  /// **'Select a work type'**
   String get hoursValidateWorkType;
 
   /// No description provided for @workTypeBillable.
@@ -1523,7 +1523,7 @@ abstract class AppLocalizations {
   /// No description provided for @mileageValidatePurpose.
   ///
   /// In en, this message translates to:
-  /// **'Describe the business purpose of this trip'**
+  /// **'Describe the purpose of this trip'**
   String get mileageValidatePurpose;
 
   /// No description provided for @mileageFieldDistance.
@@ -1673,13 +1673,13 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldUsefulLifeMin.
   ///
   /// In en, this message translates to:
-  /// **'Enter at least 1 year of useful life'**
+  /// **'Minimum 1 year'**
   String get assetsFieldUsefulLifeMin;
 
   /// No description provided for @assetsValidateName.
   ///
   /// In en, this message translates to:
-  /// **'Enter the name of this fixed asset'**
+  /// **'Enter the asset name'**
   String get assetsValidateName;
 
   /// No description provided for @assetsValidateCost.
@@ -2225,7 +2225,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxUrenBannerSuffixDone.
   ///
   /// In en, this message translates to:
-  /// **', zelfstandigenaftrek lapses'**
+  /// **', self-employed deduction lapses'**
   String get plTaxUrenBannerSuffixDone;
 
   /// No description provided for @plTaxUrenBannerSuffixPending.
@@ -2303,7 +2303,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsValidateName.
   ///
   /// In en, this message translates to:
-  /// **'Enter your business name as it appears on invoices.'**
+  /// **'Enter your business name'**
   String get settingsValidateName;
 
   /// No description provided for @settingsValidateVat.
@@ -2315,7 +2315,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsValidateVatFormat.
   ///
   /// In en, this message translates to:
-  /// **'Invalid BTW number. Format must be NL + 9 digits + B + 2 digits, e.g. NL123456789B01.'**
+  /// **'Invalid VAT number. Format: NL + 9 digits + B + 2 digits, e.g. NL123456789B01.'**
   String get settingsValidateVatFormat;
 
   /// No description provided for @settingsValidateKvk.
@@ -2333,7 +2333,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsValidateAddress.
   ///
   /// In en, this message translates to:
-  /// **'Enter your business address as it appears on invoices.'**
+  /// **'Enter your business address'**
   String get settingsValidateAddress;
 
   /// No description provided for @settingsValidateIban.
@@ -2345,7 +2345,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsValidateIbanFormat.
   ///
   /// In en, this message translates to:
-  /// **'Invalid IBAN. Must start with a 2-letter country code followed by 2 digits and up to 30 alphanumeric characters.'**
+  /// **'Invalid IBAN format (e.g. NL91ABNA0417164300).'**
   String get settingsValidateIbanFormat;
 
   /// No description provided for @actionOk.
