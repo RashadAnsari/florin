@@ -659,9 +659,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hoursFieldClientProject => 'Client / project';
 
   @override
-  String get hoursFieldBillable => 'Billable';
-
-  @override
   String get hoursFieldNotes => 'Notes';
 
   @override
@@ -684,6 +681,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get hoursValidateDescription =>
       'Describe the work performed in this session';
+
+  @override
+  String get hoursValidateWorkType => 'Select the type of work for this entry';
 
   @override
   String get workTypeBillable => 'Billable';

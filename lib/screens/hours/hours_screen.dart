@@ -37,8 +37,8 @@ class HoursScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context)!;
     final year = ref.watch(fiscalYearProvider);
-    final entries =
-        ref.watch(hourEntriesStreamProvider(year)).valueOrNull ?? [];
+    final entriesAsync = ref.watch(hourEntriesStreamProvider(year));
+    final entries = entriesAsync.valueOrNull ?? [];
     final totalHours = entries.fold<double>(0.0, (s, e) => s + e.hours);
     final billableHours = entries
         .where((e) => e.billable)
@@ -53,6 +53,7 @@ class HoursScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
+            tooltip: l.hoursNewEntry,
             onPressed: () => context.push('/hours/new'),
           ),
         ],
@@ -68,9 +69,13 @@ class HoursScreen extends ConsumerWidget {
           ),
           const Divider(height: 1),
           Expanded(
-            child: _EntryList(
-              entries: entries,
-              onTap: (e) => context.push('/hours/${e.id}', extra: e),
+            child: entriesAsync.when(
+              data: (all) => _EntryList(
+                entries: all,
+                onTap: (e) => context.push('/hours/${e.id}', extra: e),
+              ),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(child: Text('$e')),
             ),
           ),
         ],
@@ -184,16 +189,36 @@ class _EntryList extends StatelessWidget {
       itemCount: entries.length,
       itemBuilder: (context, i) {
         final e = entries[i];
+        final detail = e.clientProject != null && e.clientProject!.isNotEmpty
+            ? '${_workTypeLabel(l, e.workType)}, ${e.clientProject}'
+            : _workTypeLabel(l, e.workType);
         return ListTile(
           title: Text(
             e.description,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          subtitle: Text(
-            '${AppFormat.date(e.date)}  ·  ${_workTypeLabel(l, e.workType)}',
-            style: Theme.of(context).textTheme.bodySmall,
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppFormat.date(e.date),
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                detail,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+              ),
+            ],
           ),
+          isThreeLine: true,
+          dense: true,
+          visualDensity: VisualDensity.compact,
           trailing: Text(
             '${e.hours.toStringAsFixed(1)} ${l.hoursUnitShort}',
             style: TextStyle(
@@ -247,7 +272,11 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
     );
     _clientProject = TextEditingController(text: e?.clientProject ?? '');
     _notes = TextEditingController(text: e?.notes ?? '');
-    _workType = e?.workType ?? 'Billable';
+    _workType = e == null
+        ? 'Billable'
+        : _kWorkTypes.contains(e.workType)
+        ? e.workType
+        : 'Other';
   }
 
   @override
@@ -423,6 +452,8 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
                     decoration: InputDecoration(
                       labelText: l.hoursFieldWorkType,
                     ),
+                    validator: (v) =>
+                        v == null ? l.hoursValidateWorkType : null,
                     items: _kWorkTypes
                         .map(
                           (t) => DropdownMenuItem(

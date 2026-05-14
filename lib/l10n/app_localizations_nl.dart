@@ -662,9 +662,6 @@ class AppLocalizationsNl extends AppLocalizations {
   String get hoursFieldClientProject => 'Klant / project';
 
   @override
-  String get hoursFieldBillable => 'Facturabel';
-
-  @override
   String get hoursFieldNotes => 'Notities';
 
   @override
@@ -688,6 +685,10 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get hoursValidateDescription =>
       'Omschrijf het werk dat in deze sessie is uitgevoerd';
+
+  @override
+  String get hoursValidateWorkType =>
+      'Selecteer het type werk voor deze invoer';
 
   @override
   String get workTypeBillable => 'Factureerbaar';

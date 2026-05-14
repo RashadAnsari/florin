@@ -242,7 +242,6 @@
   "hoursFieldDescription": "Omschrijving *",
   "hoursFieldWorkType": "Type werk *",
   "hoursFieldClientProject": "Klant / project",
-  "hoursFieldBillable": "Facturabel",
   "hoursFieldNotes": "Notities",
   "hoursNewEntry": "Nieuwe invoer",
   "hoursEditEntry": "Bewerk invoer",
@@ -251,6 +250,7 @@
   "@hoursDeleteMessage": { "placeholders": { "description": { "type": "String" } } },
   "hoursValidateHours": "Voer een aantal uren in dat groter is dan 0",
   "hoursValidateDescription": "Omschrijf het werk dat in deze sessie is uitgevoerd",
+  "hoursValidateWorkType": "Selecteer het type werk voor deze invoer",
 
   "workTypeBillable": "Factureerbaar",
   "workTypeNonBillable": "Niet-factureerbaar",

@@ -241,7 +241,6 @@
   "hoursFieldDescription": "Description *",
   "hoursFieldWorkType": "Work type *",
   "hoursFieldClientProject": "Client / project",
-  "hoursFieldBillable": "Billable",
   "hoursFieldNotes": "Notes",
   "hoursNewEntry": "New entry",
   "hoursEditEntry": "Edit entry",
@@ -250,6 +249,7 @@
   "@hoursDeleteMessage": { "placeholders": { "description": { "type": "String" } } },
   "hoursValidateHours": "Enter a number of hours greater than 0",
   "hoursValidateDescription": "Describe the work performed in this session",
+  "hoursValidateWorkType": "Select the type of work for this entry",
 
   "workTypeBillable": "Billable",
   "workTypeNonBillable": "Non-billable",

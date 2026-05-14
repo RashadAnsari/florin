@@ -1316,12 +1316,6 @@ abstract class AppLocalizations {
   /// **'Client / project'**
   String get hoursFieldClientProject;
 
-  /// No description provided for @hoursFieldBillable.
-  ///
-  /// In en, this message translates to:
-  /// **'Billable'**
-  String get hoursFieldBillable;
-
   /// No description provided for @hoursFieldNotes.
   ///
   /// In en, this message translates to:
@@ -1363,6 +1357,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Describe the work performed in this session'**
   String get hoursValidateDescription;
+
+  /// No description provided for @hoursValidateWorkType.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the type of work for this entry'**
+  String get hoursValidateWorkType;
 
   /// No description provided for @workTypeBillable.
   ///
