@@ -18,6 +18,7 @@ class InvoicePdfService {
     required Invoice invoice,
     required List<InvoiceLine> lines,
     required Client client,
+    required String dialogTitle,
   }) async {
     final bytes = await generate(
       invoice: invoice,
@@ -26,7 +27,7 @@ class InvoicePdfService {
     );
     final filename = '${invoice.invoiceNumber}.pdf';
     final path = await FilePicker.platform.saveFile(
-      dialogTitle: 'Save invoice as',
+      dialogTitle: dialogTitle,
       fileName: filename,
       type: FileType.custom,
       allowedExtensions: ['pdf'],
@@ -46,7 +47,7 @@ class InvoicePdfService {
     try {
       regular = await PdfGoogleFonts.notoSansRegular();
       bold = await PdfGoogleFonts.notoSansBold();
-    } catch (_) {
+    } on Exception {
       regular = pw.Font.helvetica();
       bold = pw.Font.helveticaBold();
     }

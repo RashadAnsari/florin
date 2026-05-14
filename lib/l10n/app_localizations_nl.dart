@@ -1462,4 +1462,13 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get dbLocationChooseFolderDialog => 'Kies map voor de Florin-database';
+
+  @override
+  String get csvExportChooseFolderDialog => 'Kies exportmap';
+
+  @override
+  String get invoiceSaveAsDialog => 'Factuur opslaan als';
+
+  @override
+  String get amountNegativeError => 'Bedrag mag niet negatief zijn';
 }

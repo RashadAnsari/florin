@@ -196,7 +196,7 @@ class _FlorinAppState extends ConsumerState<FlorinApp> {
   Widget build(BuildContext context) {
     final locale = ref.watch(localeProvider);
     return MaterialApp.router(
-      title: 'Florin',
+      onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,

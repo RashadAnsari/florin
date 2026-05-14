@@ -2749,6 +2749,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose folder to store Florin database'**
   String get dbLocationChooseFolderDialog;
+
+  /// No description provided for @csvExportChooseFolderDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose export folder'**
+  String get csvExportChooseFolderDialog;
+
+  /// No description provided for @invoiceSaveAsDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Save invoice as'**
+  String get invoiceSaveAsDialog;
+
+  /// No description provided for @amountNegativeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount cannot be negative'**
+  String get amountNegativeError;
 }
 
 class _AppLocalizationsDelegate

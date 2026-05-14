@@ -89,15 +89,34 @@ class TaxService {
 
   static int computeTotalDepreciation(List<FixedAsset> assets, int year) =>
       assets.fold<int>(0, (s, a) {
-        if (a.disposalDate != null) return s;
+        // Disposed before this fiscal year: no depreciation.
+        if (a.disposalDate != null && a.disposalDate!.year < year) return s;
+
         final yrs = (year - a.purchaseDate.year).clamp(0, a.usefulLifeYears);
         if (yrs >= a.usefulLifeYears) return s;
-        return s +
-            computeAnnualDepreciation(
-              costExclVat: a.costExclVat,
-              usefulLifeYears: a.usefulLifeYears,
-              businessUsePct: a.businessUsePct,
-            );
+
+        final annual = computeAnnualDepreciation(
+          costExclVat: a.costExclVat,
+          usefulLifeYears: a.usefulLifeYears,
+          businessUsePct: a.businessUsePct,
+        );
+
+        // Disposed during this fiscal year: prorate from start of in-service
+        // period to disposal date (Dutch IB Art. 3.30).
+        if (a.disposalDate != null && a.disposalDate!.year == year) {
+          final startOfYear = DateTime(year, 1, 1);
+          final inServiceStart = a.purchaseDate.isAfter(startOfYear)
+              ? a.purchaseDate
+              : startOfYear;
+          final daysInYear =
+              DateTime(year, 12, 31).difference(startOfYear).inDays + 1;
+          final daysActive =
+              a.disposalDate!.difference(inServiceStart).inDays + 1;
+          if (daysActive <= 0) return s;
+          return s + (annual * daysActive / daysInYear).round();
+        }
+
+        return s + annual;
       });
 
   // ── Tax calculations ──────────────────────────────────────────────────────

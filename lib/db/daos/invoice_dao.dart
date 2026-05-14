@@ -74,10 +74,10 @@ class InvoiceDao extends DatabaseAccessor<AppDatabase> with _$InvoiceDaoMixin {
         }
       });
 
-  Future<void> deleteInvoice(int id) async {
+  Future<void> deleteInvoice(int id) => transaction(() async {
     await (delete(invoiceLines)..where((l) => l.invoiceId.equals(id))).go();
     await (delete(invoices)..where((i) => i.id.equals(id))).go();
-  }
+  });
 
   Future<int> nextSequenceNumber(int year, String prefix) async {
     final all =

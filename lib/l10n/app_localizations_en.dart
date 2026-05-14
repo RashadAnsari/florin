@@ -1457,4 +1457,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get dbLocationChooseFolderDialog =>
       'Choose folder to store Florin database';
+
+  @override
+  String get csvExportChooseFolderDialog => 'Choose export folder';
+
+  @override
+  String get invoiceSaveAsDialog => 'Save invoice as';
+
+  @override
+  String get amountNegativeError => 'Amount cannot be negative';
 }

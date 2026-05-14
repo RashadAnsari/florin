@@ -9,9 +9,9 @@ class CsvExportService {
   final AppDatabase db;
   CsvExportService(this.db);
 
-  Future<String?> exportYear(int year) async {
+  Future<String?> exportYear(int year, {required String dialogTitle}) async {
     final dir = await FilePicker.platform.getDirectoryPath(
-      dialogTitle: 'Kies exportmap',
+      dialogTitle: dialogTitle,
     );
     if (dir == null) return null;
 

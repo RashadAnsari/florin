@@ -34,8 +34,9 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
   Map<int, int> _revenueMap(AsyncValue<List<Invoice>> inv) {
     final result = <int, int>{};
     for (final i in inv.valueOrNull ?? []) {
-      if (i.status == 'Sent' || i.status == 'Paid') {
-        result[i.clientId] = (result[i.clientId] ?? 0) + i.totalInclVat as int;
+      if (i.status == 'Paid') {
+        result[i.clientId] =
+            ((result[i.clientId] ?? 0) + i.totalInclVat) as int;
       }
     }
     return result;

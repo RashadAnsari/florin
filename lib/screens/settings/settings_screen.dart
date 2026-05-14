@@ -89,7 +89,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final db = ref.read(databaseProvider);
     setState(() => _exportRunning = true);
     try {
-      final dir = await CsvExportService(db).exportYear(year);
+      final dir = await CsvExportService(
+        db,
+      ).exportYear(year, dialogTitle: l.csvExportChooseFolderDialog);
       if (dir != null && mounted) {
         ScaffoldMessenger.of(
           context,

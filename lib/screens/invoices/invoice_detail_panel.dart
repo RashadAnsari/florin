@@ -115,56 +115,65 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
   }
 
   Future<void> _load() async {
-    if (widget.invoiceId == null) {
-      await _loadNew();
-      return;
+    try {
+      if (widget.invoiceId == null) {
+        await _loadNew();
+        return;
+      }
+      final dao = ref.read(invoiceDaoProvider);
+      final inv = await dao.getById(widget.invoiceId!);
+      if (inv == null || !mounted) {
+        setState(() => _loading = false);
+        return;
+      }
+      final lineRecords = await dao.getLinesForInvoice(widget.invoiceId!);
+      final loaded = lineRecords
+          .map(
+            (l) => _LineItem(
+              id: l.id,
+              desc: l.description,
+              qty: l.quantity,
+              priceCents: l.unitPriceExclVat,
+              unitStr: l.quantityUnit,
+              vatRate: l.vatRate,
+            ),
+          )
+          .toList();
+      if (!mounted) return;
+      setState(() {
+        _original = inv;
+        _lines = loaded;
+        _invoiceNumber.text = inv.invoiceNumber;
+        _invoiceType = inv.invoiceType;
+        _clientId = inv.clientId;
+        _invoiceDate = inv.invoiceDate;
+        _supplyDate = inv.supplyDate;
+        _paymentTermDays.text = inv.paymentTermDays.toString();
+        _isIcp = inv.isIcp;
+        _isReverseCharge = inv.isReverseCharge;
+        _notes.text = inv.notes ?? '';
+        _loading = false;
+      });
+    } catch (_) {
+      if (mounted) setState(() => _loading = false);
     }
-    final dao = ref.read(invoiceDaoProvider);
-    final inv = await dao.getById(widget.invoiceId!);
-    if (inv == null || !mounted) {
-      setState(() => _loading = false);
-      return;
-    }
-    final lineRecords = await dao.getLinesForInvoice(widget.invoiceId!);
-    final loaded = lineRecords
-        .map(
-          (l) => _LineItem(
-            id: l.id,
-            desc: l.description,
-            qty: l.quantity,
-            priceCents: l.unitPriceExclVat,
-            unitStr: l.quantityUnit,
-            vatRate: l.vatRate,
-          ),
-        )
-        .toList();
-    setState(() {
-      _original = inv;
-      _lines = loaded;
-      _invoiceNumber.text = inv.invoiceNumber;
-      _invoiceType = inv.invoiceType;
-      _clientId = inv.clientId;
-      _invoiceDate = inv.invoiceDate;
-      _supplyDate = inv.supplyDate;
-      _paymentTermDays.text = inv.paymentTermDays.toString();
-      _isIcp = inv.isIcp;
-      _isReverseCharge = inv.isReverseCharge;
-      _notes.text = inv.notes ?? '';
-      _loading = false;
-    });
   }
 
   Future<void> _loadNew() async {
-    final year = ref.read(fiscalYearProvider);
-    final dao = ref.read(invoiceDaoProvider);
-    final prefix = 'F';
-    final seq = await dao.nextSequenceNumber(year, prefix);
-    if (!mounted) return;
-    setState(() {
-      _invoiceNumber.text = '$prefix-$year-${seq.toString().padLeft(3, '0')}';
-      _lines = [_LineItem()];
-      _loading = false;
-    });
+    try {
+      final year = ref.read(fiscalYearProvider);
+      final dao = ref.read(invoiceDaoProvider);
+      final prefix = 'F';
+      final seq = await dao.nextSequenceNumber(year, prefix);
+      if (!mounted) return;
+      setState(() {
+        _invoiceNumber.text = '$prefix-$year-${seq.toString().padLeft(3, '0')}';
+        _lines = [_LineItem()];
+        _loading = false;
+      });
+    } catch (_) {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 
   void _addLine() {
@@ -333,6 +342,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
 
   Future<void> _sharePdf() async {
     if (_original == null || _clientId == null) return;
+    final l = AppLocalizations.of(context)!;
     final lines = await ref
         .read(invoiceDaoProvider)
         .getLinesForInvoice(_original!.id);
@@ -345,6 +355,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
       invoice: _original!,
       lines: lines,
       client: client,
+      dialogTitle: l.invoiceSaveAsDialog,
     );
   }
 
@@ -897,9 +908,10 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                       .replaceAll('.', '')
                       .replaceAll(',', '.'),
                 );
-                return parsed == null
-                    ? AppLocalizations.of(context)!.invoiceValidateLinePrice
-                    : null;
+                final l = AppLocalizations.of(context)!;
+                if (parsed == null) return l.invoiceValidateLinePrice;
+                if (parsed < 0) return l.amountNegativeError;
+                return null;
               },
             ),
           ),

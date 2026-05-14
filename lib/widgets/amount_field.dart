@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../l10n/app_localizations.dart';
 
 class AmountField extends StatefulWidget {
   final int? initialValueCents;
@@ -119,9 +120,16 @@ class _AmountFieldState extends State<AmountField> {
         ),
         prefixIconConstraints: const BoxConstraints(minWidth: 32),
       ),
-      validator: widget.required
-          ? (v) => (v == null || v.isEmpty) ? widget.validatorMessage : null
-          : null,
+      validator: (v) {
+        if (widget.required && (v == null || v.isEmpty)) {
+          return widget.validatorMessage;
+        }
+        final parsed = _parse(v ?? '');
+        if (parsed != null && parsed < 0) {
+          return AppLocalizations.of(context)!.amountNegativeError;
+        }
+        return null;
+      },
     );
   }
 }

@@ -68,7 +68,7 @@ class _NavPanel extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
             child: Text(
-              'Florin',
+              l.appTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w700,
                 color: onPrimary,

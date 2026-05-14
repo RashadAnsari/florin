@@ -544,5 +544,8 @@
   "vatRateExempt": "Exempt",
   "genericSaveError": "Could not save: {error}",
   "@genericSaveError": { "placeholders": { "error": { "type": "String" } } },
-  "dbLocationChooseFolderDialog": "Choose folder to store Florin database"
+  "dbLocationChooseFolderDialog": "Choose folder to store Florin database",
+  "csvExportChooseFolderDialog": "Choose export folder",
+  "invoiceSaveAsDialog": "Save invoice as",
+  "amountNegativeError": "Amount cannot be negative"
 }
