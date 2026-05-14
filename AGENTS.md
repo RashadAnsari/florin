@@ -4,29 +4,53 @@ These rules are the source of truth for working in this repository. Always read 
 
 ## General rules
 
-- No duplicate components: reuse existing ones with props rather than creating variants.
-- **No duplicate code**: before writing a constant, function, or utility, search the codebase first. If it already exists, import it, never redefine it. Shared logic belongs in `lib/services/`. Shared UI belongs in `lib/widgets/`. Shared constants live in the relevant service file.
-- **Punctuation**: no period on short labels, headings, button text, and single-phrase descriptions. Use a period on full sentences, especially multi-clause ones (FAQs, warnings, longer descriptions).
-- **Em dash**: never use the em dash character (—) in any user-facing text, copy, labels, or metadata. Use a colon, comma, or period instead.
-- **Translations**: all user-facing strings must go through `AppLocalizations` — never hardcode text visible to the user. Add keys to both `app_en.arb` and `app_nl.arb`.
-- **Required fields**: every required form field label must end with ` *` (e.g., `Name *`). No exceptions across all forms.
-- **Theme**: always use the project theme defined in `lib/theme/`. Never invent colors, typography, spacing, or any design tokens. Never create a parallel design system. All UI decisions must reference `lib/theme/` exclusively.
+- **Reuse before creating**: before adding a component, helper, constant, service, or utility, search the codebase first. If an equivalent already exists, import and reuse it.
+- **No duplicate components**: extend existing components with props or small local composition before creating variants.
+- **No duplicate code**: shared business logic belongs in `lib/services/`. Shared UI belongs in `lib/widgets/`. Shared constants belong in the relevant service or domain file.
+- **Abstractions**: only add a helper, service, widget, or shared constant when logic is reused across files or clearly belongs to an existing shared module. If logic is local to one screen or form, keep it as a private local helper.
+- **Scope control**: make the requested change at the layer where it belongs. Do not update downstream readers, exports, reports, or unrelated screens unless the request requires it.
+- **Translations**: all user-facing strings must go through `AppLocalizations`. Never hardcode visible text. Add or update keys in both `app_en.arb` and `app_nl.arb`.
+- **Punctuation**: no period on short labels, headings, button text, or single-phrase descriptions. Use a period on full sentences, especially multi-clause text such as FAQs, warnings, and longer descriptions.
+- **Em dash**: never use the em dash character (`—`) in user-facing text, copy, labels, or metadata. Use a colon, comma, or period instead.
+- **Theme**: always use the project theme defined in `lib/theme/`. Never invent colors, typography, spacing, or design tokens. Never create a parallel design system.
 
-## UI design rules
+## Formatting and verification rules
 
-- **List screen structure**: `Column` with search bar + `Divider(height: 1)` + `Expanded(ListView)` — never put `ListView` directly as `body`. Match the invoices/expenses pattern.
-- **Tile spacing**: use `SizedBox(height: 2)` between rows inside list tiles — consistent across all screens.
-- **Checkboxes**: always use `controlAffinity: ListTileControlAffinity.leading` on `CheckboxListTile` — checkbox on left, label on right. Right-side checkbox looks like an unrelated section header.
-- **maxLength fields**: always add `counterText: ''` to `InputDecoration` — hides the character counter that breaks vertical alignment with adjacent fields.
-- **Destructive buttons**: delete `IconButton` must use `color: theme.colorScheme.error` — never a silent grey destructive action.
-- **External link buttons**: use `OutlinedButton.icon` with `Icons.open_in_new` when a button opens a URL.
-- **Primary action buttons**: use `FilledButton.icon` with `backgroundColor: theme.colorScheme.primaryContainer` and `foregroundColor: theme.colorScheme.onPrimaryContainer` — visible in both light and dark mode.
-- **Detail/form pages fill the screen**: detail panels and forms must always fill all available width. Never wrap form content in `ConstrainedBox`, `SizedBox(width:)`, or any fixed-width container — let the `Column` expand to fill the `Expanded`/`SingleChildScrollView` naturally.
-- **Form validation errors**: always show inline field errors, never toasts. Use `Form` + `GlobalKey<FormState>` + `validator` on each required field. For button-triggered checks (e.g., VIES), use a `String? _fieldError` state variable and wire it to `InputDecoration.errorText`, clearing it `onChanged`. No success toasts either — just navigate away or refresh silently.
-- **Validation messages must be field-specific**: never use a generic "Required" message. Each field's `validator` must return a sentence that explains exactly what to enter and why (e.g. "Enter the client's name", "Enter a unique invoice number, e.g. F-2024-001", "Describe the business purpose of this trip"). Add a dedicated ARB key per field (e.g. `clientsValidateName`, `mileageValidatePurpose`) in both `app_en.arb` and `app_nl.arb`.
-- **Optional field validators**: when a field is optional but has a format constraint, guard with `if (s.isEmpty) return null;` before the regex check — never reject an empty optional field.
-- **Never mix `CheckboxListTile` and form fields in the same `Row`**: `CheckboxListTile` has a different minimum height model than `DropdownButtonFormField`/`InputDecorator`. They can never align in the same row. Put checkboxes on their own rows below.
-- **`DropdownButtonFormField` in flexible parents**: always add `isExpanded: true` — prevents RenderFlex overflow when the dropdown sits inside `Expanded` or any flexible parent.
-- **`Colors.grey` is banned**: use `theme.colorScheme.outline` for muted/secondary text and borders — `Colors.grey` ignores the theme and breaks dark mode.
-- **DB/form field alignment**: form fields and DB columns must always be in sync — not just nullability but also data type, default values, and constraints. Required form field = NOT NULL column. Optional field = nullable column. If a field has a format constraint (regex), the DB type must be able to store any valid value. When adding a required field or changing nullability, bump `schemaVersion` and add a `MigrationStrategy` with `TableMigration` + `columnTransformer: { col: CustomExpression("COALESCE(col, '')") }` to handle existing nulls. In `_save()`, pass `Value(text.trim())` for NOT NULL columns, `Value(n(text))` for nullable ones. Before adding any validator, audit the matching DB column first.
-- **Enum/dropdown DB values**: store English keys in the DB (e.g. `'Low'`, `'Medium'`, `'High'`). Never display raw DB values to the user — always map to localized labels via a helper or switch. This keeps DB queries simple while UI stays translated.
+- **Required check**: after every code, localization, configuration, or documentation change, run `make local`.
+- **Fix before finishing**: if `make local` reports formatting, analysis, or generated-code issues, fix them and rerun `make local` until it passes.
+- **Generated localization**: after changing ARB files, regenerate localization output before running `make local`.
+
+## UI rules
+
+- **List screen structure**: list screens use a stable structure: controls/search area, `Divider(height: 1)`, then `Expanded(ListView)`. Do not put `ListView` directly as the page body when the screen has controls above it.
+- **Tile spacing**: use `SizedBox(height: 2)` between text rows inside list tiles.
+- **Field spacing**: keep standard vertical spacing between adjacent form fields. When removing fields, checkboxes, buttons, banners, or other UI elements, re-check the surrounding layout and restore the spacing between the remaining elements.
+- **Detail/form width**: detail panels and forms must fill all available width. Do not wrap form content in `ConstrainedBox`, `SizedBox(width:)`, or fixed-width containers unless there is a domain-specific layout requirement.
+- **Checkboxes**: use `controlAffinity: ListTileControlAffinity.leading` on `CheckboxListTile`. Put checkboxes on their own rows, not in a `Row` with form fields.
+- **Dropdowns in flexible layouts**: add `isExpanded: true` to `DropdownButtonFormField` when it is inside `Expanded`, `Flexible`, or any flexible parent.
+- **maxLength fields**: add `counterText: ''` to `InputDecoration` when using `maxLength`.
+- **Destructive actions**: delete `IconButton` widgets must use `color: theme.colorScheme.error`.
+- **External links**: buttons that open URLs must use `OutlinedButton.icon` with `Icons.open_in_new`.
+- **Primary actions**: primary save/submit actions must use `FilledButton.icon` with `backgroundColor: theme.colorScheme.primaryContainer` and `foregroundColor: theme.colorScheme.onPrimaryContainer`.
+- **Muted colors**: do not use `Colors.grey`. Use `theme.colorScheme.outline` for muted text and borders.
+
+## Form and validation rules
+
+- **Required labels**: every required form field label must end with ` *`.
+- **Optional labels**: never add `(optional)` or similar wording to field labels. A field without the required ` *` marker is already optional.
+- **Inline errors**: show validation errors inline with the field. Do not use toasts for validation errors or success states.
+- **Required validation**: use `Form` plus `GlobalKey<FormState>` plus `validator` for required fields.
+- **Button-triggered validation**: for checks triggered by a button, use a field-specific `String? _fieldError`, wire it to `InputDecoration.errorText`, and clear it in `onChanged`.
+- **Field-specific messages**: validation messages must explain exactly what to enter and why. Do not use generic messages such as "Required". Add a dedicated ARB key per validation message in both languages.
+- **Optional format validators**: when an optional field has a format constraint, allow empty values before checking the format.
+
+## Data and persistence rules
+
+- **DB/form alignment**: form fields and DB columns must stay in sync for nullability, type, default values, and constraints.
+- **Required fields in DB**: required form fields must map to `NOT NULL` columns.
+- **Optional fields in DB**: optional form fields must map to nullable columns.
+- **Nullability changes**: when adding a required field or changing nullability, bump `schemaVersion` and add a `MigrationStrategy` with `TableMigration` plus an appropriate `columnTransformer`, such as `CustomExpression("COALESCE(col, '')")`, for existing nulls.
+- **Companion values**: in `_save()`, pass `Value(text.trim())` for `NOT NULL` text columns and `Value(n(text))` for nullable text columns.
+- **Validator audits**: before adding any validator, audit the matching DB column.
+- **Derived persisted fields**: when a stored field is derived from form input, calculate it once during insert/update and persist it. Other readers should use the stored DB value unless the requested change explicitly moves that derivation elsewhere.
+- **Enum/dropdown storage**: store stable English keys in the DB, such as `Low`, `Medium`, and `High`. Never display raw DB values to the user. Map stored keys to localized labels through a helper or switch.
