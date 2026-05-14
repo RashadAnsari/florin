@@ -721,39 +721,60 @@ class AppLocalizationsNl extends AppLocalizations {
   String get mileageTotal => 'Totaal';
 
   @override
+  String get mileageUnitKm => 'km';
+
+  @override
   String mileageAllowance(String rate) {
     return 'Aftrek (€$rate/km)';
   }
 
   @override
-  String get mileageFieldDate => 'Datum';
+  String get mileageFieldDate => 'Datum *';
 
   @override
-  String get mileageFieldMakeModel => 'Merk/model';
+  String get mileageFieldMakeModel => 'Merk / model *';
 
   @override
-  String get mileageFieldPlate => 'Kenteken';
+  String get mileageFieldPlate => 'Kenteken *';
 
   @override
-  String get mileageFieldFrom => 'Vertrekadres';
+  String get mileageFieldFrom => 'Vertrekadres *';
 
   @override
-  String get mileageFieldTo => 'Aankomstadres';
+  String get mileageFieldTo => 'Aankomstadres *';
 
   @override
-  String get mileageFieldOdoStart => 'Km-stand begin';
+  String get mileageFieldOdoStart => 'Km-stand begin *';
 
   @override
-  String get mileageFieldOdoEnd => 'Km-stand eind';
+  String get mileageFieldOdoEnd => 'Km-stand eind *';
 
   @override
   String get mileageFieldOdoError => 'Eindstand moet hoger zijn dan beginstand';
+
+  @override
+  String get mileageValidateMakeModel =>
+      'Voer het merk en model van het voertuig in';
+
+  @override
+  String get mileageValidatePlate => 'Voer het kenteken van het voertuig in';
 
   @override
   String get mileageValidateFrom => 'Voer het vertrekadres in';
 
   @override
   String get mileageValidateTo => 'Voer het aankomstadres in';
+
+  @override
+  String get mileageValidateOdoStart =>
+      'Voer de beginstand van de kilometerteller in';
+
+  @override
+  String get mileageValidateOdoEnd =>
+      'Voer de eindstand van de kilometerteller in';
+
+  @override
+  String get mileageValidateTripType => 'Selecteer het type rit';
 
   @override
   String get mileageValidatePurpose =>
@@ -763,13 +784,13 @@ class AppLocalizationsNl extends AppLocalizations {
   String get mileageFieldDistance => 'Afstand';
 
   @override
-  String get mileageFieldTripType => 'Type rit';
+  String get mileageFieldTripType => 'Type rit *';
 
   @override
-  String get mileageFieldPurpose => 'Doel';
+  String get mileageFieldPurpose => 'Doel *';
 
   @override
-  String get mileageFieldRouteDeviation => 'Omrijden';
+  String get mileageFieldRouteDeviation => 'Omweg / geen directe route';
 
   @override
   String get mileageFieldNotes => 'Notities';
@@ -779,6 +800,14 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get mileageEditTrip => 'Bewerk rit';
+
+  @override
+  String get mileageDeleteTitle => 'Rit verwijderen';
+
+  @override
+  String mileageDeleteMessage(String purpose) {
+    return 'Weet je zeker dat je \"$purpose\" wilt verwijderen?';
+  }
 
   @override
   String get tripTypeBusiness => 'Zakelijk';

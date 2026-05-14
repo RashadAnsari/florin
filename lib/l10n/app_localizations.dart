@@ -1424,6 +1424,12 @@ abstract class AppLocalizations {
   /// **'Total'**
   String get mileageTotal;
 
+  /// No description provided for @mileageUnitKm.
+  ///
+  /// In en, this message translates to:
+  /// **'km'**
+  String get mileageUnitKm;
+
   /// No description provided for @mileageAllowance.
   ///
   /// In en, this message translates to:
@@ -1433,43 +1439,43 @@ abstract class AppLocalizations {
   /// No description provided for @mileageFieldDate.
   ///
   /// In en, this message translates to:
-  /// **'Date'**
+  /// **'Date *'**
   String get mileageFieldDate;
 
   /// No description provided for @mileageFieldMakeModel.
   ///
   /// In en, this message translates to:
-  /// **'Make/model'**
+  /// **'Make / model *'**
   String get mileageFieldMakeModel;
 
   /// No description provided for @mileageFieldPlate.
   ///
   /// In en, this message translates to:
-  /// **'Licence plate'**
+  /// **'Licence plate *'**
   String get mileageFieldPlate;
 
   /// No description provided for @mileageFieldFrom.
   ///
   /// In en, this message translates to:
-  /// **'Departure address'**
+  /// **'Departure address *'**
   String get mileageFieldFrom;
 
   /// No description provided for @mileageFieldTo.
   ///
   /// In en, this message translates to:
-  /// **'Arrival address'**
+  /// **'Arrival address *'**
   String get mileageFieldTo;
 
   /// No description provided for @mileageFieldOdoStart.
   ///
   /// In en, this message translates to:
-  /// **'Odometer start'**
+  /// **'Odometer start *'**
   String get mileageFieldOdoStart;
 
   /// No description provided for @mileageFieldOdoEnd.
   ///
   /// In en, this message translates to:
-  /// **'Odometer end'**
+  /// **'Odometer end *'**
   String get mileageFieldOdoEnd;
 
   /// No description provided for @mileageFieldOdoError.
@@ -1477,6 +1483,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'End reading must be higher than start reading'**
   String get mileageFieldOdoError;
+
+  /// No description provided for @mileageValidateMakeModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the vehicle make and model'**
+  String get mileageValidateMakeModel;
+
+  /// No description provided for @mileageValidatePlate.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the vehicle licence plate'**
+  String get mileageValidatePlate;
 
   /// No description provided for @mileageValidateFrom.
   ///
@@ -1489,6 +1507,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter the arrival address'**
   String get mileageValidateTo;
+
+  /// No description provided for @mileageValidateOdoStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the starting odometer reading'**
+  String get mileageValidateOdoStart;
+
+  /// No description provided for @mileageValidateOdoEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the ending odometer reading'**
+  String get mileageValidateOdoEnd;
+
+  /// No description provided for @mileageValidateTripType.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the type of trip'**
+  String get mileageValidateTripType;
 
   /// No description provided for @mileageValidatePurpose.
   ///
@@ -1505,19 +1541,19 @@ abstract class AppLocalizations {
   /// No description provided for @mileageFieldTripType.
   ///
   /// In en, this message translates to:
-  /// **'Trip type'**
+  /// **'Trip type *'**
   String get mileageFieldTripType;
 
   /// No description provided for @mileageFieldPurpose.
   ///
   /// In en, this message translates to:
-  /// **'Purpose'**
+  /// **'Purpose *'**
   String get mileageFieldPurpose;
 
   /// No description provided for @mileageFieldRouteDeviation.
   ///
   /// In en, this message translates to:
-  /// **'Detour'**
+  /// **'Detour / non-direct route'**
   String get mileageFieldRouteDeviation;
 
   /// No description provided for @mileageFieldNotes.
@@ -1537,6 +1573,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit trip'**
   String get mileageEditTrip;
+
+  /// No description provided for @mileageDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete trip'**
+  String get mileageDeleteTitle;
+
+  /// No description provided for @mileageDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{purpose}\"?'**
+  String mileageDeleteMessage(String purpose);
 
   /// No description provided for @tripTypeBusiness.
   ///

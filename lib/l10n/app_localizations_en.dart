@@ -716,40 +716,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mileageTotal => 'Total';
 
   @override
+  String get mileageUnitKm => 'km';
+
+  @override
   String mileageAllowance(String rate) {
     return 'Allowance (€$rate/km)';
   }
 
   @override
-  String get mileageFieldDate => 'Date';
+  String get mileageFieldDate => 'Date *';
 
   @override
-  String get mileageFieldMakeModel => 'Make/model';
+  String get mileageFieldMakeModel => 'Make / model *';
 
   @override
-  String get mileageFieldPlate => 'Licence plate';
+  String get mileageFieldPlate => 'Licence plate *';
 
   @override
-  String get mileageFieldFrom => 'Departure address';
+  String get mileageFieldFrom => 'Departure address *';
 
   @override
-  String get mileageFieldTo => 'Arrival address';
+  String get mileageFieldTo => 'Arrival address *';
 
   @override
-  String get mileageFieldOdoStart => 'Odometer start';
+  String get mileageFieldOdoStart => 'Odometer start *';
 
   @override
-  String get mileageFieldOdoEnd => 'Odometer end';
+  String get mileageFieldOdoEnd => 'Odometer end *';
 
   @override
   String get mileageFieldOdoError =>
       'End reading must be higher than start reading';
 
   @override
+  String get mileageValidateMakeModel => 'Enter the vehicle make and model';
+
+  @override
+  String get mileageValidatePlate => 'Enter the vehicle licence plate';
+
+  @override
   String get mileageValidateFrom => 'Enter the departure address';
 
   @override
   String get mileageValidateTo => 'Enter the arrival address';
+
+  @override
+  String get mileageValidateOdoStart => 'Enter the starting odometer reading';
+
+  @override
+  String get mileageValidateOdoEnd => 'Enter the ending odometer reading';
+
+  @override
+  String get mileageValidateTripType => 'Select the type of trip';
 
   @override
   String get mileageValidatePurpose =>
@@ -759,13 +777,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mileageFieldDistance => 'Distance';
 
   @override
-  String get mileageFieldTripType => 'Trip type';
+  String get mileageFieldTripType => 'Trip type *';
 
   @override
-  String get mileageFieldPurpose => 'Purpose';
+  String get mileageFieldPurpose => 'Purpose *';
 
   @override
-  String get mileageFieldRouteDeviation => 'Detour';
+  String get mileageFieldRouteDeviation => 'Detour / non-direct route';
 
   @override
   String get mileageFieldNotes => 'Notes';
@@ -775,6 +793,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mileageEditTrip => 'Edit trip';
+
+  @override
+  String get mileageDeleteTitle => 'Delete trip';
+
+  @override
+  String mileageDeleteMessage(String purpose) {
+    return 'Are you sure you want to delete \"$purpose\"?';
+  }
 
   @override
   String get tripTypeBusiness => 'Business';
