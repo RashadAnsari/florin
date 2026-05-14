@@ -455,6 +455,8 @@ class _TripFormState extends ConsumerState<_TripForm> {
                   TextFormField(
                     controller: _from,
                     decoration: InputDecoration(labelText: l.mileageFieldFrom),
+                    minLines: 3,
+                    maxLines: 4,
                     validator: (v) => (v == null || v.trim().isEmpty)
                         ? l.mileageValidateFrom
                         : null,
@@ -463,6 +465,8 @@ class _TripFormState extends ConsumerState<_TripForm> {
                   TextFormField(
                     controller: _to,
                     decoration: InputDecoration(labelText: l.mileageFieldTo),
+                    minLines: 3,
+                    maxLines: 4,
                     validator: (v) => (v == null || v.trim().isEmpty)
                         ? l.mileageValidateTo
                         : null,

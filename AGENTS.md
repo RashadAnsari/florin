@@ -48,6 +48,7 @@ These rules are the source of truth for working in this repository. Always read 
 - **Checkboxes**: use `controlAffinity: ListTileControlAffinity.leading` on `CheckboxListTile`. Put checkboxes on their own rows, not in a `Row` with form fields. Spacing rules: `height: 12` before the first checkbox when a field or container precedes it; `height: 8` when a section heading precedes it (heading already provides `bottom: 4–8` padding, but add explicit `height: 8` if the heading widget does not); no `SizedBox` between consecutive checkboxes; `height: 12` after the last checkbox before the next field.
 - **Dropdowns in flexible layouts**: add `isExpanded: true` to `DropdownButtonFormField` when it is inside `Expanded`, `Flexible`, or any flexible parent.
 - **maxLength fields**: add `counterText: ''` to `InputDecoration` when using `maxLength`.
+- **Address fields**: all address `TextFormField` widgets must use `minLines: 3, maxLines: 4`. This applies across all screens (settings, clients, first launch, mileage, and any future screen).
 - **Destructive actions**: delete `IconButton` widgets must use `color: theme.colorScheme.error`.
 - **External links**: buttons that open URLs must use `OutlinedButton.icon` with `Icons.open_in_new`.
 - **Primary actions**: primary save/submit actions must use `FilledButton.icon` with `backgroundColor: theme.colorScheme.primaryContainer` and `foregroundColor: theme.colorScheme.onPrimaryContainer`.
