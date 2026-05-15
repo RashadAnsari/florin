@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "" "\0"
-            VALUE "FileDescription", "florin" "\0"
+            VALUE "CompanyName", "Florin" "\0"
+            VALUE "FileDescription", "Florin" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "florin" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 Florin. All rights reserved." "\0"
             VALUE "OriginalFilename", "florin.exe" "\0"
-            VALUE "ProductName", "florin" "\0"
+            VALUE "ProductName", "Florin" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

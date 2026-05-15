@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Florin
+Comment=ZZP bookkeeping for Dutch freelancers
+Exec=florin
+Icon=florin
+Type=Application
+Categories=Office;Finance;
+StartupNotify=true
