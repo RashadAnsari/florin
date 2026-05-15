@@ -512,11 +512,29 @@ abstract class AppLocalizations {
   /// **'ICP (intracommunautair)'**
   String get invoiceFieldIcp;
 
+  /// No description provided for @invoiceTooltipIcp.
+  ///
+  /// In en, this message translates to:
+  /// **'Intra-Community transactions (ICP): sales of goods or services to VAT-registered clients in EU countries outside the Netherlands. These must be reported separately in the ICP declaration alongside your VAT return.'**
+  String get invoiceTooltipIcp;
+
+  /// No description provided for @invoiceWarnIcpNoVat.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected client has no VAT number. The ICP declaration requires a valid EU VAT number for the client.'**
+  String get invoiceWarnIcpNoVat;
+
   /// No description provided for @invoiceFieldBtwVerlegd.
   ///
   /// In en, this message translates to:
   /// **'BTW verlegd'**
   String get invoiceFieldBtwVerlegd;
+
+  /// No description provided for @invoiceTooltipBtwVerlegd.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse charge VAT: the VAT obligation is shifted from you to the recipient. Used when supplying goods or services to VAT-registered businesses, often in cross-border EU transactions. The invoice shows 0% VAT with the note \'BTW verlegd\'.'**
+  String get invoiceTooltipBtwVerlegd;
 
   /// No description provided for @invoiceFieldLines.
   ///
@@ -950,17 +968,11 @@ abstract class AppLocalizations {
   /// **'Are you sure you want to delete \"{name}\"?'**
   String clientsDeleteMessage(String name);
 
-  /// No description provided for @clientsDeleteBlockedTitle.
+  /// No description provided for @clientsDeleteBlockedTooltip.
   ///
   /// In en, this message translates to:
-  /// **'Cannot delete client'**
-  String get clientsDeleteBlockedTitle;
-
-  /// No description provided for @clientsDeleteBlockedMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'\"{name}\" has invoices and cannot be deleted.'**
-  String clientsDeleteBlockedMessage(String name);
+  /// **'Client has invoices and cannot be deleted'**
+  String get clientsDeleteBlockedTooltip;
 
   /// No description provided for @expensesTitle.
   ///
@@ -1550,6 +1562,12 @@ abstract class AppLocalizations {
   /// **'Detour / non-direct route'**
   String get mileageFieldRouteDeviation;
 
+  /// No description provided for @mileageTooltipRouteDeviation.
+  ///
+  /// In en, this message translates to:
+  /// **'Check this if you took a longer or indirect route than strictly necessary. The tax authority may ask you to explain why the route deviated from the shortest path.'**
+  String get mileageTooltipRouteDeviation;
+
   /// No description provided for @mileageFieldNotes.
   ///
   /// In en, this message translates to:
@@ -1694,6 +1712,12 @@ abstract class AppLocalizations {
   /// **'KIA eligible'**
   String get assetsFieldKia;
 
+  /// No description provided for @assetsTooltipKia.
+  ///
+  /// In en, this message translates to:
+  /// **'Kleinschaligheidsinvesteringsaftrek (KIA): an additional deduction from your taxable profit for small business investments. You qualify if your total investments in a calendar year fall within the statutory thresholds set by the Dutch tax authority.'**
+  String get assetsTooltipKia;
+
   /// No description provided for @assetsKiaBadge.
   ///
   /// In en, this message translates to:
@@ -1705,6 +1729,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'EIA / MIA'**
   String get assetsFieldEiaMia;
+
+  /// No description provided for @assetsTooltipEiaMia.
+  ///
+  /// In en, this message translates to:
+  /// **'Energie-investeringsaftrek (EIA) and Milieu-investeringsaftrek (MIA): additional tax deductions for investments in energy-efficient or environmentally-friendly business assets listed on the official Energy List or Environmental List published by RVO.'**
+  String get assetsTooltipEiaMia;
 
   /// No description provided for @assetsFieldNotes.
   ///

@@ -570,13 +570,17 @@ class _TripFormState extends ConsumerState<_TripForm> {
                         : null,
                   ),
                   const SizedBox(height: 12),
-                  CheckboxListTile(
-                    value: _routeDeviation,
-                    onChanged: (v) =>
-                        setState(() => _routeDeviation = v ?? _routeDeviation),
-                    title: Text(l.mileageFieldRouteDeviation),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    contentPadding: EdgeInsets.zero,
+                  Tooltip(
+                    message: l.mileageTooltipRouteDeviation,
+                    child: CheckboxListTile(
+                      value: _routeDeviation,
+                      onChanged: (v) => setState(
+                        () => _routeDeviation = v ?? _routeDeviation,
+                      ),
+                      title: Text(l.mileageFieldRouteDeviation),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      contentPadding: EdgeInsets.zero,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   TextFormField(

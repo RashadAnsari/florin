@@ -230,7 +230,19 @@ class AppLocalizationsNl extends AppLocalizations {
   String get invoiceFieldIcp => 'ICP (intracommunautair)';
 
   @override
+  String get invoiceTooltipIcp =>
+      'Intracommunautaire prestaties (ICP): leveringen van goederen of diensten aan BTW-plichtige klanten in EU-landen buiten Nederland. Deze moeten apart worden opgegeven in de ICP-opgaaf, samen met de BTW-aangifte.';
+
+  @override
+  String get invoiceWarnIcpNoVat =>
+      'De geselecteerde klant heeft geen BTW-nummer. De ICP-opgaaf vereist een geldig EU BTW-nummer van de klant.';
+
+  @override
   String get invoiceFieldBtwVerlegd => 'BTW verlegd';
+
+  @override
+  String get invoiceTooltipBtwVerlegd =>
+      'BTW verlegd: de BTW-verplichting wordt verlegd van jou naar de afnemer. Gebruikt bij levering van goederen of diensten aan BTW-plichtige ondernemers, vaak bij grensoverschrijdende EU-transacties. De factuur vermeldt 0% BTW met de vermelding \'BTW verlegd\'.';
 
   @override
   String get invoiceFieldLines => 'Regels';
@@ -461,12 +473,8 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get clientsDeleteBlockedTitle => 'Kan klant niet verwijderen';
-
-  @override
-  String clientsDeleteBlockedMessage(String name) {
-    return '\"$name\" heeft facturen en kan niet worden verwijderd.';
-  }
+  String get clientsDeleteBlockedTooltip =>
+      'Klant heeft facturen en kan niet worden verwijderd';
 
   @override
   String get expensesTitle => 'Uitgaven';
@@ -787,6 +795,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get mileageFieldRouteDeviation => 'Omweg / geen directe route';
 
   @override
+  String get mileageTooltipRouteDeviation =>
+      'Vink aan als je een langere of indirecte route hebt gereden dan strikt noodzakelijk. De Belastingdienst kan vragen waarom de route afweek van de kortste weg.';
+
+  @override
   String get mileageFieldNotes => 'Notities';
 
   @override
@@ -863,10 +875,18 @@ class AppLocalizationsNl extends AppLocalizations {
   String get assetsFieldKia => 'KIA-aanspraak';
 
   @override
+  String get assetsTooltipKia =>
+      'Kleinschaligheidsinvesteringsaftrek (KIA): een extra aftrek op de belastbare winst bij investeringen in bedrijfsmiddelen. Je komt in aanmerking als je totale investeringen in een kalenderjaar binnen de wettelijke drempels van de Belastingdienst vallen.';
+
+  @override
   String get assetsKiaBadge => 'KIA';
 
   @override
   String get assetsFieldEiaMia => 'EIA / MIA';
+
+  @override
+  String get assetsTooltipEiaMia =>
+      'Energie-investeringsaftrek (EIA) en Milieu-investeringsaftrek (MIA): extra aftrek bij investeringen in energiezuinige of milieuvriendelijke bedrijfsmiddelen die op de Energielijst of Milieulijst van de RVO staan.';
 
   @override
   String get assetsFieldNotes => 'Notities';

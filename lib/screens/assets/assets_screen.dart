@@ -487,21 +487,27 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  CheckboxListTile(
-                    value: _kiaEligible,
-                    onChanged: (v) =>
-                        setState(() => _kiaEligible = v ?? _kiaEligible),
-                    title: Text(l.assetsFieldKia),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    contentPadding: EdgeInsets.zero,
+                  Tooltip(
+                    message: l.assetsTooltipKia,
+                    child: CheckboxListTile(
+                      value: _kiaEligible,
+                      onChanged: (v) =>
+                          setState(() => _kiaEligible = v ?? _kiaEligible),
+                      title: Text(l.assetsFieldKia),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      contentPadding: EdgeInsets.zero,
+                    ),
                   ),
-                  CheckboxListTile(
-                    value: _eiaOrMia,
-                    onChanged: (v) =>
-                        setState(() => _eiaOrMia = v ?? _eiaOrMia),
-                    title: Text(l.assetsFieldEiaMia),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    contentPadding: EdgeInsets.zero,
+                  Tooltip(
+                    message: l.assetsTooltipEiaMia,
+                    child: CheckboxListTile(
+                      value: _eiaOrMia,
+                      onChanged: (v) =>
+                          setState(() => _eiaOrMia = v ?? _eiaOrMia),
+                      title: Text(l.assetsFieldEiaMia),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      contentPadding: EdgeInsets.zero,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   TextFormField(

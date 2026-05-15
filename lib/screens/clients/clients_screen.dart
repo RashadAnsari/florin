@@ -291,11 +291,13 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
   bool _contractSigned = false;
   DateTime? _contractExpiry;
   bool _isActive = true;
+  bool _hasInvoices = false;
 
   @override
   void initState() {
     super.initState();
     final c = widget.client;
+    if (c != null) _loadHasInvoices(c.id);
     _name = TextEditingController(text: c?.name ?? '');
     _country = TextEditingController(text: c?.country ?? 'NL');
     _vatNumber = TextEditingController(text: c?.vatNumber ?? '');
@@ -325,6 +327,11 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
     _phone.dispose();
     _notes.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadHasInvoices(int clientId) async {
+    final has = await ref.read(invoiceDaoProvider).clientHasInvoices(clientId);
+    if (mounted) setState(() => _hasInvoices = has);
   }
 
   Future<void> _save() async {
@@ -379,27 +386,8 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
   }
 
   Future<void> _delete() async {
+    if (_hasInvoices) return;
     final l = AppLocalizations.of(context)!;
-    final hasInvoices = await ref
-        .read(invoiceDaoProvider)
-        .clientHasInvoices(widget.client!.id);
-    if (!mounted) return;
-    if (hasInvoices) {
-      await showDialog<void>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text(l.clientsDeleteBlockedTitle),
-          content: Text(l.clientsDeleteBlockedMessage(_name.text)),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: Text(l.actionOk),
-            ),
-          ],
-        ),
-      );
-      return;
-    }
     final confirmed = await showConfirmationDialog(
       context,
       title: l.clientsDeleteTitle,
@@ -449,11 +437,19 @@ class _ClientFormState extends ConsumerState<_ClientForm> {
                 ),
               ),
               if (!isNew)
-                IconButton(
-                  icon: const Icon(Icons.delete_outline),
-                  tooltip: AppLocalizations.of(context)!.actionDelete,
-                  color: theme.colorScheme.error,
-                  onPressed: _delete,
+                Tooltip(
+                  message: _hasInvoices
+                      ? AppLocalizations.of(
+                          context,
+                        )!.clientsDeleteBlockedTooltip
+                      : AppLocalizations.of(context)!.actionDelete,
+                  child: IconButton(
+                    icon: const Icon(Icons.delete_outline),
+                    color: _hasInvoices
+                        ? theme.colorScheme.outline
+                        : theme.colorScheme.error,
+                    onPressed: _hasInvoices ? null : _delete,
+                  ),
                 ),
               FilledButton.icon(
                 onPressed: _save,

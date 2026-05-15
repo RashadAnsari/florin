@@ -229,7 +229,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoiceFieldIcp => 'ICP (intracommunautair)';
 
   @override
+  String get invoiceTooltipIcp =>
+      'Intra-Community transactions (ICP): sales of goods or services to VAT-registered clients in EU countries outside the Netherlands. These must be reported separately in the ICP declaration alongside your VAT return.';
+
+  @override
+  String get invoiceWarnIcpNoVat =>
+      'The selected client has no VAT number. The ICP declaration requires a valid EU VAT number for the client.';
+
+  @override
   String get invoiceFieldBtwVerlegd => 'BTW verlegd';
+
+  @override
+  String get invoiceTooltipBtwVerlegd =>
+      'Reverse charge VAT: the VAT obligation is shifted from you to the recipient. Used when supplying goods or services to VAT-registered businesses, often in cross-border EU transactions. The invoice shows 0% VAT with the note \'BTW verlegd\'.';
 
   @override
   String get invoiceFieldLines => 'Lines';
@@ -461,12 +473,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get clientsDeleteBlockedTitle => 'Cannot delete client';
-
-  @override
-  String clientsDeleteBlockedMessage(String name) {
-    return '\"$name\" has invoices and cannot be deleted.';
-  }
+  String get clientsDeleteBlockedTooltip =>
+      'Client has invoices and cannot be deleted';
 
   @override
   String get expensesTitle => 'Expenses';
@@ -781,6 +789,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mileageFieldRouteDeviation => 'Detour / non-direct route';
 
   @override
+  String get mileageTooltipRouteDeviation =>
+      'Check this if you took a longer or indirect route than strictly necessary. The tax authority may ask you to explain why the route deviated from the shortest path.';
+
+  @override
   String get mileageFieldNotes => 'Notes';
 
   @override
@@ -857,10 +869,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assetsFieldKia => 'KIA eligible';
 
   @override
+  String get assetsTooltipKia =>
+      'Kleinschaligheidsinvesteringsaftrek (KIA): an additional deduction from your taxable profit for small business investments. You qualify if your total investments in a calendar year fall within the statutory thresholds set by the Dutch tax authority.';
+
+  @override
   String get assetsKiaBadge => 'KIA';
 
   @override
   String get assetsFieldEiaMia => 'EIA / MIA';
+
+  @override
+  String get assetsTooltipEiaMia =>
+      'Energie-investeringsaftrek (EIA) and Milieu-investeringsaftrek (MIA): additional tax deductions for investments in energy-efficient or environmentally-friendly business assets listed on the official Energy List or Environmental List published by RVO.';
 
   @override
   String get assetsFieldNotes => 'Notes';

@@ -198,6 +198,23 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
 
   bool get _isEditable => _original == null || _original!.status == 'Draft';
 
+  bool get _isEuMode => _isIcp || _isReverseCharge;
+
+  void _applyEuReverseCharge() {
+    for (final line in _lines) {
+      line.vatRate = '0% EU Reverse Charge';
+    }
+  }
+
+  bool get _icpMissingVat {
+    if (!_isIcp || _clientId == null) return false;
+    final clients = ref.read(clientsStreamProvider).valueOrNull ?? [];
+    final match = clients.where((c) => c.id == _clientId);
+    if (match.isEmpty) return false;
+    final client = match.first;
+    return client.vatNumber == null || client.vatNumber!.isEmpty;
+  }
+
   Map<String, int> get _vatByRate {
     final m = <String, int>{};
     for (final l in _lines) {
@@ -464,7 +481,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
               ],
               if (_isEditable)
                 FilledButton.icon(
-                  onPressed: _save,
+                  onPressed: _icpMissingVat ? null : _save,
                   style: FilledButton.styleFrom(
                     backgroundColor: Theme.of(
                       context,
@@ -663,24 +680,61 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    CheckboxListTile(
-                      value: _isIcp,
-                      onChanged: (v) => setState(() => _isIcp = v ?? false),
-                      title: Text(
-                        AppLocalizations.of(context)!.invoiceFieldIcp,
+                    Tooltip(
+                      message: AppLocalizations.of(context)!.invoiceTooltipIcp,
+                      child: CheckboxListTile(
+                        value: _isIcp,
+                        onChanged: (v) => setState(() {
+                          _isIcp = v ?? false;
+                          if (_isIcp) _applyEuReverseCharge();
+                        }),
+                        title: Text(
+                          AppLocalizations.of(context)!.invoiceFieldIcp,
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                        controlAffinity: ListTileControlAffinity.leading,
                       ),
-                      contentPadding: EdgeInsets.zero,
-                      controlAffinity: ListTileControlAffinity.leading,
                     ),
-                    CheckboxListTile(
-                      value: _isReverseCharge,
-                      onChanged: (v) =>
-                          setState(() => _isReverseCharge = v ?? false),
-                      title: Text(
-                        AppLocalizations.of(context)!.invoiceFieldBtwVerlegd,
+                    if (_icpMissingVat)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 40, bottom: 4),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.warning_amber_rounded,
+                              size: 14,
+                              color: theme.colorScheme.error,
+                            ),
+                            const SizedBox(width: 4),
+                            Flexible(
+                              child: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.invoiceWarnIcpNoVat,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.error,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      contentPadding: EdgeInsets.zero,
-                      controlAffinity: ListTileControlAffinity.leading,
+                    Tooltip(
+                      message: AppLocalizations.of(
+                        context,
+                      )!.invoiceTooltipBtwVerlegd,
+                      child: CheckboxListTile(
+                        value: _isReverseCharge,
+                        onChanged: (v) => setState(() {
+                          _isReverseCharge = v ?? false;
+                          if (_isReverseCharge) _applyEuReverseCharge();
+                        }),
+                        title: Text(
+                          AppLocalizations.of(context)!.invoiceFieldBtwVerlegd,
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                        controlAffinity: ListTileControlAffinity.leading,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     // ── Line items ─────────────────────────────────────────────
@@ -934,9 +988,11 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                     ),
                   )
                   .toList(),
-              onChanged: (v) {
-                if (v != null) setState(() => line.vatRate = v);
-              },
+              onChanged: _isEuMode
+                  ? null
+                  : (v) {
+                      if (v != null) setState(() => line.vatRate = v);
+                    },
             ),
           ),
           const SizedBox(width: 4),
