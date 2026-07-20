@@ -112,24 +112,12 @@ To add Florin to your app launcher, copy `data/florin.desktop` to `~/.local/shar
 
 ## Build from source
 
-**Requirements:** Flutter stable channel, Dart SDK ^3.11
-
 ```sh
 git clone https://github.com/RashadAnsari/florin.git
 cd florin
 flutter pub get
-flutter run -d macos   # or -d windows, -d linux
+flutter run -d macos
 ```
-
----
-
-## Tech stack
-
-- [Flutter](https://flutter.dev) — cross-platform UI
-- [Drift](https://drift.simonbinder.eu) — local SQLite database
-- [Riverpod](https://riverpod.dev) — state management
-- [pdf](https://pub.dev/packages/pdf) + [printing](https://pub.dev/packages/printing) — invoice PDF generation
-- [go_router](https://pub.dev/packages/go_router) — navigation
 
 ---
 
