@@ -100,7 +100,7 @@ Before committing, run `make local` to generate translations, format the code an
 
 ### Releasing
 
-Raise `version` in `pubspec.yaml` (for example `1.2.0+3`) and push it to `master`. The release workflow builds macOS, Windows and Linux, tags the commit as `1.2.0-3` and publishes the GitHub release. It does nothing if a release for that version already exists.
+One workflow, `.github/workflows/build.yml`, lints and builds every push and pull request. To release, raise `version` in `pubspec.yaml` (for example `1.2.0+3`) and push it to `master`. After lint and the builds pass, the workflow packages macOS, Windows and Linux, tags the commit as `1.2.0-3`, publishes the GitHub release and updates the Homebrew cask. Pushes whose version already has a release only lint and build.
 
 ## Disclaimer
 
