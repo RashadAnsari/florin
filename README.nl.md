@@ -46,6 +46,7 @@ Met [Homebrew](https://brew.sh):
 
 ```sh
 brew tap rashadansari/florin https://github.com/RashadAnsari/florin
+brew trust --cask rashadansari/florin/florin
 brew install --cask florin
 ```
 
