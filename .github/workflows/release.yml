@@ -122,15 +122,32 @@ jobs:
       - name: Build Windows
         run: flutter build windows --release
 
+      - name: Add Visual C++ runtime
+        # Flutter apps need these next to the .exe on PCs without the Visual C++ redistributable
+        run: |
+          foreach ($dll in 'msvcp140.dll', 'vcruntime140.dll', 'vcruntime140_1.dll') {
+            Copy-Item "$env:SystemRoot\System32\$dll" build\windows\x64\runner\Release\
+          }
+
       - name: Package Windows
         run: |
           Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath florin-windows-x64.zip
+
+      - name: Build Windows installer
+        env:
+          APP_VERSION: ${{ needs.version.outputs.tag }}
+        run: |
+          choco install innosetup -y --no-progress
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DAppVersion=$env:APP_VERSION" "/DBuildDir=$PWD\build\windows\x64\runner\Release" windows\installer.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: florin-windows-x64
-          path: florin-windows-x64.zip
+          path: |
+            florin-windows-x64.zip
+            florin-windows-x64-setup.exe
 
   build-macos:
     needs: version
@@ -224,6 +241,7 @@ jobs:
           files: |
             florin-linux-amd64.deb
             florin-linux-x64.tar.gz
+            florin-windows-x64-setup.exe
             florin-windows-x64.zip
             florin-macos.zip
           generate_release_notes: true
@@ -238,9 +256,11 @@ jobs:
 
             ### Windows
 
-            1. Unzip `florin-windows-x64.zip`
-            2. Run `florin.exe`
-            3. If Windows SmartScreen appears, click **More info** then **Run anyway**
+            1. Download and run `florin-windows-x64-setup.exe`
+            2. If Windows SmartScreen appears, click **More info**, then **Run anyway**
+            3. Follow the installer. Florin is added to the Start menu.
+
+            For a portable version without installing, unzip `florin-windows-x64.zip` and run `florin.exe`.
 
             ### Linux
 

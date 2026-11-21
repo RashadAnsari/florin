@@ -48,9 +48,11 @@ Florin is signed and notarized by Apple. Requires macOS 10.15 or later.
 
 ### Windows
 
-1. Unzip `florin-windows-x64.zip`
-2. Run `florin.exe`
-3. If Windows SmartScreen appears, click **More info**, then **Run anyway**
+1. Download and run `florin-windows-x64-setup.exe`
+2. If Windows SmartScreen appears, click **More info**, then **Run anyway**
+3. Follow the installer. Florin is added to the Start menu and can be removed from **Settings > Apps** like any other app.
+
+For a portable version without installing, unzip `florin-windows-x64.zip` and run `florin.exe`.
 
 ### Linux
 
