@@ -6,3 +6,4 @@ Icon=florin
 Type=Application
 Categories=Office;Finance;
 StartupNotify=true
+StartupWMClass=me.ansarihamedani.florin

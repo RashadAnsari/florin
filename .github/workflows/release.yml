@@ -2,11 +2,38 @@ name: Release
 
 on:
   push:
-    tags:
-      - '*.*.*-*'
+    branches: [master]
+    paths: [pubspec.yaml]
 
 jobs:
+  version:
+    name: Read version
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+      exists: ${{ steps.version.outputs.exists }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read version from pubspec.yaml
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # pubspec version 1.2.0+3 becomes tag 1.2.0-3
+          TAG=$(sed -n 's/^version: *//p' pubspec.yaml | tr '+' '-')
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release $TAG already exists, nothing to do"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
   build-linux:
+    needs: version
+    if: needs.version.outputs.exists == 'false'
     name: Build Linux
     runs-on: ubuntu-latest
     steps:
@@ -21,7 +48,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version-file: pubspec.yaml
 
       - name: Install dependencies
         run: flutter pub get
@@ -34,13 +61,50 @@ jobs:
           cd build/linux/x64/release/bundle
           tar -czf ../../../../../florin-linux-x64.tar.gz .
 
+      - name: Package Linux .deb
+        run: |
+          BUNDLE=build/linux/x64/release/bundle
+          PKG="$RUNNER_TEMP/deb"
+          mkdir -p "$PKG/DEBIAN" "$PKG/opt/florin" "$PKG/usr/bin" \
+            "$PKG/usr/share/applications" "$PKG/usr/share/icons/hicolor/512x512/apps"
+          cp -r "$BUNDLE/." "$PKG/opt/florin/"
+          ln -s /opt/florin/florin "$PKG/usr/bin/florin"
+          cp linux/florin.desktop "$PKG/usr/share/applications/me.ansarihamedani.florin.desktop"
+          cp linux/runner/app_icon.png "$PKG/usr/share/icons/hicolor/512x512/apps/florin.png"
+
+          # dpkg-shlibdeps needs a debian/control in its working directory
+          mkdir -p "$RUNNER_TEMP/shlibs/debian"
+          touch "$RUNNER_TEMP/shlibs/debian/control"
+          # Drop the t64 suffix: t64 packages provide the old names, so the .deb also installs on Ubuntu 22.04 and Debian 12
+          DEPENDS=$(cd "$RUNNER_TEMP/shlibs" && dpkg-shlibdeps -O -l"$PKG/opt/florin/lib" \
+            "$PKG/opt/florin/florin" "$PKG"/opt/florin/lib/*.so | sed -e 's/^shlibs:Depends=//' -e 's/t64\b//g')
+
+          cat > "$PKG/DEBIAN/control" <<EOF
+          Package: florin
+          Version: ${{ needs.version.outputs.tag }}
+          Architecture: amd64
+          Maintainer: Rashad Ansari
+          Section: misc
+          Priority: optional
+          Depends: $DEPENDS
+          Description: ZZP bookkeeping for Dutch freelancers
+          EOF
+          sed -i 's/^ *//' "$PKG/DEBIAN/control"
+
+          dpkg-deb --build --root-owner-group "$PKG" florin-linux-amd64.deb
+          dpkg-deb --info florin-linux-amd64.deb
+
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
           name: florin-linux-x64
-          path: florin-linux-x64.tar.gz
+          path: |
+            florin-linux-x64.tar.gz
+            florin-linux-amd64.deb
 
   build-windows:
+    needs: version
+    if: needs.version.outputs.exists == 'false'
     name: Build Windows
     runs-on: windows-latest
     steps:
@@ -50,7 +114,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version-file: pubspec.yaml
 
       - name: Install dependencies
         run: flutter pub get
@@ -69,6 +133,8 @@ jobs:
           path: florin-windows-x64.zip
 
   build-macos:
+    needs: version
+    if: needs.version.outputs.exists == 'false'
     name: Build macOS
     runs-on: macos-latest
     steps:
@@ -78,7 +144,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version-file: pubspec.yaml
 
       - name: Install dependencies
         run: flutter pub get
@@ -140,7 +206,7 @@ jobs:
 
   release:
     name: Create Release
-    needs: [build-linux, build-windows, build-macos]
+    needs: [version, build-linux, build-windows, build-macos]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -153,7 +219,10 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ needs.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
           files: |
+            florin-linux-amd64.deb
             florin-linux-x64.tar.gz
             florin-windows-x64.zip
             florin-macos.zip
@@ -175,11 +244,6 @@ jobs:
 
             ### Linux
 
-            1. Extract `florin-linux-x64.tar.gz` to a folder, e.g. `~/.local/lib/florin/`
-            2. Run `./florin`
+            On Ubuntu, Debian, Linux Mint and other Debian-based systems, download `florin-linux-amd64.deb` and open it to install. Florin then appears in your app menu.
 
-            To add Florin to your app launcher:
-            ```
-            cp data/florin.desktop ~/.local/share/applications/
-            ```
-            Edit the `Exec=` line in that file to point to the full path of the `florin` binary.
+            On other distributions, extract `florin-linux-x64.tar.gz` to a folder and run `./florin`.
