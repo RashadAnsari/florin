@@ -1,6 +1,11 @@
 [Desktop Entry]
 Name=Florin
+GenericName=Bookkeeping
+GenericName[nl]=Boekhouding
 Comment=ZZP bookkeeping for Dutch freelancers
+Comment[nl]=Boekhouding voor zzp'ers
+Keywords=bookkeeping;accounting;invoice;expenses;tax;vat;btw;zzp;freelancer;
+Keywords[nl]=boekhouding;administratie;factuur;facturen;uitgaven;belasting;btw;zzp;freelancer;
 Exec=florin
 Icon=florin
 Type=Application

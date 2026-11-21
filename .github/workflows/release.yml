@@ -250,6 +250,14 @@ jobs:
 
             ### macOS
 
+            With Homebrew:
+            ```
+            brew tap rashadansari/florin https://github.com/RashadAnsari/florin
+            brew install --cask florin
+            ```
+
+            Or manually:
+
             1. Unzip `florin-macos.zip`
             2. Move `Florin.app` to your Applications folder
             3. Open `Florin.app`
@@ -267,3 +275,21 @@ jobs:
             On Ubuntu, Debian, Linux Mint and other Debian-based systems, download `florin-linux-amd64.deb` and open it to install. Florin then appears in your app menu.
 
             On other distributions, extract `florin-linux-x64.tar.gz` to a folder and run `./florin`.
+
+      - name: Checkout master for Homebrew cask
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          path: repo
+
+      - name: Update Homebrew cask
+        env:
+          TAG: ${{ needs.version.outputs.tag }}
+        run: |
+          SHA=$(sha256sum florin-macos.zip | cut -d' ' -f1)
+          cd repo
+          sed -i -e "s/^  version \".*\"/  version \"$TAG\"/" -e "s/^  sha256 \".*\"/  sha256 \"$SHA\"/" Casks/florin.rb
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Update Homebrew cask to $TAG"
+          git push origin master

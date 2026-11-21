@@ -1,5 +1,7 @@
 # Florin
 
+English | [Nederlands](README.nl.md)
+
 **Bookkeeping for Dutch freelancers (ZZP). Free, offline, and on your own computer.**
 
 Florin keeps your invoices, expenses, BTW returns, hours, mileage, assets and pension allowance in one desktop app, and shows you what you will owe the Belastingdienst as you go. No subscription, no account, no cloud: your records are a single file on your own machine.
@@ -39,6 +41,15 @@ Available for macOS, Windows and Linux, in Dutch and English.
 Download the file for your system from the [latest release](../../releases/latest).
 
 ### macOS
+
+With [Homebrew](https://brew.sh):
+
+```sh
+brew tap rashadansari/florin https://github.com/RashadAnsari/florin
+brew install --cask florin
+```
+
+Or manually:
 
 1. Unzip `florin-macos.zip`
 2. Move `Florin.app` to your Applications folder
