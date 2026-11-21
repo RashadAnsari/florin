@@ -90,10 +90,47 @@ jobs:
       - name: Build macOS
         run: flutter build macos --release
 
-      - name: Package macOS
+      - name: Import signing certificate
+        env:
+          MACOS_CERT_P12: ${{ secrets.MACOS_CERT_P12 }}
+          MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
         run: |
-          cd build/macos/Build/Products/Release
-          zip -r ../../../../../florin-macos.zip Florin.app
+          KEYCHAIN="$RUNNER_TEMP/signing.keychain-db"
+          KEYCHAIN_PASSWORD="$(uuidgen)"
+          echo "$MACOS_CERT_P12" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security import "$RUNNER_TEMP/cert.p12" -P "$MACOS_CERT_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security list-keychains -d user -s "$KEYCHAIN"
+          rm "$RUNNER_TEMP/cert.p12"
+
+      - name: Sign, notarize and package macOS
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+        run: |
+          APP=build/macos/Build/Products/Release/Florin.app
+          codesign --force --deep --options runtime --timestamp \
+            --entitlements macos/Runner/Release.entitlements \
+            --sign "Developer ID Application: Rashad Ansari (62TDQ32CK7)" "$APP"
+          codesign --verify --deep --strict "$APP"
+
+          # ditto keeps the framework symlinks that zip -r would break
+          ditto -c -k --keepParent "$APP" notarize.zip
+          xcrun notarytool submit notarize.zip --wait --output-format json \
+            --apple-id "$APPLE_ID" --password "$APPLE_APP_PASSWORD" --team-id 62TDQ32CK7 > notary.json
+          cat notary.json
+          if [ "$(jq -r .status notary.json)" != "Accepted" ]; then
+            xcrun notarytool log "$(jq -r .id notary.json)" \
+              --apple-id "$APPLE_ID" --password "$APPLE_APP_PASSWORD" --team-id 62TDQ32CK7
+            exit 1
+          fi
+
+          xcrun stapler staple "$APP"
+          spctl -a -vv "$APP"
+          ditto -c -k --keepParent "$APP" florin-macos.zip
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
@@ -124,20 +161,11 @@ jobs:
           body: |
             ## Installation
 
-            This app is not code-signed. Follow the steps below for your platform.
-
             ### macOS
 
             1. Unzip `florin-macos.zip`
             2. Move `Florin.app` to your Applications folder
-            3. Right-click `Florin.app` and choose **Open**
-            4. Click **Open** in the dialog that appears
-
-            If you see "damaged and can't be opened", run this in Terminal:
-            ```
-            xattr -cr /Applications/Florin.app
-            ```
-            Then try opening again.
+            3. Open `Florin.app`
 
             ### Windows
 
