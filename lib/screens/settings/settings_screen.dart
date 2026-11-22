@@ -53,9 +53,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final year = ref.read(fiscalYearProvider);
     setState(() => _exportRunning = true);
     try {
-      final dir = await CsvExportService(
-        ref.read(databaseProvider),
-      ).exportYear(year, dialogTitle: l.csvExportChooseFolderDialog);
+      final dir = await CsvExportService(ref.read(databaseProvider)).exportYear(
+        year,
+        dialogTitle: l.csvExportChooseFolderDialog,
+        quarters: [
+          for (var q = 1; q <= 4; q++)
+            ref.read(vatQuarterProvider((year: year, quarter: q))).requireValue,
+        ],
+        incomeTax: ref.read(taxEstimateProvider(year)).valueOrNull?.result,
+      );
       if (dir != null && mounted) {
         ScaffoldMessenger.of(
           context,
@@ -75,6 +81,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final dbPath = ref.watch(dbPathNotifierProvider).path;
     final year = ref.watch(fiscalYearProvider);
     final rules = ref.watch(taxRulesProvider(year));
+    // Keeps the figures the export writes loaded.
+    for (var q = 1; q <= 4; q++) {
+      ref.watch(vatQuarterProvider((year: year, quarter: q)));
+    }
+    ref.watch(taxEstimateProvider(year));
     final locale = ref.watch(localeProvider);
     final sectionTitle = theme.textTheme.titleLarge;
 

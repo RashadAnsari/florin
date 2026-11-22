@@ -17,6 +17,8 @@ English | [Nederlands](README.nl.md)
 
 [**Download for macOS, Windows or Linux**](https://github.com/RashadAnsari/florin/releases/latest)
 
+<img src="docs/screenshots/dashboard-en.png" alt="Florin dashboard" width="800">
+
 </div>
 
 Florin keeps your invoices, expenses, BTW returns, hours, mileage, assets and pension room in one desktop app, and shows what you will owe the Belastingdienst as you go. No subscription, no account, no cloud: your records are one file on your own computer.
@@ -28,7 +30,7 @@ Florin keeps your invoices, expenses, BTW returns, hours, mileage, assets and pe
 - **Explained as you go.** Every field and every tax term has a short explanation one hover away.
 - **Invoices built from the BTW rules.** PDF invoices include the items listed in article 35a of the Wet op de omzetbelasting, with btw verlegd, intra-Community supplies and credit notes that name the invoice they correct.
 - **Your data stays yours.** One local database file, in a folder you choose. Keep it in iCloud Drive, OneDrive or Dropbox for backup.
-- **Ready for your accountant.** Export a full year to CSV files in one click.
+- **Ready for your returns and your accountant.** Export a full year to CSV files in one click: every record, the BTW return of each quarter by rubriek in whole euros as the form asks, the ICP list of each quarter and the estimated income tax.
 - **Free and open source** under the MIT license.
 
 ## Features

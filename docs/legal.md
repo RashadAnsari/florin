@@ -80,6 +80,37 @@ Where Florin implements it: `VatService.calculateQuarter` fills 1a, 1b, 1d,
 or 4b. Rubriek 1c (other rates) and 3c (installation and distance sales) do
 not occur in the supplies Florin records.
 
+## BTW return rounding
+
+> Als je de btw-aangifte invult, rond je alle bedragen af op hele euro’s. Dit mag je in het voordeel van de stichting of vereniging doen. Zet bij negatieve bedragen een minteken (-) vóór het bedrag.
+
+[Belastingdienst, Invullen rubrieken](https://stichtingenvereniging.belastingdienst.nl/aangifte/aangifte-omzetbelasting/invullen-rubrieken/), read 2026-11-22
+
+> In de btw-aangifte rondt u de btw-bedragen af op hele euro’s. Dit mag u in uw voordeel doen.
+
+[Belastingdienst, Btw-bedrag afronden](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/administratie_bijhouden/facturen_maken/btw-bedrag_afronden), read 2026-11-22
+
+> Op het scherm 'Voorbelasting' staat bij 5a, 'Verschuldige btw (rubrieken 1 t/m 4)', het totaal aan verschuldigde btw uit de vorige rubrieken.
+
+[Belastingdienst, Ik moet btw-aangifte doen: hoe vul ik die in?](https://www.belastingdienst.nl/wps/wcm/connect/nl/btw/content/ik-moet-btw-aangifte-doen-hoe-vul-ik-die-in), read 2026-11-22
+
+Where Florin implements it: `CsvExportService.btwReturnRows` writes one file
+per quarter, `florin_<year>_btw_Q1.csv` to `Q4`, with every rubriek of the form
+in whole euros. Amounts owed and their bases round down, voorbelasting (5b)
+rounds up, and 5a is the sum of the rounded BTW amounts, as the form adds
+them. Negative amounts keep their minus sign. The ICP list per quarter,
+`florin_<year>_icp_Q<n>.csv`, totals the supplies per customer BTW number with
+goods and services apart, in euros and cents: the pages read for this review
+state no rounding rule for the ICP-opgaaf.
+
+Filing from Florin directly is not possible: the Belastingdienst accepts
+returns from software only over SBR and Digipoort, signed with a PKIoverheid
+certificate.
+
+> If you file a tax return using Standard Business Reporting (SBR), you use Digipoort, the secure digital channel of the public authorities. To be able to send and receive messages via Digipoort, you need a PKIoverheid services server certificate.
+
+[Belastingdienst, Filing tax returns using accounting software](https://www.belastingdienst.nl/wps/wcm/connect/bldcontenten/belastingdienst/business/tax_return/filing_digital_tax_returns/filing-tax-returns-using-accounting-software/), read 2026-11-22
+
 ## BTW deadlines
 
 > Ik doe aangifte per kwartaal: 4e kwartaal 2025 | 31 januari 2026 · 1e kwartaal 2026 | 30 april 2026 · 2e kwartaal 2026 | 31 juli 2026 · 3e kwartaal 2026 | 31 oktober 2026 · 4e kwartaal 2026 | 31 januari 2027

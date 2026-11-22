@@ -1019,7 +1019,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String settingsExportDescription(int year) {
-    return 'Export all $year data to CSV files.';
+    return 'Export all $year data to CSV files, with the BTW return of each quarter by rubriek in whole euros, the ICP list of each quarter and the estimated income tax of the year.';
   }
 
   @override

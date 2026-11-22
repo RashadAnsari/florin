@@ -46,7 +46,14 @@ Two skills hold the procedures:
    it, and tell the user.
 6. **Statutory figures are code, not settings.** Users cannot edit rates or
    thresholds; they live in `lib/services/tax_rules/`.
-7. **Every estimate says it is one.** A figure Florin calculates rather than
+7. **Exports follow the form they feed.** A figure the user copies into a
+   return is exported in the layout, codes, units and rounding of that
+   return, sourced in `docs/legal.md`: the BTW return as one file per
+   quarter (`btw_Q1` to `btw_Q4`, written even when a quarter is empty) with
+   every rubriek in whole euros, the ICP-opgaaf per quarter, and the income
+   tax estimate per year. A change to a return's rubrieken changes the export
+   and its test in the same commit.
+8. **Every estimate says it is one.** A figure Florin calculates rather than
    reads from the records (tax, net profit after tax, tax savings, private
    use of a car, BTW on private use) carries "estimated" in its label or
    section title, and its help text says so.
@@ -71,6 +78,7 @@ assets/fonts/            The invoice PDF font and its licence
 tool/                    create_demo_database.dart, run by `make demo`
 docs/
   images/                README images: the logo
+  screenshots/           README screenshots of the dashboard, one per language
   legal.md               Non-yearly rules with sources
   tax-years/<year>.md    Yearly figures with sources
 drift_schemas/           Exported schema snapshot per schema version

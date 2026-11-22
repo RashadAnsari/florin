@@ -1979,7 +1979,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsExportDescription.
   ///
   /// In en, this message translates to:
-  /// **'Export all {year} data to CSV files.'**
+  /// **'Export all {year} data to CSV files, with the BTW return of each quarter by rubriek in whole euros, the ICP list of each quarter and the estimated income tax of the year.'**
   String settingsExportDescription(int year);
 
   /// No description provided for @settingsExportButton.

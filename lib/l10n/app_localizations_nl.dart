@@ -1023,7 +1023,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String settingsExportDescription(int year) {
-    return 'Exporteer alle gegevens van $year naar CSV-bestanden.';
+    return 'Exporteer alle gegevens van $year naar CSV-bestanden, met per kwartaal de btw-aangifte per rubriek in hele euro\'s, het ICP-overzicht en de geschatte inkomstenbelasting van het jaar.';
   }
 
   @override

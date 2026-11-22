@@ -497,7 +497,7 @@
   },
   "settingsMoveDatabase": "Database naar andere map kopiëren",
   "settingsExportSection": "Exporteren",
-  "settingsExportDescription": "Exporteer alle gegevens van {year} naar CSV-bestanden.",
+  "settingsExportDescription": "Exporteer alle gegevens van {year} naar CSV-bestanden, met per kwartaal de btw-aangifte per rubriek in hele euro's, het ICP-overzicht en de geschatte inkomstenbelasting van het jaar.",
   "@settingsExportDescription": {
     "placeholders": {
       "year": {

@@ -8,9 +8,12 @@ import 'package:path/path.dart' as p;
 import '../db/database.dart';
 import '../theme/app_theme.dart';
 import 'domain.dart';
+import 'tax_service.dart';
+import 'vat_service.dart';
 
-/// Exports one year of bookkeeping as CSV files for an accountant. Headers
-/// and values are Dutch whatever the app language.
+/// Exports one year of bookkeeping as CSV files. Headers and values are Dutch
+/// whatever the app language. The BTW files follow the rubrieken of the
+/// return, one per quarter, so each figure can be typed into the form.
 class CsvExportService {
   final AppDatabase db;
 
@@ -80,7 +83,152 @@ class CsvExportService {
     WetDbaRisk.high => 'Hoog',
   };
 
-  Future<String?> exportYear(int year, {required String dialogTitle}) async {
+  /// Whole euros as the return asks, rounded in the filer's favour as the
+  /// Belastingdienst allows (`docs/legal.md`, BTW return rounding): amounts
+  /// owed round down, voorbelasting rounds up.
+  static int _owed(int cents) => (cents / 100).floor();
+  static int _reclaim(int cents) => (cents / 100).ceil();
+
+  /// The rows of one quarterly BTW return, in the order of the form.
+  static List<List<Object>> btwReturnRows(VatQuarterResult r) {
+    final vat = [r.vat1a, r.vat1b, r.vat1d, r.vat2a, r.vat4a, r.vat4b];
+    final owed5a = vat.fold(0, (s, v) => s + _owed(v));
+    final input5b = _reclaim(r.inputVat5b);
+    return [
+      ['Rubriek', 'Omschrijving', 'Bedrag waarover btw wordt berekend', 'Btw'],
+      [
+        '1a',
+        'Leveringen/diensten belast met hoog tarief',
+        _owed(r.revenue1a),
+        _owed(r.vat1a),
+      ],
+      [
+        '1b',
+        'Leveringen/diensten belast met laag tarief',
+        _owed(r.revenue1b),
+        _owed(r.vat1b),
+      ],
+      [
+        '1c',
+        'Leveringen/diensten belast met overige tarieven behalve 0%',
+        0,
+        0,
+      ],
+      ['1d', 'Privégebruik', '', _owed(r.vat1d)],
+      [
+        '1e',
+        'Leveringen/diensten belast met 0% of niet bij u belast',
+        _owed(r.revenue1e),
+        '',
+      ],
+      ['2a', 'Verleggingsregeling binnenland', _owed(r.base2a), _owed(r.vat2a)],
+      ['3a', 'Uitvoer naar landen buiten de EU', _owed(r.revenue3a), ''],
+      [
+        '3b',
+        'Leveringen naar of diensten in landen binnen de EU',
+        _owed(r.revenue3b),
+        '',
+      ],
+      ['3c', 'Installatie/afstandsverkopen binnen de EU', 0, ''],
+      [
+        '4a',
+        'Leveringen/diensten uit landen buiten de EU',
+        _owed(r.base4a),
+        _owed(r.vat4a),
+      ],
+      [
+        '4b',
+        'Leveringen/diensten uit landen binnen de EU',
+        _owed(r.base4b),
+        _owed(r.vat4b),
+      ],
+      ['5a', 'Verschuldigde btw (rubrieken 1 t/m 4)', '', owed5a],
+      ['5b', 'Voorbelasting', '', input5b],
+      [
+        '',
+        'Te betalen (positief) of terug te vragen (negatief)',
+        '',
+        owed5a - input5b,
+      ],
+    ];
+  }
+
+  /// The supplies to EU businesses of one quarter, totalled per customer BTW
+  /// number with goods and services apart, as the ICP-opgaaf lists them.
+  static List<List<Object>> icpRows(
+    VatQuarterResult r,
+    Map<int, Client> clients,
+  ) {
+    final totals = <String, ({String country, int goods, int services})>{};
+    for (final i in r.icpInvoices) {
+      final c = clients[i.clientId];
+      final key = c?.vatNumber ?? '';
+      final sign = i.invoiceType == InvoiceType.creditNote ? -1 : 1;
+      final t =
+          totals[key] ?? (country: c?.country ?? '', goods: 0, services: 0);
+      final amount = sign * i.totalExclVat;
+      totals[key] = i.vatTreatment == VatTreatment.euGoods
+          ? (country: t.country, goods: t.goods + amount, services: t.services)
+          : (country: t.country, goods: t.goods, services: t.services + amount);
+    }
+    return [
+      [
+        'Land',
+        'Btw-identificatienummer afnemer',
+        'Leveringen goederen',
+        'Diensten',
+      ],
+      for (final e in totals.entries)
+        [e.value.country, e.key, _euro(e.value.goods), _euro(e.value.services)],
+    ];
+  }
+
+  /// The income tax estimate of the year, line by line as Florin computes it.
+  static List<List<Object>> incomeTaxRows(TaxResult t) => [
+    ['Onderdeel (schatting)', 'Bedrag'],
+    ['Omzet', _euro(t.grossRevenue)],
+    ['Creditnota\'s', _euro(-t.creditNotes)],
+    ['Kosten', _euro(-t.totalCosts)],
+    ['Resultaat verkoop bedrijfsmiddelen', _euro(t.disposalResult)],
+    ['Desinvesteringsbijtelling', _euro(t.desinvesteringsbijtelling)],
+    ['Bijtelling privégebruik auto', _euro(t.carPrivateUse)],
+    ['Vrijval herinvesteringsreserve', _euro(t.reserveReleased)],
+    ['Kleinschaligheidsinvesteringsaftrek', _euro(-t.investmentDeduction.kia)],
+    ['Energie-investeringsaftrek', _euro(-t.investmentDeduction.eia)],
+    ['Milieu-investeringsaftrek', _euro(-t.investmentDeduction.mia)],
+    ['Winst uit onderneming', _euro(t.profit)],
+    ['Zelfstandigenaftrek', _euro(-t.zelfstandigenaftrek)],
+    ['Startersaftrek', _euro(-t.startersaftrek)],
+    ['S&O-aftrek', _euro(-t.soAftrek)],
+    ['Meewerkaftrek', _euro(-t.meewerkaftrek)],
+    [
+      'Startersaftrek bij arbeidsongeschiktheid',
+      _euro(-t.disabilityStartersaftrek),
+    ],
+    ['Stakingsaftrek', _euro(-t.stakingsaftrek)],
+    ['Mkb-winstvrijstelling', _euro(-t.mkbWinstvrijstelling)],
+    ['Belastbare winst uit onderneming', _euro(t.belastbareWinst)],
+    ['Lijfrentepremie', _euro(-t.lijfrenteDeduction)],
+    ['Premie arbeidsongeschiktheidsverzekering', _euro(-t.aovDeduction)],
+    ['Verrekende verliezen', _euro(-t.lossOffset)],
+    ['Belastbaar inkomen box 1', _euro(t.taxableIncome)],
+    ['Belasting box 1 vóór heffingskortingen', _euro(t.grossBox1Tax)],
+    ['Algemene heffingskorting', _euro(-t.algemeneHeffingskorting)],
+    ['Arbeidskorting', _euro(-t.arbeidskorting)],
+    ['Inkomstenbelasting box 1', _euro(t.box1Tax)],
+    ['Inkomensafhankelijke bijdrage Zvw', _euro(t.zvwContribution)],
+    ['Totaal', _euro(t.totalTax)],
+  ];
+
+  /// Writes the year's files. [quarters] holds the BTW returns for Q1 to Q4;
+  /// every quarter gets its files, empty or not.
+  Future<String?> exportYear(
+    int year, {
+    required String dialogTitle,
+    required List<VatQuarterResult> quarters,
+    required TaxResult? incomeTax,
+  }) async {
+    assert(quarters.length == 4);
     final dir = await FilePicker.platform.getDirectoryPath(
       dialogTitle: dialogTitle,
     );
@@ -122,6 +270,7 @@ class CsvExportService {
     )..orderBy([(a) => OrderingTerm.asc(a.purchaseDate)])).get();
     final clients = await db.select(db.clients).get();
     final clientNames = {for (final c in clients) c.id: c.name};
+    final clientsById = {for (final c in clients) c.id: c};
 
     Future<void> write(String name, List<List<Object>> rows) => File(
       p.join(dir, 'florin_${year}_$name.csv'),
@@ -344,6 +493,14 @@ class CsvExportService {
           _yesNo(c.isActive),
         ],
     ]);
+
+    for (var q = 1; q <= 4; q++) {
+      await write('btw_Q$q', btwReturnRows(quarters[q - 1]));
+      await write('icp_Q$q', icpRows(quarters[q - 1], clientsById));
+    }
+    if (incomeTax != null) {
+      await write('inkomstenbelasting_schatting', incomeTaxRows(incomeTax));
+    }
 
     return dir;
   }

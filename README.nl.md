@@ -17,6 +17,8 @@
 
 [**Download voor macOS, Windows of Linux**](https://github.com/RashadAnsari/florin/releases/latest)
 
+<img src="docs/screenshots/dashboard-nl.png" alt="Florin-dashboard" width="800">
+
 </div>
 
 Florin houdt je facturen, uitgaven, btw-aangiftes, uren, kilometers, bedrijfsmiddelen en pensioenruimte bij in één desktop-app, en laat gaandeweg zien wat je aan de Belastingdienst gaat betalen. Geen abonnement, geen account, geen cloud: je administratie is één bestand op je eigen computer.
@@ -28,7 +30,7 @@ Florin houdt je facturen, uitgaven, btw-aangiftes, uren, kilometers, bedrijfsmid
 - **Uitleg waar je hem nodig hebt.** Elk veld en elk fiscaal begrip heeft een korte uitleg onder de muisaanwijzer.
 - **Facturen opgebouwd volgens de btw-regels.** Pdf-facturen bevatten de vermeldingen uit artikel 35a van de Wet op de omzetbelasting, met btw verlegd, intracommunautaire leveringen en creditnota's die de gecorrigeerde factuur noemen.
 - **Jouw gegevens blijven van jou.** Eén lokaal databasebestand, in een map die je zelf kiest. Zet het in iCloud Drive, OneDrive of Dropbox als back-up.
-- **Klaar voor je boekhouder.** Exporteer een volledig jaar met één klik naar CSV-bestanden.
+- **Klaar voor je aangiftes en je boekhouder.** Exporteer een volledig jaar met één klik naar CSV-bestanden: alle gegevens, de btw-aangifte van elk kwartaal per rubriek in hele euro's zoals het formulier vraagt, het ICP-overzicht van elk kwartaal en de geschatte inkomstenbelasting.
 - **Gratis en open source** onder de MIT-licentie.
 
 ## Functies
