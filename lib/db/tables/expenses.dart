@@ -1,26 +1,35 @@
 import 'package:drift/drift.dart';
+import '../enums.dart';
+import 'fixed_assets.dart';
 
+@TableIndex(name: 'expenses_date', columns: {#date})
 class Expenses extends Table {
   IntColumn get id => integer().autoIncrement()();
   DateTimeColumn get date => dateTime()();
   TextColumn get supplier => text()();
   TextColumn get description => text()();
-  TextColumn get category => text()();
+  TextColumn get category => textEnum<ExpenseCategory>()();
   BoolColumn get receiptAttached =>
       boolean().withDefault(const Constant(false))();
   IntColumn get amountExclVat => integer()();
-  TextColumn get vatRate => text().withDefault(const Constant('21%'))();
-  IntColumn get vatAmount => integer().withDefault(const Constant(0))();
-  IntColumn get totalInclVat => integer().withDefault(const Constant(0))();
-  RealColumn get businessUsePct => real().withDefault(const Constant(1.0))();
-  IntColumn get deductibleAmount => integer().withDefault(const Constant(0))();
-  BoolColumn get vatReclaimable =>
-      boolean().withDefault(const Constant(true))();
-  IntColumn get vatToReclaim => integer().withDefault(const Constant(0))();
-  BoolColumn get isMixedCost => boolean().withDefault(const Constant(false))();
+  TextColumn get vatRate => textEnum<VatRate>()();
+  TextColumn get purchaseVat => textEnum<PurchaseVat>().withDefault(
+    Constant(PurchaseVat.domestic.name),
+  )();
+  IntColumn get vatAmount => integer()();
+  IntColumn get totalInclVat => integer()();
+  RealColumn get businessUsePct => real()();
+  IntColumn get deductibleAmount => integer()();
+  BoolColumn get vatReclaimable => boolean()();
+  IntColumn get vatToReclaim => integer()();
   TextColumn get notes => text().nullable()();
   TextColumn get paidFrom => text().nullable()();
   TextColumn get paymentReference => text().nullable()();
-  IntColumn get fiscalYear => integer()();
-  TextColumn get quarter => text()();
+
+  /// The business car this cost belongs to.
+  IntColumn get carAssetId => integer().nullable().references(
+    FixedAssets,
+    #id,
+    onDelete: KeyAction.restrict,
+  )();
 }

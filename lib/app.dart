@@ -5,7 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:florin/l10n/app_localizations.dart';
-import 'package:florin/db/database.dart';
+import 'db/database.dart';
 import 'theme/app_theme.dart';
 import 'providers/providers.dart';
 import 'screens/first_launch/first_launch_screen.dart';
@@ -27,7 +27,7 @@ import 'constants/prefs_keys.dart';
 /// Supported locales.
 const kSupportedLocales = [Locale('nl'), Locale('en')];
 
-/// Active locale provider — persisted in shared_preferences.
+/// The interface language, stored in shared preferences.
 final localeProvider = StateProvider<Locale>((ref) {
   final prefs = ref.read(sharedPreferencesProvider);
   final tag = prefs.getString(PrefsKeys.appLocale);
@@ -79,10 +79,9 @@ class _FlorinAppState extends ConsumerState<FlorinApp> {
               routes: [
                 GoRoute(
                   path: 'new',
-                  builder: (c, s) => Scaffold(
-                    body: InvoiceDetailPanel(
-                      onBack: () => c.pop(),
-                      onCreated: (id) => c.go('/invoices/$id'),
+                  builder: (c, s) => InvoiceDetailPanel(
+                    creditForId: int.tryParse(
+                      s.uri.queryParameters['creditFor'] ?? '',
                     ),
                   ),
                 ),
@@ -92,11 +91,8 @@ class _FlorinAppState extends ConsumerState<FlorinApp> {
                       int.tryParse(s.pathParameters['id'] ?? '') == null
                       ? '/invoices'
                       : null,
-                  builder: (c, s) => Scaffold(
-                    body: InvoiceDetailPanel(
-                      invoiceId: int.parse(s.pathParameters['id']!),
-                      onBack: () => c.pop(),
-                    ),
+                  builder: (c, s) => InvoiceDetailPanel(
+                    invoiceId: int.parse(s.pathParameters['id']!),
                   ),
                 ),
               ],
@@ -200,6 +196,8 @@ class _FlorinAppState extends ConsumerState<FlorinApp> {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
+      highContrastTheme: AppTheme.highContrastLight,
+      highContrastDarkTheme: AppTheme.highContrastDark,
       locale: locale,
       supportedLocales: kSupportedLocales,
       localizationsDelegates: const [

@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint:
-    name: Lint
+    name: Lint and test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,18 +22,22 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Check localizations are up to date
+      - name: Check generated code is up to date
         run: |
-          flutter gen-l10n
-          git diff --exit-code lib/l10n/
+          make gen
+          git diff --exit-code
 
       - name: Analyze and check formatting
         run: make lint
+
+      - name: Test
+        run: make test
 
   version:
     name: Version
     runs-on: ubuntu-latest
     outputs:
+      version: ${{ steps.version.outputs.version }}
       tag: ${{ steps.version.outputs.tag }}
       release: ${{ steps.version.outputs.release }}
     steps:
@@ -45,8 +49,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # pubspec version 1.2.0+3 becomes tag 1.2.0-3
-          TAG=$(sed -n 's/^version: *//p' pubspec.yaml | tr '+' '-')
+          # pubspec version 1.2.0 becomes tag v1.2.0
+          VERSION=$(sed -n 's/^version: *//p' pubspec.yaml)
+          if ! echo "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "pubspec version must be MAJOR.MINOR.PATCH without a build number, got $VERSION"
+            exit 1
+          fi
+          TAG="v$VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           # Release only from pushes to master, and only once per version
           if [ "$GITHUB_EVENT_NAME" = "push" ] && ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
@@ -107,7 +117,7 @@ jobs:
 
           cat > "$PKG/DEBIAN/control" <<EOF
           Package: florin
-          Version: ${{ needs.version.outputs.tag }}
+          Version: ${{ needs.version.outputs.version }}
           Architecture: amd64
           Maintainer: Rashad Ansari
           Section: misc
@@ -164,7 +174,7 @@ jobs:
       - name: Build Windows installer
         if: needs.version.outputs.release == 'true'
         env:
-          APP_VERSION: ${{ needs.version.outputs.tag }}
+          APP_VERSION: ${{ needs.version.outputs.version }}
         run: |
           choco install innosetup -y --no-progress
           & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DAppVersion=$env:APP_VERSION" "/DBuildDir=$PWD\build\windows\x64\runner\Release" windows\installer.iss
@@ -318,11 +328,12 @@ jobs:
 
       - name: Update Homebrew cask
         env:
+          VERSION: ${{ needs.version.outputs.version }}
           TAG: ${{ needs.version.outputs.tag }}
         run: |
           SHA=$(sha256sum florin-macos.zip | cut -d' ' -f1)
           cd repo
-          sed -i -e "s/^  version \".*\"/  version \"$TAG\"/" -e "s/^  sha256 \".*\"/  sha256 \"$SHA\"/" Casks/florin.rb
+          sed -i -e "s/^  version \".*\"/  version \"$VERSION\"/" -e "s/^  sha256 \".*\"/  sha256 \"$SHA\"/" Casks/florin.rb
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -am "Update Homebrew cask to $TAG"

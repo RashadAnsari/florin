@@ -1,15 +1,29 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../db/database.dart';
+
+import '../constants/prefs_keys.dart';
+import '../db/daos/asset_dao.dart';
+import '../db/daos/business_profile_dao.dart';
 import '../db/daos/client_dao.dart';
-import '../db/daos/invoice_dao.dart';
 import '../db/daos/expense_dao.dart';
 import '../db/daos/hour_dao.dart';
+import '../db/daos/invoice_dao.dart';
 import '../db/daos/mileage_dao.dart';
-import '../db/daos/asset_dao.dart';
-import '../db/daos/tax_params_dao.dart';
-import '../constants/prefs_keys.dart';
+import '../db/daos/pension_dao.dart';
+import '../db/daos/tax_year_inputs_dao.dart';
+import '../db/daos/vat_return_dao.dart';
+import '../db/database.dart';
+import '../services/asset_service.dart';
+import '../services/car_service.dart';
+import '../services/pension_service.dart';
+import '../services/tax_rules/tax_year_rules.dart';
+import '../services/tax_service.dart';
+import '../services/vat_service.dart';
+
+final sharedPreferencesProvider = Provider<SharedPreferences>(
+  (ref) => throw UnimplementedError('Overridden in main()'),
+);
 
 class DbPathNotifier extends ChangeNotifier {
   final SharedPreferences _prefs;
@@ -24,112 +38,252 @@ class DbPathNotifier extends ChangeNotifier {
   }
 }
 
-final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
-  throw UnimplementedError();
-});
-
-final dbPathNotifierProvider = ChangeNotifierProvider<DbPathNotifier>((ref) {
-  return DbPathNotifier(ref.watch(sharedPreferencesProvider));
-});
+final dbPathNotifierProvider = ChangeNotifierProvider<DbPathNotifier>(
+  (ref) => DbPathNotifier(ref.watch(sharedPreferencesProvider)),
+);
 
 final databaseProvider = Provider<AppDatabase>((ref) {
-  final notifier = ref.watch(dbPathNotifierProvider);
-  final path = notifier.path;
+  final path = ref.watch(dbPathNotifierProvider).path;
   if (path == null) throw StateError('No database path configured');
-  final db = AppDatabase.connect(path);
+  final db = AppDatabase.open(path);
   ref.onDispose(db.close);
   return db;
 });
 
-final clientDaoProvider = Provider<ClientDao>((ref) {
-  return ClientDao(ref.watch(databaseProvider));
-});
+final businessProfileDaoProvider = Provider(
+  (ref) => BusinessProfileDao(ref.watch(databaseProvider)),
+);
+final clientDaoProvider = Provider(
+  (ref) => ClientDao(ref.watch(databaseProvider)),
+);
+final invoiceDaoProvider = Provider(
+  (ref) => InvoiceDao(ref.watch(databaseProvider)),
+);
+final expenseDaoProvider = Provider(
+  (ref) => ExpenseDao(ref.watch(databaseProvider)),
+);
+final hourDaoProvider = Provider((ref) => HourDao(ref.watch(databaseProvider)));
+final mileageDaoProvider = Provider(
+  (ref) => MileageDao(ref.watch(databaseProvider)),
+);
+final assetDaoProvider = Provider(
+  (ref) => AssetDao(ref.watch(databaseProvider)),
+);
+final pensionDaoProvider = Provider(
+  (ref) => PensionDao(ref.watch(databaseProvider)),
+);
+final taxYearInputsDaoProvider = Provider(
+  (ref) => TaxYearInputsDao(ref.watch(databaseProvider)),
+);
+final vatReturnDaoProvider = Provider(
+  (ref) => VatReturnDao(ref.watch(databaseProvider)),
+);
 
-final invoiceDaoProvider = Provider<InvoiceDao>((ref) {
-  return InvoiceDao(ref.watch(databaseProvider));
-});
-
-final expenseDaoProvider = Provider<ExpenseDao>((ref) {
-  return ExpenseDao(ref.watch(databaseProvider));
-});
-
-final hourDaoProvider = Provider<HourDao>((ref) {
-  return HourDao(ref.watch(databaseProvider));
-});
-
-final mileageDaoProvider = Provider<MileageDao>((ref) {
-  return MileageDao(ref.watch(databaseProvider));
-});
-
-final assetDaoProvider = Provider<AssetDao>((ref) {
-  return AssetDao(ref.watch(databaseProvider));
-});
-
-final taxParamsDaoProvider = Provider<TaxParamsDao>((ref) {
-  return TaxParamsDao(ref.watch(databaseProvider));
-});
-
+/// The selected year, always one with verified tax rules.
 final fiscalYearProvider = StateProvider<int>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
-  return prefs.getInt(PrefsKeys.fiscalYear) ?? DateTime.now().year;
+  final stored = prefs.getInt(PrefsKeys.fiscalYear);
+  return stored != null && taxYears.containsKey(stored)
+      ? stored
+      : nearestSupportedYear(DateTime.now().year);
 });
 
-// ── Phase 2 stream providers ──────────────────────────────────────────────────
+final businessProfileProvider = StreamProvider(
+  (ref) => ref.watch(businessProfileDaoProvider).watch(),
+);
+final clientsProvider = StreamProvider(
+  (ref) => ref.watch(clientDaoProvider).watchAll(),
+);
+final allInvoicesProvider = StreamProvider(
+  (ref) => ref.watch(invoiceDaoProvider).watchAll(),
+);
+final invoicesProvider = StreamProvider.family<List<Invoice>, int>(
+  (ref, year) => ref.watch(invoiceDaoProvider).watchInYear(year),
+);
+final invoiceLinesProvider = StreamProvider.family<List<InvoiceLine>, int>(
+  (ref, year) => ref.watch(invoiceDaoProvider).watchLinesInYear(year),
+);
+final expensesProvider = StreamProvider.family<List<Expense>, int>(
+  (ref, year) => ref.watch(expenseDaoProvider).watchInYear(year),
+);
+final hourEntriesProvider = StreamProvider.family<List<HourEntry>, int>(
+  (ref, year) => ref.watch(hourDaoProvider).watchInYear(year),
+);
+final mileageTripsProvider = StreamProvider.family<List<MileageTrip>, int>(
+  (ref, year) => ref.watch(mileageDaoProvider).watchInYear(year),
+);
+final assetsProvider = StreamProvider.family<List<FixedAsset>, int>(
+  (ref, year) => ref.watch(assetDaoProvider).watchInUse(year),
+);
+final allAssetsProvider = StreamProvider(
+  (ref) => ref.watch(assetDaoProvider).watchAll(),
+);
+final taxYearInputsProvider = StreamProvider.family<TaxYearInput?, int>(
+  (ref, year) => ref.watch(taxYearInputsDaoProvider).watchYear(year),
+);
+final pensionProvider = StreamProvider.family<PensionEntry?, int>(
+  (ref, year) => ref.watch(pensionDaoProvider).watchYear(year),
+);
+final vatReturnsProvider = StreamProvider.family<List<VatReturn>, int>(
+  (ref, year) => ref.watch(vatReturnDaoProvider).watchYear(year),
+);
 
-final clientsStreamProvider = StreamProvider<List<Client>>((ref) {
-  return ref.watch(clientDaoProvider).watchAllActive();
-});
+/// Verified statutory figures for a supported year.
+final taxRulesProvider = Provider.family<TaxYearRules, int>(
+  (ref, year) => taxYears[year]!,
+);
 
-final invoicesStreamProvider = StreamProvider.family<List<Invoice>, int>((
+/// The income tax estimate for [year], built from all bookkeeping of that
+/// year.
+final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
   ref,
   year,
 ) {
-  return ref.watch(invoiceDaoProvider).watchByYear(year);
+  final rules = ref.watch(taxRulesProvider(year));
+  final profile = ref.watch(businessProfileProvider);
+  final invoices = ref.watch(invoicesProvider(year));
+  final expenses = ref.watch(expensesProvider(year));
+  final hours = ref.watch(hourEntriesProvider(year));
+  final trips = ref.watch(mileageTripsProvider(year));
+  final assets = ref.watch(assetsProvider(year));
+  final allAssets = ref.watch(allAssetsProvider);
+  final pension = ref.watch(pensionProvider(year));
+  final inputs = ref.watch(taxYearInputsProvider(year));
+  final all = [
+    profile,
+    invoices,
+    expenses,
+    hours,
+    trips,
+    assets,
+    allAssets,
+    pension,
+    inputs,
+  ];
+  for (final a in all) {
+    if (a.hasError) return AsyncError(a.error!, a.stackTrace!);
+  }
+  if (all.any((a) => !a.hasValue)) return const AsyncLoading();
+
+  final totalHours = hours.requireValue.fold(0.0, (s, h) => s + h.hours);
+  final yearOver = year < DateTime.now().year;
+  final meetsUrencriterium = totalHours >= rules.urencriterium;
+  final km = TaxService.businessKm(trips.requireValue);
+  final assetList = assets.requireValue;
+  final every = allAssets.requireValue;
+  final yearInputs = inputs.requireValue;
+  final ceased = yearInputs?.businessCeased ?? false;
+  final reserve = AssetService.reserveLedger(
+    every,
+    year,
+    ceasedYear: ceased ? year : null,
+  )[year];
+  final soHours = hours.requireValue
+      .where((h) => h.workType == WorkType.wbso)
+      .fold(0.0, (s, h) => s + h.hours);
+  final result = TaxService.calculate(
+    rules: rules,
+    grossRevenue: TaxService.grossRevenue(invoices.requireValue),
+    creditNotes: TaxService.creditNotes(invoices.requireValue),
+    deductibleExpenses: TaxService.deductibleExpenses(
+      expenses.requireValue,
+      rules,
+    ),
+    depreciation: AssetService.totalDepreciation(assetList, year),
+    disposalResult: AssetService.disposalResult(every, year),
+    mileageAllowance: TaxService.mileageAllowance(km, rules),
+    investmentDeduction: AssetService.investmentDeduction(every, year, rules),
+    desinvesteringsbijtelling: AssetService.desinvesteringsbijtelling(
+      every,
+      year,
+      rules,
+    ),
+    carPrivateUse: CarService.privateUseAddition(
+      assets: every,
+      trips: trips.requireValue,
+      expenses: expenses.requireValue,
+      year: year,
+      rules: rules,
+    ),
+    reserveReleased: reserve?.released ?? 0,
+    stakingswinst: ceased
+        ? AssetService.saleGains(every, year) + (reserve?.released ?? 0)
+        : 0,
+    totalHours: totalHours,
+    soHours: soHours,
+    assumeUrencriterium: !yearOver,
+    isStarter: profile.requireValue?.isStarter ?? false,
+    inputs: yearInputs,
+    lijfrentePremium: PensionService.deductiblePremium(
+      rules,
+      pension.requireValue,
+    ),
+    aovPremium: (pension.requireValue?.aovInsured ?? false)
+        ? pension.requireValue!.monthlyAovPremium * 12
+        : 0,
+  );
+  return AsyncData(
+    TaxEstimate(
+      rules: rules,
+      result: result,
+      totalHours: totalHours,
+      meetsUrencriterium: meetsUrencriterium,
+      yearOver: yearOver,
+      businessKm: km,
+    ),
+  );
 });
 
-final expensesStreamProvider = StreamProvider.family<List<Expense>, int>((
-  ref,
-  year,
-) {
-  return ref.watch(expenseDaoProvider).watchByYear(year);
-});
-
-final invoiceLinesByYearStreamProvider =
-    StreamProvider.family<List<InvoiceLine>, int>((ref, year) {
-      return ref.watch(invoiceDaoProvider).watchLinesByYear(year);
+/// The BTW return figures for one quarter.
+final vatQuarterProvider =
+    Provider.family<AsyncValue<VatQuarterResult>, ({int year, int quarter})>((
+      ref,
+      key,
+    ) {
+      final invoices = ref.watch(invoicesProvider(key.year));
+      final lines = ref.watch(invoiceLinesProvider(key.year));
+      final expenses = ref.watch(expensesProvider(key.year));
+      final trips = ref.watch(mileageTripsProvider(key.year));
+      final assets = ref.watch(allAssetsProvider);
+      final all = [invoices, lines, expenses, trips, assets];
+      for (final a in all) {
+        if (a.hasError) return AsyncError(a.error!, a.stackTrace!);
+      }
+      if (all.any((a) => !a.hasValue)) return const AsyncLoading();
+      return AsyncData(
+        VatService.calculateQuarter(
+          invoices: invoices.requireValue,
+          lines: lines.requireValue,
+          expenses: expenses.requireValue,
+          quarter: key.quarter,
+          // Private use of business cars goes in the last return of the year.
+          privateUseVat: key.quarter == 4
+              ? CarService.btwPrivateUse(
+                  assets: assets.requireValue,
+                  trips: trips.requireValue,
+                  expenses: expenses.requireValue,
+                  year: key.year,
+                  rules: ref.watch(taxRulesProvider(key.year)),
+                )
+              : 0,
+        ),
+      );
     });
 
-final hourEntriesStreamProvider = StreamProvider.family<List<HourEntry>, int>((
-  ref,
-  year,
-) {
-  return ref.watch(hourDaoProvider).watchByYear(year);
-});
+class TaxEstimate {
+  final TaxYearRules rules;
+  final TaxResult result;
+  final double totalHours;
+  final bool meetsUrencriterium;
+  final bool yearOver;
+  final int businessKm;
 
-final mileageTripsStreamProvider =
-    StreamProvider.family<List<MileageTrip>, int>((ref, year) {
-      return ref.watch(mileageDaoProvider).watchByYear(year);
-    });
-
-final assetsStreamProvider = StreamProvider.family<List<FixedAsset>, int>((
-  ref,
-  year,
-) {
-  return ref.watch(assetDaoProvider).watchByYear(year);
-});
-
-final taxParamsStreamProvider = StreamProvider.family<TaxParam?, int>((
-  ref,
-  year,
-) async* {
-  final dao = ref.watch(taxParamsDaoProvider);
-  await dao.ensureExistsForYear(year);
-  yield* dao.watchByYear(year);
-});
-
-final pensionStreamProvider = StreamProvider.family<PensionEntry?, int>((
-  ref,
-  year,
-) {
-  return ref.watch(taxParamsDaoProvider).watchPensionByYear(year);
-});
+  const TaxEstimate({
+    required this.rules,
+    required this.result,
+    required this.totalHours,
+    required this.meetsUrencriterium,
+    required this.yearOver,
+    required this.businessKm,
+  });
+}

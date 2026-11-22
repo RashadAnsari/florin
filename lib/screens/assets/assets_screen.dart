@@ -1,14 +1,28 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
+import '../../widgets/help.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
-import '../../services/tax_service.dart';
+import '../../l10n/labels.dart';
+import '../../services/asset_service.dart';
+import '../../services/tax_rules/tax_year_rules.dart';
+import '../../widgets/enum_dropdown.dart';
+import '../../widgets/value_row.dart';
+import '../../theme/app_spacing.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/amount_field.dart';
+import '../../widgets/business_use_slider.dart';
 import '../../widgets/confirmation_dialog.dart';
+import '../../widgets/date_field.dart';
+import '../../widgets/detail_scaffold.dart';
+import '../../widgets/feedback.dart';
+import '../../widgets/form_row.dart';
+import '../../widgets/list_scaffold.dart';
+import '../../widgets/summary_bar.dart';
+import '../../widgets/tone_badge.dart';
 
 class AssetsScreen extends ConsumerWidget {
   const AssetsScreen({super.key});
@@ -16,295 +30,188 @@ class AssetsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     final year = ref.watch(fiscalYearProvider);
-    final assetsAsync = ref.watch(assetsStreamProvider(year));
-    final assets = assetsAsync.valueOrNull ?? [];
-    final paramsAsync = ref.watch(taxParamsStreamProvider(year));
-    final params = paramsAsync.valueOrNull;
+    final assets = ref.watch(assetsProvider(year));
+    final rules = ref.watch(taxRulesProvider(year));
+    final list = assets.valueOrNull ?? const <FixedAsset>[];
 
-    final service = const TaxService();
-    final kiaTotal = TaxService.computeKiaTotal(assets, year);
-    final kiaDeduction = params != null
-        ? service.computeKia(params, kiaTotal)
-        : 0;
-    final totalDepreciation = TaxService.computeTotalDepreciation(assets, year);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l.assetsTitle),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: l.assetsNewAsset,
-            onPressed: () => context.push('/assets/new'),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          _SummaryBar(
-            kiaTotal: kiaTotal,
-            kiaDeduction: kiaDeduction,
-            totalDepreciation: totalDepreciation,
-          ),
-          const Divider(height: 1),
-          Expanded(
-            child: assetsAsync.when(
-              data: (data) => _AssetList(
-                assets: data,
-                year: year,
-                onTap: (a) => context.push('/assets/${a.id}', extra: a),
-              ),
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stackTrace) =>
-                  Center(child: Text(l.genericLoadError('$error'))),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SummaryBar extends StatelessWidget {
-  final int kiaTotal;
-  final int kiaDeduction;
-  final int totalDepreciation;
-
-  const _SummaryBar({
-    required this.kiaTotal,
-    required this.kiaDeduction,
-    required this.totalDepreciation,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              _stat(l.assetsKiaInvestments, AppFormat.cents(kiaTotal), theme),
-              const SizedBox(width: 32),
-              _stat(
-                l.assetsKiaDeduction,
-                AppFormat.cents(kiaDeduction),
-                theme,
-                valueColor: AppColors.income,
-              ),
-              const SizedBox(width: 32),
-              _stat(
-                l.assetsDepreciationThisYear,
-                AppFormat.cents(totalDepreciation),
-                theme,
-              ),
-            ],
-          ),
+    return ListScaffold<FixedAsset>(
+      title: l.assetsTitle,
+      addTooltip: l.assetsNewAsset,
+      onAdd: () => context.push('/assets/new'),
+      items: assets,
+      emptyText: l.assetsNone,
+      controls: SummaryBar([
+        SummaryStat(
+          l.assetsKiaInvestments,
+          AppFormat.cents(AssetService.kiaInvestments(list, year, rules)),
         ),
-      ),
-    );
-  }
-
-  Widget _stat(
-    String label,
-    String value,
-    ThemeData theme, {
-    Color? valueColor,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: theme.textTheme.bodySmall),
-        Text(
-          value,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w700,
-            color: valueColor,
+        SummaryStat(
+          l.assetsKiaDeduction,
+          AppFormat.cents(
+            rules.kia.valueFor(AssetService.kiaInvestments(list, year, rules)),
           ),
+          color: context.colors.income,
         ),
-      ],
-    );
-  }
-}
-
-class _AssetList extends StatelessWidget {
-  final List<FixedAsset> assets;
-  final int year;
-  final ValueChanged<FixedAsset> onTap;
-
-  const _AssetList({
-    required this.assets,
-    required this.year,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    if (assets.isEmpty) {
-      return Center(child: Text(l.assetsNone));
-    }
-    return ListView.builder(
-      itemCount: assets.length,
-      itemBuilder: (context, i) {
-        final a = assets[i];
+        SummaryStat(
+          l.assetsDepreciationThisYear,
+          AppFormat.cents(AssetService.totalDepreciation(list, year)),
+        ),
+      ]),
+      itemBuilder: (context, a) {
         final disposed = a.disposalDate != null;
-        final yearsElapsed = year - a.purchaseDate.year;
-        final bookValue = TaxService.computeBookValue(
-          costExclVat: a.costExclVat,
-          usefulLifeYears: a.usefulLifeYears,
-          businessUsePct: a.businessUsePct,
-          yearsElapsed: yearsElapsed,
-        );
         return ListTile(
           title: Text(
             a.assetName,
             style: disposed
-                ? theme.textTheme.bodyLarge?.copyWith(
+                ? TextStyle(
                     decoration: TextDecoration.lineThrough,
                     color: theme.colorScheme.outline,
                   )
                 : null,
           ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppFormat.cents(a.costExclVat),
-                style: theme.textTheme.bodySmall,
-              ),
-              const SizedBox(height: 2),
-              Text(
-                l.assetsYears(a.usefulLifeYears),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.outline,
-                ),
-              ),
-            ],
+          subtitle: Text(
+            '${AppFormat.cents(a.costExclVat)}  '
+            '${l.assetsYears(a.usefulLifeYears)}',
           ),
-          trailing: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
+              if (a.kiaEligible && a.purchaseDate.year == year) ...[
+                ToneBadge(
+                  label: l.assetsKiaBadge,
+                  color: context.colors.income,
+                ),
+                const SizedBox(width: AppSpacing.heading),
+              ],
               Text(
-                AppFormat.cents(bookValue),
+                AppFormat.cents(AssetService.bookValue(a, year)),
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
-              if (a.kiaEligible)
-                Text(
-                  l.assetsKiaBadge,
-                  style: const TextStyle(color: AppColors.income, fontSize: 11),
-                ),
             ],
           ),
-          onTap: () => onTap(a),
+          onTap: () => context.push('/assets/${a.id}', extra: a),
         );
       },
     );
   }
 }
 
-class _AssetForm extends ConsumerStatefulWidget {
+class AssetDetailPage extends ConsumerStatefulWidget {
   final FixedAsset? asset;
-  final int year;
-  final VoidCallback? onBack;
-  final VoidCallback onSaved;
-  final VoidCallback onDeleted;
 
-  const _AssetForm({
-    required this.asset,
-    required this.year,
-    this.onBack,
-    required this.onSaved,
-    required this.onDeleted,
-  });
+  const AssetDetailPage({super.key, this.asset});
 
   @override
-  ConsumerState<_AssetForm> createState() => _AssetFormState();
+  ConsumerState<AssetDetailPage> createState() => _AssetDetailPageState();
 }
 
-class _AssetFormState extends ConsumerState<_AssetForm> {
+class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _name;
-  late TextEditingController _notes;
-  late DateTime _purchaseDate;
-  late int _costExclVat;
-  late double _businessUsePct;
-  late int _usefulLifeYears;
-  late bool _kiaEligible;
-  late bool _eiaOrMia;
-  DateTime? _disposalDate;
-  int _disposalProceeds = 0;
+  late final _name = TextEditingController(text: widget.asset?.assetName);
+  late final _notes = TextEditingController(text: widget.asset?.notes);
+  late final _usefulLife = TextEditingController(
+    text: '${widget.asset?.usefulLifeYears ?? AssetService.minUsefulLifeYears}',
+  );
+  late DateTime _purchaseDate = widget.asset?.purchaseDate ?? DateTime.now();
+  late int _costExclVat = widget.asset?.costExclVat ?? 0;
+  late int _residualValue = widget.asset?.residualValue ?? 0;
+  late double _businessUsePct = widget.asset?.businessUsePct ?? 1.0;
+  late bool _kiaEligible = widget.asset?.kiaEligible ?? false;
+  late DateTime? _disposalDate = widget.asset?.disposalDate;
+  late int _disposalProceeds = widget.asset?.disposalProceeds ?? 0;
+  late AssetKind _kind = widget.asset?.kind ?? AssetKind.general;
+  late bool _eiaEligible = widget.asset?.eiaEligible ?? false;
+  late MiaCategory? _miaCategory = widget.asset?.miaCategory;
+  late int? _deductionReceived = widget.asset?.investmentDeductionReceived;
+  late int _reserveApplied = widget.asset?.reinvestmentReserveApplied ?? 0;
+  late bool _reserveGain = widget.asset?.reserveGain ?? false;
+  late int? _catalogueValue = widget.asset?.catalogueValue;
+  late DateTime? _firstRegistration = widget.asset?.firstRegistration;
+  late ZeroEmission _zeroEmission =
+      widget.asset?.zeroEmission ?? ZeroEmission.none;
+  late int? _marketValue = widget.asset?.marketValue;
+  late bool _keepsTripLog = widget.asset?.keepsTripLog ?? false;
+  late int _vatOnPurchase = widget.asset?.vatDeductedOnPurchase ?? 0;
 
-  @override
-  void initState() {
-    super.initState();
-    final a = widget.asset;
-    _name = TextEditingController(text: a?.assetName ?? '');
-    _notes = TextEditingController(text: a?.notes ?? '');
-    _purchaseDate = a?.purchaseDate ?? DateTime(widget.year, 1, 1);
-    _costExclVat = a?.costExclVat ?? 0;
-    _businessUsePct = a?.businessUsePct ?? 1.0;
-    _usefulLifeYears = a?.usefulLifeYears ?? 5;
-    _kiaEligible = a?.kiaEligible ?? false;
-    _eiaOrMia = a?.eiaOrMia ?? false;
-    _disposalDate = a?.disposalDate;
-    _disposalProceeds = a?.disposalProceeds ?? 0;
+  bool get _isCar => _kind == AssetKind.car;
+
+  /// The purchase year has no rules in Florin, so the deduction received
+  /// there is entered rather than computed.
+  bool get _needsDeductionInput =>
+      taxRulesFor(_purchaseDate.year) == null &&
+      (_kiaEligible || _eiaEligible || _miaCategory != null);
+
+  /// Herinvesteringsreserve available when this asset was bought.
+  int _availableReserve(List<FixedAsset> all) {
+    final others = all.where((a) => a.id != widget.asset?.id).toList();
+    final before = AssetService.reserveLedger(
+      others,
+      _purchaseDate.year - 1,
+    )[_purchaseDate.year - 1];
+    final formedThisYear =
+        AssetService.reserveLedger(
+          others,
+          _purchaseDate.year,
+        )[_purchaseDate.year]?.formed ??
+        0;
+    return (before?.balance ?? 0) + formedThisYear;
   }
 
   @override
   void dispose() {
     _name.dispose();
     _notes.dispose();
+    _usefulLife.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    final dao = ref.read(assetDaoProvider);
-    final companion = FixedAssetsCompanion(
-      id: widget.asset != null ? Value(widget.asset!.id) : const Value.absent(),
-      fiscalYear: Value(widget.year),
-      assetName: Value(_name.text.trim()),
-      costExclVat: Value(_costExclVat),
-      purchaseDate: Value(_purchaseDate),
-      businessUsePct: Value(_businessUsePct),
-      usefulLifeYears: Value(_usefulLifeYears),
-      kiaEligible: Value(_kiaEligible),
-      eiaOrMia: Value(_eiaOrMia),
-      notes: Value(_notes.text.trim().isEmpty ? null : _notes.text.trim()),
-      disposalDate: Value(_disposalDate),
-      disposalProceeds: Value(_disposalDate != null ? _disposalProceeds : null),
-    );
-    try {
-      if (widget.asset == null) {
-        await dao.insertAsset(companion);
-      } else {
-        await dao.saveAsset(companion);
-      }
-      widget.onSaved();
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.genericSaveError(e.toString()),
+    final notes = _notes.text.trim();
+    final saved = await guardSave(
+      context,
+      () => ref
+          .read(assetDaoProvider)
+          .save(
+            FixedAssetsCompanion(
+              id: widget.asset == null
+                  ? const Value.absent()
+                  : Value(widget.asset!.id),
+              kind: Value(_kind),
+              assetName: Value(_name.text.trim()),
+              costExclVat: Value(_costExclVat),
+              residualValue: Value(_residualValue),
+              purchaseDate: Value(_purchaseDate),
+              businessUsePct: Value(_businessUsePct),
+              usefulLifeYears: Value(int.parse(_usefulLife.text.trim())),
+              kiaEligible: Value(!_isCar && _kiaEligible),
+              eiaEligible: Value(_eiaEligible),
+              miaCategory: Value(_eiaEligible ? null : _miaCategory),
+              investmentDeductionReceived: Value(
+                _needsDeductionInput ? _deductionReceived : null,
+              ),
+              reinvestmentReserveApplied: Value(_reserveApplied),
+              reserveGain: Value(_disposalDate != null && _reserveGain),
+              catalogueValue: Value(_isCar ? _catalogueValue : null),
+              firstRegistration: Value(_isCar ? _firstRegistration : null),
+              zeroEmission: Value(_isCar ? _zeroEmission : ZeroEmission.none),
+              marketValue: Value(_isCar ? _marketValue : null),
+              keepsTripLog: Value(_isCar && _keepsTripLog),
+              vatDeductedOnPurchase: Value(_isCar ? _vatOnPurchase : 0),
+              notes: Value(notes.isEmpty ? null : notes),
+              disposalDate: Value(_disposalDate),
+              disposalProceeds: Value(
+                _disposalDate == null ? null : _disposalProceeds,
+              ),
+            ),
           ),
-        ),
-      );
-    }
+    );
+    if (saved && mounted) context.pop();
   }
 
   Future<void> _delete() async {
-    if (widget.asset == null) return;
     final l = AppLocalizations.of(context)!;
     final confirmed = await showConfirmationDialog(
       context,
@@ -313,275 +220,295 @@ class _AssetFormState extends ConsumerState<_AssetForm> {
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
-    try {
-      await ref.read(assetDaoProvider).deleteAsset(widget.asset!.id);
-      if (mounted) widget.onDeleted();
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.genericSaveError(e.toString()),
-          ),
-        ),
-      );
-    }
+    final deleted = await guardSave(
+      context,
+      () => ref.read(assetDaoProvider).remove(widget.asset!),
+    );
+    if (deleted && mounted) context.pop();
   }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final isNew = widget.asset == null;
-
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 6, 8, 6),
-          child: Row(
-            children: [
-              if (widget.onBack != null)
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: widget.onBack,
-                ),
-              Expanded(
-                child: Text(
-                  isNew ? l.assetsNewAsset : _name.text,
-                  style: theme.textTheme.titleMedium,
-                  overflow: TextOverflow.ellipsis,
-                ),
+    return DetailScaffold(
+      title: widget.asset == null ? l.assetsNewAsset : widget.asset!.assetName,
+      onBack: () => context.pop(),
+      onDelete: widget.asset == null ? null : _delete,
+      onSave: _save,
+      body: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            EnumDropdown<AssetKind>(
+              label: l.assetsFieldKind,
+              help: l.assetsFieldKindHelp,
+              required: true,
+              value: _kind,
+              values: AssetKind.values,
+              labelOf: (k) => k.label(l),
+              onChanged: (k) => setState(() => _kind = k),
+            ),
+            const SizedBox(height: AppSpacing.field),
+            TextFormField(
+              controller: _name,
+              decoration: fieldDecoration(
+                label: l.assetsFieldName,
+                help: l.assetsFieldNameHelp,
+                required: true,
               ),
-              if (!isNew)
-                IconButton(
-                  icon: const Icon(Icons.delete_outline),
-                  tooltip: l.actionDelete,
-                  color: theme.colorScheme.error,
-                  onPressed: _delete,
+              validator: (v) =>
+                  (v ?? '').trim().isEmpty ? l.assetsValidateName : null,
+            ),
+            const SizedBox(height: AppSpacing.field),
+            FormRow(
+              children: [
+                AmountField(
+                  label: l.assetsFieldCost,
+                  help: l.assetsFieldCostHelp,
+                  initialValueCents: _costExclVat,
+                  required: true,
+                  validatorMessage: l.assetsValidateCost,
+                  onChanged: (v) => setState(() => _costExclVat = v),
                 ),
-              FilledButton.icon(
-                onPressed: _save,
-                style: FilledButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primaryContainer,
-                  foregroundColor: theme.colorScheme.onPrimaryContainer,
+                DateField(
+                  label: l.assetsFieldPurchaseDate,
+                  help: l.assetsFieldPurchaseDateHelp,
+                  value: _purchaseDate,
+                  firstDate: DateTime(1990),
+                  onChanged: (d) => setState(() => _purchaseDate = d),
+                  required: true,
                 ),
-                icon: const Icon(Icons.save_outlined, size: 18),
-                label: Text(l.actionSave),
-              ),
-              const SizedBox(width: 8),
-            ],
-          ),
-        ),
-        const Divider(height: 1),
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                TextFormField(
+                  controller: _usefulLife,
+                  decoration: fieldDecoration(
+                    label: l.assetsFieldUsefulLife,
+                    help: l.assetsFieldUsefulLifeHelp,
+                    required: true,
+                    suffixText: l.assetsFieldUsefulLifeUnit,
+                  ),
+                  keyboardType: TextInputType.number,
+                  validator: (v) {
+                    final n = int.tryParse((v ?? '').trim());
+                    return n == null || n < AssetService.minUsefulLifeYears
+                        ? l.assetsFieldUsefulLifeMin(
+                            AssetService.minUsefulLifeYears,
+                          )
+                        : null;
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.field),
+            FormRow(
+              children: [
+                AmountField(
+                  label: l.assetsFieldResidualValue,
+                  help: l.assetsFieldResidualValueHelp,
+                  initialValueCents: _residualValue,
+                  required: true,
+                  validatorMessage: l.assetsValidateResidualValue,
+                  check: (v) => v > _costExclVat
+                      ? l.assetsValidateResidualAboveCost
+                      : null,
+                  onChanged: (v) => setState(() => _residualValue = v),
+                ),
+                const SizedBox.shrink(),
+                const SizedBox.shrink(),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.group),
+            BusinessUseSlider(
+              value: _businessUsePct,
+              onChanged: (v) => setState(() => _businessUsePct = v),
+            ),
+            if (_isCar) ...[
+              const SizedBox(height: AppSpacing.section),
+              SectionLabel(l.assetsCarSection, help: l.assetsCarSectionHelp),
+              const SizedBox(height: AppSpacing.heading),
+              FormRow(
                 children: [
-                  TextFormField(
-                    controller: _name,
-                    decoration: InputDecoration(labelText: l.assetsFieldName),
-                    validator: (v) => (v == null || v.trim().isEmpty)
-                        ? l.assetsValidateName
+                  AmountField(
+                    label: l.assetsFieldCatalogueValue,
+                    help: l.assetsFieldCatalogueValueHelp,
+                    initialValueCents: _catalogueValue,
+                    required: true,
+                    validatorMessage: l.assetsValidateCatalogueValue,
+                    onChanged: (v) => setState(() => _catalogueValue = v),
+                  ),
+                  DateField(
+                    label: l.assetsFieldFirstRegistration,
+                    help: l.assetsFieldFirstRegistrationHelp,
+                    required: true,
+                    value: _firstRegistration,
+                    firstDate: DateTime(1950),
+                    validator: (_) => _firstRegistration == null
+                        ? l.assetsValidateFirstRegistration
                         : null,
+                    onChanged: (d) => setState(() => _firstRegistration = d),
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: AmountField(
-                          key: ValueKey('cost_${widget.asset?.id}'),
-                          label: l.assetsFieldCost,
-                          initialValueCents: _costExclVat,
-                          onChanged: (v) => setState(() => _costExclVat = v),
-                          required: true,
-                          validatorMessage: l.assetsValidateCost,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: TextFormField(
-                          key: ValueKey(_purchaseDate.toString()),
-                          initialValue: AppFormat.date(_purchaseDate),
-                          readOnly: true,
-                          strutStyle: StrutStyle.disabled,
-                          decoration: InputDecoration(
-                            labelText: l.assetsFieldPurchaseDate,
-                          ),
-                          onTap: () async {
-                            final d = await showDatePicker(
-                              context: context,
-                              initialDate: _purchaseDate,
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(widget.year, 12, 31),
-                            );
-                            if (d != null) setState(() => _purchaseDate = d);
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: TextFormField(
-                          initialValue: _usefulLifeYears.toString(),
-                          decoration: InputDecoration(
-                            labelText: l.assetsFieldUsefulLife,
-                            suffixText: l.assetsFieldUsefulLifeUnit,
-                          ),
-                          keyboardType: TextInputType.number,
-                          onChanged: (v) => setState(
-                            () => _usefulLifeYears = int.tryParse(v) ?? 5,
-                          ),
-                          validator: (v) {
-                            final y = int.tryParse(v ?? '');
-                            if (y == null || y < 1) {
-                              return l.assetsFieldUsefulLifeMin;
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ],
+                  EnumDropdown<ZeroEmission>(
+                    label: l.assetsFieldZeroEmission,
+                    help: l.assetsFieldZeroEmissionHelp,
+                    required: true,
+                    value: _zeroEmission,
+                    values: ZeroEmission.values,
+                    labelOf: (z) => z.label(l),
+                    onChanged: (z) => setState(() => _zeroEmission = z),
                   ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: theme.colorScheme.outlineVariant,
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              l.expensesBusinessUse,
-                              style: theme.textTheme.titleSmall,
-                            ),
-                            const Spacer(),
-                            Text(
-                              l.expensesBusinessUsePct(
-                                (_businessUsePct * 100).round(),
-                              ),
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Slider(
-                          value: _businessUsePct,
-                          min: 0,
-                          max: 1,
-                          divisions: 20,
-                          label: '${(_businessUsePct * 100).round()}%',
-                          onChanged: (v) => setState(() => _businessUsePct = v),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Tooltip(
-                    message: l.assetsTooltipKia,
-                    child: CheckboxListTile(
-                      value: _kiaEligible,
-                      onChanged: (v) =>
-                          setState(() => _kiaEligible = v ?? _kiaEligible),
-                      title: Text(l.assetsFieldKia),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                  Tooltip(
-                    message: l.assetsTooltipEiaMia,
-                    child: CheckboxListTile(
-                      value: _eiaOrMia,
-                      onChanged: (v) =>
-                          setState(() => _eiaOrMia = v ?? _eiaOrMia),
-                      title: Text(l.assetsFieldEiaMia),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _notes,
-                    decoration: InputDecoration(labelText: l.assetsFieldNotes),
-                    maxLines: 2,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(l.assetsDisposal, style: theme.textTheme.titleSmall),
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    key: ValueKey(_disposalDate?.toString() ?? 'null'),
-                    initialValue: _disposalDate != null
-                        ? AppFormat.date(_disposalDate!)
-                        : '',
-                    readOnly: true,
-                    strutStyle: StrutStyle.disabled,
-                    decoration: InputDecoration(
-                      labelText: l.assetsFieldDisposalDate,
-                      suffixIcon: _disposalDate == null
-                          ? null
-                          : IconButton(
-                              icon: const Icon(Icons.clear),
-                              tooltip: l.assetsClearDisposalDate,
-                              onPressed: () => setState(() {
-                                _disposalDate = null;
-                                _disposalProceeds = 0;
-                              }),
-                            ),
-                    ),
-                    onTap: () async {
-                      final d = await showDatePicker(
-                        context: context,
-                        initialDate: _disposalDate ?? _purchaseDate,
-                        firstDate: _purchaseDate,
-                        lastDate: DateTime(2099),
-                      );
-                      if (d != null) setState(() => _disposalDate = d);
-                    },
-                  ),
-                  if (_disposalDate != null) ...[
-                    const SizedBox(height: 12),
-                    AmountField(
-                      key: ValueKey('proceeds_${widget.asset?.id}'),
-                      label: l.assetsFieldDisposalProceeds,
-                      initialValueCents: _disposalProceeds,
-                      onChanged: (v) => setState(() => _disposalProceeds = v),
-                    ),
-                  ],
                 ],
               ),
+              const SizedBox(height: AppSpacing.field),
+              FormRow(
+                children: [
+                  AmountField(
+                    label: l.assetsFieldVatOnPurchase,
+                    help: l.assetsFieldVatOnPurchaseHelp,
+                    initialValueCents: _vatOnPurchase,
+                    onChanged: (v) => setState(() => _vatOnPurchase = v),
+                  ),
+                  AmountField(
+                    label: l.assetsFieldMarketValue,
+                    help: l.assetsFieldMarketValueHelp,
+                    initialValueCents: _marketValue,
+                    onChanged: (v) => setState(() => _marketValue = v),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.field),
+              HelpCheckbox(
+                value: _keepsTripLog,
+                onChanged: (v) => setState(() => _keepsTripLog = v),
+                title: l.assetsFieldTripLog,
+                help: l.assetsFieldTripLogHelp,
+              ),
+            ],
+            const SizedBox(height: AppSpacing.section),
+            SectionLabel(
+              l.assetsInvestmentSection,
+              help: l.assetsInvestmentSectionHelp,
             ),
-          ),
+            const SizedBox(height: AppSpacing.heading),
+            if (!_isCar)
+              HelpCheckbox(
+                value: _kiaEligible,
+                onChanged: (v) => setState(() => _kiaEligible = v),
+                title: l.assetsFieldKia,
+                help: l.assetsFieldKiaHelp,
+              ),
+            HelpCheckbox(
+              value: _eiaEligible,
+              onChanged: (v) => setState(() {
+                _eiaEligible = v;
+                if (v) _miaCategory = null;
+              }),
+              title: l.assetsFieldEia,
+              help: l.assetsFieldEiaHelp,
+            ),
+            const SizedBox(height: AppSpacing.field),
+            DropdownButtonFormField<MiaCategory?>(
+              initialValue: _miaCategory,
+              isExpanded: true,
+              decoration: fieldDecoration(
+                label: l.assetsFieldMia,
+                help: l.assetsFieldMiaHelp,
+              ),
+              items: [
+                DropdownMenuItem(value: null, child: Text(l.assetsMiaNone)),
+                for (final c in MiaCategory.values)
+                  DropdownMenuItem(value: c, child: Text(c.label(l))),
+              ],
+              onChanged: _eiaEligible
+                  ? null
+                  : (c) => setState(() => _miaCategory = c),
+            ),
+            if (_needsDeductionInput) ...[
+              const SizedBox(height: AppSpacing.field),
+              AmountField(
+                label: l.assetsFieldDeductionReceived,
+                help: l.assetsFieldDeductionReceivedHelp,
+                initialValueCents: _deductionReceived,
+                required: true,
+                validatorMessage: l.assetsValidateDeductionReceived,
+                onChanged: (v) => setState(() => _deductionReceived = v),
+              ),
+            ],
+            const SizedBox(height: AppSpacing.field),
+            AmountField(
+              label: l.assetsFieldReserveApplied,
+              help: l.assetsFieldReserveAppliedHelp,
+              helperText: l.assetsReserveAvailable(
+                AppFormat.cents(
+                  _availableReserve(
+                    ref.watch(allAssetsProvider).valueOrNull ?? const [],
+                  ),
+                ),
+              ),
+              initialValueCents: _reserveApplied,
+              check: (v) {
+                final all = ref.read(allAssetsProvider).valueOrNull ?? const [];
+                if (v > _availableReserve(all)) {
+                  return l.assetsValidateReserveAboveAvailable;
+                }
+                if (v > _costExclVat - _residualValue) {
+                  return l.assetsValidateReserveAboveCost;
+                }
+                return null;
+              },
+              onChanged: (v) => setState(() => _reserveApplied = v),
+            ),
+            const SizedBox(height: AppSpacing.field),
+            TextFormField(
+              controller: _notes,
+              decoration: fieldDecoration(
+                label: l.assetsFieldNotes,
+                help: l.assetsFieldNotesHelp,
+              ),
+              maxLines: 2,
+            ),
+            const SizedBox(height: AppSpacing.section),
+            Text(l.assetsDisposal, style: theme.textTheme.titleSmall),
+            const SizedBox(height: AppSpacing.heading),
+            FormRow(
+              children: [
+                DateField(
+                  label: l.assetsFieldDisposalDate,
+                  help: l.assetsFieldDisposalDateHelp,
+                  value: _disposalDate,
+                  firstDate: _purchaseDate,
+                  onChanged: (d) => setState(() => _disposalDate = d),
+                ),
+                if (_disposalDate != null)
+                  AmountField(
+                    label: l.assetsFieldDisposalProceeds,
+                    help: l.assetsFieldDisposalProceedsHelp,
+                    initialValueCents: _disposalProceeds,
+                    onChanged: (v) => setState(() => _disposalProceeds = v),
+                  )
+                else
+                  const SizedBox.shrink(),
+              ],
+            ),
+            if (_disposalDate != null) ...[
+              const SizedBox(height: AppSpacing.field),
+              HelpCheckbox(
+                value: _reserveGain,
+                onChanged: (v) => setState(() => _reserveGain = v),
+                title: l.assetsFieldReserveGain,
+                help: l.assetsFieldReserveGainHelp,
+              ),
+            ],
+            if (_disposalDate != null) ...[
+              const SizedBox(height: AppSpacing.heading),
+              TextButton.icon(
+                onPressed: () => setState(() => _disposalDate = null),
+                icon: const Icon(Icons.clear, size: 16),
+                label: Text(l.assetsClearDisposalDate),
+              ),
+            ],
+          ],
         ),
-      ],
-    );
-  }
-}
-
-class AssetDetailPage extends ConsumerWidget {
-  final FixedAsset? asset;
-
-  const AssetDetailPage({super.key, this.asset});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final year = ref.watch(fiscalYearProvider);
-    return Scaffold(
-      body: _AssetForm(
-        asset: asset,
-        year: asset?.fiscalYear ?? year,
-        onBack: () => context.pop(),
-        onSaved: () => context.pop(),
-        onDeleted: () => context.pop(),
       ),
     );
   }

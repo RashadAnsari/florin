@@ -1,277 +1,275 @@
 import '../db/database.dart';
+import 'asset_service.dart';
+import 'domain.dart';
+import 'tax_rules/tax_year_rules.dart';
 
+/// Income tax estimate for one year. Amounts are in cents.
 class TaxResult {
   final int grossRevenue;
   final int creditNotes;
-  final int netRevenue;
-  final int totalExpenses;
-  final int grossProfit;
-  final int zelfstandigenaftrekApplied; // cents, negative
-  final int startersaftrekApplied; // cents, negative
-  final int wbsoDeductionApplied; // cents, positive
-  final int ondernemersaftrekTotal; // cents, negative sum
-  final int profitAfterOndernemer;
-  final int mkbDeduction; // cents, positive
-  final int kiaDeduction; // cents, positive
-  final int lijrenteDeduction; // cents, positive
-  final int taxableProfit;
-  final int bracket1Tax;
-  final int bracket2Tax;
-  final int bracket3Tax;
-  final int grossBox1Tax;
-  final int algHeffingskortingApplied;
-  final int arbeidskortingApplied;
-  final int box1Tax; // after kortingen, min 0
+  final int totalCosts;
+  final int disposalResult;
+  final int desinvesteringsbijtelling;
+  final int carPrivateUse;
+  final int reserveReleased;
+  final InvestmentDeduction investmentDeduction;
+  final int zelfstandigenaftrek;
+  final int startersaftrek;
+  final int unrealisedZelfstandigenaftrek;
+  final int soAftrek;
+  final int meewerkaftrek;
+  final int disabilityStartersaftrek;
+  final int stakingsaftrek;
+  final int mkbWinstvrijstelling;
+  final int belastbareWinst;
+  final int lijfrenteDeduction;
+  final int aovDeduction;
+  final int lossOffset;
+  final int taxableIncome;
+  final List<int> bracketTax;
+  final int algemeneHeffingskorting;
+  final int arbeidskorting;
+  final int box1Tax;
   final int zvwContribution;
-  final int totalTax;
-  final int netProfitAfterTax;
-  final int effectiveTaxRate; // basis points, e.g. 3200 = 32.00%
 
   const TaxResult({
     required this.grossRevenue,
     required this.creditNotes,
-    required this.netRevenue,
-    required this.totalExpenses,
-    required this.grossProfit,
-    required this.zelfstandigenaftrekApplied,
-    required this.startersaftrekApplied,
-    required this.wbsoDeductionApplied,
-    required this.ondernemersaftrekTotal,
-    required this.profitAfterOndernemer,
-    required this.mkbDeduction,
-    required this.kiaDeduction,
-    required this.lijrenteDeduction,
-    required this.taxableProfit,
-    required this.bracket1Tax,
-    required this.bracket2Tax,
-    required this.bracket3Tax,
-    required this.grossBox1Tax,
-    required this.algHeffingskortingApplied,
-    required this.arbeidskortingApplied,
+    required this.totalCosts,
+    required this.disposalResult,
+    required this.desinvesteringsbijtelling,
+    required this.carPrivateUse,
+    required this.reserveReleased,
+    required this.investmentDeduction,
+    required this.zelfstandigenaftrek,
+    required this.startersaftrek,
+    required this.unrealisedZelfstandigenaftrek,
+    required this.soAftrek,
+    required this.meewerkaftrek,
+    required this.disabilityStartersaftrek,
+    required this.stakingsaftrek,
+    required this.mkbWinstvrijstelling,
+    required this.belastbareWinst,
+    required this.lijfrenteDeduction,
+    required this.aovDeduction,
+    required this.lossOffset,
+    required this.taxableIncome,
+    required this.bracketTax,
+    required this.algemeneHeffingskorting,
+    required this.arbeidskorting,
     required this.box1Tax,
     required this.zvwContribution,
-    required this.totalTax,
-    required this.netProfitAfterTax,
-    required this.effectiveTaxRate,
   });
+
+  int get netRevenue => grossRevenue - creditNotes;
+
+  /// Revenue minus costs plus additions such as sale gains and private use.
+  int get grossProfit =>
+      netRevenue -
+      totalCosts +
+      disposalResult +
+      desinvesteringsbijtelling +
+      carPrivateUse +
+      reserveReleased;
+  int get profit => grossProfit - investmentDeduction.total;
+  int get grossBox1Tax => bracketTax.fold(0, (s, t) => s + t);
+  int get totalTax => box1Tax + zvwContribution;
+  int get netProfitAfterTax => grossProfit - totalTax;
+
+  /// Total tax as a share of gross profit, in basis points.
+  int get effectiveTaxRate =>
+      grossProfit > 0 ? totalTax * 10000 ~/ grossProfit : 0;
 }
 
-class TaxService {
-  const TaxService();
+abstract final class TaxService {
+  /// Revenue excl. VAT from issued invoices.
+  static int grossRevenue(List<Invoice> invoices) => invoices
+      .where((i) => i.invoiceType == InvoiceType.invoice && i.isIssued)
+      .fold(0, (s, i) => s + i.totalExclVat);
 
-  static const double urencriteriumThreshold = 1225;
-  static const double defaultMileageRatePerKm = 0.23;
-  static const double kiaDecreaseRate = 0.0756;
+  /// Credit notes excl. VAT, as a positive amount.
+  static int creditNotes(List<Invoice> invoices) => invoices
+      .where((i) => i.invoiceType == InvoiceType.creditNote && i.isIssued)
+      .fold(0, (s, i) => s + i.totalExclVat);
 
-  // ── Aggregation helpers ───────────────────────────────────────────────────
+  /// Food, drinks and representation costs of the year.
+  static int gemengdeKosten(List<Expense> expenses) => expenses
+      .where((e) => e.category == ExpenseCategory.foodAndRepresentation)
+      .fold(0, (s, e) => s + e.deductibleAmount);
 
-  static int computeGrossRevenue(List<Invoice> invoices) => invoices
-      .where((i) => i.invoiceType == 'Invoice' && i.status != 'Draft')
-      .fold<int>(0, (s, i) => s + i.totalExclVat);
+  /// The deductible part of food, drinks and representation: the better of
+  /// 80% (Wet IB 2001 art. 3.15 lid 5) and the costs above the drempel
+  /// (lid 1). The choice is made in the return, so Florin takes the higher.
+  static int gemengdeKostenDeductible(int costs, TaxYearRules rules) {
+    final pct = (costs * rules.gemengdeKostenPct).round();
+    final aboveDrempel = costs - rules.gemengdeKostenDrempel;
+    final best = pct > aboveDrempel ? pct : aboveDrempel;
+    return best < 0 ? 0 : best;
+  }
 
-  static int computeCreditNotes(List<Invoice> invoices) => invoices
-      .where((i) => i.invoiceType == 'CreditNote' && i.status != 'Draft')
-      .fold<int>(0, (s, i) => s + i.totalExclVat);
+  /// Deductible business share of expenses, with the limit on food, drinks
+  /// and representation.
+  static int deductibleExpenses(List<Expense> expenses, TaxYearRules rules) {
+    final food = gemengdeKosten(expenses);
+    final other = expenses.fold(0, (s, e) => s + e.deductibleAmount) - food;
+    return other + gemengdeKostenDeductible(food, rules);
+  }
 
-  static int computeDeductibleExpenses(List<Expense> expenses) =>
-      expenses.fold<int>(0, (s, e) => s + e.deductibleAmount);
+  /// Kilometres in a private vehicle deductible at the mileage rate.
+  /// Commuting counts as business travel for income tax (Belastingdienst, see
+  /// `docs/tax-years/`). Trips in a business car are not: its costs are.
+  static int businessKm(List<MileageTrip> trips) => trips
+      .where((t) => t.carAssetId == null && t.tripType != TripType.private)
+      .fold(0, (s, t) => s + t.distanceKm);
 
-  static int computeBusinessKm(List<MileageTrip> trips) => trips
-      .where((t) => t.tripType == 'Business')
-      .fold<int>(0, (s, t) => s + t.distanceKm);
+  static int mileageAllowance(int businessKm, TaxYearRules rules) =>
+      businessKm * rules.mileageCentsPerKm;
 
-  static int computeMileageAllowance(int businessKm, double ratePerKm) =>
-      (businessKm * ratePerKm * 100).round();
+  /// The meewerkaftrek rate for the partner's [hours] (art. 3.78).
+  static double meewerkRate(int hours, TaxYearRules rules) {
+    var rate = 0.0;
+    for (final (min, r) in rules.meewerkaftrek) {
+      if (hours >= min) rate = r;
+    }
+    return rate;
+  }
 
-  static int computeKiaTotal(List<FixedAsset> assets, int year) => assets
-      .where((a) => a.kiaEligible && a.fiscalYear == year)
-      .fold<int>(0, (s, a) => s + a.costExclVat);
-
-  static int computeTotalDepreciation(List<FixedAsset> assets, int year) =>
-      assets.fold<int>(0, (s, a) {
-        // Disposed before this fiscal year: no depreciation.
-        if (a.disposalDate != null && a.disposalDate!.year < year) return s;
-
-        final yrs = (year - a.purchaseDate.year).clamp(0, a.usefulLifeYears);
-        if (yrs >= a.usefulLifeYears) return s;
-
-        final annual = computeAnnualDepreciation(
-          costExclVat: a.costExclVat,
-          usefulLifeYears: a.usefulLifeYears,
-          businessUsePct: a.businessUsePct,
-        );
-
-        // Disposed during this fiscal year: prorate from start of in-service
-        // period to disposal date (Dutch IB Art. 3.30).
-        if (a.disposalDate != null && a.disposalDate!.year == year) {
-          final startOfYear = DateTime(year, 1, 1);
-          final inServiceStart = a.purchaseDate.isAfter(startOfYear)
-              ? a.purchaseDate
-              : startOfYear;
-          final daysInYear =
-              DateTime(year, 12, 31).difference(startOfYear).inDays + 1;
-          final daysActive =
-              a.disposalDate!.difference(inServiceStart).inDays + 1;
-          if (daysActive <= 0) return s;
-          return s + (annual * daysActive / daysInYear).round();
-        }
-
-        return s + annual;
-      });
-
-  // ── Tax calculations ──────────────────────────────────────────────────────
-
-  TaxResult calculate({
-    required TaxParam params,
+  static TaxResult calculate({
+    required TaxYearRules rules,
     required int grossRevenue,
     required int creditNotes,
-    required int totalDeductibleExpenses,
-    required int totalDepreciation,
-    required int carMileageAllowance,
-    required int kiaDeduction,
-    required bool claimZelfstandigenaftrek,
-    required bool claimStartersaftrek,
-    required int wbsoDeduction,
-    required int algHeffingskorting,
-    required int arbeidskorting,
-    required int lijrenteDeduction,
+    required int deductibleExpenses,
+    required int depreciation,
+    required int disposalResult,
+    required int mileageAllowance,
+    required InvestmentDeduction investmentDeduction,
+    required int desinvesteringsbijtelling,
+    required int carPrivateUse,
+    required int reserveReleased,
+    required int stakingswinst,
+    required double totalHours,
+    required double soHours,
+    required bool assumeUrencriterium,
+    required bool isStarter,
+    required TaxYearInput? inputs,
+    required int lijfrentePremium,
+    required int aovPremium,
   }) {
-    final netRevenue = grossRevenue - creditNotes;
-    final totalExpenses =
-        totalDeductibleExpenses + totalDepreciation + carMileageAllowance;
-    final grossProfit = netRevenue - totalExpenses;
+    final i = inputs;
+    final totalCosts = deductibleExpenses + depreciation + mileageAllowance;
+    final additions =
+        disposalResult +
+        desinvesteringsbijtelling +
+        carPrivateUse +
+        reserveReleased;
+    final profit =
+        grossRevenue -
+        creditNotes -
+        totalCosts +
+        additions -
+        investmentDeduction.total;
+    final uren = assumeUrencriterium || totalHours >= rules.urencriterium;
 
-    final zelfs = claimZelfstandigenaftrek ? params.zelfstandigenaftrek : 0;
-    final starters = claimStartersaftrek ? params.startersaftrek : 0;
-    final wbsoCents = -wbsoDeduction;
-    final ondernemersaftrekTotal = zelfs + starters + wbsoCents;
-    final profitAfterOndernemer = grossProfit + ondernemersaftrekTotal;
+    // Ondernemersaftrek (art. 3.74), in the order of the return.
+    var zelfstandigenaftrek = 0;
+    var startersaftrek = 0;
+    var unrealisedUsed = 0;
+    var soAftrek = 0;
+    var meewerkaftrek = 0;
+    var disabilityStarters = 0;
+    var stakingsaftrek = 0;
+    if (uren) {
+      zelfstandigenaftrek = rules.zelfstandigenaftrek;
+      if (isStarter) {
+        startersaftrek = rules.startersaftrek;
+      } else if (zelfstandigenaftrek > profit) {
+        zelfstandigenaftrek = profit < 0 ? 0 : profit;
+      }
+      final room = profit - zelfstandigenaftrek - startersaftrek;
+      final unrealised = i?.unrealisedZelfstandigenaftrek ?? 0;
+      if (room > 0) unrealisedUsed = unrealised < room ? unrealised : room;
+      if ((i?.hasSoVerklaring ?? false) && soHours >= rules.soMinHours) {
+        soAftrek =
+            rules.soAftrek +
+            ((i?.soStarter ?? false) ? rules.soStarterIncrease : 0);
+      }
+      final meewerkBase = profit - stakingswinst;
+      if (meewerkBase > 0) {
+        meewerkaftrek = (meewerkBase * meewerkRate(i?.partnerHours ?? 0, rules))
+            .round();
+      }
+    } else if (isStarter &&
+        (i?.disabilityBenefit ?? false) &&
+        totalHours >= rules.reducedUrencriterium) {
+      final used = i?.disabilityStartersUsed ?? 0;
+      if (used < rules.disabilityStartersaftrek.length) {
+        final amount = rules.disabilityStartersaftrek[used];
+        disabilityStarters = profit <= 0
+            ? 0
+            : (amount < profit ? amount : profit);
+      }
+    }
+    if (i?.businessCeased ?? false) {
+      final max = rules.stakingsaftrekMax - (i?.stakingsaftrekUsedBefore ?? 0);
+      if (max > 0 && stakingswinst > 0) {
+        stakingsaftrek = stakingswinst < max ? stakingswinst : max;
+      }
+    }
 
-    // MKB base is winst after ondernemersaftrek AND KIA (Dutch IB form order).
-    final mkbBase = profitAfterOndernemer - kiaDeduction;
-    final mkb = mkbBase > 0
-        ? (mkbBase * params.mkbWinstvrijstellingPct).round()
-        : 0;
+    final ondernemersaftrek =
+        zelfstandigenaftrek +
+        startersaftrek +
+        unrealisedUsed +
+        soAftrek +
+        meewerkaftrek +
+        disabilityStarters +
+        stakingsaftrek;
+    final afterOndernemersaftrek = profit - ondernemersaftrek;
+    final mkb = (afterOndernemersaftrek * rules.mkbWinstvrijstelling).round();
+    final belastbareWinst = afterOndernemersaftrek - mkb;
+    final beforeLosses = belastbareWinst - lijfrentePremium - aovPremium;
+    final carry = i?.lossCarryForward ?? 0;
+    final lossOffset = beforeLosses <= 0
+        ? 0
+        : (carry < beforeLosses ? carry : beforeLosses);
+    final taxableIncome = beforeLosses - lossOffset;
 
-    final taxableProfit = mkbBase - mkb - lijrenteDeduction;
+    final bracketTax = rules.box1TaxPerBracket(taxableIncome);
+    final grossBox1 = bracketTax.fold(0, (s, t) => s + t);
+    final ahk = rules.algemeneHeffingskorting.valueFor(taxableIncome);
+    final ak = rules.arbeidskorting.valueFor(profit);
+    final box1 = (grossBox1 - ahk - ak).clamp(0, grossBox1);
 
-    final b1 = _bracket1Tax(params, taxableProfit);
-    final b2 = _bracket2Tax(params, taxableProfit);
-    final b3 = _bracket3Tax(params, taxableProfit);
-    final grossBox1Tax = b1 + b2 + b3;
-
-    final kortingen = algHeffingskorting + arbeidskorting;
-    final box1Tax = (grossBox1Tax - kortingen).clamp(0, grossBox1Tax);
-
-    final zvw = computeZvw(params, taxableProfit);
-    final totalTax = box1Tax + zvw;
-    final netProfitAfterTax = grossProfit - totalTax;
-    final effectiveRate = grossProfit > 0
-        ? (totalTax * 10000 ~/ grossProfit)
-        : 0;
+    final zvwBase = belastbareWinst.clamp(0, rules.zvwMaxIncome);
+    final zvw = (zvwBase * rules.zvwRate).round();
 
     return TaxResult(
       grossRevenue: grossRevenue,
       creditNotes: creditNotes,
-      netRevenue: netRevenue,
-      totalExpenses: totalExpenses,
-      grossProfit: grossProfit,
-      zelfstandigenaftrekApplied: zelfs,
-      startersaftrekApplied: starters,
-      wbsoDeductionApplied: wbsoDeduction,
-      ondernemersaftrekTotal: ondernemersaftrekTotal,
-      profitAfterOndernemer: profitAfterOndernemer,
-      mkbDeduction: mkb,
-      kiaDeduction: kiaDeduction,
-      lijrenteDeduction: lijrenteDeduction,
-      taxableProfit: taxableProfit,
-      bracket1Tax: b1,
-      bracket2Tax: b2,
-      bracket3Tax: b3,
-      grossBox1Tax: grossBox1Tax,
-      algHeffingskortingApplied: algHeffingskorting,
-      arbeidskortingApplied: arbeidskorting,
-      box1Tax: box1Tax,
+      totalCosts: totalCosts,
+      disposalResult: disposalResult,
+      desinvesteringsbijtelling: desinvesteringsbijtelling,
+      carPrivateUse: carPrivateUse,
+      reserveReleased: reserveReleased,
+      investmentDeduction: investmentDeduction,
+      zelfstandigenaftrek: zelfstandigenaftrek,
+      startersaftrek: startersaftrek,
+      unrealisedZelfstandigenaftrek: unrealisedUsed,
+      soAftrek: soAftrek,
+      meewerkaftrek: meewerkaftrek,
+      disabilityStartersaftrek: disabilityStarters,
+      stakingsaftrek: stakingsaftrek,
+      mkbWinstvrijstelling: mkb,
+      belastbareWinst: belastbareWinst,
+      lijfrenteDeduction: lijfrentePremium,
+      aovDeduction: aovPremium,
+      lossOffset: lossOffset,
+      taxableIncome: taxableIncome,
+      bracketTax: bracketTax,
+      algemeneHeffingskorting: ahk,
+      arbeidskorting: ak,
+      box1Tax: box1,
       zvwContribution: zvw,
-      totalTax: totalTax,
-      netProfitAfterTax: netProfitAfterTax,
-      effectiveTaxRate: effectiveRate,
-    );
-  }
-
-  int computeBox1Tax(TaxParam params, int taxableIncome) {
-    if (taxableIncome <= 0) return 0;
-    return _bracket1Tax(params, taxableIncome) +
-        _bracket2Tax(params, taxableIncome) +
-        _bracket3Tax(params, taxableIncome);
-  }
-
-  int _bracket1Tax(TaxParam params, int income) {
-    if (income <= 0) return 0;
-    final b = income.clamp(0, params.bracket1Threshold);
-    return (b * params.bracket1Rate).round();
-  }
-
-  int _bracket2Tax(TaxParam params, int income) {
-    if (income <= params.bracket1Threshold) return 0;
-    final b = (income - params.bracket1Threshold).clamp(
-      0,
-      params.bracket2Threshold - params.bracket1Threshold,
-    );
-    return (b * params.bracket2Rate).round();
-  }
-
-  int _bracket3Tax(TaxParam params, int income) {
-    if (income <= params.bracket2Threshold) return 0;
-    final b = income - params.bracket2Threshold;
-    return (b * params.bracket3Rate).round();
-  }
-
-  int computeZvw(TaxParam params, int taxableProfit) {
-    if (taxableProfit <= 0) return 0;
-    return (taxableProfit * params.zvwRate).round().clamp(0, params.zvwMax);
-  }
-
-  int computeMkb(TaxParam params, int mkbBase) {
-    if (mkbBase <= 0) return 0;
-    return (mkbBase * params.mkbWinstvrijstellingPct).round();
-  }
-
-  int computeKia(TaxParam params, int totalQualifyingInvestments) {
-    final v = totalQualifyingInvestments;
-    if (v < params.kiaLowerThreshold) return 0;
-    if (v <= params.kiaUpperThreshold) return (v * params.kiaRate).round();
-    if (v <= params.kiaFlatThreshold) return params.kiaFlatAmount;
-    // Decrease zone: 7.56% of amount above kiaFlatThreshold (Dutch law Art. 3.41).
-    final reduction = ((v - params.kiaFlatThreshold) * params.kiaDecreaseRate)
-        .round();
-    return (params.kiaFlatAmount - reduction).clamp(0, params.kiaFlatAmount);
-  }
-
-  static int computeAnnualDepreciation({
-    required int costExclVat,
-    required int usefulLifeYears,
-    required double businessUsePct,
-  }) {
-    if (usefulLifeYears <= 0) return 0;
-    return ((costExclVat * businessUsePct) / usefulLifeYears).round();
-  }
-
-  static int computeBookValue({
-    required int costExclVat,
-    required int usefulLifeYears,
-    required double businessUsePct,
-    required int yearsElapsed,
-  }) {
-    final annual = computeAnnualDepreciation(
-      costExclVat: costExclVat,
-      usefulLifeYears: usefulLifeYears,
-      businessUsePct: businessUsePct,
-    );
-    final years = yearsElapsed.clamp(0, usefulLifeYears);
-    return ((costExclVat * businessUsePct).round() - annual * years).clamp(
-      0,
-      costExclVat,
     );
   }
 }

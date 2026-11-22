@@ -1,121 +1,82 @@
 import 'package:drift/drift.dart';
 import '../database.dart';
-import '../tables/clients.dart';
-import '../tables/invoices.dart';
 import '../tables/invoice_lines.dart';
+import '../tables/invoices.dart';
 
 part 'invoice_dao.g.dart';
 
-@DriftAccessor(tables: [Invoices, InvoiceLines, Clients])
-class InvoiceDao extends DatabaseAccessor<AppDatabase> with _$InvoiceDaoMixin {
+@DriftAccessor(tables: [Invoices, InvoiceLines])
+class InvoiceDao extends DatabaseAccessor<AppDatabase>
+    with _$InvoiceDaoMixin, Crud<$InvoicesTable, Invoice> {
   InvoiceDao(super.db);
 
-  Stream<List<Invoice>> watchByYear(int year) =>
+  @override
+  TableInfo<$InvoicesTable, Invoice> get table => invoices;
+
+  Stream<List<Invoice>> watchInYear(int year) =>
       (select(invoices)
-            ..where((i) => i.fiscalYear.equals(year))
+            ..where((i) => i.invoiceDate.inYear(year))
             ..orderBy([(i) => OrderingTerm.desc(i.invoiceDate)]))
           .watch();
 
-  Future<List<Invoice>> getByYear(int year) =>
-      (select(invoices)
-            ..where((i) => i.fiscalYear.equals(year))
-            ..orderBy([(i) => OrderingTerm.desc(i.invoiceDate)]))
-          .get();
+  Stream<List<Invoice>> watchAll() => (select(
+    invoices,
+  )..orderBy([(i) => OrderingTerm.desc(i.invoiceDate)])).watch();
 
   Future<Invoice?> getById(int id) =>
       (select(invoices)..where((i) => i.id.equals(id))).getSingleOrNull();
 
-  Future<List<InvoiceLine>> getLinesForInvoice(int invoiceId) =>
+  Future<List<InvoiceLine>> getLines(int invoiceId) =>
       (select(invoiceLines)
             ..where((l) => l.invoiceId.equals(invoiceId))
             ..orderBy([(l) => OrderingTerm.asc(l.sortOrder)]))
           .get();
 
-  Stream<List<InvoiceLine>> watchLinesForInvoice(int invoiceId) =>
-      (select(invoiceLines)
-            ..where((l) => l.invoiceId.equals(invoiceId))
-            ..orderBy([(l) => OrderingTerm.asc(l.sortOrder)]))
-          .watch();
-
-  Stream<List<InvoiceLine>> watchLinesByYear(int year) {
-    final query =
-        select(invoiceLines).join([
-            innerJoin(invoices, invoices.id.equalsExp(invoiceLines.invoiceId)),
-          ])
-          ..where(invoices.fiscalYear.equals(year))
-          ..orderBy([OrderingTerm.asc(invoiceLines.sortOrder)]);
+  Stream<List<InvoiceLine>> watchLinesInYear(int year) {
+    final query = select(invoiceLines).join([
+      innerJoin(invoices, invoices.id.equalsExp(invoiceLines.invoiceId)),
+    ])..where(invoices.invoiceDate.inYear(year));
     return query.watch().map(
       (rows) => rows.map((row) => row.readTable(invoiceLines)).toList(),
     );
   }
 
-  Future<int> insertInvoice(InvoicesCompanion entry) =>
-      into(invoices).insert(entry);
-
-  Future<bool> saveInvoice(InvoicesCompanion entry) =>
-      (update(invoices)).replace(entry);
-
-  Future<int> insertLine(InvoiceLinesCompanion entry) =>
-      into(invoiceLines).insert(entry);
-
-  Future<bool> saveLine(InvoiceLinesCompanion entry) =>
-      (update(invoiceLines)).replace(entry);
-
-  Future<int> deleteLine(int id) =>
-      (delete(invoiceLines)..where((l) => l.id.equals(id))).go();
-
-  Future<void> replaceLines(int invoiceId, List<InvoiceLinesCompanion> lines) =>
-      transaction(() async {
-        await (delete(
-          invoiceLines,
-        )..where((l) => l.invoiceId.equals(invoiceId))).go();
-        for (final l in lines) {
-          await into(invoiceLines).insert(l);
-        }
-      });
-
-  Future<void> deleteInvoice(int id) => transaction(() async {
-    await (delete(invoiceLines)..where((l) => l.invoiceId.equals(id))).go();
-    await (delete(invoices)..where((i) => i.id.equals(id))).go();
+  /// Saves [invoice] and replaces its lines in one transaction.
+  Future<int> saveWithLines(
+    InvoicesCompanion invoice,
+    List<InvoiceLinesCompanion> lines,
+  ) => transaction(() async {
+    final id = await save(invoice);
+    final invoiceId = invoice.id.present ? invoice.id.value : id;
+    await (delete(
+      invoiceLines,
+    )..where((l) => l.invoiceId.equals(invoiceId))).go();
+    for (final line in lines) {
+      await into(
+        invoiceLines,
+      ).insert(line.copyWith(invoiceId: Value(invoiceId)));
+    }
+    return invoiceId;
   });
 
+  Future<void> setStatus(int id, InvoiceStatus status, {DateTime? paidDate}) =>
+      (update(invoices)..where((i) => i.id.equals(id))).write(
+        InvoicesCompanion(status: Value(status), paidDate: Value(paidDate)),
+      );
+
+  /// Highest sequence number used in `<prefix>-<year>-<n>`, plus one.
   Future<int> nextSequenceNumber(int year, String prefix) async {
-    final all =
-        await (select(invoices)
-              ..where((i) => i.fiscalYear.equals(year))
-              ..where((i) => i.invoiceNumber.like('$prefix-$year-%')))
+    final numbers =
+        await (selectOnly(invoices)
+              ..addColumns([invoices.invoiceNumber])
+              ..where(invoices.invoiceNumber.like('$prefix-$year-%')))
+            .map((r) => r.read(invoices.invoiceNumber)!)
             .get();
-    if (all.isEmpty) return 1;
-    final nums = all.map((i) {
-      final parts = i.invoiceNumber.split('-');
-      return parts.length >= 3 ? (int.tryParse(parts.last) ?? 0) : 0;
-    });
-    return nums.reduce((a, b) => a > b ? a : b) + 1;
-  }
-
-  Future<bool> clientHasInvoices(int clientId) async {
-    final result =
-        await (select(invoices)
-              ..where((i) => i.clientId.equals(clientId))
-              ..limit(1))
-            .get();
-    return result.isNotEmpty;
-  }
-
-  Future<void> recalculateTotals(int invoiceId) async {
-    final lines = await getLinesForInvoice(invoiceId);
-    var exclVat = 0;
-    var vat = 0;
-    for (final l in lines) {
-      exclVat += l.lineTotalExclVat;
-      vat += l.vatAmount;
+    var max = 0;
+    for (final n in numbers) {
+      final seq = int.tryParse(n.split('-').last) ?? 0;
+      if (seq > max) max = seq;
     }
-    await (update(invoices)..where((i) => i.id.equals(invoiceId))).write(
-      InvoicesCompanion(
-        totalExclVat: Value(exclVat),
-        totalVat: Value(vat),
-        totalInclVat: Value(exclVat + vat),
-      ),
-    );
+    return max + 1;
   }
 }

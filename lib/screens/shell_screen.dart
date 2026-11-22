@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import '../theme/app_spacing.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/providers.dart';
+import '../theme/app_theme.dart';
+import '../widgets/help.dart';
 import '../constants/prefs_keys.dart';
+import '../services/tax_rules/tax_year_rules.dart';
 
 class ShellScreen extends ConsumerWidget {
   final Widget child;
@@ -53,16 +57,14 @@ class _NavPanel extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final primary = theme.colorScheme.primary;
-    final onPrimary = theme.colorScheme.onPrimary;
-    final onPrimaryMuted = onPrimary.withValues(alpha: 0.7);
-    final dividerColor = onPrimary.withValues(alpha: 0.24);
+    final muted = context.colors.secondaryLabel;
+    final dividerColor = context.colors.separator;
     final year = ref.watch(fiscalYearProvider);
     final mainItems = _buildMainItems();
 
     return Container(
       width: 220,
-      color: primary,
+      color: context.colors.sidebar,
       child: Column(
         children: [
           Padding(
@@ -71,12 +73,11 @@ class _NavPanel extends ConsumerWidget {
               l.appTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: onPrimary,
               ),
             ),
           ),
           Divider(color: dividerColor, height: 1),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.tight),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 4),
@@ -97,25 +98,21 @@ class _NavPanel extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
-                Icon(
-                  Icons.calendar_today_outlined,
-                  size: 15,
-                  color: onPrimaryMuted,
-                ),
-                const SizedBox(width: 8),
+                Icon(Icons.calendar_today_outlined, size: 15, color: muted),
+                const SizedBox(width: AppSpacing.heading),
                 Text(
                   l.navYear,
-                  style: TextStyle(color: onPrimaryMuted, fontSize: 13),
+                  style: theme.textTheme.bodyMedium?.copyWith(color: muted),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: AppSpacing.tight),
                 DropdownButton<int>(
                   value: year,
-                  dropdownColor: primary,
-                  style: TextStyle(color: onPrimary, fontSize: 13),
+                  style: theme.textTheme.bodyMedium,
                   underline: const SizedBox(),
-                  items: List.generate(6, (i) => 2025 + i)
-                      .map((y) => DropdownMenuItem(value: y, child: Text('$y')))
-                      .toList(),
+                  items: [
+                    for (final y in supportedYears)
+                      DropdownMenuItem(value: y, child: Text('$y')),
+                  ],
                   onChanged: (y) {
                     if (y == null) return;
                     ref.read(fiscalYearProvider.notifier).state = y;
@@ -140,7 +137,7 @@ class _NavPanel extends ConsumerWidget {
             route: '/settings',
             isSelected: currentPath.startsWith('/settings'),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.field),
         ],
       ),
     );
@@ -161,9 +158,9 @@ class _NavTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onPrimary = Theme.of(context).colorScheme.onPrimary;
-    final selectedColor = onPrimary;
-    final defaultColor = onPrimary.withValues(alpha: 0.7);
+    final theme = Theme.of(context);
+    final selectedColor = theme.colorScheme.primary;
+    final defaultColor = theme.colorScheme.onSurface;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
       child: InkWell(
@@ -173,7 +170,7 @@ class _NavTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: isSelected
               ? BoxDecoration(
-                  color: onPrimary.withValues(alpha: 0.15),
+                  color: selectedColor.withValues(alpha: 0.14),
                   borderRadius: BorderRadius.circular(8),
                 )
               : null,
@@ -182,15 +179,21 @@ class _NavTile extends StatelessWidget {
               Icon(
                 icon,
                 size: 20,
-                color: isSelected ? selectedColor : defaultColor,
+                color: isSelected
+                    ? selectedColor
+                    : context.colors.secondaryLabel,
               ),
-              const SizedBox(width: 12),
-              Text(
-                label,
-                style: TextStyle(
-                  color: isSelected ? selectedColor : defaultColor,
-                  fontSize: 14,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              const SizedBox(width: AppSpacing.field),
+              Expanded(
+                child: EllipsisText(
+                  label,
+                  style: TextStyle(
+                    color: isSelected ? selectedColor : defaultColor,
+                    fontSize: 14,
+                    fontWeight: isSelected
+                        ? FontWeight.w600
+                        : FontWeight.normal,
+                  ),
                 ),
               ),
             ],

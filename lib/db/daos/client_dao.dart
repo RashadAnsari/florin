@@ -1,40 +1,28 @@
 import 'package:drift/drift.dart';
 import '../database.dart';
 import '../tables/clients.dart';
+import '../tables/invoices.dart';
 
 part 'client_dao.g.dart';
 
-@DriftAccessor(tables: [Clients])
-class ClientDao extends DatabaseAccessor<AppDatabase> with _$ClientDaoMixin {
+@DriftAccessor(tables: [Clients, Invoices])
+class ClientDao extends DatabaseAccessor<AppDatabase>
+    with _$ClientDaoMixin, Crud<$ClientsTable, Client> {
   ClientDao(super.db);
 
-  Stream<List<Client>> watchAllActive() =>
-      (select(clients)
-            ..where((c) => c.isActive.equals(true))
-            ..orderBy([(c) => OrderingTerm.asc(c.name)]))
-          .watch();
-
-  Future<List<Client>> getAllActive() =>
-      (select(clients)
-            ..where((c) => c.isActive.equals(true))
-            ..orderBy([(c) => OrderingTerm.asc(c.name)]))
-          .get();
-
-  Future<List<Client>> getAll() =>
-      (select(clients)..orderBy([(c) => OrderingTerm.asc(c.name)])).get();
-
-  Future<Client?> getById(int id) =>
-      (select(clients)..where((c) => c.id.equals(id))).getSingleOrNull();
-
-  Future<int> insertClient(ClientsCompanion entry) =>
-      into(clients).insert(entry);
-
-  Future<bool> saveClient(ClientsCompanion entry) =>
-      (update(clients)).replace(entry);
+  @override
+  TableInfo<$ClientsTable, Client> get table => clients;
 
   Stream<List<Client>> watchAll() =>
       (select(clients)..orderBy([(c) => OrderingTerm.asc(c.name)])).watch();
 
-  Future<int> deleteClient(int id) =>
-      (delete(clients)..where((c) => c.id.equals(id))).go();
+  Future<Client?> getById(int id) =>
+      (select(clients)..where((c) => c.id.equals(id))).getSingleOrNull();
+
+  Future<bool> hasInvoices(int clientId) async =>
+      await (select(invoices)
+            ..where((i) => i.clientId.equals(clientId))
+            ..limit(1))
+          .getSingleOrNull() !=
+      null;
 }

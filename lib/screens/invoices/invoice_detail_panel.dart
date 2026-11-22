@@ -1,78 +1,67 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
+import '../../widgets/help.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:go_router/go_router.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
-import '../../db/tables/invoices.dart' show kDefaultPaymentTermDays;
+import '../../l10n/labels.dart';
 import '../../providers/providers.dart';
+import '../../services/domain.dart';
 import '../../services/invoice_pdf_service.dart';
+import '../../theme/app_spacing.dart';
 import '../../theme/app_theme.dart';
-import '../../constants/prefs_keys.dart';
 import '../../widgets/confirmation_dialog.dart';
-import '../../widgets/vat_rate_selector.dart';
+import '../../widgets/date_field.dart';
+import '../../widgets/detail_scaffold.dart';
+import '../../widgets/enum_dropdown.dart';
+import '../../widgets/feedback.dart';
+import '../../widgets/form_row.dart';
+import '../../widgets/invoice_status_badge.dart';
+import '../../widgets/notice_banner.dart';
+import '../../widgets/value_row.dart';
 
-String _centsToInput(int cents) =>
-    (cents / 100).toStringAsFixed(2).replaceAll('.', ',');
-
-int _inputToCents(String text) {
-  final s = text
-      .replaceAll('€', '')
-      .replaceAll(' ', '')
-      .replaceAll('.', '')
-      .replaceAll(',', '.')
-      .trim();
-  return ((double.tryParse(s) ?? 0.0) * 100).round();
-}
+const _defaultPaymentTermDays = 14;
+const _numberPrefix = 'F';
 
 class _LineItem {
-  final int? id;
-  final TextEditingController description;
-  final TextEditingController quantity;
-  final TextEditingController unitPrice;
-  final TextEditingController unit;
-  String vatRate;
+  final description = TextEditingController();
+  final quantity = TextEditingController(text: '1');
+  final unit = TextEditingController();
+  final unitPrice = TextEditingController(text: AppFormat.centsInput(0));
+  VatRate vatRate = VatRate.high;
 
-  _LineItem({
-    this.id,
-    String desc = '',
-    double qty = 1.0,
-    int priceCents = 0,
-    String unitStr = '1',
-    this.vatRate = '21%',
-  }) : description = TextEditingController(text: desc),
-       quantity = TextEditingController(
-         text: qty == qty.truncateToDouble()
-             ? qty.toInt().toString()
-             : qty.toString(),
-       ),
-       unitPrice = TextEditingController(text: _centsToInput(priceCents)),
-       unit = TextEditingController(text: unitStr == '1' ? '' : unitStr);
+  _LineItem();
 
-  double get _qty => double.tryParse(quantity.text.replaceAll(',', '.')) ?? 1.0;
-  int get _price => _inputToCents(unitPrice.text);
-  int get lineTotalExclVat => (_qty * _price).round();
-  int get vatAmount => (lineTotalExclVat * parseVatRate(vatRate)).round();
+  _LineItem.from(InvoiceLine l) {
+    description.text = l.description;
+    quantity.text = AppFormat.number(l.quantity);
+    unit.text = l.unit ?? '';
+    unitPrice.text = AppFormat.centsInput(l.unitPriceExclVat);
+    vatRate = l.vatRate;
+  }
+
+  double get qty =>
+      double.tryParse(quantity.text.replaceAll(',', '.').trim()) ?? 0;
+  int get price => AppFormat.parseCents(unitPrice.text) ?? 0;
+  int get total => (qty * price).round();
+  int vat(VatTreatment t) =>
+      t == VatTreatment.standard ? vatRate.vatOn(total) : 0;
 
   void dispose() {
-    description.dispose();
-    quantity.dispose();
-    unitPrice.dispose();
-    unit.dispose();
+    for (final c in [description, quantity, unit, unitPrice]) {
+      c.dispose();
+    }
   }
 }
 
+/// Creates or edits an invoice. With [creditForId], creates a credit note
+/// that corrects that invoice.
 class InvoiceDetailPanel extends ConsumerStatefulWidget {
   final int? invoiceId;
-  final void Function(int id)? onCreated;
-  final VoidCallback? onBack;
+  final int? creditForId;
 
-  const InvoiceDetailPanel({
-    super.key,
-    this.invoiceId,
-    this.onCreated,
-    this.onBack,
-  });
+  const InvoiceDetailPanel({super.key, this.invoiceId, this.creditForId});
 
   @override
   ConsumerState<InvoiceDetailPanel> createState() => _InvoiceDetailPanelState();
@@ -80,33 +69,29 @@ class InvoiceDetailPanel extends ConsumerStatefulWidget {
 
 class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
   final _formKey = GlobalKey<FormState>();
+  final _number = TextEditingController();
+  final _paymentTerm = TextEditingController(text: '$_defaultPaymentTermDays');
+  final _notes = TextEditingController();
   bool _loading = true;
   Invoice? _original;
+  Invoice? _corrected;
   List<_LineItem> _lines = [];
-
-  late final TextEditingController _invoiceNumber;
-  late final TextEditingController _paymentTermDays;
-  late final TextEditingController _notes;
-  String _invoiceType = 'Invoice';
+  InvoiceType _type = InvoiceType.invoice;
+  VatTreatment _treatment = VatTreatment.standard;
   int? _clientId;
-  DateTime _invoiceDate = DateTime.now();
+  late DateTime _invoiceDate = todayIn(ref.read(fiscalYearProvider));
   DateTime? _supplyDate;
-  bool _isIcp = false;
-  bool _isReverseCharge = false;
 
   @override
   void initState() {
     super.initState();
-    _invoiceNumber = TextEditingController();
-    _paymentTermDays = TextEditingController(text: '$kDefaultPaymentTermDays');
-    _notes = TextEditingController();
     _load();
   }
 
   @override
   void dispose() {
-    _invoiceNumber.dispose();
-    _paymentTermDays.dispose();
+    _number.dispose();
+    _paymentTerm.dispose();
     _notes.dispose();
     for (final l in _lines) {
       l.dispose();
@@ -115,269 +100,173 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
   }
 
   Future<void> _load() async {
-    try {
-      if (widget.invoiceId == null) {
-        await _loadNew();
-        return;
-      }
-      final dao = ref.read(invoiceDaoProvider);
-      final inv = await dao.getById(widget.invoiceId!);
-      if (inv == null || !mounted) {
-        setState(() => _loading = false);
-        return;
-      }
-      final lineRecords = await dao.getLinesForInvoice(widget.invoiceId!);
-      final loaded = lineRecords
-          .map(
-            (l) => _LineItem(
-              id: l.id,
-              desc: l.description,
-              qty: l.quantity,
-              priceCents: l.unitPriceExclVat,
-              unitStr: l.quantityUnit,
-              vatRate: l.vatRate,
-            ),
-          )
-          .toList();
-      if (!mounted) return;
-      setState(() {
-        _original = inv;
-        _lines = loaded;
-        _invoiceNumber.text = inv.invoiceNumber;
-        _invoiceType = inv.invoiceType;
-        _clientId = inv.clientId;
-        _invoiceDate = inv.invoiceDate;
-        _supplyDate = inv.supplyDate;
-        _paymentTermDays.text = inv.paymentTermDays.toString();
-        _isIcp = inv.isIcp;
-        _isReverseCharge = inv.isReverseCharge;
-        _notes.text = inv.notes ?? '';
-        _loading = false;
-      });
-    } catch (_) {
-      if (mounted) setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _loadNew() async {
-    try {
-      final year = ref.read(fiscalYearProvider);
-      final dao = ref.read(invoiceDaoProvider);
-      final prefix = 'F';
-      final seq = await dao.nextSequenceNumber(year, prefix);
-      if (!mounted) return;
-      setState(() {
-        _invoiceNumber.text = '$prefix-$year-${seq.toString().padLeft(3, '0')}';
-        _lines = [_LineItem()];
-        _loading = false;
-      });
-    } catch (_) {
-      if (mounted) setState(() => _loading = false);
-    }
-  }
-
-  void _addLine() {
-    setState(() => _lines.add(_LineItem()));
-  }
-
-  void _removeLine(int i) {
+    final dao = ref.read(invoiceDaoProvider);
+    final id = widget.invoiceId ?? widget.creditForId;
+    final source = id == null ? null : await dao.getById(id);
+    final lines = source == null ? <InvoiceLine>[] : await dao.getLines(id!);
+    final corrected = source?.correctedInvoiceId == null
+        ? null
+        : await dao.getById(source!.correctedInvoiceId!);
+    final isCredit = widget.creditForId != null;
+    final number = widget.invoiceId == null
+        ? await _suggestNumber(_invoiceDate.year)
+        : source!.invoiceNumber;
+    if (!mounted) return;
     setState(() {
-      _lines[i].dispose();
-      _lines.removeAt(i);
+      _lines = lines.isEmpty
+          ? [_LineItem()]
+          : lines.map(_LineItem.from).toList();
+      if (source != null) {
+        _clientId = source.clientId;
+        _treatment = source.vatTreatment;
+        _paymentTerm.text = '${source.paymentTermDays}';
+        if (isCredit) {
+          _type = InvoiceType.creditNote;
+          _corrected = source;
+        } else {
+          _original = source;
+          _corrected = corrected;
+          _type = source.invoiceType;
+          _invoiceDate = source.invoiceDate;
+          _supplyDate = source.supplyDate;
+          _notes.text = source.notes ?? '';
+        }
+      }
+      _number.text = number;
+      _loading = false;
     });
   }
 
-  DateTime get _dueDate {
-    final days = int.tryParse(_paymentTermDays.text) ?? 0;
-    return _invoiceDate.add(Duration(days: days));
+  Future<String> _suggestNumber(int year) async {
+    final seq = await ref
+        .read(invoiceDaoProvider)
+        .nextSequenceNumber(year, _numberPrefix);
+    return '$_numberPrefix-$year-${seq.toString().padLeft(3, '0')}';
   }
 
-  int get _totalExclVat => _lines.fold(0, (s, l) => s + l.lineTotalExclVat);
-  int get _totalVat => _lines.fold(0, (s, l) => s + l.vatAmount);
-  int get _totalInclVat => _totalExclVat + _totalVat;
+  bool get _isNew => _original == null;
+  bool get _isEditable => _isNew || _original!.status == InvoiceStatus.draft;
 
-  bool get _isEditable => _original == null || _original!.status == 'Draft';
+  int get _totalExclVat => _lines.fold(0, (s, l) => s + l.total);
+  int get _totalVat => _lines.fold(0, (s, l) => s + l.vat(_treatment));
 
-  bool get _isEuMode => _isIcp || _isReverseCharge;
+  Client? _client(List<Client> clients) =>
+      clients.where((c) => c.id == _clientId).firstOrNull;
 
-  void _applyEuReverseCharge() {
-    for (final line in _lines) {
-      line.vatRate = '0% EU Reverse Charge';
+  Future<void> _setInvoiceDate(DateTime d) async {
+    final yearChanged = d.year != _invoiceDate.year;
+    setState(() => _invoiceDate = d);
+    if (_isNew && yearChanged) {
+      final n = await _suggestNumber(d.year);
+      if (mounted) setState(() => _number.text = n);
     }
-  }
-
-  bool get _icpMissingVat {
-    if (!_isIcp || _clientId == null) return false;
-    final clients = ref.read(clientsStreamProvider).valueOrNull ?? [];
-    final match = clients.where((c) => c.id == _clientId);
-    if (match.isEmpty) return false;
-    final client = match.first;
-    return client.vatNumber == null || client.vatNumber!.isEmpty;
-  }
-
-  Map<String, int> get _vatByRate {
-    final m = <String, int>{};
-    for (final l in _lines) {
-      final v = l.vatAmount;
-      if (v > 0) m[l.vatRate] = (m[l.vatRate] ?? 0) + v;
-    }
-    return m;
   }
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    final dao = ref.read(invoiceDaoProvider);
-    final year = ref.read(fiscalYearProvider);
-    final prefs = await SharedPreferences.getInstance();
-    final sellerName = prefs.getString(PrefsKeys.businessName) ?? '';
-    final sellerVat = prefs.getString(PrefsKeys.businessVatNumber) ?? '';
-    final sellerKvk = prefs.getString(PrefsKeys.businessKvk) ?? '';
-    final sellerAddress = prefs.getString(PrefsKeys.businessAddress) ?? '';
-    final sellerIban = prefs.getString(PrefsKeys.businessIban);
-    final companion = InvoicesCompanion(
-      id: _original != null ? Value(_original!.id) : const Value.absent(),
-      invoiceNumber: Value(_invoiceNumber.text.trim()),
+    final profile = await ref.read(businessProfileDaoProvider).get();
+    if (profile == null || !mounted) return;
+    final notes = _notes.text.trim();
+    final invoice = InvoicesCompanion(
+      id: _isNew ? const Value.absent() : Value(_original!.id),
+      invoiceNumber: Value(_number.text.trim()),
+      invoiceType: Value(_type),
+      correctedInvoiceId: Value(_corrected?.id),
       invoiceDate: Value(_invoiceDate),
       supplyDate: Value(_supplyDate),
       clientId: Value(_clientId!),
-      invoiceType: Value(_invoiceType),
-      sellerName: Value(sellerName),
-      sellerVatNumber: Value(sellerVat),
-      sellerKvkNumber: Value(sellerKvk),
-      sellerAddress: Value(sellerAddress),
-      sellerIban: Value(sellerIban?.isNotEmpty == true ? sellerIban : null),
-      paymentTermDays: Value(int.tryParse(_paymentTermDays.text) ?? 0),
-      dueDate: Value(_dueDate),
-      status: Value(_original?.status ?? 'Draft'),
+      vatTreatment: Value(_treatment),
+      sellerName: Value(profile.name),
+      sellerVatNumber: Value(profile.vatNumber),
+      sellerKvkNumber: Value(profile.kvkNumber),
+      sellerAddress: Value(profile.address),
+      sellerIban: Value(profile.iban),
+      paymentTermDays: Value(int.parse(_paymentTerm.text.trim())),
+      status: Value(_original?.status ?? InvoiceStatus.draft),
       paidDate: Value(_original?.paidDate),
-      refundDate: Value(_original?.refundDate),
-      notes: Value(_notes.text.trim().isEmpty ? null : _notes.text.trim()),
-      isReverseCharge: Value(_isReverseCharge),
-      isIcp: Value(_isIcp),
-      reverseChargeNote: Value(_original?.reverseChargeNote),
+      notes: Value(notes.isEmpty ? null : notes),
       totalExclVat: Value(_totalExclVat),
       totalVat: Value(_totalVat),
-      totalInclVat: Value(_totalInclVat),
-      fiscalYear: Value(year),
-      quarter: Value(AppFormat.quarter(_invoiceDate)),
+      totalInclVat: Value(_totalExclVat + _totalVat),
     );
-
-    try {
-      int invoiceId;
-      if (_original == null) {
-        invoiceId = await dao.insertInvoice(companion);
-      } else {
-        await dao.saveInvoice(companion);
-        invoiceId = _original!.id;
-      }
-
-      final lineCompanions = [
-        for (var i = 0; i < _lines.length; i++)
-          InvoiceLinesCompanion(
-            invoiceId: Value(invoiceId),
-            description: Value(_lines[i].description.text.trim()),
-            quantityUnit: Value(
-              _lines[i].unit.text.trim().isEmpty
-                  ? '1'
-                  : _lines[i].unit.text.trim(),
-            ),
-            quantity: Value(_lines[i]._qty),
-            unitPriceExclVat: Value(_inputToCents(_lines[i].unitPrice.text)),
-            vatRate: Value(_lines[i].vatRate),
-            vatAmount: Value(_lines[i].vatAmount),
-            lineTotalExclVat: Value(_lines[i].lineTotalExclVat),
-            sortOrder: Value(i),
+    final lines = [
+      for (var i = 0; i < _lines.length; i++)
+        InvoiceLinesCompanion(
+          invoiceId: const Value(0),
+          description: Value(_lines[i].description.text.trim()),
+          quantity: Value(_lines[i].qty),
+          unit: Value(
+            _lines[i].unit.text.trim().isEmpty
+                ? null
+                : _lines[i].unit.text.trim(),
           ),
-      ];
-
-      if (_original != null) {
-        await dao.replaceLines(invoiceId, lineCompanions);
-      } else {
-        for (final lc in lineCompanions) {
-          await dao.insertLine(lc);
-        }
-      }
-
-      if (_original == null) {
-        final newInv = await dao.getById(invoiceId);
-        if (mounted && newInv != null) {
-          widget.onCreated?.call(invoiceId);
-        }
-      }
-      if (mounted) widget.onBack?.call();
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.genericSaveError(e.toString()),
+          unitPriceExclVat: Value(_lines[i].price),
+          vatRate: Value(
+            _treatment == VatTreatment.standard
+                ? _lines[i].vatRate
+                : VatRate.zero,
           ),
+          vatAmount: Value(_lines[i].vat(_treatment)),
+          lineTotalExclVat: Value(_lines[i].total),
+          sortOrder: Value(i),
         ),
-      );
+    ];
+    int? id;
+    final saved = await guardSave(context, () async {
+      id = await ref.read(invoiceDaoProvider).saveWithLines(invoice, lines);
+    });
+    if (!saved || !mounted) return;
+    if (_isNew) {
+      context.pushReplacement('/invoices/$id');
+    } else {
+      context.pop();
     }
   }
 
-  Future<void> _markStatus(
-    String status, {
-    DateTime? paidDate,
-    DateTime? refundDate,
-  }) async {
-    if (_original == null) return;
+  Future<void> _setStatus(InvoiceStatus status) async {
+    final inv = _original!;
     final dao = ref.read(invoiceDaoProvider);
-    await dao.saveInvoice(
-      InvoicesCompanion(
-        id: Value(_original!.id),
-        invoiceNumber: Value(_original!.invoiceNumber),
-        invoiceDate: Value(_original!.invoiceDate),
-        supplyDate: Value(_original!.supplyDate),
-        clientId: Value(_original!.clientId),
-        invoiceType: Value(_original!.invoiceType),
-        sellerName: Value(_original!.sellerName),
-        sellerVatNumber: Value(_original!.sellerVatNumber),
-        sellerKvkNumber: Value(_original!.sellerKvkNumber),
-        sellerAddress: Value(_original!.sellerAddress),
-        sellerIban: Value(_original!.sellerIban),
-        paymentTermDays: Value(_original!.paymentTermDays),
-        dueDate: Value(_original!.dueDate),
-        status: Value(status),
-        paidDate: Value(paidDate),
-        refundDate: Value(refundDate),
-        notes: Value(_original!.notes),
-        isReverseCharge: Value(_original!.isReverseCharge),
-        isIcp: Value(_original!.isIcp),
-        reverseChargeNote: Value(_original!.reverseChargeNote),
-        totalExclVat: Value(_original!.totalExclVat),
-        totalVat: Value(_original!.totalVat),
-        totalInclVat: Value(_original!.totalInclVat),
-        fiscalYear: Value(_original!.fiscalYear),
-        quarter: Value(_original!.quarter),
+    await guardSave(
+      context,
+      () => dao.setStatus(
+        inv.id,
+        status,
+        paidDate: status == InvoiceStatus.paid ? DateTime.now() : null,
       ),
     );
-    final updated = await dao.getById(_original!.id);
-    if (mounted && updated != null) setState(() => _original = updated);
+    final updated = await dao.getById(inv.id);
+    if (mounted) setState(() => _original = updated);
   }
 
-  Future<void> _sharePdf() async {
-    if (_original == null || _clientId == null) return;
+  Future<void> _issue() async {
     final l = AppLocalizations.of(context)!;
-    final lines = await ref
-        .read(invoiceDaoProvider)
-        .getLinesForInvoice(_original!.id);
-    final clients = ref.read(clientsStreamProvider).valueOrNull ?? [];
-    final client = clients.firstWhere(
-      (c) => c.id == _clientId,
-      orElse: () => throw StateError('Client not found'),
+    final confirmed = await showConfirmationDialog(
+      context,
+      title: l.invoiceIssueTitle,
+      message: l.invoiceIssueMessage,
     );
-    await InvoicePdfService.share(
-      invoice: _original!,
-      lines: lines,
-      client: client,
-      dialogTitle: l.invoiceSaveAsDialog,
+    if (confirmed && mounted) await _setStatus(InvoiceStatus.sent);
+  }
+
+  Future<void> _exportPdf() async {
+    final l = AppLocalizations.of(context)!;
+    final inv = _original!;
+    final client = await ref.read(clientDaoProvider).getById(inv.clientId);
+    final lines = await ref.read(invoiceDaoProvider).getLines(inv.id);
+    if (client == null || !mounted) return;
+    await guardSave(
+      context,
+      () => InvoicePdfService.save(
+        invoice: inv,
+        lines: lines,
+        client: client,
+        correctedInvoice: _corrected,
+        dialogTitle: l.invoiceSaveAsDialog,
+      ),
     );
   }
 
   Future<void> _delete() async {
-    if (_original == null) return;
     final l = AppLocalizations.of(context)!;
     final confirmed = await showConfirmationDialog(
       context,
@@ -386,707 +275,318 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
-    await ref.read(invoiceDaoProvider).deleteInvoice(_original!.id);
-    if (mounted) widget.onBack?.call();
+    final deleted = await guardSave(
+      context,
+      () => ref.read(invoiceDaoProvider).remove(_original!),
+    );
+    if (deleted && mounted) context.pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Center(child: CircularProgressIndicator());
+    if (_loading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final clients = ref.watch(clientsStreamProvider).valueOrNull ?? [];
-    final status = _original?.status ?? 'Draft';
-    final isNew = _original == null;
+    final allClients = ref.watch(clientsProvider).valueOrNull ?? <Client>[];
+    final clients = allClients
+        .where((c) => c.isActive || c.id == _clientId)
+        .toList();
+    final client = _client(allClients);
+    final status = _original?.status;
+    final isCredit = _type == InvoiceType.creditNote;
 
-    return Column(
-      children: [
-        // ── Header bar ──────────────────────────────────────────────────────
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 6, 8, 6),
-          child: Row(
+    return DetailScaffold(
+      title: _isNew
+          ? (isCredit ? l.invoiceNewCreditNoteHeader : l.invoicesNewHeader)
+          : _original!.invoiceNumber,
+      onBack: () => context.pop(),
+      showSave: _isEditable,
+      onSave: _save,
+      onDelete: !_isNew && _isEditable ? _delete : null,
+      actions: [
+        if (!_isNew) ...[
+          InvoiceStatusBadge(_original!),
+          if (status == InvoiceStatus.draft)
+            OutlinedButton.icon(
+              icon: const Icon(Icons.send, size: 16),
+              label: Text(l.invoiceActionSend),
+              onPressed: _issue,
+            ),
+          if (status == InvoiceStatus.sent)
+            OutlinedButton.icon(
+              icon: const Icon(Icons.check, size: 16),
+              label: Text(l.invoiceActionMarkPaid),
+              onPressed: () => _setStatus(InvoiceStatus.paid),
+            ),
+          if (status != InvoiceStatus.draft && !isCredit)
+            OutlinedButton.icon(
+              icon: const Icon(Icons.undo, size: 16),
+              label: Text(l.invoiceActionCreditNote),
+              onPressed: () =>
+                  context.push('/invoices/new?creditFor=${_original!.id}'),
+            ),
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf_outlined),
+            tooltip: l.invoiceActionExportPdf,
+            onPressed: _exportPdf,
+          ),
+        ],
+      ],
+      body: Form(
+        key: _formKey,
+        child: AbsorbPointer(
+          absorbing: !_isEditable,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (widget.onBack != null)
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: widget.onBack,
-                ),
-              Expanded(
-                child: Text(
-                  isNew
-                      ? AppLocalizations.of(context)!.invoicesNewHeader
-                      : _invoiceNumber.text,
-                  style: theme.textTheme.titleMedium,
-                  overflow: TextOverflow.ellipsis,
+              if (_corrected != null) ...[
+                NoticeBanner(l.invoiceCorrects(_corrected!.invoiceNumber)),
+                const SizedBox(height: AppSpacing.group),
+              ],
+              FormRow(
+                flex: const [3, 2],
+                children: [
+                  DropdownButtonFormField<int>(
+                    initialValue: _clientId,
+                    isExpanded: true,
+                    decoration: fieldDecoration(
+                      label: l.invoiceFieldClient,
+                      help: l.invoiceFieldClientHelp,
+                      required: true,
+                    ),
+                    items: [
+                      for (final c in clients)
+                        DropdownMenuItem(value: c.id, child: Text(c.name)),
+                    ],
+                    onChanged: isCredit
+                        ? null
+                        : (v) => setState(() => _clientId = v),
+                    validator: (_) {
+                      if (client == null) return l.invoiceValidateClient;
+                      if (_treatment.needsCustomerVatNumber &&
+                          (client.vatNumber ?? '').isEmpty) {
+                        return l.invoiceValidateClientVat;
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: _number,
+                    decoration: fieldDecoration(
+                      label: l.invoiceFieldNumber,
+                      help: l.invoiceFieldNumberHelp,
+                      required: true,
+                    ),
+                    validator: (v) => (v ?? '').trim().isEmpty
+                        ? l.invoiceValidateNumber
+                        : null,
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.field),
+              FormRow(
+                children: [
+                  DateField(
+                    label: l.invoiceFieldInvoiceDate,
+                    help: l.invoiceFieldInvoiceDateHelp,
+                    value: _invoiceDate,
+                    onChanged: _setInvoiceDate,
+                    required: true,
+                  ),
+                  DateField(
+                    label: l.invoiceFieldSupplyDate,
+                    help: l.invoiceFieldSupplyDateHelp,
+                    value: _supplyDate,
+                    onChanged: (d) => setState(() => _supplyDate = d),
+                  ),
+                  TextFormField(
+                    controller: _paymentTerm,
+                    decoration: fieldDecoration(
+                      label: l.invoiceFieldPaymentTerm,
+                      help: l.invoiceFieldPaymentTermHelp,
+                      required: true,
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (_) => setState(() {}),
+                    validator: (v) {
+                      final n = int.tryParse((v ?? '').trim());
+                      return n == null || n < 0
+                          ? l.invoiceValidatePaymentTerm
+                          : null;
+                    },
+                  ),
+                  InputDecorator(
+                    decoration: fieldDecoration(
+                      label: l.invoiceFieldDueDate,
+                      help: l.invoiceFieldDueDateHelp,
+                    ),
+                    child: Text(
+                      AppFormat.date(
+                        _invoiceDate.add(
+                          Duration(
+                            days: int.tryParse(_paymentTerm.text.trim()) ?? 0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.field),
+              EnumDropdown<VatTreatment>(
+                label: l.invoiceFieldVatTreatment,
+                help: l.invoiceFieldVatTreatmentHelp,
+                value: _treatment,
+                values: VatTreatment.values,
+                labelOf: (t) => t.label(l),
+                onChanged: isCredit
+                    ? null
+                    : (t) => setState(() => _treatment = t),
+                required: true,
+              ),
+              const SizedBox(height: AppSpacing.section),
+              Text(l.invoiceFieldLines, style: theme.textTheme.titleSmall),
+              const SizedBox(height: AppSpacing.heading),
+              for (var i = 0; i < _lines.length; i++) _lineRow(i, l),
+              const SizedBox(height: AppSpacing.heading),
+              TextButton.icon(
+                icon: const Icon(Icons.add, size: 16),
+                label: Text(l.invoiceFieldAddLine),
+                onPressed: () => setState(() => _lines.add(_LineItem())),
+              ),
+              const SizedBox(height: AppSpacing.section),
+              Align(
+                alignment: Alignment.centerRight,
+                child: SizedBox(
+                  width: 320,
+                  child: Column(
+                    children: [
+                      ValueRow(
+                        label: l.invoiceSubtotal,
+                        value: AppFormat.cents(_totalExclVat),
+                      ),
+                      ValueRow(
+                        label: l.invoiceVatTotal,
+                        value: AppFormat.cents(_totalVat),
+                      ),
+                      const Divider(),
+                      ValueRow(
+                        label: l.invoiceTotalInclVat,
+                        value: AppFormat.cents(_totalExclVat + _totalVat),
+                        bold: true,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              if (!isNew) ...[
-                _StatusBadge(status: status, dueDate: _original!.dueDate),
-                const SizedBox(width: 8),
-                if (status == 'Draft')
-                  OutlinedButton.icon(
-                    icon: const Icon(Icons.send, size: 16),
-                    label: Text(
-                      AppLocalizations.of(context)!.invoiceActionSend,
-                    ),
-                    onPressed: () => _markStatus('Sent'),
-                  ),
-                if (status == 'Sent')
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: OutlinedButton.icon(
-                      icon: const Icon(Icons.check, size: 16),
-                      label: Text(
-                        AppLocalizations.of(context)!.invoiceActionMarkPaid,
-                      ),
-                      onPressed: () =>
-                          _markStatus('Paid', paidDate: DateTime.now()),
-                    ),
-                  ),
-                if (status == 'Paid')
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: OutlinedButton.icon(
-                      icon: const Icon(Icons.undo, size: 16),
-                      label: Text(
-                        AppLocalizations.of(context)!.invoiceActionMarkRefunded,
-                      ),
-                      onPressed: () =>
-                          _markStatus('Refunded', refundDate: DateTime.now()),
-                    ),
-                  ),
-                if (status == 'Sent')
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: OutlinedButton.icon(
-                      icon: const Icon(Icons.cancel_outlined, size: 16),
-                      label: Text(
-                        AppLocalizations.of(context)!.invoiceActionCancel,
-                      ),
-                      onPressed: () => _markStatus('Cancelled'),
-                    ),
-                  ),
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: const Icon(Icons.picture_as_pdf_outlined),
-                  tooltip: AppLocalizations.of(context)!.invoiceActionExportPdf,
-                  onPressed: _sharePdf,
+              const SizedBox(height: AppSpacing.section),
+              TextFormField(
+                controller: _notes,
+                decoration: fieldDecoration(
+                  label: l.invoiceFieldRemarks,
+                  help: l.invoiceFieldRemarksHelp,
                 ),
-                if (_isEditable)
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline),
-                    tooltip: AppLocalizations.of(context)!.invoiceActionDelete,
-                    color: Theme.of(context).colorScheme.error,
-                    onPressed: _delete,
-                  ),
-              ],
-              if (_isEditable)
-                FilledButton.icon(
-                  onPressed: _icpMissingVat ? null : _save,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Theme.of(
-                      context,
-                    ).colorScheme.primaryContainer,
-                    foregroundColor: Theme.of(
-                      context,
-                    ).colorScheme.onPrimaryContainer,
-                  ),
-                  icon: const Icon(Icons.save_outlined, size: 18),
-                  label: Text(AppLocalizations.of(context)!.actionSave),
-                ),
-              const SizedBox(width: 8),
+                maxLines: 3,
+              ),
             ],
           ),
         ),
-        const Divider(height: 1),
-        // ── Form body ───────────────────────────────────────────────────────
-        Expanded(
-          child: Form(
-            key: _formKey,
-            child: AbsorbPointer(
-              absorbing: !_isEditable,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Invoice type + client + dates
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 150,
-                          child: DropdownButtonFormField<String>(
-                            initialValue: _invoiceType,
-                            isExpanded: true,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.invoiceFieldType,
-                            ),
-                            items: [
-                              DropdownMenuItem(
-                                value: 'Invoice',
-                                child: Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  )!.invoiceTypeInvoice,
-                                ),
-                              ),
-                              DropdownMenuItem(
-                                value: 'CreditNote',
-                                child: Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  )!.invoiceTypeCreditNote,
-                                ),
-                              ),
-                            ],
-                            onChanged: (v) => setState(() => _invoiceType = v!),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: DropdownButtonFormField<int>(
-                            initialValue: clients.any((c) => c.id == _clientId)
-                                ? _clientId
-                                : null,
-                            isExpanded: true,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.invoiceFieldClient,
-                            ),
-                            items: clients
-                                .map(
-                                  (c) => DropdownMenuItem(
-                                    value: c.id,
-                                    child: Text(c.name),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (v) => setState(() => _clientId = v),
-                            validator: (_) => _clientId == null
-                                ? AppLocalizations.of(
-                                    context,
-                                  )!.invoiceValidateClient
-                                : null,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        SizedBox(
-                          width: 160,
-                          child: TextFormField(
-                            controller: _invoiceNumber,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.invoiceFieldNumber,
-                            ),
-                            validator: (v) => (v == null || v.trim().isEmpty)
-                                ? AppLocalizations.of(
-                                    context,
-                                  )!.invoiceValidateNumber
-                                : null,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            key: ValueKey(_invoiceDate.toString()),
-                            initialValue: AppFormat.date(_invoiceDate),
-                            readOnly: true,
-                            strutStyle: StrutStyle.disabled,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.invoiceFieldInvoiceDate,
-                            ),
-                            onTap: () async {
-                              final d = await showDatePicker(
-                                context: context,
-                                initialDate: _invoiceDate,
-                                firstDate: DateTime(2020),
-                                lastDate: DateTime(2040),
-                              );
-                              if (d != null) setState(() => _invoiceDate = d);
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            key: ValueKey(_supplyDate?.toString() ?? 'null'),
-                            initialValue: _supplyDate != null
-                                ? AppFormat.date(_supplyDate!)
-                                : '-',
-                            readOnly: true,
-                            strutStyle: StrutStyle.disabled,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.invoiceFieldSupplyDate,
-                            ),
-                            onTap: () async {
-                              final d = await showDatePicker(
-                                context: context,
-                                initialDate: _supplyDate ?? _invoiceDate,
-                                firstDate: DateTime(2020),
-                                lastDate: DateTime(2040),
-                              );
-                              if (d != null) setState(() => _supplyDate = d);
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            controller: _paymentTermDays,
-                            strutStyle: StrutStyle.disabled,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.invoiceFieldPaymentTerm,
-                            ),
-                            keyboardType: TextInputType.number,
-                            onChanged: (_) => setState(() {}),
-                            validator: (v) {
-                              final n = int.tryParse(v ?? '');
-                              if (n == null || n < 0) {
-                                return AppLocalizations.of(
-                                  context,
-                                )!.invoiceValidatePaymentTerm;
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            key: ValueKey(_dueDate.toString()),
-                            initialValue: AppFormat.date(_dueDate),
-                            readOnly: true,
-                            strutStyle: StrutStyle.disabled,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(
-                                context,
-                              )!.invoiceFieldDueDate,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Tooltip(
-                      message: AppLocalizations.of(context)!.invoiceTooltipIcp,
-                      child: CheckboxListTile(
-                        value: _isIcp,
-                        onChanged: (v) => setState(() {
-                          _isIcp = v ?? false;
-                          if (_isIcp) _applyEuReverseCharge();
-                        }),
-                        title: Text(
-                          AppLocalizations.of(context)!.invoiceFieldIcp,
-                        ),
-                        contentPadding: EdgeInsets.zero,
-                        controlAffinity: ListTileControlAffinity.leading,
-                      ),
-                    ),
-                    if (_icpMissingVat)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 40, bottom: 4),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.warning_amber_rounded,
-                              size: 14,
-                              color: theme.colorScheme.error,
-                            ),
-                            const SizedBox(width: 4),
-                            Flexible(
-                              child: Text(
-                                AppLocalizations.of(
-                                  context,
-                                )!.invoiceWarnIcpNoVat,
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.error,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    Tooltip(
-                      message: AppLocalizations.of(
-                        context,
-                      )!.invoiceTooltipBtwVerlegd,
-                      child: CheckboxListTile(
-                        value: _isReverseCharge,
-                        onChanged: (v) => setState(() {
-                          _isReverseCharge = v ?? false;
-                          if (_isReverseCharge) _applyEuReverseCharge();
-                        }),
-                        title: Text(
-                          AppLocalizations.of(context)!.invoiceFieldBtwVerlegd,
-                        ),
-                        contentPadding: EdgeInsets.zero,
-                        controlAffinity: ListTileControlAffinity.leading,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    // ── Line items ─────────────────────────────────────────────
-                    Text(
-                      AppLocalizations.of(context)!.invoiceFieldLines,
-                      style: theme.textTheme.titleSmall,
-                    ),
-                    const SizedBox(height: 8),
-                    _buildLineHeader(theme),
-                    ..._lines.asMap().entries.map(
-                      (e) => _buildLineRow(e.key, e.value, theme),
-                    ),
-                    const SizedBox(height: 8),
-                    TextButton.icon(
-                      icon: const Icon(Icons.add, size: 16),
-                      label: Text(
-                        AppLocalizations.of(context)!.invoiceFieldAddLine,
-                      ),
-                      onPressed: _addLine,
-                    ),
-                    const SizedBox(height: 24),
-                    // ── Totals ─────────────────────────────────────────────────
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: SizedBox(
-                        width: 280,
-                        child: Column(
-                          children: [
-                            _totalRow(
-                              AppLocalizations.of(context)!.invoiceSubtotal,
-                              AppFormat.cents(_totalExclVat),
-                              theme,
-                            ),
-                            ..._vatByRate.entries.map(
-                              (e) => _totalRow(
-                                AppLocalizations.of(
-                                  context,
-                                )!.invoiceVatLine(e.key),
-                                AppFormat.cents(e.value),
-                                theme,
-                              ),
-                            ),
-                            const Divider(),
-                            _totalRow(
-                              AppLocalizations.of(context)!.invoiceTotalInclVat,
-                              AppFormat.cents(_totalInclVat),
-                              theme,
-                              bold: true,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    TextFormField(
-                      controller: _notes,
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(
-                          context,
-                        )!.invoiceFieldRemarks,
-                      ),
-                      maxLines: 3,
-                    ),
-                  ],
+      ),
+    );
+  }
+
+  Widget _lineRow(int i, AppLocalizations l) {
+    final line = _lines[i];
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.heading),
+      child: FormRow(
+        flex: const [6, 2, 2, 3, 3, 2],
+        children: [
+          TextFormField(
+            controller: line.description,
+            decoration: fieldDecoration(
+              label: l.invoiceFieldDescription,
+              help: l.invoiceFieldDescriptionHelp,
+              required: true,
+            ),
+            validator: (v) => (v ?? '').trim().isEmpty
+                ? l.invoiceValidateLineDescription
+                : null,
+          ),
+          TextFormField(
+            controller: line.quantity,
+            decoration: fieldDecoration(
+              label: l.invoiceFieldQuantity,
+              help: l.invoiceFieldQuantityHelp,
+              required: true,
+            ),
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            onChanged: (_) => setState(() {}),
+            validator: (_) =>
+                line.qty <= 0 ? l.invoiceValidateLineQuantity : null,
+          ),
+          TextFormField(
+            controller: line.unit,
+            decoration: fieldDecoration(
+              label: l.invoiceFieldUnit,
+              help: l.invoiceFieldUnitHelp,
+              hintText: l.invoiceUnitHint,
+            ),
+          ),
+          TextFormField(
+            controller: line.unitPrice,
+            decoration: fieldDecoration(
+              label: l.invoiceFieldPrice,
+              help: l.invoiceFieldPriceHelp,
+              required: true,
+              prefixText: '€ ',
+            ),
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            onChanged: (_) => setState(() {}),
+            validator: (v) {
+              final c = AppFormat.parseCents(v ?? '');
+              if (c == null) return l.invoiceValidateLinePrice;
+              return c < 0 ? l.amountNegativeError : null;
+            },
+          ),
+          _treatment == VatTreatment.standard
+              ? EnumDropdown(
+                  label: l.invoiceFieldVat,
+                  help: l.invoiceFieldVatHelp,
+                  value: line.vatRate,
+                  values: VatRate.values,
+                  labelOf: (r) => r.label(l),
+                  onChanged: (r) => setState(() => line.vatRate = r),
+                  required: true,
+                )
+              : InputDecorator(
+                  decoration: fieldDecoration(
+                    label: l.invoiceFieldVat,
+                    help: l.invoiceFieldVatHelp,
+                  ),
+                  child: Text(_treatment.label(l)),
+                ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  AppFormat.cents(line.total),
+                  textAlign: TextAlign.right,
                 ),
               ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLineHeader(ThemeData theme) {
-    final l = AppLocalizations.of(context)!;
-    return Container(
-      color: theme.colorScheme.surfaceContainerHighest,
-      padding: const EdgeInsets.only(left: 2, top: 4, bottom: 4),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              l.invoiceFieldDescription,
-              style: theme.textTheme.labelSmall?.copyWith(
-                fontWeight: FontWeight.w600,
+              IconButton(
+                icon: const Icon(Icons.close, size: 16),
+                tooltip: l.invoiceRemoveLine,
+                color: Theme.of(context).colorScheme.error,
+                onPressed: _lines.length > 1
+                    ? () => setState(() => _lines.removeAt(i).dispose())
+                    : null,
               ),
-            ),
-          ),
-          const SizedBox(width: 4),
-          SizedBox(
-            width: 50,
-            child: Text(
-              l.invoiceFieldQuantity,
-              style: theme.textTheme.labelSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          const SizedBox(width: 4),
-          SizedBox(
-            width: 70,
-            child: Text(
-              l.invoiceFieldUnit,
-              style: theme.textTheme.labelSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          const SizedBox(width: 4),
-          SizedBox(
-            width: 90,
-            child: Text(
-              l.invoiceFieldPrice,
-              style: theme.textTheme.labelSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          const SizedBox(width: 4),
-          SizedBox(
-            width: 130,
-            child: Text(
-              l.invoiceFieldVat,
-              style: theme.textTheme.labelSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          const SizedBox(width: 4),
-          SizedBox(
-            width: 80,
-            child: Text(
-              l.invoiceFieldVatAmount,
-              style: theme.textTheme.labelSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.right,
-            ),
-          ),
-          const SizedBox(width: 4),
-          SizedBox(
-            width: 80,
-            child: Text(
-              l.invoiceFieldLineTotal,
-              style: theme.textTheme.labelSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.right,
-            ),
-          ),
-          const SizedBox(width: 32),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLineRow(int i, _LineItem line, ThemeData theme) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextFormField(
-              controller: line.description,
-              decoration: InputDecoration(
-                isDense: true,
-                hintText: AppLocalizations.of(context)!.invoiceHintDescription,
-              ),
-              onChanged: (_) => setState(() {}),
-              validator: (v) => (v == null || v.trim().isEmpty)
-                  ? AppLocalizations.of(context)!.invoiceValidateLineDescription
-                  : null,
-            ),
-          ),
-          const SizedBox(width: 4),
-          SizedBox(
-            width: 50,
-            child: TextFormField(
-              controller: line.quantity,
-              decoration: const InputDecoration(isDense: true),
-              textAlign: TextAlign.right,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              onChanged: (_) => setState(() {}),
-              validator: (v) {
-                final n = double.tryParse((v ?? '').replaceAll(',', '.'));
-                return (n == null || n <= 0)
-                    ? AppLocalizations.of(context)!.invoiceValidateLineQuantity
-                    : null;
-              },
-            ),
-          ),
-          const SizedBox(width: 4),
-          SizedBox(
-            width: 70,
-            child: TextFormField(
-              controller: line.unit,
-              decoration: InputDecoration(
-                isDense: true,
-                hintText: AppLocalizations.of(context)!.invoiceUnitHint,
-              ),
-              onChanged: (_) => setState(() {}),
-            ),
-          ),
-          const SizedBox(width: 4),
-          SizedBox(
-            width: 90,
-            child: TextFormField(
-              controller: line.unitPrice,
-              decoration: const InputDecoration(
-                isDense: true,
-                prefixText: '€ ',
-              ),
-              textAlign: TextAlign.right,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              onChanged: (_) => setState(() {}),
-              validator: (v) {
-                final parsed = double.tryParse(
-                  (v ?? '')
-                      .replaceAll('€', '')
-                      .replaceAll(' ', '')
-                      .replaceAll('.', '')
-                      .replaceAll(',', '.'),
-                );
-                final l = AppLocalizations.of(context)!;
-                if (parsed == null) return l.invoiceValidateLinePrice;
-                if (parsed < 0) return l.amountNegativeError;
-                return null;
-              },
-            ),
-          ),
-          const SizedBox(width: 4),
-          SizedBox(
-            width: 130,
-            child: DropdownButtonFormField<String>(
-              initialValue: line.vatRate,
-              isDense: true,
-              isExpanded: true,
-              decoration: const InputDecoration(isDense: true),
-              items: kVatRates
-                  .map(
-                    (r) => DropdownMenuItem(
-                      value: r,
-                      child: Text(
-                        vatRateLabel(AppLocalizations.of(context)!, r),
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ),
-                  )
-                  .toList(),
-              onChanged: _isEuMode
-                  ? null
-                  : (v) {
-                      if (v != null) setState(() => line.vatRate = v);
-                    },
-            ),
-          ),
-          const SizedBox(width: 4),
-          SizedBox(
-            width: 80,
-            child: Text(
-              AppFormat.cents(line.vatAmount),
-              textAlign: TextAlign.right,
-              style: theme.textTheme.bodySmall,
-            ),
-          ),
-          const SizedBox(width: 4),
-          SizedBox(
-            width: 80,
-            child: Text(
-              AppFormat.cents(line.lineTotalExclVat),
-              textAlign: TextAlign.right,
-              style: theme.textTheme.bodySmall,
-            ),
-          ),
-          SizedBox(
-            width: 32,
-            child: IconButton(
-              icon: const Icon(Icons.close, size: 16),
-              padding: EdgeInsets.zero,
-              color: _lines.length > 1
-                  ? Theme.of(context).colorScheme.error
-                  : null,
-              onPressed: _lines.length > 1 ? () => _removeLine(i) : null,
-            ),
+            ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _totalRow(
-    String label,
-    String value,
-    ThemeData theme, {
-    bool bold = false,
-  }) {
-    final style = bold
-        ? theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700)
-        : theme.textTheme.bodySmall;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: style),
-          Text(value, style: style),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusBadge extends StatelessWidget {
-  final String status;
-  final DateTime dueDate;
-
-  const _StatusBadge({required this.status, required this.dueDate});
-
-  @override
-  Widget build(BuildContext context) {
-    final isOverdue = status == 'Sent' && dueDate.isBefore(DateTime.now());
-    final l = AppLocalizations.of(context)!;
-    final (label, color) = isOverdue
-        ? (l.invoiceStatusOverdue, AppColors.red)
-        : switch (status) {
-            'Draft' => (
-              l.invoiceStatusConcept,
-              Theme.of(context).colorScheme.outline,
-            ),
-            'Sent' => (l.invoiceStatusSent, AppColors.action),
-            'Paid' => (l.invoiceStatusPaid, AppColors.income),
-            'Cancelled' => (l.invoiceStatusCancelled, AppColors.red),
-            'Refunded' => (l.invoiceStatusRefunded, AppColors.red),
-            _ => (status, Theme.of(context).colorScheme.outline),
-          };
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        border: Border.all(color: color),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: color,
-          fontWeight: FontWeight.w600,
-        ),
       ),
     );
   }

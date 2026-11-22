@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import '../enums.dart';
 
 class Clients extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -6,11 +7,11 @@ class Clients extends Table {
   TextColumn get country => text().withDefault(const Constant('NL'))();
   TextColumn get vatNumber => text().nullable()();
   TextColumn get kvkNumber => text().nullable()();
-  TextColumn get address => text().withDefault(const Constant(''))();
+  TextColumn get address => text()();
   TextColumn get contactPerson => text().nullable()();
   TextColumn get email => text().nullable()();
   TextColumn get phone => text().nullable()();
-  TextColumn get wetDbaRiskLevel => text().withDefault(const Constant('Low'))();
+  TextColumn get wetDbaRisk => textEnum<WetDbaRisk>()();
   BoolColumn get contractSigned =>
       boolean().withDefault(const Constant(false))();
   DateTimeColumn get contractExpiry => dateTime().nullable()();

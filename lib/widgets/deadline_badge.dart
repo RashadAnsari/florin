@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../services/vat_service.dart';
 import '../theme/app_theme.dart';
+import 'tone_badge.dart';
 
 class DeadlineBadge extends StatelessWidget {
   final DateTime deadline;
@@ -13,32 +14,23 @@ class DeadlineBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
     if (filed) {
-      return _badge(l.deadlineBadgeFiled, AppColors.income);
+      return ToneBadge(
+        label: l.deadlineBadgeFiled,
+        color: context.colors.income,
+      );
     }
     final days = deadline.difference(DateTime.now()).inDays;
-    if (days < 0) return _badge(l.deadlineBadgeOverdue, AppColors.red);
-    if (days <= VatService.urgentDeadlineDays) {
-      return _badge(l.deadlineBadgeDays(days), AppColors.vat);
+    if (days < 0) {
+      return ToneBadge(
+        label: l.deadlineBadgeOverdue,
+        color: context.colors.danger,
+      );
     }
-    return _badge(l.deadlineBadgeDays(days), AppColors.income);
-  }
-
-  Widget _badge(String label, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        border: Border.all(color: color),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+    return ToneBadge(
+      label: l.deadlineBadgeDays(days),
+      color: days <= VatService.urgentDeadlineDays
+          ? context.colors.vat
+          : context.colors.income,
     );
   }
 }

@@ -1,44 +1,56 @@
-# Florin
+<div align="center">
 
-English | [Nederlands](README.nl.md)
+<img src="docs/images/logo.png" alt="Florin logo" width="112" height="112">
+
+# Florin
 
 **Bookkeeping for Dutch freelancers (ZZP). Free, offline, and on your own computer.**
 
-Florin keeps your invoices, expenses, BTW returns, hours, mileage, assets and pension allowance in one desktop app, and shows you what you will owe the Belastingdienst as you go. No subscription, no account, no cloud: your records are a single file on your own machine.
+[![Build](https://github.com/RashadAnsari/florin/actions/workflows/build.yml/badge.svg)](https://github.com/RashadAnsari/florin/actions/workflows/build.yml)
+[![Latest release](https://img.shields.io/github/v/release/RashadAnsari/florin?label=release)](https://github.com/RashadAnsari/florin/releases/latest)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey.svg)](#install)
+[![Tax year](https://img.shields.io/badge/tax%20year-2026-orange.svg)](docs/tax-years/2026.md)
+[![Languages](https://img.shields.io/badge/languages-Nederlands%20%7C%20English-green.svg)](#)
 
-Available for macOS, Windows and Linux, in Dutch and English.
+English | [Nederlands](README.nl.md)
 
-![Florin dashboard](docs/screenshots/dashboard.png)
+[**Download for macOS, Windows or Linux**](https://github.com/RashadAnsari/florin/releases/latest)
 
-[**Download the latest release**](../../releases/latest)
+</div>
 
----
+Florin keeps your invoices, expenses, BTW returns, hours, mileage, assets and pension room in one desktop app, and shows what you will owe the Belastingdienst as you go. No subscription, no account, no cloud: your records are one file on your own computer.
 
 ## Why Florin
 
-- **Built for the Dutch ZZP rules.** Zelfstandigenaftrek, startersaftrek, MKB-winstvrijstelling, KIA, urencriterium and the BTW quarters are built in, not bolted on. Dutch tax terms have short explanations right in the app.
-- **Know your numbers all year.** The dashboard shows revenue, costs, BTW to pay and an income tax estimate as you add invoices and expenses, so the annual return holds no surprises.
-- **Your data stays yours.** Everything is stored in one local database file. You choose the folder, so you can keep it in a synced folder such as iCloud Drive, OneDrive or Dropbox for backup.
-- **Ready for your accountant.** Export a full year to CSV files in one click: invoices, invoice lines, expenses, hours, mileage, assets and clients.
+- **Built on Dutch tax law, with the sources.** Every rate, threshold and invoice rule in Florin is checked against the statute on wetten.overheid.nl or the Belastingdienst, and the quote and link are in [`docs/legal.md`](docs/legal.md) and [`docs/tax-years/`](docs/tax-years/).
+- **Know your numbers all year.** The dashboard shows revenue, costs, BTW to pay and an estimate of your income tax as you add invoices and expenses. Every estimate is marked as one.
+- **Explained as you go.** Every field and every tax term has a short explanation one hover away.
+- **Invoices built from the BTW rules.** PDF invoices include the items listed in article 35a of the Wet op de omzetbelasting, with btw verlegd, intra-Community supplies and credit notes that name the invoice they correct.
+- **Your data stays yours.** One local database file, in a folder you choose. Keep it in iCloud Drive, OneDrive or Dropbox for backup.
+- **Ready for your accountant.** Export a full year to CSV files in one click.
 - **Free and open source** under the MIT license.
 
 ## Features
 
 | | |
 |---|---|
-| **Invoicing** | PDF invoices in Dutch with automatic numbering. Credit notes, ICP (intracommunautaire prestaties) and BTW verlegd. Status tracking from draft to paid, including overdue. |
-| **Expenses** | Costs by category with BTW reclaim, business use percentage for mixed costs, and receipt tracking. |
-| **BTW-aangifte** | Quarterly return pre-filled from your invoices and expenses: rubrieken 1a, 1b, 1c, 3a, 5a and 5b. Track filing and payment per quarter, with the filing deadline shown for each. |
-| **P&L and tax estimate** | Income tax estimate with zelfstandigenaftrek, startersaftrek, MKB-winstvrijstelling, KIA / EIA / MIA, depreciation, lijfrente, algemene heffingskorting and arbeidskorting. |
-| **Urencriterium** | Hours per client and project, with progress towards the 1,225 hours a year you need for the zelfstandigenaftrek. |
-| **Mileage** | Business trips with odometer readings and purpose, and the deductible allowance at €0.23/km. |
-| **Fixed assets** | Straight-line depreciation, business use percentage and KIA / EIA / MIA eligibility, fed straight into your tax estimate. |
-| **Pension (jaarruimte)** | Your annual pension allowance with AOW franchise, factor A and unused room from earlier years. |
-| **Clients** | Contact details, BTW and KVK numbers, and Wet DBA risk level per client. |
+| **Invoicing** | Dutch PDF invoices with automatic numbering. Dutch BTW, btw verlegd to Dutch and EU businesses, intra-Community supplies of goods and export outside the EU. Issued invoices are locked; corrections are credit notes. Status from draft to paid, including overdue. |
+| **Expenses** | Costs by category with BTW reclaim, business use percentage and receipt tracking, including purchases where the BTW is shifted to you. Food, drinks and representation use whichever of the 80% rule and the € 5.700 threshold deducts more, and BTW on restaurant meals is not reclaimed. |
+| **BTW return** | Each quarter pre-filled from your records: rubrieken 1a, 1b, 1d, 1e, 2a, 3a, 3b, 4a, 4b, 5a and 5b, plus the supplies for the ICP-opgaaf. Filing and payment tracked per quarter, with the deadline shown. |
+| **Income tax estimate** | Zelfstandigenaftrek, startersaftrek, S&O-aftrek, meewerkaftrek, stakingsaftrek, startersaftrek bij arbeidsongeschiktheid, mkb-winstvrijstelling, KIA, EIA, MIA, desinvesteringsbijtelling, herinvesteringsreserve, depreciation, gains on sold assets, lijfrente, disability insurance, losses from earlier years, algemene heffingskorting, arbeidskorting and the Zvw contribution. |
+| **Urencriterium** | Hours per client and project, with progress towards the 1,225 hours you need for the zelfstandigenaftrek. |
+| **Mileage** | Business and commuting trips with odometer readings and purpose, deducted at the Belastingdienst rate for the year. |
+| **Fixed assets** | Straight-line depreciation by day down to the residual value, business use percentage, KIA, EIA, MIA and the herinvesteringsreserve. |
+| **Business car** | The private-use addition (bijtelling) with the zero-emission reduction and the 500 km rule, and the BTW on private use in the last return of the year. |
+| **Pension** | Your jaarruimte from last year's income, AOW-franchise and factor A, plus reserveringsruimte. |
+| **Clients** | Contact details, BTW and KvK numbers, and the Wet DBA risk per client. |
+
+Florin covers the **2026** tax year. Only covered years can be selected and booked into; a new year arrives in an update once its figures are published and checked.
 
 ## Install
 
-Download the file for your system from the [latest release](../../releases/latest).
+Download the file for your system from the [latest release](https://github.com/RashadAnsari/florin/releases/latest).
 
 ### macOS
 
@@ -56,7 +68,7 @@ Or manually:
 2. Move `Florin.app` to your Applications folder
 3. Open `Florin.app`
 
-Florin is signed and notarized by Apple. Requires macOS 10.15 or later.
+Florin is signed and notarized by Apple. Requires macOS 12 or later.
 
 ### Windows
 
@@ -75,7 +87,7 @@ On other distributions, extract `florin-linux-x64.tar.gz` to a folder and run `.
 ## FAQ
 
 **Where is my data stored?**
-In a single file, `florin.db`. You pick its folder when you first start Florin and can move it later in Settings.
+In a single file, `florin.db`, including your business details. You pick its folder when you first start Florin and can copy it to another folder later in Settings. Choosing a folder that already holds `florin.db` on first start opens it.
 
 **How do I back up my data?**
 Keep the database folder inside a synced or backed-up folder, or copy `florin.db` somewhere safe. Close Florin before copying it.
@@ -83,8 +95,11 @@ Keep the database folder inside a synced or backed-up folder, or copy `florin.db
 **Can Florin file my BTW return or income tax return?**
 No. Florin prepares the figures; you file them yourself in Mijn Belastingdienst Zakelijk, or your accountant does.
 
+**Which situations does the income tax estimate cover?**
+One business owner under the AOW age with no other income. Wages, a fiscal partner, box 2 and box 3 are not included. [`docs/legal.md`](docs/legal.md) lists what Florin does not model.
+
 **Does Florin need an internet connection?**
-No. Florin never uploads your data. When you are online it downloads its fonts from Google Fonts; offline it falls back to standard fonts and keeps working.
+No. Florin never connects to the internet: your data stays on your computer and the fonts are built in.
 
 ## Build from source
 
@@ -97,19 +112,21 @@ flutter pub get
 flutter run -d macos   # or windows / linux
 ```
 
-Before committing, run `make local` to generate translations, format the code and run the analyzer.
+To try Florin with a fictional business, run `make demo` and choose the new `demo` folder when Florin first starts.
+
+Before committing, run `make local`. It regenerates translations and database code, formats, analyzes and runs the tests. [`AGENTS.md`](AGENTS.md) describes how the project is organised.
 
 ### Releasing
 
-One workflow, `.github/workflows/build.yml`, lints and builds every push and pull request. To release, raise `version` in `pubspec.yaml` (for example `1.2.0+3`) and push it to `master`. After lint and the builds pass, the workflow packages macOS, Windows and Linux, tags the commit as `1.2.0-3`, publishes the GitHub release and updates the Homebrew cask. Pushes whose version already has a release only lint and build.
+One workflow, `.github/workflows/build.yml`, lints, tests and builds every push and pull request. To release, raise `version` in `pubspec.yaml` to the next `MAJOR.MINOR.PATCH` (for example `1.2.0`, without a build number) and push it to `master`. After the checks and builds pass, the workflow packages macOS, Windows and Linux, tags the commit as `v1.2.0`, publishes the GitHub release and updates the Homebrew cask. Pushes whose version already has a release only lint, test and build.
 
 ## Disclaimer
 
-Florin helps you organise your financial records. It is not a substitute for professional tax or legal advice.
+Florin is free, open-source software provided as is, without any warranty. It helps you keep your financial records and is not a substitute for professional tax or legal advice.
 
-The tax calculations, deductions and figures in Florin are estimates based on publicly available Dutch tax rules. They may be incomplete, outdated or not applicable to your situation. Always check your tax obligations with a qualified accountant (boekhouder) or tax advisor before filing with the Belastingdienst.
+Every figure and rule in Florin was checked against the law and the Belastingdienst, and the sources are published with the code. Even so, the calculations are estimates. They can contain errors, can fall behind changes in the law, and may not fit your situation. Check your tax obligations with an accountant (boekhouder) or tax adviser before filing with the Belastingdienst.
 
-The author accepts no liability for errors in calculations, missed deadlines, incorrect filings, financial loss or any other consequence of using this software. Use Florin at your own risk.
+The authors accept no liability for errors in calculations, missed deadlines, incorrect filings, financial loss or any other consequence of using this software. Use Florin at your own risk.
 
 ## License
 

@@ -1,8 +1,6 @@
 {
   "@@locale": "nl",
-
   "appTitle": "Florin",
-
   "navDashboard": "Dashboard",
   "navInvoices": "Facturen",
   "navClients": "Klanten",
@@ -15,58 +13,68 @@
   "navPension": "Pensioen",
   "navSettings": "Instellingen",
   "navYear": "Jaar:",
-
   "actionSave": "Opslaan",
   "actionDelete": "Verwijderen",
   "actionCancel": "Annuleren",
   "actionConfirm": "Bevestigen",
-  "actionAdd": "Toevoegen",
-  "actionNew": "Nieuw",
-  "actionOk": "OK",
-
-  "labelRequired": "Verplicht",
   "labelDate": "Datum",
   "labelNotes": "Opmerkingen",
-  "labelDescription": "Omschrijving",
-  "labelAmount": "Bedrag",
-  "labelAddress": "Adres",
-  "labelName": "Naam",
   "labelCategory": "Categorie",
   "labelAll": "Alle",
   "labelSearch": "Zoeken…",
-
   "dashboardTitle": "Dashboard {year}",
-  "@dashboardTitle": { "placeholders": { "year": { "type": "int" } } },
+  "@dashboardTitle": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
   "dashboardNetRevenue": "Netto omzet",
   "dashboardDeductibleCosts": "Kosten (aftrekbaar)",
   "dashboardEstimatedTax": "Geschatte belasting",
   "dashboardEffectiveRate": "Effectief {rate}%",
-  "@dashboardEffectiveRate": { "placeholders": { "rate": { "type": "String" } } },
-  "dashboardNetProfitAfterTax": "Netto winst na belasting",
-  "dashboardOutstandingInvoices": "Openstaande facturen",
-  "dashboardInvoiceCount": "{count} factuur/facturen",
-  "@dashboardInvoiceCount": { "placeholders": { "count": { "type": "int" } } },
-  "dashboardUrencriterium": "Urencriterium",
-  "dashboardHoursProgress": "{total} / {target} uur",
-  "@dashboardHoursProgress": {
+  "@dashboardEffectiveRate": {
     "placeholders": {
-      "total": { "type": "String" },
-      "target": { "type": "String" }
+      "rate": {
+        "type": "String"
+      }
     }
   },
+  "dashboardNetProfitAfterTax": "Geschatte nettowinst na belasting",
+  "dashboardOutstandingInvoices": "Openstaande facturen",
+  "dashboardInvoiceCount": "{count} factuur/facturen",
+  "@dashboardInvoiceCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardUrencriterium": "Urencriterium",
   "dashboardBtwDeadlines": "BTW-deadlines",
   "dashboardMonthlyRevenue": "Maandelijkse omzet",
   "deadlineStatusFiled": "ingediend",
   "deadlineStatusOverdue": "te laat",
   "deadlineDaysLeft": "{days} d",
-  "@deadlineDaysLeft": { "placeholders": { "days": { "type": "int" } } },
+  "@deadlineDaysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "genericLoadError": "Kan gegevens niet laden: {error}",
-  "@genericLoadError": { "placeholders": { "error": { "type": "String" } } },
-
+  "@genericLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "invoicesTitle": "Facturen",
   "invoicesNewTooltip": "Nieuwe factuur",
   "invoicesNone": "Geen facturen",
-  "invoicesSelectOrNew": "Selecteer een factuur of maak een nieuwe aan",
   "invoicesNewHeader": "Nieuwe factuur",
   "invoicesFilterAll": "Alle",
   "invoicesFilterOverdue": "Verlopen",
@@ -74,39 +82,22 @@
   "invoiceStatusSent": "Verzonden",
   "invoiceStatusPaid": "Betaald",
   "invoiceStatusOverdue": "Verlopen",
-  "invoiceStatusCancelled": "Geannuleerd",
-  "invoiceStatusRefunded": "Terugbetaald",
   "invoiceTypeInvoice": "Factuur",
   "invoiceTypeCreditNote": "Creditnota",
-  "invoiceFieldType": "Type",
-  "invoiceFieldClient": "Klant *",
-  "invoiceFieldNumber": "Factuurnummer *",
-  "invoiceFieldInvoiceDate": "Factuurdatum *",
+  "invoiceFieldClient": "Klant",
+  "invoiceFieldNumber": "Factuurnummer",
+  "invoiceFieldInvoiceDate": "Factuurdatum",
   "invoiceFieldSupplyDate": "Leveringsdatum",
-  "invoiceFieldPaymentTerm": "Termijn (dagen) *",
+  "invoiceFieldPaymentTerm": "Termijn (dagen)",
   "invoiceValidatePaymentTerm": "Voer een heel aantal dagen in (bijv. 14 of 30)",
   "invoiceFieldDueDate": "Vervaldatum",
-  "invoiceFieldIcp": "ICP (intracommunautair)",
-  "invoiceTooltipIcp": "Intracommunautaire prestaties (ICP): leveringen van goederen of diensten aan BTW-plichtige klanten in EU-landen buiten Nederland. Deze moeten apart worden opgegeven in de ICP-opgaaf, samen met de BTW-aangifte.",
-  "invoiceWarnIcpNoVat": "De geselecteerde klant heeft geen BTW-nummer. De ICP-opgaaf vereist een geldig EU BTW-nummer van de klant.",
-  "invoiceFieldBtwVerlegd": "BTW verlegd",
-  "invoiceTooltipBtwVerlegd": "BTW verlegd: de BTW-verplichting wordt verlegd van jou naar de afnemer. Gebruikt bij levering van goederen of diensten aan BTW-plichtige ondernemers, vaak bij grensoverschrijdende EU-transacties. De factuur vermeldt 0% BTW met de vermelding 'BTW verlegd'.",
   "invoiceFieldLines": "Regels",
   "invoiceFieldAddLine": "Regel toevoegen",
-  "invoiceFieldDescription": "Omschrijving *",
-  "invoiceHintDescription": "bijv. Advieswerk, webdesign...",
-  "invoiceFieldQuantity": "Aantal *",
+  "invoiceFieldDescription": "Omschrijving",
+  "invoiceFieldQuantity": "Aantal",
   "invoiceFieldUnit": "Eenheid",
-  "invoiceFieldPrice": "Prijs (excl.) *",
+  "invoiceFieldPrice": "Prijs (excl.)",
   "invoiceFieldVat": "BTW",
-  "invoiceFieldVatAmount": "BTW bedrag",
-  "invoiceFieldLineTotal": "Totaal excl.",
-  "invoiceVatLine": "BTW {rate}",
-  "@invoiceVatLine": {
-    "placeholders": {
-      "rate": {"type": "String"}
-    }
-  },
   "invoiceValidateLineDescription": "Voer een regelomschrijving in",
   "invoiceValidateLineQuantity": "Voer een aantal groter dan nul in",
   "invoiceValidateLinePrice": "Voer een geldige eenheidsprijs in",
@@ -115,40 +106,36 @@
   "invoiceFieldRemarks": "Opmerkingen",
   "invoiceActionSend": "Verzenden",
   "invoiceActionMarkPaid": "Betaald",
-  "invoiceActionCancel": "Annuleren",
-  "invoiceActionMarkRefunded": "Terugbetaald",
   "invoiceActionExportPdf": "PDF exporteren",
-  "invoiceActionDelete": "Verwijderen",
   "invoiceDeleteTitle": "Factuur verwijderen",
   "invoiceDeleteMessage": "Weet je zeker dat je factuur \"{number}\" wilt verwijderen?",
-  "@invoiceDeleteMessage": { "placeholders": { "number": { "type": "String" } } },
-  "invoiceCreated": "Factuur aangemaakt",
-  "invoiceSaved": "Factuur opgeslagen",
-  "invoiceDeleted": "Factuur verwijderd",
+  "@invoiceDeleteMessage": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
   "invoiceValidateClient": "Selecteer een klant voor deze factuur",
-  "invoiceValidateNumber": "Voer een uniek factuurnummer in, bijv. F-2024-001",
+  "invoiceValidateNumber": "Voer een uniek factuurnummer in, bijv. F-2026-001",
   "invoiceUnitHint": "uur",
-
   "clientsTitle": "Klanten",
   "clientsNewTooltip": "Nieuwe klant",
   "clientsNone": "Geen klanten",
-  "clientsSelectOrNew": "Selecteer een klant of maak een nieuwe aan",
   "clientsNewHeader": "Nieuwe klant",
-  "clientsShowInactive": "Toon inactief",
-  "clientsHideInactive": "Verberg inactief",
   "clientsFilterAll": "Alle",
   "clientsFilterActive": "Actief",
   "clientsFilterInactive": "Inactief",
   "clientsInactive": "Inactief",
-  "clientsFieldName": "Naam *",
+  "clientsFieldName": "Naam",
   "clientsValidateName": "Voer de naam van de klant in",
   "clientsFieldCountry": "Land",
   "clientsValidateCountry": "Gebruik een landcode van 2 letters (bijv. NL, DE, FR)",
   "clientsFieldVat": "BTW-nummer",
-  "clientsValidateVat": "Voer een geldig EU BTW-nummer in (bijv. NL854224798B01)",
+  "clientsValidateVat": "Voer een geldig EU-btw-id in, bijv. NL123456789B01 of DE123456789",
   "clientsFieldKvk": "KVK-nummer",
   "clientsValidateKvk": "KVK-nummer moet exact 8 cijfers bevatten",
-  "clientsFieldAddress": "Adres *",
+  "clientsFieldAddress": "Adres",
   "clientsValidateAddress": "Voer het straatadres van de klant in",
   "clientsFieldContact": "Contactpersoon",
   "clientsFieldEmail": "E-mail",
@@ -164,28 +151,29 @@
   "clientsRiskHigh": "Hoog",
   "clientsContractSigned": "Contract getekend",
   "clientsContractExpiry": "Vervaldatum contract",
-  "clientsHighRiskWarning": "Hoog Wet DBA-risico: zorg voor een geldige overeenkomst van opdracht.",
-  "clientsViesEmptyVat": "Voer eerst een BTW-nummer in",
-  "clientsCreated": "Klant aangemaakt",
-  "clientsSaved": "Klant opgeslagen",
+  "clientsHighRiskWarning": "Hoog Wet DBA-risico: de Belastingdienst kan dit werk als dienstbetrekking zien. Laat de arbeidsrelatie beoordelen door een adviseur.",
   "clientsDeleteTitle": "Klant verwijderen",
   "clientsDeleteMessage": "Weet je zeker dat je \"{name}\" wilt verwijderen?",
-  "@clientsDeleteMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@clientsDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "clientsDeleteBlockedTooltip": "Klant heeft facturen en kan niet worden verwijderd",
-
   "expensesTitle": "Uitgaven",
   "expensesNewTooltip": "Nieuwe uitgave",
   "expensesNone": "Geen uitgaven",
-  "expensesSelectOrNew": "Selecteer een uitgave of voeg een nieuwe toe",
   "expensesNewHeader": "Nieuwe uitgave",
-  "expensesFieldSupplier": "Leverancier *",
+  "expensesFieldSupplier": "Leverancier",
   "expensesHintSupplier": "bijv. Albert Heijn, Amazon, KPN",
   "expensesValidateSupplier": "Voer de naam van de leverancier in",
-  "expensesFieldCategory": "Categorie *",
+  "expensesFieldCategory": "Categorie",
   "expensesValidateCategory": "Selecteer een categorie voor deze uitgave",
-  "expensesFieldDescription": "Omschrijving *",
+  "expensesFieldDescription": "Omschrijving",
   "expensesValidateDescription": "Voer een omschrijving voor deze uitgave in",
-  "expensesFieldAmountExcl": "Bedrag (excl. BTW) *",
+  "expensesFieldAmountExcl": "Bedrag (excl. BTW)",
   "expensesValidateAmount": "Voer het bedrag exclusief BTW in",
   "expensesFieldVatRate": "BTW-tarief",
   "expensesFieldVat": "BTW",
@@ -193,23 +181,22 @@
   "expensesFieldPaidFrom": "Betaald van",
   "expensesHintPaidFrom": "bijv. ING zakelijke rekening, Visa-kaart",
   "expensesFieldPaymentRef": "Betalingsreferentie",
-  "expensesHintPaymentRef": "bijv. INV-2024-0042, SEPA-kenmerk 123456",
+  "expensesHintPaymentRef": "bijv. INV-2026-0042, SEPA-kenmerk 123456",
   "expensesBusinessUse": "Zakelijk gebruik",
   "expensesBusinessUsePct": "{pct}% zakelijk",
-  "@expensesBusinessUsePct": { "placeholders": { "pct": { "type": "int" } } },
+  "@expensesBusinessUsePct": {
+    "placeholders": {
+      "pct": {
+        "type": "int"
+      }
+    }
+  },
   "expensesDeductible": "Aftrekbaar",
   "expensesReclaimVat": "BTW terugvragen",
   "expensesVatBack": "BTW terug",
-  "expensesVatBackAmount": "BTW terug: {amount}",
-  "@expensesVatBackAmount": { "placeholders": { "amount": { "type": "String" } } },
-  "expensesMixedCosts": "Gemengde kosten",
   "expensesReceiptAttached": "Bon aanwezig",
-  "expensesBuaWarning": "BUA: maaltijden & entertainment boven €227. BTW-aftrek mogelijk beperkt (Besluit Uitsluiting Aftrek).",
-  "expensesCreated": "Uitgave aangemaakt",
-  "expensesSaved": "Uitgave opgeslagen",
   "expensesDeleteTitle": "Uitgave verwijderen",
   "expensesDeleteMessage": "Weet je zeker dat je deze uitgave wilt verwijderen?",
-
   "expenseCatOffice": "Kantoor & benodigdheden",
   "expenseCatTravel": "Reizen & verblijf",
   "expenseCatMeals": "Maaltijden & entertainment",
@@ -221,59 +208,80 @@
   "expenseCatInsurance": "Verzekering",
   "expenseCatTraining": "Training & opleiding",
   "expenseCatOther": "Overig",
-
   "hoursTitle": "Urenregistratie",
   "hoursNone": "Geen uren geregistreerd",
-  "hoursSelectOrNew": "Selecteer een invoer of klik +",
   "hoursBillable": "Facturabel: {hours} uur",
-  "@hoursBillable": { "placeholders": { "hours": { "type": "String" } } },
+  "@hoursBillable": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
   "hoursUnitShort": "u",
   "hoursProgress": "{total} / {target} uur",
   "@hoursProgress": {
     "placeholders": {
-      "total": { "type": "String" },
-      "target": { "type": "String" }
+      "total": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
     }
   },
   "hoursUrencriteriumOk": "Urencriterium OK",
   "hoursUrencriteriumLeft": "{left} uur te gaan",
-  "@hoursUrencriteriumLeft": { "placeholders": { "left": { "type": "String" } } },
-  "hoursFieldDate": "Datum *",
-  "hoursFieldHours": "Uren *",
-  "hoursFieldDescription": "Omschrijving *",
-  "hoursFieldWorkType": "Type werk *",
+  "@hoursUrencriteriumLeft": {
+    "placeholders": {
+      "left": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursFieldDate": "Datum",
+  "hoursFieldHours": "Uren",
+  "hoursFieldDescription": "Omschrijving",
+  "hoursFieldWorkType": "Type werk",
   "hoursFieldClientProject": "Klant / project",
   "hoursFieldNotes": "Notities",
   "hoursNewEntry": "Nieuwe invoer",
-  "hoursEditEntry": "Bewerk invoer",
   "hoursDeleteTitle": "Ureninvoer verwijderen",
   "hoursDeleteMessage": "Weet je zeker dat je \"{description}\" wilt verwijderen?",
-  "@hoursDeleteMessage": { "placeholders": { "description": { "type": "String" } } },
-  "hoursValidateHours": "Voer een aantal uren in dat groter is dan 0",
+  "@hoursDeleteMessage": {
+    "placeholders": {
+      "description": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursValidateHours": "Voer de gewerkte uren in: meer dan 0 en hoogstens 24",
   "hoursValidateDescription": "Omschrijf het uitgevoerde werk",
-  "hoursValidateWorkType": "Selecteer een type werk",
-
   "workTypeBillable": "Factureerbaar",
   "workTypeNonBillable": "Niet-factureerbaar",
   "workTypeAdministrative": "Administratief",
   "workTypeWbso": "WBSO",
   "workTypeOther": "Overig",
-
   "mileageTitle": "Kilometerregistratie",
   "mileageNone": "Geen ritten geregistreerd",
-  "mileageSelectOrNew": "Selecteer een rit of klik +",
   "mileageBusiness": "Zakelijk",
   "mileageTotal": "Totaal",
   "mileageUnitKm": "km",
-  "mileageAllowance": "Aftrek (€{rate}/km)",
-  "@mileageAllowance": { "placeholders": { "rate": { "type": "String" } } },
-  "mileageFieldDate": "Datum *",
-  "mileageFieldMakeModel": "Merk / model *",
-  "mileageFieldPlate": "Kenteken *",
-  "mileageFieldFrom": "Vertrekadres *",
-  "mileageFieldTo": "Aankomstadres *",
-  "mileageFieldOdoStart": "Km-stand begin *",
-  "mileageFieldOdoEnd": "Km-stand eind *",
+  "mileageAllowance": "Aftrek ({rate} / km)",
+  "@mileageAllowance": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "mileageFieldDate": "Datum",
+  "mileageFieldMakeModel": "Merk / model",
+  "mileageFieldPlate": "Kenteken",
+  "mileageFieldFrom": "Vertrekadres",
+  "mileageFieldTo": "Aankomstadres",
+  "mileageFieldOdoStart": "Km-stand begin",
+  "mileageFieldOdoEnd": "Km-stand eind",
   "mileageFieldOdoError": "Eindstand moet hoger zijn dan beginstand",
   "mileageValidateMakeModel": "Voer het merk en model van het voertuig in",
   "mileageValidatePlate": "Voer het kenteken van het voertuig in",
@@ -281,45 +289,40 @@
   "mileageValidateTo": "Voer het aankomstadres in",
   "mileageValidateOdoStart": "Voer de beginstand van de kilometerteller in",
   "mileageValidateOdoEnd": "Voer de eindstand van de kilometerteller in",
-  "mileageValidateTripType": "Selecteer het type rit",
   "mileageValidatePurpose": "Omschrijf het doel van de rit",
   "mileageFieldDistance": "Afstand",
-  "mileageFieldTripType": "Type rit *",
-  "mileageFieldPurpose": "Doel *",
+  "mileageFieldTripType": "Type rit",
+  "mileageFieldPurpose": "Doel",
   "mileageFieldRouteDeviation": "Omweg / geen directe route",
-  "mileageTooltipRouteDeviation": "Vink aan als je een langere of indirecte route hebt gereden dan strikt noodzakelijk. De Belastingdienst kan vragen waarom de route afweek van de kortste weg.",
   "mileageFieldNotes": "Notities",
   "mileageNewTrip": "Nieuwe rit",
-  "mileageEditTrip": "Bewerk rit",
   "mileageDeleteTitle": "Rit verwijderen",
   "mileageDeleteMessage": "Weet je zeker dat je \"{purpose}\" wilt verwijderen?",
-  "@mileageDeleteMessage": { "placeholders": { "purpose": { "type": "String" } } },
-
+  "@mileageDeleteMessage": {
+    "placeholders": {
+      "purpose": {
+        "type": "String"
+      }
+    }
+  },
   "tripTypeBusiness": "Zakelijk",
   "tripTypeCommute": "Woon-werkverkeer",
   "tripTypePrivate": "Privé",
-
   "assetsTitle": "Vaste activa",
   "assetsNone": "Geen activa geregistreerd",
-  "assetsSelectOrNew": "Selecteer een activum of klik +",
   "assetsKiaInvestments": "KIA-investeringen",
   "assetsKiaDeduction": "KIA-aftrek",
   "assetsDepreciationThisYear": "Afschrijving dit jaar",
-  "assetsFieldName": "Naam activum *",
-  "assetsFieldCost": "Kosten excl. BTW *",
-  "assetsFieldPurchaseDate": "Aankoopdatum *",
-  "assetsFieldBusinessUse": "Zakelijk gebruik: {pct}% *",
-  "@assetsFieldBusinessUse": { "placeholders": { "pct": { "type": "int" } } },
-  "assetsFieldUsefulLife": "Levensduur *",
+  "assetsFieldName": "Naam activum",
+  "assetsFieldCost": "Kosten excl. BTW",
+  "assetsFieldPurchaseDate": "Aankoopdatum",
+  "assetsFieldUsefulLife": "Levensduur",
   "assetsFieldUsefulLifeUnit": "jaar",
-  "assetsFieldUsefulLifeMin": "Minimaal 1 jaar",
+  "assetsFieldUsefulLifeMin": "Voer minstens {years} jaar in: afschrijving is beperkt tot 20% van de kosten per jaar",
   "assetsValidateName": "Voer de naam van het activum in",
   "assetsValidateCost": "Voer de aanschafwaarde exclusief BTW in",
   "assetsFieldKia": "KIA-aanspraak",
-  "assetsTooltipKia": "Kleinschaligheidsinvesteringsaftrek (KIA): een extra aftrek op de belastbare winst bij investeringen in bedrijfsmiddelen. Je komt in aanmerking als je totale investeringen in een kalenderjaar binnen de wettelijke drempels van de Belastingdienst vallen.",
   "assetsKiaBadge": "KIA",
-  "assetsFieldEiaMia": "EIA / MIA",
-  "assetsTooltipEiaMia": "Energie-investeringsaftrek (EIA) en Milieu-investeringsaftrek (MIA): extra aftrek bij investeringen in energiezuinige of milieuvriendelijke bedrijfsmiddelen die op de Energielijst of Milieulijst van de RVO staan.",
   "assetsFieldNotes": "Notities",
   "assetsDisposal": "Vervreemding",
   "assetsFieldDisposalDate": "Vervreemdingsdatum",
@@ -327,80 +330,82 @@
   "assetsClearDisposalDate": "Vervreemdingsdatum wissen",
   "assetsDeleteTitle": "Activum verwijderen",
   "assetsDeleteMessage": "Weet je zeker dat je \"{name}\" wilt verwijderen?",
-  "@assetsDeleteMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@assetsDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "assetsNewAsset": "Nieuw activum",
-  "assetsEditAsset": "Bewerk activum",
   "assetsYears": "{n} jaar",
-  "@assetsYears": { "placeholders": { "n": { "type": "int" } } },
-
+  "@assetsYears": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "pensionTitle": "Pensioen",
-  "pensionLoadError": "Kan pensioengegevens niet laden: {error}",
-  "@pensionLoadError": { "placeholders": { "error": { "type": "String" } } },
   "pensionJaarruimte": "Jaarruimteberekening",
-  "pensionTaxableProfit": "Belastbare winst",
   "pensionAowFranchise": "AOW-franchise",
   "pensionPensioengrondslag": "Pensioengrondslag",
-  "pensionJaarruimte30": "Jaarruimte (30%)",
   "pensionJaarruimteMax": "Jaarruimte (max {max})",
-  "@pensionJaarruimteMax": { "placeholders": { "max": { "type": "String" } } },
+  "@pensionJaarruimteMax": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "pensionReserveringsruimte": "Reserveringsruimte",
   "pensionTotalBudget": "Totaal beschikbaar",
   "pensionEstimatedTaxSaving": "Geschatte belastingbesparing",
   "pensionInputSection": "Invoer",
   "pensionFactorA": "Factor A",
-  "pensionFactorAHelper": "Pensioenopbouw bij werkgever / BV",
-  "pensionReserveringsruimteLabel": "Reserveringsruimte (ongebruikte jaren)",
+  "pensionReserveringsruimteLabel": "Reserveringsruimte",
   "pensionPlannedSection": "Voorgenomen inleg",
   "pensionLijfrente": "Lijfrentepremie / AOV-premie",
-  "pensionLijfrenteHelper": "Wordt als aftrekpost meegenomen in belastingberekening",
   "pensionAovSection": "AOV arbeidsongeschiktheidsverzekering",
   "pensionAovInsured": "AOV afgesloten",
   "pensionMonthlyPremium": "Maandelijkse premie",
   "pensionAnnualPremium": "Jaarlijkse premie: {amount}",
-  "@pensionAnnualPremium": { "placeholders": { "amount": { "type": "String" } } },
-
+  "@pensionAnnualPremium": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "vatReturnTitle": "BTW-aangifte",
   "vatReturnRevenueSection": "Omzet",
   "vatReturnCalculationSection": "BTW-berekening",
   "vatReturnIcpSection": "ICP-opgaaf",
-  "vatReturnIcpDeadline": "Deadline gelijk aan BTW-aangifte: {date}.",
-  "@vatReturnIcpDeadline": { "placeholders": { "date": { "type": "String" } } },
   "vatReturnStatusSection": "Afhandelstatus",
   "vatReturnFiled": "Aangifte ingediend",
   "vatReturnPaid": "BTW betaald",
-  "vatReturnYtdRevenue": "YTD omzet: {amount}",
-  "@vatReturnYtdRevenue": { "placeholders": { "amount": { "type": "String" } } },
-  "vatReturnLoadError": "Kan BTW-aangiftegegevens niet laden: {error}",
-  "@vatReturnLoadError": { "placeholders": { "error": { "type": "String" } } },
   "vatReturnDue": "Te betalen BTW",
   "vatReturnRefund": "Terug te ontvangen BTW",
-  "vatReturnKorWarning": "KOR-drempel bereikt ({ytd} van {max}). Factureer BTW vanaf de volgende transactie.",
-  "@vatReturnKorWarning": {
-    "placeholders": {
-      "ytd": { "type": "String" },
-      "max": { "type": "String" }
-    }
-  },
   "vatRow1a": "1a  Leveringen / diensten belast met 21%",
   "vatRow1b": "1b  Leveringen / diensten belast met 9%",
-  "vatRow1c": "1c  Leveringen / diensten belast met 0% (export)",
-  "vatRow3a": "3a  Leveringen naar EU-ondernemers (ICP / RC)",
+  "vatRow3a": "3a  Leveringen naar landen buiten de EU (uitvoer)",
   "vatRow5a": "5a  BTW over omzet",
   "vatRow5b": "5b  Voorbelasting (terug te vragen)",
-
-  "plTaxTitle": "W&V / Belasting",
-  "plTaxLoadError": "Kan W&V / belastinggegevens niet laden: {error}",
-  "@plTaxLoadError": { "placeholders": { "error": { "type": "String" } } },
+  "plTaxTitle": "Winst en geschatte belasting",
   "plTaxRevenuSection": "Omzet",
   "plTaxGrossRevenue": "Bruto omzet (excl. BTW)",
   "plTaxCreditNotes": "Af: creditnota's",
   "plTaxNetRevenue": "Netto omzet",
   "plTaxCostsSection": "Kosten",
-  "plTaxMileageAllowance": "Kilometervergoeding ({km}km × €{rate})",
+  "plTaxMileageAllowance": "Zakelijke kilometers ({km} km × {rate})",
   "@plTaxMileageAllowance": {
     "placeholders": {
-      "km": { "type": "int" },
-      "rate": { "type": "String" }
+      "km": {
+        "type": "int"
+      },
+      "rate": {
+        "type": "String"
+      }
     }
   },
   "plTaxDepreciation": "Afschrijvingen",
@@ -408,50 +413,63 @@
   "plTaxGrossProfit": "Brutowinst",
   "plTaxDeductionsSection": "Ondernemersaftrek",
   "plTaxZelfstandigenaftrek": "Zelfstandigenaftrek {year}",
-  "@plTaxZelfstandigenaftrek": { "placeholders": { "year": { "type": "int" } } },
-  "plTaxStartersaftrek": "Startersaftrek",
-  "plTaxMkb": "MKB-winstvrijstelling ({pct}%)",
-  "@plTaxMkb": { "placeholders": { "pct": { "type": "String" } } },
-  "plTaxKia": "KIA-aftrek",
-  "plTaxLijrente": "Lijfrenteaftrek",
-  "plTaxTaxableProfit": "Belastbare winst",
-  "plTaxBox1Section": "Inkomstenbelasting box 1",
-  "plTaxBracket1": "Schijf 1 ({pct}%)",
-  "@plTaxBracket1": { "placeholders": { "pct": { "type": "String" } } },
-  "plTaxBracket2": "Schijf 2 ({pct}%)",
-  "@plTaxBracket2": { "placeholders": { "pct": { "type": "String" } } },
-  "plTaxBracket3": "Schijf 3 ({pct}%)",
-  "@plTaxBracket3": { "placeholders": { "pct": { "type": "String" } } },
-  "plTaxAlgHeffing": "Algemene heffingskorting",
-  "plTaxArbeidskorting": "Arbeidskorting",
-  "plTaxDeduct": "Af: {label}",
-  "@plTaxDeduct": { "placeholders": { "label": { "type": "String" } } },
-  "plTaxMax": "(max {amount})",
-  "@plTaxMax": { "placeholders": { "amount": { "type": "String" } } },
-  "plTaxInkomsten": "Inkomstenbelasting",
-  "plTaxZvw": "ZVW-bijdrage ({pct}%)",
-  "@plTaxZvw": { "placeholders": { "pct": { "type": "String" } } },
-  "plTaxTotalTax": "Totaal belasting",
-  "plTaxNetProfit": "Netto winst na belasting",
-  "plTaxEffectiveRate": "Effectief tarief: {rate}%",
-  "@plTaxEffectiveRate": { "placeholders": { "rate": { "type": "String" } } },
-  "plTaxSettingsSection": "Instellingen",
-  "plTaxClaimZelfs": "Zelfstandigenaftrek claimen",
-  "plTaxClaimStarters": "Startersaftrek claimen",
-  "plTaxUrenBanner": "Urencriterium: {hours} / 1.225 uur gelogd{suffix}.",
-  "@plTaxUrenBanner": {
+  "@plTaxZelfstandigenaftrek": {
     "placeholders": {
-      "hours": { "type": "String" },
-      "suffix": { "type": "String" }
+      "year": {
+        "type": "int"
+      }
     }
   },
-  "plTaxUrenBannerSuffixDone": ", zelfstandigenaftrek vervalt",
-  "plTaxUrenBannerSuffixPending": ", nog niet bereikt",
-
+  "plTaxStartersaftrek": "Startersaftrek",
+  "plTaxMkb": "MKB-winstvrijstelling ({pct}%)",
+  "@plTaxMkb": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "plTaxKia": "KIA-aftrek",
+  "plTaxLijrente": "Lijfrenteaftrek",
+  "plTaxTaxableProfit": "Belastbaar inkomen",
+  "plTaxBox1Section": "Inkomstenbelasting box 1, geschat",
+  "plTaxAlgHeffing": "Algemene heffingskorting",
+  "plTaxArbeidskorting": "Arbeidskorting",
+  "plTaxInkomsten": "Inkomstenbelasting",
+  "plTaxZvw": "ZVW-bijdrage ({pct}%)",
+  "@plTaxZvw": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "plTaxTotalTax": "Geschatte totale belasting",
+  "plTaxNetProfit": "Geschatte nettowinst na belasting",
+  "plTaxEffectiveRate": "Effectief tarief: {rate}%",
+  "@plTaxEffectiveRate": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "plTaxUrenBanner": "Urencriterium: {hours} van {target} uur gelogd{suffix}.",
+  "@plTaxUrenBanner": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "suffix": {
+        "type": "String"
+      }
+    }
+  },
+  "plTaxUrenBannerSuffixDone": ", dus geen zelfstandigenaftrek",
+  "plTaxUrenBannerSuffixPending": ". De schatting gaat ervan uit dat je het dit jaar haalt",
   "settingsLanguageSection": "Taal",
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageEn": "Engels",
-
   "settingsTitle": "Instellingen",
   "settingsBusinessSection": "Bedrijfsgegevens",
   "settingsBusinessName": "Bedrijfsnaam",
@@ -468,88 +486,357 @@
   "settingsValidateAddress": "Voer je bedrijfsadres in",
   "settingsValidateIban": "Voer je IBAN in, bijv. NL91ABNA0417164300.",
   "settingsValidateIbanFormat": "Ongeldig IBAN-formaat (bijv. NL91ABNA0417164300).",
-  "settingsSaved": "Bedrijfsgegevens opgeslagen",
   "settingsDatabaseSection": "Database",
   "settingsDatabaseLocation": "Locatie: {path}",
-  "@settingsDatabaseLocation": { "placeholders": { "path": { "type": "String" } } },
-  "settingsDatabaseNotSet": "Niet ingesteld",
-  "settingsMoveDatabase": "Database verplaatsen…",
-  "settingsDatabaseMoved": "Database verplaatst naar {path}",
-  "@settingsDatabaseMoved": { "placeholders": { "path": { "type": "String" } } },
+  "@settingsDatabaseLocation": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsMoveDatabase": "Database naar andere map kopiëren",
   "settingsExportSection": "Exporteren",
   "settingsExportDescription": "Exporteer alle gegevens van {year} naar CSV-bestanden.",
-  "@settingsExportDescription": { "placeholders": { "year": { "type": "int" } } },
+  "@settingsExportDescription": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
   "settingsExportButton": "Exporteer {year} als CSV",
-  "@settingsExportButton": { "placeholders": { "year": { "type": "int" } } },
+  "@settingsExportButton": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
   "settingsExportRunning": "Bezig met exporteren…",
   "settingsExported": "Geëxporteerd naar {dir}",
-  "@settingsExported": { "placeholders": { "dir": { "type": "String" } } },
-  "settingsTaxSection": "Belastingparameters {year}",
-  "@settingsTaxSection": { "placeholders": { "year": { "type": "int" } } },
-  "settingsTaxNoParams": "Geen parameters gevonden voor {year}. Start de app opnieuw na het aanmaken van een database.",
-  "@settingsTaxNoParams": { "placeholders": { "year": { "type": "int" } } },
-  "settingsTaxRates": "Tarieven & schijven",
+  "@settingsExported": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsTaxSection": "Belastingregels {year}",
+  "@settingsTaxSection": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
   "settingsTaxZelfs": "Zelfstandigenaftrek",
   "settingsTaxStarters": "Startersaftrek",
   "settingsTaxMkb": "MKB-winstvrijstelling (%)",
-  "settingsTaxMileage": "Kilometervergoeding (€/km)",
-  "settingsTaxBrackets": "Schijven inkomstenbelasting",
-  "settingsTaxB1Rate": "Schijf 1 tarief (%)",
-  "settingsTaxB1Thresh": "Schijf 1 grens",
-  "settingsTaxB2Rate": "Schijf 2 tarief (%)",
-  "settingsTaxB2Thresh": "Schijf 2 grens",
-  "settingsTaxB3Rate": "Schijf 3 tarief (%)",
-  "settingsTaxKortingen": "Kortingen & ZVW",
-  "settingsTaxAlgHeff": "Alg. heffingskorting max",
-  "settingsTaxArbeids": "Arbeidskorting max",
+  "settingsTaxMileage": "Kilometervergoeding per km",
   "settingsTaxZvwRate": "ZVW-tarief (%)",
-  "settingsTaxZvwMax": "ZVW max",
-  "settingsTaxUrencriterium": "Urencriterium",
-  "settingsTaxKia": "KIA-aftrek",
-  "settingsTaxKiaLowerThresh": "Ondergrens",
-  "settingsTaxKiaUpperThresh": "Bovengrens",
-  "settingsTaxKiaFlatThresh": "Vlakke drempel",
-  "settingsTaxKiaRate": "KIA-percentage (%)",
-  "settingsTaxKiaFlatAmount": "Vast bedrag",
-  "settingsTaxKiaDecreaseRate": "Afnamerate (%)",
-  "settingsTaxKor": "KOR-drempel",
-  "settingsTaxKorThresh": "KOR-drempel",
-  "settingsTaxSaveParams": "Parameters opslaan",
-  "settingsTaxParamsSaved": "Belastingparameters opgeslagen voor {year}",
-  "@settingsTaxParamsSaved": { "placeholders": { "year": { "type": "int" } } },
-  "settingsTaxValidateField": "Voer een geldig getal in.",
-
+  "settingsTaxUrencriterium": "Urencriterium (uren)",
   "firstLaunchWelcome": "Welkom bij Florin",
   "firstLaunchSubtitle": "Stel je boekhoudwerkruimte in.",
   "firstLaunchDbSection": "Databaselocatie",
-  "firstLaunchDbDescription": "Standaard: Application Support. Kies een andere map voor iCloud / Google Drive sync.",
+  "firstLaunchDbDescription": "Standaard: de map met app-gegevens. Kies een andere map om hem in een gesynchroniseerde map te bewaren. Staat daar al een Florin-database, dan opent Florin die.",
   "firstLaunchDbDefault": "Application Support (standaard)",
   "firstLaunchChooseFolder": "Map kiezen",
-  "firstLaunchBusinessSection": "Bedrijfsgegevens",
-  "firstLaunchStartersSubtitle": "Eerste 3 jaar: €2.123 extra aftrek",
+  "firstLaunchStartersSubtitle": "Voor ondernemers die in een of meer van de 5 voorgaande jaren geen ondernemer waren en in die periode hoogstens twee keer zelfstandigenaftrek hadden",
   "firstLaunchGetStarted": "Aan de slag",
   "firstLaunchSaveError": "Kan setup niet afronden: {error}",
-  "@firstLaunchSaveError": { "placeholders": { "error": { "type": "String" } } },
-
-  "confirmDeleteTitle": "Verwijderen",
-  "confirmDeleteCancel": "Annuleren",
-  "confirmDeleteConfirm": "Verwijderen",
-
+  "@firstLaunchSaveError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "deadlineBadgeFiled": "Ingediend",
   "deadlineBadgeOverdue": "Te laat",
   "deadlineBadgeDays": "{days} dagen",
-  "@deadlineBadgeDays": { "placeholders": { "days": { "type": "int" } } },
-
-  "vatRateSelectorLabel": "BTW-tarief",
+  "@deadlineBadgeDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "vatRate21": "21%",
   "vatRate9": "9%",
   "vatRate0": "0%",
-  "vatRateEuReverseCharge": "0% EU BTW verlegd",
   "vatRateExempt": "Vrijgesteld",
   "genericSaveError": "Kan niet opslaan: {error}",
-  "@genericSaveError": { "placeholders": { "error": { "type": "String" } } },
+  "@genericSaveError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "dbLocationChooseFolderDialog": "Kies map voor de Florin-database",
   "csvExportChooseFolderDialog": "Kies exportmap",
   "invoiceSaveAsDialog": "Factuur opslaan als",
-  "amountNegativeError": "Bedrag mag niet negatief zijn"
+  "amountNegativeError": "Bedrag mag niet negatief zijn",
+  "vatTreatmentStandard": "Nederlandse btw",
+  "vatTreatmentReverseChargeNl": "Btw verlegd naar Nederlandse ondernemer",
+  "vatTreatmentExportOutsideEu": "Uitvoer van goederen buiten de EU (0%)",
+  "invoiceFieldVatTreatment": "Btw-behandeling",
+  "invoiceValidateClientVat": "Deze klant heeft geen btw-id. Vul het in bij de klant: deze factuur moet het vermelden.",
+  "invoiceIssueTitle": "Factuur verzenden",
+  "invoiceIssueMessage": "Na verzenden kan de factuur niet meer worden gewijzigd of verwijderd. Correcties maak je met een creditnota.",
+  "invoiceActionCreditNote": "Creditnota",
+  "invoiceNewCreditNoteHeader": "Nieuwe creditnota",
+  "invoiceCorrects": "Deze creditnota corrigeert factuur {number}.",
+  "invoiceVatTotal": "Btw",
+  "invoiceRemoveLine": "Regel verwijderen",
+  "expensesFoodNotice": "Voedsel, drank en representatie zijn voor 80% aftrekbaar voor de inkomstenbelasting (Wet IB 2001 art. 3.15). Btw op eten en drinken in een restaurant, café of hotel is niet aftrekbaar (Wet OB 1968 art. 15).",
+  "plTaxFoodLimited": "{category} ({amount})",
+  "plTaxBelastbareWinst": "Belastbare winst",
+  "plTaxBracket": "Schijf {n} ({pct}%)",
+  "plTaxEstimateNotice": "Dit is een schatting voor een ondernemer onder de AOW-leeftijd zonder ander inkomen. Inkomen uit loondienst, van een partner, box 2 of box 3 telt niet mee.",
+  "settingsMoved": "Database gekopieerd naar {path} en in gebruik. Het oude bestand is bewaard.",
+  "settingsTaxVerified": "Florin gebruikt deze bedragen, gecontroleerd bij de Belastingdienst en in de wet. Ze zijn niet aan te passen.",
+  "settingsTaxUpTo": "tot en met {amount}",
+  "pensionPriorYearIncome": "Inkomen uit arbeid in {year}",
+  "pensionDeductible": "Aftrekbaar dit jaar",
+  "vatRow1e": "1e  Leveringen / diensten belast met 0% of niet bij u belast",
+  "vatRow3b": "3b  Leveringen naar of diensten in landen binnen de EU",
+  "vatTreatmentEuServices": "Diensten aan EU-ondernemer (btw verlegd)",
+  "vatTreatmentEuGoods": "Goederen aan EU-ondernemer (intracommunautaire levering, 0%)",
+  "vatReturnIcpNote": "Geef deze prestaties op in de ICP-opgaaf. Lever je in een kwartaal meer dan € 50.000 aan goederen aan EU-ondernemers, dan doe je de opgaaf per maand.",
+  "assetsFieldResidualValue": "Restwaarde",
+  "assetsValidateResidualValue": "Voer de restwaarde in, of 0 als het bedrijfsmiddel dan niets meer waard is",
+  "assetsValidateResidualAboveCost": "De restwaarde kan niet hoger zijn dan de kosten",
+  "plTaxDisposalResult": "Resultaat op verkochte bedrijfsmiddelen",
+  "plTaxAov": "Premies arbeidsongeschiktheidsverzekering",
+  "pensionAovHelper": "Premies voor een arbeidsongeschiktheidsverzekering worden in de belastingschatting volledig afgetrokken.",
+  "assetsFieldCostHelp": "De aankoopprijs zonder btw. Afschrijving en de investeringsaftrek gaan uit van dit bedrag.",
+  "assetsFieldDisposalDateHelp": "De datum waarop je het bedrijfsmiddel verkocht of uit de onderneming haalde. De afschrijving stopt op die datum.",
+  "assetsFieldDisposalProceedsHelp": "Wat je voor het bedrijfsmiddel kreeg, zonder btw. Het verschil met de boekwaarde is winst of verlies.",
+  "assetsFieldKiaHelp": "Kleinschaligheidsinvesteringsaftrek: een extra aftrek voor bedrijfsmiddelen. Bedrijfsmiddelen onder € 450 tellen niet mee, en personenauto's en sommige andere bedrijfsmiddelen zijn uitgesloten.",
+  "assetsFieldNameHelp": "Een naam waaraan je het bedrijfsmiddel herkent, zoals \"MacBook Pro 2026\".",
+  "assetsFieldNotesHelp": "Alles wat je over dit bedrijfsmiddel wilt onthouden. Telt niet mee in berekeningen.",
+  "assetsFieldPurchaseDateHelp": "De datum waarop je het bedrijfsmiddel kocht. De afschrijving begint op die datum en de investeringsaftrek geldt voor dit jaar.",
+  "assetsFieldResidualValueHelp": "Wat het bedrijfsmiddel aan het eind van de levensduur nog waard is. De afschrijving stopt bij deze waarde.",
+  "assetsFieldUsefulLifeHelp": "Hoeveel jaar je het bedrijfsmiddel verwacht te gebruiken. Minimaal 5, omdat afschrijving beperkt is tot 20% van de kosten per jaar.",
+  "clientsContractExpiryHelp": "Wanneer de overeenkomst met deze klant afloopt.",
+  "clientsContractSignedHelp": "Vink aan als jij en de klant een schriftelijke overeenkomst hebben getekend.",
+  "clientsFieldActiveHelp": "Inactieve klanten blijven in je administratie, maar staan niet in de keuzelijst voor nieuwe facturen.",
+  "clientsFieldAddressHelp": "Het volledige zakelijke adres van de klant. Het staat op elke factuur.",
+  "clientsFieldContactHelp": "De persoon met wie je bij deze klant contact hebt.",
+  "clientsFieldCountryHelp": "De landcode van twee letters, zoals NL of DE. Bepaalt of een factuur met btw verlegd naar een EU-ondernemer mogelijk is.",
+  "clientsFieldEmailHelp": "Het adres waar je facturen naartoe stuurt.",
+  "clientsFieldKvkHelp": "Het KvK-nummer van 8 cijfers van de klant, als die er een heeft.",
+  "clientsFieldNameHelp": "De officiële naam of handelsnaam van de klant, zoals die op facturen moet staan.",
+  "clientsFieldNotesHelp": "Alles wat je over deze klant wilt onthouden. Staat niet op facturen.",
+  "clientsFieldPhoneHelp": "Een telefoonnummer van deze klant.",
+  "clientsFieldVatHelp": "Het btw-identificatienummer van de klant. Verplicht op facturen met btw verlegd of aan een EU-ondernemer.",
+  "clientsRiskLevelHelp": "Je eigen inschatting of het werk als dienstbetrekking gezien kan worden onder de Wet DBA. Alleen als geheugensteun.",
+  "expensesFieldAmountExclHelp": "Het bedrag op de bon zonder btw.",
+  "expensesFieldCategoryHelp": "Wat voor kosten dit zijn. Voedsel, drank en representatie zijn maar gedeeltelijk aftrekbaar.",
+  "expensesFieldDescriptionHelp": "Wat je hebt gekocht, zodat jij en de Belastingdienst het zakelijke doel zien.",
+  "expensesFieldPaidFromHelp": "De rekening of kaart waarmee je betaalde, om de uitgave met je afschrift te koppelen.",
+  "expensesFieldPaymentRefHelp": "Het kenmerk van de betaling of factuur, om hem later terug te vinden.",
+  "expensesFieldSupplierHelp": "Het bedrijf waar je kocht, zoals op de bon.",
+  "expensesFieldVatRateHelp": "Het btw-tarief op de bon: 21%, 9%, 0% of vrijgesteld.",
+  "expensesReceiptAttachedHelp": "Vink aan als je de bon of factuur hebt bewaard. Die heb je nodig om btw terug te vragen en de kosten aan te tonen.",
+  "expensesReclaimVatHelp": "Vink aan als je deze btw mag aftrekken in je btw-aangifte. Niet voor eten en drinken in een restaurant, of voor privégebruik.",
+  "hoursFieldClientProjectHelp": "De klant of het project waarvoor de uren waren.",
+  "hoursFieldDateHelp": "De dag waarop je werkte.",
+  "hoursFieldDescriptionHelp": "Wat je deed. Alle uren voor de onderneming tellen mee voor het urencriterium, niet alleen declarabele.",
+  "hoursFieldHoursHelp": "Hoeveel uur je die dag werkte, bijvoorbeeld 7,5.",
+  "hoursFieldNotesHelp": "Alles wat je over deze uren wilt onthouden.",
+  "hoursFieldWorkTypeHelp": "Het soort werk. WBSO-uren tellen mee voor de 500 uur die nodig zijn voor de S&O-aftrek.",
+  "invoiceFieldClientHelp": "Voor wie de factuur is. Naam en adres komen erop te staan.",
+  "invoiceFieldDescriptionHelp": "Wat je leverde: de aard van de goederen of diensten, zoals de wet op een factuur vereist.",
+  "invoiceFieldDueDateHelp": "De laatste dag om te betalen: de factuurdatum plus de betalingstermijn.",
+  "invoiceFieldInvoiceDateHelp": "De datum waarop de factuur wordt uitgereikt. Bepaalt in welk jaar en kwartaal de omzet en btw vallen.",
+  "invoiceFieldNumberHelp": "Een uniek nummer in een doorlopende reeks, zoals de wet vereist. Florin stelt het volgende voor.",
+  "invoiceFieldPaymentTermHelp": "Hoeveel dagen de klant heeft om te betalen.",
+  "invoiceFieldPriceHelp": "De prijs per eenheid zonder btw.",
+  "invoiceFieldQuantityHelp": "Hoeveel eenheden, bijvoorbeeld uren of stuks.",
+  "invoiceFieldRemarksHelp": "Extra tekst onderaan de factuur.",
+  "invoiceFieldSupplyDateHelp": "Wanneer je leverde, als dat afwijkt van de factuurdatum. De wet vereist het dan op de factuur.",
+  "invoiceFieldUnitHelp": "De eenheid van het aantal, zoals uren of stuks.",
+  "invoiceFieldVatHelp": "Het btw-tarief voor deze regel.",
+  "invoiceFieldVatTreatmentHelp": "Hoe de btw werkt. Nederlandse btw voor de meeste klanten. Btw verlegd als de klant de btw betaalt. EU-goederen en -diensten aan ondernemers komen ook op de ICP-opgaaf.",
+  "labelCategoryHelp": "Toon alleen uitgaven van één categorie.",
+  "labelDateHelp": "De datum op de bon. Bepaalt het jaar en kwartaal van de uitgave.",
+  "labelNotesHelp": "Alles wat je wilt onthouden. Telt niet mee in berekeningen.",
+  "mileageFieldDateHelp": "De dag van de rit.",
+  "mileageFieldDistanceHelp": "Berekend uit de kilometerstanden.",
+  "mileageFieldFromHelp": "Waar de rit begon.",
+  "mileageFieldMakeModelHelp": "Merk en model van het voertuig, voor je rittenregistratie.",
+  "mileageFieldNotesHelp": "Alles wat je over deze rit wilt onthouden.",
+  "mileageFieldOdoEndHelp": "De kilometerstand aan het eind van de rit.",
+  "mileageFieldOdoStartHelp": "De kilometerstand aan het begin van de rit.",
+  "mileageFieldPlateHelp": "Het kenteken, voor je rittenregistratie.",
+  "mileageFieldPurposeHelp": "Waarom je de rit maakte, bijvoorbeeld de klant of afspraak.",
+  "mileageFieldRouteDeviationHelp": "Vink aan als je een langere of andere route dan de kortste reed, en noteer waarom.",
+  "mileageFieldToHelp": "Waar de rit eindigde.",
+  "mileageFieldTripTypeHelp": "Zakelijke ritten en woon-werkritten met een privévoertuig zijn per km aftrekbaar voor de inkomstenbelasting. Privéritten niet.",
+  "pensionAovInsuredHelp": "Vink aan als je een particuliere arbeidsongeschiktheidsverzekering (AOV) hebt. De premies zijn aftrekbaar.",
+  "pensionFactorAHelp": "Het pensioen dat je vorig jaar bij een werkgever opbouwde, de factor A op je UPO. Laat 0 als je dat niet had.",
+  "pensionLijfrenteHelp": "Wat je dit jaar in een lijfrente stort of wilt storten. Aftrekbaar tot de ruimte die je hebt.",
+  "pensionMonthlyPremiumHelp": "De maandpremie van je arbeidsongeschiktheidsverzekering.",
+  "pensionPriorYearIncomeHelp": "Je winst uit onderneming en loon van vorig jaar, uit de aangifte van dat jaar. De jaarruimte gaat hiervan uit.",
+  "pensionReserveringsruimteLabelHelp": "Niet-gebruikte jaarruimte uit eerdere jaren die je nog mag gebruiken. Het Hulpmiddel Lijfrentepremie van de Belastingdienst rekent het uit.",
+  "settingsBusinessAddressHelp": "Je volledige zakelijke adres. Het staat op elke factuur.",
+  "settingsBusinessNameHelp": "Je bedrijfsnaam zoals ingeschreven bij de KvK. Hij staat op elke factuur.",
+  "settingsIbanHelp": "De rekening waarop klanten betalen. Hij staat in de betaalinstructies.",
+  "settingsKvkNumberHelp": "Je KvK-nummer van 8 cijfers. Het staat op elke factuur.",
+  "settingsStartersaftrekHelp": "Je krijgt de startersaftrek als je in minstens één van de 5 voorgaande jaren geen ondernemer was en in die periode hoogstens twee keer zelfstandigenaftrek had.",
+  "settingsVatNumberHelp": "Je btw-identificatienummer (btw-id): NL, 9 cijfers, B en 2 cijfers. Het staat op elke factuur.",
+  "vatReturnFiledHelp": "Vink aan zodra je de aangifte van dit kwartaal hebt gedaan in Mijn Belastingdienst Zakelijk.",
+  "vatReturnPaidHelp": "Vink aan zodra je de btw van dit kwartaal hebt betaald.",
+  "assetKindGeneral": "Bedrijfsmiddel",
+  "assetKindCar": "Auto van de zaak",
+  "assetsFieldKind": "Soort",
+  "assetsFieldKindHelp": "Kies auto voor een personen- of bestelauto die tot de onderneming hoort. Privégebruik ervan telt bij je winst en in je btw-aangifte.",
+  "assetsCarSection": "Auto",
+  "assetsCarSectionHelp": "Deze gegevens bepalen de bijtelling voor privégebruik en de btw over privégebruik.",
+  "assetsFieldCatalogueValue": "Cataloguswaarde",
+  "assetsFieldCatalogueValueHelp": "De oorspronkelijke catalogusprijs inclusief btw en bpm, zoals op het kentekenbewijs of de website van de RDW.",
+  "assetsValidateCatalogueValue": "Voer de cataloguswaarde in, inclusief btw en bpm",
+  "assetsFieldFirstRegistration": "Eerste toelating",
+  "assetsFieldFirstRegistrationHelp": "De datum waarop de auto voor het eerst werd toegelaten, op het kentekenbewijs. Bepaalt welk bijtellingspercentage geldt.",
+  "assetsValidateFirstRegistration": "Voer de datum van eerste toelating van het kentekenbewijs in",
+  "assetsFieldZeroEmission": "Emissievrij",
+  "assetsFieldZeroEmissionHelp": "Elektrische, waterstof- en zonne-auto's met 0 g/km CO2 krijgen een lagere bijtelling.",
+  "zeroEmissionNone": "Nee",
+  "zeroEmissionBattery": "Elektrisch met accu",
+  "zeroEmissionHydrogenOrSolar": "Waterstof of geïntegreerde zonnepanelen",
+  "assetsFieldVatOnPurchase": "Afgetrokken btw bij aankoop",
+  "assetsFieldVatOnPurchaseHelp": "De btw op de aankoop die je in je btw-aangifte aftrok. Laat 0 als je niets aftrok, bijvoorbeeld bij een auto van een particulier.",
+  "assetsFieldMarketValue": "Waarde in het economisch verkeer",
+  "assetsFieldMarketValueHelp": "Wat de auto nu waard is. Wordt alleen gebruikt als de auto ouder is dan 15 jaar.",
+  "assetsFieldTripLog": "Ik houd een sluitende rittenregistratie bij voor deze auto",
+  "assetsFieldTripLogHelp": "Met een sluitende rittenregistratie van alle ritten in deze auto is er geen bijtelling bij 500 privékilometers per jaar of minder, en gaat de btw over privégebruik uit van de werkelijke kilometers.",
+  "assetsInvestmentSection": "Investeringsaftrek",
+  "assetsInvestmentSectionHelp": "Extra aftrek in het jaar van aankoop. Verkoop je het bedrijfsmiddel binnen 5 jaar, dan telt een deel weer bij de winst.",
+  "assetsFieldEia": "Energie-investering (EIA), gemeld bij RVO",
+  "assetsFieldEiaHelp": "Een bedrijfsmiddel op de Energielijst van RVO, binnen 3 maanden gemeld bij RVO. Minimaal € 2.500 per bedrijfsmiddel. Niet te combineren met MIA.",
+  "assetsFieldMia": "Milieu-investering (MIA)",
+  "assetsFieldMiaHelp": "De categorie op de Milieulijst van RVO, binnen 3 maanden gemeld bij RVO. Minimaal € 2.500 per bedrijfsmiddel.",
+  "assetsMiaNone": "Geen",
+  "miaCategoryOne": "Categorie I",
+  "miaCategoryTwo": "Categorie II",
+  "miaCategoryThree": "Categorie III",
+  "assetsFieldDeductionReceived": "Ontvangen investeringsaftrek",
+  "assetsFieldDeductionReceivedHelp": "De KIA, EIA en MIA die je voor dit bedrijfsmiddel kreeg in het jaar van aankoop, uit de aangifte van dat jaar. Nodig om een deel bij te tellen als je het binnen 5 jaar verkoopt.",
+  "assetsValidateDeductionReceived": "Voer de investeringsaftrek in die je voor dit bedrijfsmiddel kreeg, of 0",
+  "assetsFieldReserveApplied": "Afgeboekte herinvesteringsreserve",
+  "assetsFieldReserveAppliedHelp": "Deel van de herinvesteringsreserve dat je op deze aankoop afboekt. Verlaagt het bedrag waarover je afschrijft.",
+  "assetsReserveAvailable": "Beschikbaar: {amount}",
+  "assetsValidateReserveAboveAvailable": "Dit is meer dan de beschikbare herinvesteringsreserve",
+  "assetsValidateReserveAboveCost": "Dit is meer dan de kosten min de restwaarde",
+  "assetsFieldReserveGain": "Boekwinst naar de herinvesteringsreserve",
+  "assetsFieldReserveGainHelp": "Alleen als je van plan bent een vervanger te kopen. De boekwinst wordt dan nu niet belast maar afgeboekt op de volgende aankoop; na 3 jaar ongebruikt telt hij bij je winst.",
+  "dashboardDeductibleCostsHelp": "Kosten die aftrekbaar zijn voor de inkomstenbelasting, inclusief afschrijving en kilometervergoeding. Geschat.",
+  "dashboardEstimatedTaxHelp": "Geschatte inkomstenbelasting en Zvw-bijdrage over je winst tot nu toe. Geen aanslag.",
+  "dashboardNetProfitAfterTaxHelp": "Winst min de geschatte belasting. Een schatting, geen definitief bedrag.",
+  "expensesFieldCar": "Auto van de zaak",
+  "expensesFieldCarHelp": "Koppel kosten zoals brandstof en verzekering aan een auto van de zaak. Ze begrenzen de bijtelling en bepalen de btw over privégebruik.",
+  "expensesNoCar": "Niet voor een auto van de zaak",
+  "mileageFieldVehicle": "Voertuig",
+  "mileageFieldVehicleHelp": "Een privévoertuig geeft de aftrek per km. Ritten in een auto van de zaak niet; die tellen voor de rittenregistratie van die auto.",
+  "mileagePrivateVehicle": "Privévoertuig",
+  "inputPartnerHours": "Uren van je partner in de onderneming",
+  "inputPartnerHoursHelp": "Uren die je fiscale partner dit jaar in je onderneming werkte zonder vergoeding of voor minder dan € 5.000. Vanaf 525 uur krijg je de meewerkaftrek.",
+  "inputUnrealisedZelfs": "Niet-gerealiseerde zelfstandigenaftrek",
+  "inputUnrealisedZelfsHelp": "Zelfstandigenaftrek uit de vorige 9 jaar die niet in je winst paste, zoals vastgesteld door de Belastingdienst. Wordt gebruikt tot de winst van dit jaar.",
+  "inputLossCarryForward": "Verliezen uit eerdere jaren",
+  "inputLossCarryForwardHelp": "Verliezen in box 1 uit eerdere jaren die je nog mag verrekenen, zoals vastgesteld door de Belastingdienst. Verrekend met het inkomen van dit jaar.",
+  "inputSoVerklaring": "Ik heb een S&O-verklaring voor dit jaar",
+  "inputSoVerklaringHelp": "Een S&O-verklaring van RVO voor speur- en ontwikkelingswerk. Met minstens 500 WBSO-uren krijg je de S&O-aftrek.",
+  "inputSoStarter": "Startersverhoging S&O-aftrek",
+  "inputSoStarterHelp": "Je was in een of meer van de 5 voorgaande jaren geen ondernemer en kreeg in die periode voor hoogstens 2 jaar een S&O-verklaring.",
+  "inputBusinessCeased": "Ik ben dit jaar met de hele onderneming gestopt",
+  "inputBusinessCeasedHelp": "Winst op het verkopen of overnemen van de bedrijfsmiddelen is stakingswinst. Daarop krijg je de stakingsaftrek, en een herinvesteringsreserve telt bij je winst.",
+  "inputStakingsUsedBefore": "Eerder gebruikte stakingsaftrek",
+  "inputStakingsUsedBeforeHelp": "Stakingsaftrek die je in eerdere jaren kreeg. Verlaagt het maximum van € 3.630.",
+  "inputDisabilityBenefit": "Ik heb een arbeidsongeschiktheidsuitkering",
+  "inputDisabilityBenefitHelp": "Een uitkering zoals WIA, WAO, WAZ of Wajong. Als starter met minstens 800 maar minder dan 1.225 uur kun je de startersaftrek bij arbeidsongeschiktheid krijgen.",
+  "inputDisabilityUsed": "Jaren gebruikt in de vorige 5",
+  "inputDisabilityUsedHelp": "In hoeveel van de vorige 5 jaar je de startersaftrek bij arbeidsongeschiktheid kreeg: 0, 1, 2 of 3.",
+  "inputWholeNumber": "Voer een heel getal in van 0 tot en met {max}",
+  "pensionAowFranchiseHelp": "Het deel van je inkomen waarover je al AOW opbouwt. De jaarruimte wordt alleen berekend over inkomen daarboven.",
+  "pensionPensioengrondslagHelp": "Het inkomen van vorig jaar min de AOW-franchise, tot het wettelijke maximum.",
+  "pensionJaarruimteHelp": "30% van de premiegrondslag min een veelvoud van factor A, tot het jaarlijkse maximum. Wat je dit jaar voor een lijfrente mag aftrekken.",
+  "pensionEstimatedTaxSavingHelp": "Geschat: de box 1-belasting die je bespaart door de premie af te trekken, vóór heffingskortingen.",
+  "plTaxAlgHeffingHelp": "Een heffingskorting die iedereen krijgt. Wordt lager naarmate het inkomen boven een grens stijgt.",
+  "plTaxArbeidskortingHelp": "Een heffingskorting voor werkenden, op basis van de winst vóór ondernemersaftrek en mkb-winstvrijstelling.",
+  "plTaxAovHelp": "Premies voor een particuliere arbeidsongeschiktheidsverzekering zijn volledig aftrekbaar van het inkomen in box 1.",
+  "plTaxBelastbareWinstHelp": "Winst na ondernemersaftrek en mkb-winstvrijstelling. De Zvw-bijdrage gaat hiervan uit.",
+  "plTaxBox1SectionHelp": "Geschatte inkomstenbelasting inclusief premies volksverzekeringen, per schijf, min de heffingskortingen.",
+  "plTaxCarPrivateUse": "Privégebruik auto van de zaak",
+  "plTaxCarPrivateUseHelp": "De bijtelling: een percentage van de cataloguswaarde dat bij de winst telt voor privégebruik, hoogstens de autokosten. Geen bijtelling met een rittenregistratie van 500 privékilometers per jaar of minder.",
+  "plTaxDeductionsSectionHelp": "Aftrekposten voor ondernemers. De meeste vereisen het urencriterium van 1.225 uur.",
+  "plTaxDepreciationHelp": "Het deel van de kosten van je bedrijfsmiddelen dat dit jaar wordt afgeschreven, per dag verdeeld over de levensduur.",
+  "plTaxDesinvestering": "Desinvesteringsbijtelling",
+  "plTaxDesinvesteringHelp": "Deel van een investeringsaftrek dat terugkomt omdat een bedrijfsmiddel binnen 5 jaar na het begin van het jaar van aankoop is verkocht.",
+  "plTaxDisabilityStarters": "Startersaftrek bij arbeidsongeschiktheid",
+  "plTaxDisabilityStartersHelp": "Voor starters met een arbeidsongeschiktheidsuitkering die minstens 800 uur werken maar niet aan het urencriterium voldoen. Hoogstens de winst.",
+  "plTaxDisposalResultHelp": "Verkoopprijs min boekwaarde van bedrijfsmiddelen die dit jaar zijn verkocht. Winst telt erbij, verlies gaat eraf.",
+  "plTaxEia": "Energie-investeringsaftrek (EIA)",
+  "plTaxEiaHelp": "Een extra aftrek voor investeringen op de Energielijst van RVO.",
+  "plTaxFoodLimitedHelp": "Voedsel, drank en representatie zijn voor {pct}% aftrekbaar, of boven de eerste {drempel}. Florin neemt wat de grootste aftrek geeft.",
+  "plTaxInputsSection": "Jouw situatie in {year}",
+  "plTaxInputsSectionHelp": "Gegevens die de administratie niet laat zien. Ze veranderen de schatting hierboven.",
+  "plTaxInvestmentSection": "Investeringsaftrek",
+  "plTaxInvestmentSectionHelp": "Extra aftrek voor bedrijfsmiddelen die dit jaar zijn gekocht.",
+  "plTaxKiaHelp": "Kleinschaligheidsinvesteringsaftrek: een percentage of vast bedrag op basis van je totale investeringen die meetellen dit jaar.",
+  "plTaxLijrenteHelp": "Premies voor een lijfrente, afgetrokken tot je jaarruimte en reserveringsruimte.",
+  "plTaxLossOffset": "Verliezen uit eerdere jaren",
+  "plTaxLossOffsetHelp": "Verliezen in box 1 uit eerdere jaren, verrekend met het inkomen van dit jaar.",
+  "plTaxMeewerk": "Meewerkaftrek",
+  "plTaxMeewerkHelp": "Een percentage van de winst als je fiscale partner minstens 525 uur zonder vergoeding in de onderneming werkt.",
+  "plTaxMia": "Milieu-investeringsaftrek (MIA)",
+  "plTaxMiaHelp": "Een extra aftrek voor investeringen op de Milieulijst van RVO.",
+  "plTaxMileageAllowanceHelp": "Zakelijke en woon-werkkilometers met een privévoertuig, tegen het tarief per km van de Belastingdienst.",
+  "plTaxMkbHelp": "Een percentage van de winst na ondernemersaftrek dat is vrijgesteld. Het urencriterium is niet nodig.",
+  "plTaxProfit": "Winst",
+  "plTaxProfitHelp": "Winst uit onderneming vóór ondernemersaftrek. De arbeidskorting gaat hiervan uit.",
+  "plTaxReserveReleased": "Vrijval herinvesteringsreserve",
+  "plTaxReserveReleasedHelp": "Reserve die niet binnen 3 jaar is gebruikt, of overblijft als de onderneming stopt, telt bij de winst.",
+  "plTaxSo": "S&O-aftrek",
+  "plTaxSoHelp": "Voor speur- en ontwikkelingswerk met een S&O-verklaring en minstens 500 uur.",
+  "plTaxStakings": "Stakingsaftrek",
+  "plTaxStakingsHelp": "Een aftrek op de winst bij het stoppen van de hele onderneming, tot € 3.630 over je hele leven.",
+  "plTaxStartersaftrekHelp": "Een extra aftrek bovenop de zelfstandigenaftrek voor ondernemers die net zijn begonnen.",
+  "plTaxTaxableProfitHelp": "Het inkomen in box 1 waarover de belasting wordt berekend.",
+  "plTaxUnrealisedZelfs": "Niet-gerealiseerde zelfstandigenaftrek",
+  "plTaxUnrealisedZelfsHelp": "Zelfstandigenaftrek uit eerdere jaren die toen niet in de winst paste, gebruikt tot de winst van dit jaar.",
+  "plTaxZelfstandigenaftrekHelp": "Een vaste aftrek voor ondernemers die aan het urencriterium voldoen. Hoogstens de winst, tenzij je starter bent.",
+  "plTaxZvwHelp": "De inkomensafhankelijke bijdrage Zorgverzekeringswet, over de belastbare winst tot een maximum.",
+  "vatReturnIcpSectionHelp": "Leveringen aan ondernemers in andere EU-landen, apart opgegeven in de ICP-opgaaf.",
+  "vatRow1aHelp": "Omzet belast met 21% en de btw daarover.",
+  "vatRow1bHelp": "Omzet belast met 9% en de btw daarover.",
+  "vatRow1d": "1d  Privégebruik",
+  "vatRow1dHelp": "Btw over privégebruik van auto's van de zaak: 2,7% of 1,5% van de cataloguswaarde, of het werkelijke privédeel met een rittenregistratie. Alleen in de laatste aangifte van het jaar.",
+  "vatRow1eHelp": "Omzet tegen 0% of waarbij de btw is verlegd naar een Nederlandse ondernemer.",
+  "vatRow3aHelp": "Uitvoer van goederen naar landen buiten de EU.",
+  "vatRow3bHelp": "Goederen en diensten aan ondernemers in andere EU-landen.",
+  "vatRow5aHelp": "De btw die je verschuldigd bent over je omzet en privégebruik.",
+  "vatRow5bHelp": "De btw op zakelijke kosten die je mag aftrekken.",
+  "clientsSearchHelp": "Zoek klanten op naam.",
+  "invoicesSearchHelp": "Zoek op factuurnummer of klantnaam.",
+  "expensesFieldPurchaseVat": "Btw op deze aankoop",
+  "expensesFieldPurchaseVatHelp": "Nederlandse btw als de leverancier die rekende. Verlegd als op de factuur staat dat de btw naar jou is verlegd, of als de leverancier in het buitenland zit: je geeft de btw dan zelf aan en trekt hem weer af.",
+  "purchaseVatDomestic": "Gerekend door de leverancier",
+  "purchaseVatReverseChargeNl": "Naar mij verlegd door een Nederlandse leverancier (2a)",
+  "purchaseVatFromEu": "Van een leverancier in een ander EU-land (4b)",
+  "purchaseVatFromOutsideEu": "Dienst van een leverancier buiten de EU (4a)",
+  "vatReturnShiftedSection": "Naar jou verlegde btw",
+  "vatReturnShiftedSectionHelp": "Aankopen waarover je zelf de btw aangeeft. Dezelfde btw trek je af bij 5b, dus per saldo betaal je meestal niets.",
+  "vatRow2a": "2a  Verleggingsregelingen binnenland",
+  "vatRow2aHelp": "Aankopen bij Nederlandse leveranciers die de btw naar jou verlegden.",
+  "vatRow4a": "4a  Leveringen / diensten uit landen buiten de EU",
+  "vatRow4aHelp": "Diensten van leveranciers buiten de EU.",
+  "vatRow4b": "4b  Leveringen / diensten uit landen binnen de EU",
+  "vatRow4bHelp": "Goederen en diensten van leveranciers in andere EU-landen.",
+  "vatBaseAndVat": "{base}, btw {vat}",
+  "expensesBusinessUseHelp": "Het deel dat zakelijk wordt gebruikt. Alleen dat deel van de kosten en btw is aftrekbaar.",
+  "settingsLanguageSectionHelp": "De taal van de app. Facturen en CSV-exports zijn altijd in het Nederlands."
 }

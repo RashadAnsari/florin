@@ -1,0 +1,112 @@
+import '../db/enums.dart';
+import 'app_localizations.dart';
+
+// Localized labels for stored enum keys. Raw keys are never shown.
+
+extension PurchaseVatLabel on PurchaseVat {
+  String label(AppLocalizations l) => switch (this) {
+    PurchaseVat.domestic => l.purchaseVatDomestic,
+    PurchaseVat.reverseChargeNl => l.purchaseVatReverseChargeNl,
+    PurchaseVat.fromEu => l.purchaseVatFromEu,
+    PurchaseVat.fromOutsideEu => l.purchaseVatFromOutsideEu,
+  };
+}
+
+extension AssetKindLabel on AssetKind {
+  String label(AppLocalizations l) => switch (this) {
+    AssetKind.general => l.assetKindGeneral,
+    AssetKind.car => l.assetKindCar,
+  };
+}
+
+extension MiaCategoryLabel on MiaCategory {
+  String label(AppLocalizations l) => switch (this) {
+    MiaCategory.one => l.miaCategoryOne,
+    MiaCategory.two => l.miaCategoryTwo,
+    MiaCategory.three => l.miaCategoryThree,
+  };
+}
+
+extension ZeroEmissionLabel on ZeroEmission {
+  String label(AppLocalizations l) => switch (this) {
+    ZeroEmission.none => l.zeroEmissionNone,
+    ZeroEmission.battery => l.zeroEmissionBattery,
+    ZeroEmission.hydrogenOrSolar => l.zeroEmissionHydrogenOrSolar,
+  };
+}
+
+extension InvoiceTypeLabel on InvoiceType {
+  String label(AppLocalizations l) => switch (this) {
+    InvoiceType.invoice => l.invoiceTypeInvoice,
+    InvoiceType.creditNote => l.invoiceTypeCreditNote,
+  };
+}
+
+extension InvoiceStatusLabel on InvoiceStatus {
+  String label(AppLocalizations l) => switch (this) {
+    InvoiceStatus.draft => l.invoiceStatusConcept,
+    InvoiceStatus.sent => l.invoiceStatusSent,
+    InvoiceStatus.paid => l.invoiceStatusPaid,
+  };
+}
+
+extension VatTreatmentLabel on VatTreatment {
+  String label(AppLocalizations l) => switch (this) {
+    VatTreatment.standard => l.vatTreatmentStandard,
+    VatTreatment.reverseChargeNl => l.vatTreatmentReverseChargeNl,
+    VatTreatment.euServices => l.vatTreatmentEuServices,
+    VatTreatment.euGoods => l.vatTreatmentEuGoods,
+    VatTreatment.exportOutsideEu => l.vatTreatmentExportOutsideEu,
+  };
+}
+
+extension VatRateLabel on VatRate {
+  String label(AppLocalizations l) => switch (this) {
+    VatRate.high => l.vatRate21,
+    VatRate.low => l.vatRate9,
+    VatRate.zero => l.vatRate0,
+    VatRate.exempt => l.vatRateExempt,
+  };
+}
+
+extension ExpenseCategoryLabel on ExpenseCategory {
+  String label(AppLocalizations l) => switch (this) {
+    ExpenseCategory.office => l.expenseCatOffice,
+    ExpenseCategory.travel => l.expenseCatTravel,
+    ExpenseCategory.foodAndRepresentation => l.expenseCatMeals,
+    ExpenseCategory.software => l.expenseCatSoftware,
+    ExpenseCategory.hardware => l.expenseCatHardware,
+    ExpenseCategory.marketing => l.expenseCatMarketing,
+    ExpenseCategory.professionalServices => l.expenseCatProfessional,
+    ExpenseCategory.phoneAndInternet => l.expenseCatPhone,
+    ExpenseCategory.insurance => l.expenseCatInsurance,
+    ExpenseCategory.training => l.expenseCatTraining,
+    ExpenseCategory.other => l.expenseCatOther,
+  };
+}
+
+extension TripTypeLabel on TripType {
+  String label(AppLocalizations l) => switch (this) {
+    TripType.business => l.tripTypeBusiness,
+    TripType.commute => l.tripTypeCommute,
+    TripType.private => l.tripTypePrivate,
+  };
+}
+
+extension WorkTypeLabel on WorkType {
+  String label(AppLocalizations l) => switch (this) {
+    WorkType.billable => l.workTypeBillable,
+    WorkType.nonBillable => l.workTypeNonBillable,
+    WorkType.administrative => l.workTypeAdministrative,
+    WorkType.wbso => l.workTypeWbso,
+    WorkType.other => l.workTypeOther,
+  };
+}
+
+extension WetDbaRiskLabel on WetDbaRisk {
+  String label(AppLocalizations l) => switch (this) {
+    WetDbaRisk.low => l.clientsRiskLow,
+    WetDbaRisk.medium => l.clientsRiskMedium,
+    WetDbaRisk.high => l.clientsRiskHigh,
+  };
+}

@@ -1,6 +1,6 @@
-import 'dart:ui' show PlatformDispatcher;
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,7 +17,7 @@ void main() async {
     return true;
   };
 
-  await initializeDateFormatting('nl_NL');
+  await initializeDateFormatting();
 
   await windowManager.ensureInitialized();
   await windowManager.waitUntilReadyToShow(
@@ -33,6 +33,12 @@ void main() async {
       await windowManager.focus();
     },
   );
+
+  LicenseRegistry.addLicense(() async* {
+    yield LicenseEntryWithLineBreaks([
+      'Noto Sans',
+    ], await rootBundle.loadString('assets/fonts/OFL.txt'));
+  });
 
   final prefs = await SharedPreferences.getInstance();
 

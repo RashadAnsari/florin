@@ -1,11 +1,19 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
+import '../../widgets/help.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:florin/l10n/app_localizations.dart';
+import '../../db/database.dart';
 import '../../providers/providers.dart';
+import '../../services/domain.dart';
 import '../../services/vat_service.dart';
+import '../../theme/app_spacing.dart';
 import '../../theme/app_theme.dart';
-import '../../constants/prefs_keys.dart';
+import '../../widgets/async_body.dart';
 import '../../widgets/deadline_badge.dart';
+import '../../widgets/feedback.dart';
+import '../../widgets/quarter_chips.dart';
+import '../../widgets/value_row.dart';
 
 class VatReturnScreen extends ConsumerStatefulWidget {
   const VatReturnScreen({super.key});
@@ -15,246 +23,191 @@ class VatReturnScreen extends ConsumerStatefulWidget {
 }
 
 class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
-  String _quarter = _currentQuarter();
-  final _service = const VatService();
+  int _quarter = quarterOf(DateTime.now());
 
-  static String _currentQuarter() =>
-      'Q${((DateTime.now().month - 1) ~/ 3) + 1}';
-
-  String _prefKey(int year, String field) => field == 'filed'
-      ? PrefsKeys.vatFiled(year, _quarter)
-      : PrefsKeys.vatPaid(year, _quarter);
+  Future<void> _setStatus(
+    int year,
+    VatReturn? current, {
+    bool? filed,
+    bool? paid,
+  }) => guardSave(
+    context,
+    () => ref
+        .read(vatReturnDaoProvider)
+        .save(
+          VatReturnsCompanion(
+            year: Value(year),
+            quarter: Value(_quarter),
+            filed: Value(filed ?? current?.filed ?? false),
+            paid: Value(paid ?? current?.paid ?? false),
+          ),
+        ),
+  );
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final year = ref.watch(fiscalYearProvider);
-    final invoicesAsync = ref.watch(invoicesStreamProvider(year));
-    final invoiceLinesAsync = ref.watch(invoiceLinesByYearStreamProvider(year));
-    final expensesAsync = ref.watch(expensesStreamProvider(year));
-    final paramsAsync = ref.watch(taxParamsStreamProvider(year));
-    final prefs = ref.read(sharedPreferencesProvider);
-
-    final invoices = invoicesAsync.valueOrNull ?? [];
-    final invoiceLines = invoiceLinesAsync.valueOrNull ?? [];
-    final expenses = expensesAsync.valueOrNull ?? [];
-    final params = paramsAsync.valueOrNull;
-    final isLoading =
-        invoicesAsync.isLoading ||
-        invoiceLinesAsync.isLoading ||
-        expensesAsync.isLoading ||
-        paramsAsync.isLoading;
-    final loadError = invoicesAsync.hasError
-        ? invoicesAsync.error
-        : invoiceLinesAsync.hasError
-        ? invoiceLinesAsync.error
-        : expensesAsync.hasError
-        ? expensesAsync.error
-        : paramsAsync.hasError
-        ? paramsAsync.error
-        : null;
-    final result = params != null
-        ? _service.calculateQuarter(
-            allYearInvoices: invoices,
-            allYearInvoiceLines: invoiceLines,
-            allYearExpenses: expenses,
-            fiscalYear: year,
-            quarter: _quarter,
-            params: params,
-          )
-        : null;
-
-    final deadline = _service.filingDeadline(year, _quarter);
-    final filed = prefs.getBool(_prefKey(year, 'filed')) ?? false;
-    final paid = prefs.getBool(_prefKey(year, 'paid')) ?? false;
+    final result = ref.watch(
+      vatQuarterProvider((year: year, quarter: _quarter)),
+    );
+    final status = ref
+        .watch(vatReturnsProvider(year))
+        .valueOrNull
+        ?.where((v) => v.quarter == _quarter)
+        .firstOrNull;
+    final deadline = VatService.filingDeadline(year, _quarter);
 
     return Scaffold(
       appBar: AppBar(title: Text(l.vatReturnTitle)),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: AppSpacing.screenPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                ...['Q1', 'Q2', 'Q3', 'Q4'].map(
-                  (q) => Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: ChoiceChip(
-                      label: Text(q),
-                      selected: _quarter == q,
-                      onSelected: (_) => setState(() => _quarter = q),
-                    ),
-                  ),
+                QuarterChips(
+                  selected: _quarter,
+                  allowAll: false,
+                  onSelected: (q) => setState(() => _quarter = q!),
                 ),
                 const Spacer(),
-                DeadlineBadge(deadline: deadline, filed: filed),
+                DeadlineBadge(
+                  deadline: deadline,
+                  filed: status?.filed ?? false,
+                ),
               ],
             ),
-            const SizedBox(height: 24),
-
-            if (loadError != null) ...[
-              Center(child: Text(l.vatReturnLoadError('$loadError'))),
-            ] else if (isLoading || result == null) ...[
-              const Center(child: CircularProgressIndicator()),
-            ] else ...[
-              if (result.korRisk)
-                _banner(
-                  l.vatReturnKorWarning(
-                    AppFormat.cents(result.ytdRevenue),
-                    AppFormat.cents(params!.korThreshold),
+            const SizedBox(height: AppSpacing.section),
+            AsyncBody(
+              value: result,
+              builder: (r) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SectionLabel(l.vatReturnRevenueSection),
+                  ValueRow(
+                    label: l.vatRow1a,
+                    help: l.vatRow1aHelp,
+                    value: AppFormat.cents(r.revenue1a),
                   ),
-                  theme.colorScheme.error,
-                  context,
-                ),
-
-              _sectionTitle(l.vatReturnRevenueSection, context),
-              _row(l.vatRow1a, AppFormat.cents(result.revenue21), context),
-              _row(l.vatRow1b, AppFormat.cents(result.revenue9), context),
-              _row(l.vatRow1c, AppFormat.cents(result.revenue0), context),
-              _row(
-                l.vatRow3a,
-                AppFormat.cents(result.reverseChargeRevenue),
-                context,
-              ),
-              const SizedBox(height: 16),
-
-              _sectionTitle(l.vatReturnCalculationSection, context),
-              _row(
-                l.vatRow5a,
-                AppFormat.cents(result.outputVatTotal),
-                context,
-                bold: true,
-              ),
-              _row(
-                l.vatRow5b,
-                AppFormat.cents(result.inputVatReclaimable),
-                context,
-              ),
-              const Divider(height: 24),
-              _row(
-                result.netVatDue >= 0 ? l.vatReturnDue : l.vatReturnRefund,
-                AppFormat.cents(result.netVatDue.abs()),
-                context,
-                bold: true,
-                color: result.netVatDue >= 0
-                    ? theme.colorScheme.error
-                    : AppColors.income,
-              ),
-              const SizedBox(height: 24),
-
-              if (result.icpInvoices.isNotEmpty) ...[
-                _sectionTitle(l.vatReturnIcpSection, context),
-                Text(
-                  l.vatReturnIcpDeadline(AppFormat.date(deadline)),
-                  style: theme.textTheme.bodySmall,
-                ),
-                const SizedBox(height: 8),
-                ...result.icpInvoices.map(
-                  (inv) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2),
-                    child: Row(
-                      children: [
-                        Text(
-                          inv.invoiceNumber,
-                          style: const TextStyle(fontFamily: 'monospace'),
-                        ),
-                        const SizedBox(width: 24),
-                        Text(AppFormat.cents(inv.totalExclVat)),
-                      ],
+                  ValueRow(
+                    label: l.vatRow1b,
+                    help: l.vatRow1bHelp,
+                    value: AppFormat.cents(r.revenue1b),
+                  ),
+                  ValueRow(
+                    label: l.vatRow1e,
+                    help: l.vatRow1eHelp,
+                    value: AppFormat.cents(r.revenue1e),
+                  ),
+                  if (r.vat1d > 0)
+                    ValueRow(
+                      label: l.vatRow1d,
+                      help: l.vatRow1dHelp,
+                      value: AppFormat.cents(r.vat1d),
                     ),
+                  ValueRow(
+                    label: l.vatRow3a,
+                    help: l.vatRow3aHelp,
+                    value: AppFormat.cents(r.revenue3a),
                   ),
-                ),
-                const SizedBox(height: 24),
-              ],
-
-              _sectionTitle(l.vatReturnStatusSection, context),
-              CheckboxListTile(
-                value: filed,
-                onChanged: (v) async {
-                  await prefs.setBool(_prefKey(year, 'filed'), v ?? false);
-                  setState(() {});
-                },
-                title: Text(l.vatReturnFiled),
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
+                  ValueRow(
+                    label: l.vatRow3b,
+                    help: l.vatRow3bHelp,
+                    value: AppFormat.cents(r.revenue3b),
+                  ),
+                  if (r.base2a != 0 || r.base4a != 0 || r.base4b != 0) ...[
+                    const SizedBox(height: AppSpacing.group),
+                    SectionLabel(
+                      l.vatReturnShiftedSection,
+                      help: l.vatReturnShiftedSectionHelp,
+                    ),
+                    ValueRow(
+                      label: l.vatRow2a,
+                      help: l.vatRow2aHelp,
+                      value: l.vatBaseAndVat(
+                        AppFormat.cents(r.base2a),
+                        AppFormat.cents(r.vat2a),
+                      ),
+                    ),
+                    ValueRow(
+                      label: l.vatRow4a,
+                      help: l.vatRow4aHelp,
+                      value: l.vatBaseAndVat(
+                        AppFormat.cents(r.base4a),
+                        AppFormat.cents(r.vat4a),
+                      ),
+                    ),
+                    ValueRow(
+                      label: l.vatRow4b,
+                      help: l.vatRow4bHelp,
+                      value: l.vatBaseAndVat(
+                        AppFormat.cents(r.base4b),
+                        AppFormat.cents(r.vat4b),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: AppSpacing.group),
+                  SectionLabel(l.vatReturnCalculationSection),
+                  ValueRow(
+                    label: l.vatRow5a,
+                    help: l.vatRow5aHelp,
+                    value: AppFormat.cents(r.outputVat5a),
+                    bold: true,
+                  ),
+                  ValueRow(
+                    label: l.vatRow5b,
+                    help: l.vatRow5bHelp,
+                    value: AppFormat.cents(r.inputVat5b),
+                  ),
+                  const Divider(height: AppSpacing.section),
+                  ValueRow(
+                    label: r.netVat >= 0 ? l.vatReturnDue : l.vatReturnRefund,
+                    value: AppFormat.cents(r.netVat.abs()),
+                    bold: true,
+                    color: r.netVat >= 0
+                        ? theme.colorScheme.error
+                        : context.colors.income,
+                  ),
+                  if (r.icpInvoices.isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.section),
+                    SectionLabel(
+                      l.vatReturnIcpSection,
+                      help: l.vatReturnIcpSectionHelp,
+                    ),
+                    Text(l.vatReturnIcpNote, style: theme.textTheme.bodySmall),
+                    const SizedBox(height: AppSpacing.heading),
+                    for (final inv in r.icpInvoices)
+                      ValueRow.cents(
+                        inv.invoiceNumber,
+                        inv.invoiceType == InvoiceType.creditNote
+                            ? -inv.totalExclVat
+                            : inv.totalExclVat,
+                      ),
+                  ],
+                ],
               ),
-              CheckboxListTile(
-                value: paid,
-                onChanged: (v) async {
-                  await prefs.setBool(_prefKey(year, 'paid'), v ?? false);
-                  setState(() {});
-                },
-                title: Text(l.vatReturnPaid),
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                l.vatReturnYtdRevenue(AppFormat.cents(result.ytdRevenue)),
-                style: theme.textTheme.bodySmall,
-              ),
-            ],
+            ),
+            const SizedBox(height: AppSpacing.section),
+            SectionLabel(l.vatReturnStatusSection),
+            const SizedBox(height: AppSpacing.heading),
+            HelpCheckbox(
+              value: status?.filed ?? false,
+              onChanged: (v) => _setStatus(year, status, filed: v),
+              title: l.vatReturnFiled,
+              help: l.vatReturnFiledHelp,
+            ),
+            HelpCheckbox(
+              value: status?.paid ?? false,
+              onChanged: (v) => _setStatus(year, status, paid: v),
+              title: l.vatReturnPaid,
+              help: l.vatReturnPaidHelp,
+            ),
           ],
         ),
       ),
     );
   }
-
-  Widget _sectionTitle(String t, BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 8),
-    child: Text(
-      t,
-      style: Theme.of(
-        context,
-      ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-    ),
-  );
-
-  Widget _row(
-    String label,
-    String value,
-    BuildContext context, {
-    bool bold = false,
-    Color? color,
-  }) {
-    final style = Theme.of(context).textTheme.bodyMedium?.copyWith(
-      fontWeight: bold ? FontWeight.w700 : null,
-      color: color,
-    );
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        children: [
-          Expanded(child: Text(label, style: style)),
-          Text(value, style: style),
-        ],
-      ),
-    );
-  }
-
-  Widget _banner(String msg, Color color, BuildContext context) => Container(
-    margin: const EdgeInsets.only(bottom: 16),
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: color.withValues(alpha: 0.08),
-      border: Border.all(color: color),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: Row(
-      children: [
-        Icon(Icons.warning_amber, color: color, size: 18),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            msg,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: color),
-          ),
-        ),
-      ],
-    ),
-  );
 }

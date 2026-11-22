@@ -1,15 +1,17 @@
 import 'package:drift/drift.dart';
+import '../enums.dart';
 import 'invoices.dart';
 
 class InvoiceLines extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get invoiceId => integer().references(Invoices, #id)();
+  IntColumn get invoiceId =>
+      integer().references(Invoices, #id, onDelete: KeyAction.cascade)();
   TextColumn get description => text()();
-  TextColumn get quantityUnit => text().withDefault(const Constant('1'))();
-  RealColumn get quantity => real().withDefault(const Constant(1.0))();
+  RealColumn get quantity => real()();
+  TextColumn get unit => text().nullable()();
   IntColumn get unitPriceExclVat => integer()();
-  TextColumn get vatRate => text().withDefault(const Constant('21%'))();
-  IntColumn get vatAmount => integer().withDefault(const Constant(0))();
-  IntColumn get lineTotalExclVat => integer().withDefault(const Constant(0))();
-  IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+  TextColumn get vatRate => textEnum<VatRate>()();
+  IntColumn get vatAmount => integer()();
+  IntColumn get lineTotalExclVat => integer()();
+  IntColumn get sortOrder => integer()();
 }

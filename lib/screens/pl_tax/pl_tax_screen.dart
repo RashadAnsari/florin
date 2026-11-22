@@ -1,396 +1,460 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
+import '../../l10n/labels.dart';
 import '../../providers/providers.dart';
+import '../../services/asset_service.dart';
 import '../../services/tax_service.dart';
+import '../../theme/app_spacing.dart';
 import '../../theme/app_theme.dart';
-import '../../constants/prefs_keys.dart';
 import '../../widgets/amount_field.dart';
-import '../expenses/expenses_screen.dart' show expenseCategoryLabels;
+import '../../widgets/async_body.dart';
+import '../../widgets/feedback.dart';
+import '../../widgets/form_row.dart';
+import '../../widgets/help.dart';
+import '../../widgets/notice_banner.dart';
+import '../../widgets/urencriterium_progress.dart';
+import '../../widgets/value_row.dart';
 
-class PlTaxScreen extends ConsumerStatefulWidget {
+String _pct(double rate, [int digits = 2]) =>
+    (rate * 100).toStringAsFixed(digits);
+
+class PlTaxScreen extends ConsumerWidget {
   const PlTaxScreen({super.key});
 
   @override
-  ConsumerState<PlTaxScreen> createState() => _PlTaxScreenState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context)!;
+    final year = ref.watch(fiscalYearProvider);
+    final expenses = ref.watch(expensesProvider(year)).valueOrNull ?? [];
+    final assets = ref.watch(assetsProvider(year)).valueOrNull ?? [];
+
+    return Scaffold(
+      appBar: AppBar(title: Text(l.plTaxTitle)),
+      body: AsyncBody(
+        value: ref.watch(taxEstimateProvider(year)),
+        builder: (estimate) {
+          final r = estimate.result;
+          final rules = estimate.rules;
+          final byCategory = <ExpenseCategory, int>{};
+          for (final e in expenses) {
+            byCategory[e.category] =
+                (byCategory[e.category] ?? 0) + e.deductibleAmount;
+          }
+          final food = TaxService.gemengdeKosten(expenses);
+          final mileage = TaxService.mileageAllowance(
+            estimate.businessKm,
+            rules,
+          );
+          final depreciation = AssetService.totalDepreciation(assets, year);
+          final d = r.investmentDeduction;
+
+          return SingleChildScrollView(
+            padding: AppSpacing.screenPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                NoticeBanner(l.plTaxEstimateNotice),
+                const SizedBox(height: AppSpacing.group),
+                if (!estimate.meetsUrencriterium) ...[
+                  NoticeBanner(
+                    l.plTaxUrenBanner(
+                      formatHours(estimate.totalHours),
+                      '${rules.urencriterium}',
+                      estimate.yearOver
+                          ? l.plTaxUrenBannerSuffixDone
+                          : l.plTaxUrenBannerSuffixPending,
+                    ),
+                    tone: estimate.yearOver
+                        ? NoticeTone.error
+                        : NoticeTone.warning,
+                  ),
+                  const SizedBox(height: AppSpacing.group),
+                ],
+                SectionLabel(l.plTaxRevenuSection),
+                ValueRow.cents(l.plTaxGrossRevenue, r.grossRevenue),
+                if (r.creditNotes > 0)
+                  ValueRow.cents(l.plTaxCreditNotes, -r.creditNotes),
+                ValueRow.cents(l.plTaxNetRevenue, r.netRevenue, bold: true),
+                const SizedBox(height: AppSpacing.field),
+                SectionLabel(l.plTaxCostsSection),
+                for (final e in byCategory.entries)
+                  if (e.key != ExpenseCategory.foodAndRepresentation)
+                    ValueRow.cents(e.key.label(l), -e.value),
+                if (food > 0)
+                  ValueRow.cents(
+                    l.plTaxFoodLimited(
+                      ExpenseCategory.foodAndRepresentation.label(l),
+                      AppFormat.cents(food),
+                    ),
+                    -TaxService.gemengdeKostenDeductible(food, rules),
+                    help: l.plTaxFoodLimitedHelp(
+                      _pct(rules.gemengdeKostenPct, 0),
+                      AppFormat.cents(rules.gemengdeKostenDrempel),
+                    ),
+                  ),
+                if (mileage > 0)
+                  ValueRow.cents(
+                    l.plTaxMileageAllowance(
+                      estimate.businessKm,
+                      AppFormat.cents(rules.mileageCentsPerKm),
+                    ),
+                    -mileage,
+                    help: l.plTaxMileageAllowanceHelp,
+                  ),
+                if (depreciation > 0)
+                  ValueRow.cents(
+                    l.plTaxDepreciation,
+                    -depreciation,
+                    help: l.plTaxDepreciationHelp,
+                  ),
+                ValueRow.cents(l.plTaxTotalCosts, -r.totalCosts, bold: true),
+                if (r.disposalResult != 0)
+                  ValueRow.cents(
+                    l.plTaxDisposalResult,
+                    r.disposalResult,
+                    help: l.plTaxDisposalResultHelp,
+                  ),
+                if (r.desinvesteringsbijtelling > 0)
+                  ValueRow.cents(
+                    l.plTaxDesinvestering,
+                    r.desinvesteringsbijtelling,
+                    help: l.plTaxDesinvesteringHelp,
+                  ),
+                if (r.carPrivateUse > 0)
+                  ValueRow.cents(
+                    l.plTaxCarPrivateUse,
+                    r.carPrivateUse,
+                    help: l.plTaxCarPrivateUseHelp,
+                  ),
+                if (r.reserveReleased > 0)
+                  ValueRow.cents(
+                    l.plTaxReserveReleased,
+                    r.reserveReleased,
+                    help: l.plTaxReserveReleasedHelp,
+                  ),
+                const SizedBox(height: AppSpacing.field),
+                ValueRow.cents(l.plTaxGrossProfit, r.grossProfit, bold: true),
+                const Divider(),
+                SectionLabel(
+                  l.plTaxInvestmentSection,
+                  help: l.plTaxInvestmentSectionHelp,
+                ),
+                ValueRow.cents(l.plTaxKia, -d.kia, help: l.plTaxKiaHelp),
+                if (d.eia > 0)
+                  ValueRow.cents(l.plTaxEia, -d.eia, help: l.plTaxEiaHelp),
+                if (d.mia > 0)
+                  ValueRow.cents(l.plTaxMia, -d.mia, help: l.plTaxMiaHelp),
+                ValueRow.cents(
+                  l.plTaxProfit,
+                  r.profit,
+                  bold: true,
+                  help: l.plTaxProfitHelp,
+                ),
+                const Divider(),
+                SectionLabel(
+                  l.plTaxDeductionsSection,
+                  help: l.plTaxDeductionsSectionHelp,
+                ),
+                ValueRow.cents(
+                  l.plTaxZelfstandigenaftrek(year),
+                  -r.zelfstandigenaftrek,
+                  muted: r.zelfstandigenaftrek == 0,
+                  help: l.plTaxZelfstandigenaftrekHelp,
+                ),
+                if (r.startersaftrek > 0)
+                  ValueRow.cents(
+                    l.plTaxStartersaftrek,
+                    -r.startersaftrek,
+                    help: l.plTaxStartersaftrekHelp,
+                  ),
+                if (r.unrealisedZelfstandigenaftrek > 0)
+                  ValueRow.cents(
+                    l.plTaxUnrealisedZelfs,
+                    -r.unrealisedZelfstandigenaftrek,
+                    help: l.plTaxUnrealisedZelfsHelp,
+                  ),
+                if (r.soAftrek > 0)
+                  ValueRow.cents(l.plTaxSo, -r.soAftrek, help: l.plTaxSoHelp),
+                if (r.meewerkaftrek > 0)
+                  ValueRow.cents(
+                    l.plTaxMeewerk,
+                    -r.meewerkaftrek,
+                    help: l.plTaxMeewerkHelp,
+                  ),
+                if (r.disabilityStartersaftrek > 0)
+                  ValueRow.cents(
+                    l.plTaxDisabilityStarters,
+                    -r.disabilityStartersaftrek,
+                    help: l.plTaxDisabilityStartersHelp,
+                  ),
+                if (r.stakingsaftrek > 0)
+                  ValueRow.cents(
+                    l.plTaxStakings,
+                    -r.stakingsaftrek,
+                    help: l.plTaxStakingsHelp,
+                  ),
+                ValueRow.cents(
+                  l.plTaxMkb(_pct(rules.mkbWinstvrijstelling, 1)),
+                  -r.mkbWinstvrijstelling,
+                  help: l.plTaxMkbHelp,
+                ),
+                ValueRow.cents(
+                  l.plTaxBelastbareWinst,
+                  r.belastbareWinst,
+                  bold: true,
+                  help: l.plTaxBelastbareWinstHelp,
+                ),
+                if (r.lijfrenteDeduction > 0)
+                  ValueRow.cents(
+                    l.plTaxLijrente,
+                    -r.lijfrenteDeduction,
+                    help: l.plTaxLijrenteHelp,
+                  ),
+                if (r.aovDeduction > 0)
+                  ValueRow.cents(
+                    l.plTaxAov,
+                    -r.aovDeduction,
+                    help: l.plTaxAovHelp,
+                  ),
+                if (r.lossOffset > 0)
+                  ValueRow.cents(
+                    l.plTaxLossOffset,
+                    -r.lossOffset,
+                    help: l.plTaxLossOffsetHelp,
+                  ),
+                ValueRow.cents(
+                  l.plTaxTaxableProfit,
+                  r.taxableIncome,
+                  bold: true,
+                  help: l.plTaxTaxableProfitHelp,
+                ),
+                const Divider(),
+                SectionLabel(l.plTaxBox1Section, help: l.plTaxBox1SectionHelp),
+                for (var i = 0; i < r.bracketTax.length; i++)
+                  if (i == 0 || r.bracketTax[i] > 0)
+                    ValueRow.cents(
+                      l.plTaxBracket(i + 1, _pct(rules.box1Brackets[i].rate)),
+                      r.bracketTax[i],
+                    ),
+                ValueRow.cents(
+                  l.plTaxAlgHeffing,
+                  -r.algemeneHeffingskorting,
+                  help: l.plTaxAlgHeffingHelp,
+                ),
+                ValueRow.cents(
+                  l.plTaxArbeidskorting,
+                  -r.arbeidskorting,
+                  help: l.plTaxArbeidskortingHelp,
+                ),
+                ValueRow.cents(l.plTaxInkomsten, r.box1Tax, bold: true),
+                ValueRow.cents(
+                  l.plTaxZvw(_pct(rules.zvwRate)),
+                  r.zvwContribution,
+                  help: l.plTaxZvwHelp,
+                ),
+                const Divider(),
+                ValueRow.cents(l.plTaxTotalTax, r.totalTax, bold: true),
+                ValueRow.cents(
+                  l.plTaxNetProfit,
+                  r.netProfitAfterTax,
+                  bold: true,
+                ),
+                const SizedBox(height: AppSpacing.field),
+                Text(
+                  l.plTaxEffectiveRate(
+                    (r.effectiveTaxRate / 100).toStringAsFixed(1),
+                  ),
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: AppSpacing.section),
+                _YearInputs(year: year),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
 
-class _PlTaxScreenState extends ConsumerState<PlTaxScreen> {
-  int? _algHeffingOverride;
-  int? _arbeidskortingOverride;
-  bool _claimZelfs = true;
-  bool _claimStarters = false;
-  final _service = const TaxService();
+/// Facts for the year that the bookkeeping cannot show.
+class _YearInputs extends ConsumerWidget {
+  final int year;
+
+  const _YearInputs({required this.year});
 
   @override
-  void initState() {
-    super.initState();
-    final prefs = ref.read(sharedPreferencesProvider);
-    _claimStarters = prefs.getBool(PrefsKeys.isStarter) ?? false;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context)!;
+    return AsyncBody(
+      value: ref.watch(taxYearInputsProvider(year)),
+      builder: (i) {
+        Future<void> save(TaxYearInputsCompanion change) => guardSave(
+          context,
+          () => ref
+              .read(taxYearInputsDaoProvider)
+              .save(change.copyWith(year: Value(year))),
+        );
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SectionLabel(
+              l.plTaxInputsSection(year),
+              help: l.plTaxInputsSectionHelp,
+            ),
+            const SizedBox(height: AppSpacing.heading),
+            FormRow(
+              children: [
+                _WholeNumberField(
+                  key: ValueKey('partner_$year'),
+                  label: l.inputPartnerHours,
+                  help: l.inputPartnerHoursHelp,
+                  value: i?.partnerHours ?? 0,
+                  onChanged: (v) =>
+                      save(TaxYearInputsCompanion(partnerHours: Value(v))),
+                ),
+                AmountField(
+                  key: ValueKey('unrealised_$year'),
+                  label: l.inputUnrealisedZelfs,
+                  help: l.inputUnrealisedZelfsHelp,
+                  initialValueCents: i?.unrealisedZelfstandigenaftrek ?? 0,
+                  onChanged: (v) => save(
+                    TaxYearInputsCompanion(
+                      unrealisedZelfstandigenaftrek: Value(v),
+                    ),
+                  ),
+                ),
+                AmountField(
+                  key: ValueKey('losses_$year'),
+                  label: l.inputLossCarryForward,
+                  help: l.inputLossCarryForwardHelp,
+                  initialValueCents: i?.lossCarryForward ?? 0,
+                  onChanged: (v) =>
+                      save(TaxYearInputsCompanion(lossCarryForward: Value(v))),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.field),
+            HelpCheckbox(
+              value: i?.hasSoVerklaring ?? false,
+              onChanged: (v) =>
+                  save(TaxYearInputsCompanion(hasSoVerklaring: Value(v))),
+              title: l.inputSoVerklaring,
+              help: l.inputSoVerklaringHelp,
+            ),
+            if (i?.hasSoVerklaring ?? false)
+              HelpCheckbox(
+                value: i?.soStarter ?? false,
+                onChanged: (v) =>
+                    save(TaxYearInputsCompanion(soStarter: Value(v))),
+                title: l.inputSoStarter,
+                help: l.inputSoStarterHelp,
+              ),
+            HelpCheckbox(
+              value: i?.businessCeased ?? false,
+              onChanged: (v) =>
+                  save(TaxYearInputsCompanion(businessCeased: Value(v))),
+              title: l.inputBusinessCeased,
+              help: l.inputBusinessCeasedHelp,
+            ),
+            if (i?.businessCeased ?? false) ...[
+              const SizedBox(height: AppSpacing.field),
+              AmountField(
+                key: ValueKey('stakings_$year'),
+                label: l.inputStakingsUsedBefore,
+                help: l.inputStakingsUsedBeforeHelp,
+                initialValueCents: i?.stakingsaftrekUsedBefore ?? 0,
+                onChanged: (v) => save(
+                  TaxYearInputsCompanion(stakingsaftrekUsedBefore: Value(v)),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.field),
+            ],
+            HelpCheckbox(
+              value: i?.disabilityBenefit ?? false,
+              onChanged: (v) =>
+                  save(TaxYearInputsCompanion(disabilityBenefit: Value(v))),
+              title: l.inputDisabilityBenefit,
+              help: l.inputDisabilityBenefitHelp,
+            ),
+            if (i?.disabilityBenefit ?? false) ...[
+              const SizedBox(height: AppSpacing.field),
+              _WholeNumberField(
+                key: ValueKey('disability_$year'),
+                label: l.inputDisabilityUsed,
+                help: l.inputDisabilityUsedHelp,
+                value: i?.disabilityStartersUsed ?? 0,
+                max: 3,
+                onChanged: (v) => save(
+                  TaxYearInputsCompanion(disabilityStartersUsed: Value(v)),
+                ),
+              ),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// A whole-number field saved when it loses focus.
+class _WholeNumberField extends StatefulWidget {
+  final String label;
+  final String help;
+  final int value;
+  final int? max;
+  final ValueChanged<int> onChanged;
+
+  const _WholeNumberField({
+    super.key,
+    required this.label,
+    required this.help,
+    required this.value,
+    required this.onChanged,
+    this.max,
+  });
+
+  @override
+  State<_WholeNumberField> createState() => _WholeNumberFieldState();
+}
+
+class _WholeNumberFieldState extends State<_WholeNumberField> {
+  late final _controller = TextEditingController(text: '${widget.value}');
+  late final _focus = FocusNode()..addListener(_commit);
+
+  int? get _parsed {
+    final v = int.tryParse(_controller.text.trim());
+    if (v == null || v < 0 || (widget.max != null && v > widget.max!)) {
+      return null;
+    }
+    return v;
+  }
+
+  void _commit() {
+    if (!_focus.hasFocus && _parsed != null) widget.onChanged(_parsed!);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focus.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final year = ref.watch(fiscalYearProvider);
-    final invoicesAsync = ref.watch(invoicesStreamProvider(year));
-    final expensesAsync = ref.watch(expensesStreamProvider(year));
-    final hoursAsync = ref.watch(hourEntriesStreamProvider(year));
-    final mileageAsync = ref.watch(mileageTripsStreamProvider(year));
-    final assetsAsync = ref.watch(assetsStreamProvider(year));
-    final paramsAsync = ref.watch(taxParamsStreamProvider(year));
-    final pensionAsync = ref.watch(pensionStreamProvider(year));
-
-    final invoices = invoicesAsync.valueOrNull ?? [];
-    final expenses = expensesAsync.valueOrNull ?? [];
-    final hours = hoursAsync.valueOrNull ?? [];
-    final mileage = mileageAsync.valueOrNull ?? [];
-    final assets = assetsAsync.valueOrNull ?? [];
-    final pension = pensionAsync.valueOrNull;
-    final params = paramsAsync.valueOrNull;
-    final isLoading =
-        invoicesAsync.isLoading ||
-        expensesAsync.isLoading ||
-        hoursAsync.isLoading ||
-        mileageAsync.isLoading ||
-        assetsAsync.isLoading ||
-        paramsAsync.isLoading ||
-        pensionAsync.isLoading;
-    final loadError = invoicesAsync.hasError
-        ? invoicesAsync.error
-        : expensesAsync.hasError
-        ? expensesAsync.error
-        : hoursAsync.hasError
-        ? hoursAsync.error
-        : mileageAsync.hasError
-        ? mileageAsync.error
-        : assetsAsync.hasError
-        ? assetsAsync.error
-        : paramsAsync.hasError
-        ? paramsAsync.error
-        : pensionAsync.hasError
-        ? pensionAsync.error
-        : null;
-
-    Widget body;
-    if (loadError != null) {
-      body = Center(child: Text(l.plTaxLoadError('$loadError')));
-    } else if (isLoading || params == null) {
-      body = const Center(child: CircularProgressIndicator());
-    } else {
-      body = _content(
-        context: context,
-        l: l,
-        theme: theme,
-        year: year,
-        invoices: invoices,
-        expenses: expenses,
-        hours: hours,
-        mileage: mileage,
-        assets: assets,
-        pension: pension,
-        params: params,
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(title: Text(l.plTaxTitle)),
-      body: body,
+    return TextFormField(
+      controller: _controller,
+      focusNode: _focus,
+      keyboardType: TextInputType.number,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      decoration: fieldDecoration(label: widget.label, help: widget.help),
+      validator: (_) =>
+          _parsed == null ? l.inputWholeNumber(widget.max ?? 9999) : null,
     );
   }
-
-  Widget _content({
-    required BuildContext context,
-    required AppLocalizations l,
-    required ThemeData theme,
-    required int year,
-    required List<Invoice> invoices,
-    required List<Expense> expenses,
-    required List<HourEntry> hours,
-    required List<MileageTrip> mileage,
-    required List<FixedAsset> assets,
-    required PensionEntry? pension,
-    required TaxParam params,
-  }) {
-    final grossRevenue = TaxService.computeGrossRevenue(invoices);
-    final creditNotes = TaxService.computeCreditNotes(invoices);
-    final totalDeductible = TaxService.computeDeductibleExpenses(expenses);
-    final businessKm = TaxService.computeBusinessKm(mileage);
-    final mileageAllowance = TaxService.computeMileageAllowance(
-      businessKm,
-      params.mileageRatePerKm,
-    );
-    final totalDepreciation = TaxService.computeTotalDepreciation(assets, year);
-    final kiaTotal = TaxService.computeKiaTotal(assets, year);
-    final kiaDeduction = _service.computeKia(params, kiaTotal);
-    final lijrente = pension?.plannedContribution ?? 0;
-
-    final totalHours = hours.fold<double>(0.0, (s, h) => s + h.hours);
-    final yearDone = year < DateTime.now().year;
-    final urenOk = totalHours >= params.urencriteriumThreshold;
-    final claimZelfs = _claimZelfs && (urenOk || !yearDone);
-
-    final algHeffing = _algHeffingOverride ?? params.algHeffingskortingMax;
-    final arbeids = _arbeidskortingOverride ?? params.arbeidskortingMax;
-
-    final result = _service.calculate(
-      params: params,
-      grossRevenue: grossRevenue,
-      creditNotes: creditNotes,
-      totalDeductibleExpenses: totalDeductible,
-      totalDepreciation: totalDepreciation,
-      carMileageAllowance: mileageAllowance,
-      kiaDeduction: kiaDeduction,
-      claimZelfstandigenaftrek: claimZelfs,
-      claimStartersaftrek: _claimStarters,
-      wbsoDeduction: 0,
-      algHeffingskorting: algHeffing,
-      arbeidskorting: arbeids,
-      lijrenteDeduction: lijrente,
-    );
-
-    final expByCategory = <String, int>{};
-    for (final e in expenses) {
-      expByCategory[e.category] =
-          (expByCategory[e.category] ?? 0) + e.deductibleAmount;
-    }
-
-    final catLabels = expenseCategoryLabels(l);
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (!urenOk)
-            _banner(
-              l.plTaxUrenBanner(
-                totalHours.toStringAsFixed(1),
-                yearDone
-                    ? l.plTaxUrenBannerSuffixDone
-                    : l.plTaxUrenBannerSuffixPending,
-              ),
-              yearDone ? theme.colorScheme.error : AppColors.expense,
-              context,
-            ),
-
-          _head(l.plTaxRevenuSection, context),
-          _plLine(l.plTaxGrossRevenue, result.grossRevenue),
-          if (result.creditNotes > 0)
-            _plLine(l.plTaxCreditNotes, -result.creditNotes),
-          _plLine(l.plTaxNetRevenue, result.netRevenue, bold: true),
-          const SizedBox(height: 12),
-
-          _head(l.plTaxCostsSection, context),
-          ...expByCategory.entries.map(
-            (e) => _plLine(catLabels[e.key] ?? e.key, -e.value),
-          ),
-          if (mileageAllowance > 0)
-            _plLine(
-              l.plTaxMileageAllowance(
-                businessKm,
-                params.mileageRatePerKm.toStringAsFixed(2),
-              ),
-              -mileageAllowance,
-            ),
-          if (totalDepreciation > 0)
-            _plLine(l.plTaxDepreciation, -totalDepreciation),
-          _plLine(l.plTaxTotalCosts, -result.totalExpenses, bold: true),
-          const SizedBox(height: 12),
-          _plLine(l.plTaxGrossProfit, result.grossProfit, bold: true),
-          const Divider(),
-
-          _head(l.plTaxDeductionsSection, context),
-          _plLine(
-            l.plTaxZelfstandigenaftrek(year),
-            result.zelfstandigenaftrekApplied,
-            muted: !claimZelfs,
-          ),
-          if (_claimStarters)
-            _plLine(l.plTaxStartersaftrek, result.startersaftrekApplied),
-          _plLine(
-            l.plTaxMkb(
-              (params.mkbWinstvrijstellingPct * 100).toStringAsFixed(1),
-            ),
-            -result.mkbDeduction,
-          ),
-          if (kiaDeduction > 0) _plLine(l.plTaxKia, -kiaDeduction),
-          if (lijrente > 0) _plLine(l.plTaxLijrente, -lijrente),
-          _plLine(l.plTaxTaxableProfit, result.taxableProfit, bold: true),
-          const Divider(),
-
-          _head(l.plTaxBox1Section, context),
-          _plLine(
-            l.plTaxBracket1((params.bracket1Rate * 100).toStringAsFixed(2)),
-            result.bracket1Tax,
-          ),
-          if (result.bracket2Tax > 0)
-            _plLine(
-              l.plTaxBracket2((params.bracket2Rate * 100).toStringAsFixed(2)),
-              result.bracket2Tax,
-            ),
-          if (result.bracket3Tax > 0)
-            _plLine(
-              l.plTaxBracket3((params.bracket3Rate * 100).toStringAsFixed(2)),
-              result.bracket3Tax,
-            ),
-          const SizedBox(height: 8),
-          _kortingRow(
-            l.plTaxAlgHeffing,
-            algHeffing,
-            params.algHeffingskortingMax,
-            (v) => setState(() => _algHeffingOverride = v),
-            context,
-          ),
-          _kortingRow(
-            l.plTaxArbeidskorting,
-            arbeids,
-            params.arbeidskortingMax,
-            (v) => setState(() => _arbeidskortingOverride = v),
-            context,
-          ),
-          _plLine(l.plTaxInkomsten, result.box1Tax, bold: true),
-          _plLine(
-            l.plTaxZvw((params.zvwRate * 100).toStringAsFixed(2)),
-            result.zvwContribution,
-          ),
-          const Divider(),
-          _plLine(l.plTaxTotalTax, result.totalTax, bold: true),
-          _plLine(l.plTaxNetProfit, result.netProfitAfterTax, bold: true),
-          const SizedBox(height: 12),
-          Text(
-            l.plTaxEffectiveRate(
-              (result.effectiveTaxRate / 100).toStringAsFixed(1),
-            ),
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          const SizedBox(height: 24),
-
-          _head(l.plTaxSettingsSection, context),
-          const SizedBox(height: 8),
-          CheckboxListTile(
-            value: _claimZelfs,
-            onChanged: (v) => setState(() => _claimZelfs = v ?? true),
-            title: Text(l.plTaxClaimZelfs),
-            controlAffinity: ListTileControlAffinity.leading,
-            contentPadding: EdgeInsets.zero,
-          ),
-          CheckboxListTile(
-            value: _claimStarters,
-            onChanged: (v) => setState(() => _claimStarters = v ?? false),
-            title: Text(l.plTaxClaimStarters),
-            controlAffinity: ListTileControlAffinity.leading,
-            contentPadding: EdgeInsets.zero,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _head(String t, BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: 4, bottom: 4),
-    child: Text(
-      t,
-      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-        letterSpacing: 1.2,
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
-      ),
-    ),
-  );
-
-  Widget _plLine(
-    String label,
-    int cents, {
-    bool bold = false,
-    bool muted = false,
-  }) {
-    final theme = Theme.of(context);
-    final color = muted
-        ? theme.colorScheme.outline
-        : cents < 0
-        ? theme.colorScheme.error
-        : null;
-    final ts = theme.textTheme.bodyMedium?.copyWith(
-      fontWeight: bold ? FontWeight.w700 : null,
-      color: color,
-    );
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        children: [
-          Expanded(child: Text(label, style: ts)),
-          Text(
-            cents < 0 ? '(${AppFormat.cents(-cents)})' : AppFormat.cents(cents),
-            style: ts,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _kortingRow(
-    String label,
-    int current,
-    int max,
-    ValueChanged<int> onChanged,
-    BuildContext context,
-  ) {
-    final l = AppLocalizations.of(context)!;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              l.plTaxDeduct(label),
-              style: const TextStyle(color: AppColors.income),
-            ),
-          ),
-          Flexible(
-            flex: 2,
-            child: AmountField(
-              key: ValueKey(label),
-              initialValueCents: current,
-              label: '',
-              onChanged: onChanged,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              l.plTaxMax(AppFormat.cents(max)),
-              style: Theme.of(context).textTheme.bodySmall,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _banner(String msg, Color color, BuildContext context) => Container(
-    margin: const EdgeInsets.only(bottom: 16),
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: color.withValues(alpha: 0.08),
-      border: Border.all(color: color),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: Row(
-      children: [
-        Icon(Icons.warning_amber, color: color, size: 18),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            msg,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: color),
-          ),
-        ),
-      ],
-    ),
-  );
 }

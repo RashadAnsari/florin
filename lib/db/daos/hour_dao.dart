@@ -5,32 +5,16 @@ import '../tables/hour_entries.dart';
 part 'hour_dao.g.dart';
 
 @DriftAccessor(tables: [HourEntries])
-class HourDao extends DatabaseAccessor<AppDatabase> with _$HourDaoMixin {
+class HourDao extends DatabaseAccessor<AppDatabase>
+    with _$HourDaoMixin, Crud<$HourEntriesTable, HourEntry> {
   HourDao(super.db);
 
-  Stream<List<HourEntry>> watchByYear(int year) =>
+  @override
+  TableInfo<$HourEntriesTable, HourEntry> get table => hourEntries;
+
+  Stream<List<HourEntry>> watchInYear(int year) =>
       (select(hourEntries)
-            ..where((h) => h.fiscalYear.equals(year))
-            ..orderBy([(h) => OrderingTerm.desc(h.date)]))
+            ..where((r) => r.date.inYear(year))
+            ..orderBy([(r) => OrderingTerm.desc(r.date)]))
           .watch();
-
-  Future<List<HourEntry>> getByYear(int year) =>
-      (select(hourEntries)
-            ..where((h) => h.fiscalYear.equals(year))
-            ..orderBy([(h) => OrderingTerm.desc(h.date)]))
-          .get();
-
-  Future<double> totalHoursForYear(int year) async {
-    final entries = await getByYear(year);
-    return entries.fold<double>(0.0, (sum, e) => sum + e.hours);
-  }
-
-  Future<int> insertEntry(HourEntriesCompanion entry) =>
-      into(hourEntries).insert(entry);
-
-  Future<bool> saveEntry(HourEntriesCompanion entry) =>
-      (update(hourEntries)).replace(entry);
-
-  Future<int> deleteEntry(int id) =>
-      (delete(hourEntries)..where((h) => h.id.equals(id))).go();
 }

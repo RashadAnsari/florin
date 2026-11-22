@@ -3,1768 +3,442 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
-class $TaxParamsTable extends TaxParams
-    with TableInfo<$TaxParamsTable, TaxParam> {
+class $BusinessProfilesTable extends BusinessProfiles
+    with TableInfo<$BusinessProfilesTable, BusinessProfile> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TaxParamsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _yearMeta = const VerificationMeta('year');
+  $BusinessProfilesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> year = GeneratedColumn<int>(
-    'year',
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
     aliasedName,
     false,
+    check: () => id.equals(1),
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _zelfstandigenaftrekMeta =
-      const VerificationMeta('zelfstandigenaftrek');
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
-  late final GeneratedColumn<int> zelfstandigenaftrek = GeneratedColumn<int>(
-    'zelfstandigenaftrek',
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _startersaftrekMeta = const VerificationMeta(
-    'startersaftrek',
+  static const VerificationMeta _vatNumberMeta = const VerificationMeta(
+    'vatNumber',
   );
   @override
-  late final GeneratedColumn<int> startersaftrek = GeneratedColumn<int>(
-    'startersaftrek',
+  late final GeneratedColumn<String> vatNumber = GeneratedColumn<String>(
+    'vat_number',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _mkbWinstvrijstellingPctMeta =
-      const VerificationMeta('mkbWinstvrijstellingPct');
-  @override
-  late final GeneratedColumn<double> mkbWinstvrijstellingPct =
-      GeneratedColumn<double>(
-        'mkb_winstvrijstelling_pct',
-        aliasedName,
-        false,
-        type: DriftSqlType.double,
-        requiredDuringInsert: true,
-      );
-  static const VerificationMeta _bracket1RateMeta = const VerificationMeta(
-    'bracket1Rate',
+  static const VerificationMeta _kvkNumberMeta = const VerificationMeta(
+    'kvkNumber',
   );
   @override
-  late final GeneratedColumn<double> bracket1Rate = GeneratedColumn<double>(
-    'bracket1_rate',
+  late final GeneratedColumn<String> kvkNumber = GeneratedColumn<String>(
+    'kvk_number',
     aliasedName,
     false,
-    type: DriftSqlType.double,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _bracket1ThresholdMeta = const VerificationMeta(
-    'bracket1Threshold',
+  static const VerificationMeta _addressMeta = const VerificationMeta(
+    'address',
   );
   @override
-  late final GeneratedColumn<int> bracket1Threshold = GeneratedColumn<int>(
-    'bracket1_threshold',
+  late final GeneratedColumn<String> address = GeneratedColumn<String>(
+    'address',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _bracket2RateMeta = const VerificationMeta(
-    'bracket2Rate',
-  );
+  static const VerificationMeta _ibanMeta = const VerificationMeta('iban');
   @override
-  late final GeneratedColumn<double> bracket2Rate = GeneratedColumn<double>(
-    'bracket2_rate',
+  late final GeneratedColumn<String> iban = GeneratedColumn<String>(
+    'iban',
     aliasedName,
     false,
-    type: DriftSqlType.double,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _bracket2ThresholdMeta = const VerificationMeta(
-    'bracket2Threshold',
+  static const VerificationMeta _isStarterMeta = const VerificationMeta(
+    'isStarter',
   );
   @override
-  late final GeneratedColumn<int> bracket2Threshold = GeneratedColumn<int>(
-    'bracket2_threshold',
+  late final GeneratedColumn<bool> isStarter = GeneratedColumn<bool>(
+    'is_starter',
     aliasedName,
     false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _bracket3RateMeta = const VerificationMeta(
-    'bracket3Rate',
-  );
-  @override
-  late final GeneratedColumn<double> bracket3Rate = GeneratedColumn<double>(
-    'bracket3_rate',
-    aliasedName,
-    false,
-    type: DriftSqlType.double,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _algHeffingskortingMaxMeta =
-      const VerificationMeta('algHeffingskortingMax');
-  @override
-  late final GeneratedColumn<int> algHeffingskortingMax = GeneratedColumn<int>(
-    'alg_heffingskorting_max',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _arbeidskortingMaxMeta = const VerificationMeta(
-    'arbeidskortingMax',
-  );
-  @override
-  late final GeneratedColumn<int> arbeidskortingMax = GeneratedColumn<int>(
-    'arbeidskorting_max',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _zvwRateMeta = const VerificationMeta(
-    'zvwRate',
-  );
-  @override
-  late final GeneratedColumn<double> zvwRate = GeneratedColumn<double>(
-    'zvw_rate',
-    aliasedName,
-    false,
-    type: DriftSqlType.double,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _zvwMaxMeta = const VerificationMeta('zvwMax');
-  @override
-  late final GeneratedColumn<int> zvwMax = GeneratedColumn<int>(
-    'zvw_max',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _mixedCostsThresholdMeta =
-      const VerificationMeta('mixedCostsThreshold');
-  @override
-  late final GeneratedColumn<int> mixedCostsThreshold = GeneratedColumn<int>(
-    'mixed_costs_threshold',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _mixedCosts80PctMeta = const VerificationMeta(
-    'mixedCosts80Pct',
-  );
-  @override
-  late final GeneratedColumn<double> mixedCosts80Pct = GeneratedColumn<double>(
-    'mixed_costs80_pct',
-    aliasedName,
-    false,
-    type: DriftSqlType.double,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _jaarruimtePctMeta = const VerificationMeta(
-    'jaarruimtePct',
-  );
-  @override
-  late final GeneratedColumn<double> jaarruimtePct = GeneratedColumn<double>(
-    'jaarruimte_pct',
-    aliasedName,
-    false,
-    type: DriftSqlType.double,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _jaarruimteMaxMeta = const VerificationMeta(
-    'jaarruimteMax',
-  );
-  @override
-  late final GeneratedColumn<int> jaarruimteMax = GeneratedColumn<int>(
-    'jaarruimte_max',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _aowFranchiseMeta = const VerificationMeta(
-    'aowFranchise',
-  );
-  @override
-  late final GeneratedColumn<int> aowFranchise = GeneratedColumn<int>(
-    'aow_franchise',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _reserveringsruimteMaxMeta =
-      const VerificationMeta('reserveringsruimteMax');
-  @override
-  late final GeneratedColumn<int> reserveringsruimteMax = GeneratedColumn<int>(
-    'reserveringsruimte_max',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _factorAMultiplierMeta = const VerificationMeta(
-    'factorAMultiplier',
-  );
-  @override
-  late final GeneratedColumn<double> factorAMultiplier =
-      GeneratedColumn<double>(
-        'factor_a_multiplier',
-        aliasedName,
-        false,
-        type: DriftSqlType.double,
-        requiredDuringInsert: true,
-      );
-  static const VerificationMeta _kiaLowerThresholdMeta = const VerificationMeta(
-    'kiaLowerThreshold',
-  );
-  @override
-  late final GeneratedColumn<int> kiaLowerThreshold = GeneratedColumn<int>(
-    'kia_lower_threshold',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _kiaUpperThresholdMeta = const VerificationMeta(
-    'kiaUpperThreshold',
-  );
-  @override
-  late final GeneratedColumn<int> kiaUpperThreshold = GeneratedColumn<int>(
-    'kia_upper_threshold',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _kiaFlatThresholdMeta = const VerificationMeta(
-    'kiaFlatThreshold',
-  );
-  @override
-  late final GeneratedColumn<int> kiaFlatThreshold = GeneratedColumn<int>(
-    'kia_flat_threshold',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _kiaRateMeta = const VerificationMeta(
-    'kiaRate',
-  );
-  @override
-  late final GeneratedColumn<double> kiaRate = GeneratedColumn<double>(
-    'kia_rate',
-    aliasedName,
-    false,
-    type: DriftSqlType.double,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _kiaFlatAmountMeta = const VerificationMeta(
-    'kiaFlatAmount',
-  );
-  @override
-  late final GeneratedColumn<int> kiaFlatAmount = GeneratedColumn<int>(
-    'kia_flat_amount',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _kiaDecreaseRateMeta = const VerificationMeta(
-    'kiaDecreaseRate',
-  );
-  @override
-  late final GeneratedColumn<double> kiaDecreaseRate = GeneratedColumn<double>(
-    'kia_decrease_rate',
-    aliasedName,
-    false,
-    type: DriftSqlType.double,
+    type: DriftSqlType.bool,
     requiredDuringInsert: false,
-    defaultValue: const Constant(0.0756),
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_starter" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
   );
-  static const VerificationMeta _urencriteriumThresholdMeta =
-      const VerificationMeta('urencriteriumThreshold');
-  @override
-  late final GeneratedColumn<int> urencriteriumThreshold = GeneratedColumn<int>(
-    'urencriterium_threshold',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(1225),
-  );
-  static const VerificationMeta _mileageRatePerKmMeta = const VerificationMeta(
-    'mileageRatePerKm',
-  );
-  @override
-  late final GeneratedColumn<double> mileageRatePerKm = GeneratedColumn<double>(
-    'mileage_rate_per_km',
-    aliasedName,
-    false,
-    type: DriftSqlType.double,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _korThresholdMeta = const VerificationMeta(
-    'korThreshold',
-  );
-  @override
-  late final GeneratedColumn<int> korThreshold = GeneratedColumn<int>(
-    'kor_threshold',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _ossThresholdMeta = const VerificationMeta(
-    'ossThreshold',
-  );
-  @override
-  late final GeneratedColumn<int> ossThreshold = GeneratedColumn<int>(
-    'oss_threshold',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _belastingrentePctMeta = const VerificationMeta(
-    'belastingrentePct',
-  );
-  @override
-  late final GeneratedColumn<double> belastingrentePct =
-      GeneratedColumn<double>(
-        'belastingrente_pct',
-        aliasedName,
-        false,
-        type: DriftSqlType.double,
-        requiredDuringInsert: true,
-      );
   @override
   List<GeneratedColumn> get $columns => [
-    year,
-    zelfstandigenaftrek,
-    startersaftrek,
-    mkbWinstvrijstellingPct,
-    bracket1Rate,
-    bracket1Threshold,
-    bracket2Rate,
-    bracket2Threshold,
-    bracket3Rate,
-    algHeffingskortingMax,
-    arbeidskortingMax,
-    zvwRate,
-    zvwMax,
-    mixedCostsThreshold,
-    mixedCosts80Pct,
-    jaarruimtePct,
-    jaarruimteMax,
-    aowFranchise,
-    reserveringsruimteMax,
-    factorAMultiplier,
-    kiaLowerThreshold,
-    kiaUpperThreshold,
-    kiaFlatThreshold,
-    kiaRate,
-    kiaFlatAmount,
-    kiaDecreaseRate,
-    urencriteriumThreshold,
-    mileageRatePerKm,
-    korThreshold,
-    ossThreshold,
-    belastingrentePct,
+    id,
+    name,
+    vatNumber,
+    kvkNumber,
+    address,
+    iban,
+    isStarter,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'tax_params';
+  static const String $name = 'business_profiles';
   @override
   VerificationContext validateIntegrity(
-    Insertable<TaxParam> instance, {
+    Insertable<BusinessProfile> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('year')) {
-      context.handle(
-        _yearMeta,
-        year.isAcceptableOrUnknown(data['year']!, _yearMeta),
-      );
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('zelfstandigenaftrek')) {
+    if (data.containsKey('name')) {
       context.handle(
-        _zelfstandigenaftrekMeta,
-        zelfstandigenaftrek.isAcceptableOrUnknown(
-          data['zelfstandigenaftrek']!,
-          _zelfstandigenaftrekMeta,
-        ),
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
       );
     } else if (isInserting) {
-      context.missing(_zelfstandigenaftrekMeta);
+      context.missing(_nameMeta);
     }
-    if (data.containsKey('startersaftrek')) {
+    if (data.containsKey('vat_number')) {
       context.handle(
-        _startersaftrekMeta,
-        startersaftrek.isAcceptableOrUnknown(
-          data['startersaftrek']!,
-          _startersaftrekMeta,
-        ),
+        _vatNumberMeta,
+        vatNumber.isAcceptableOrUnknown(data['vat_number']!, _vatNumberMeta),
       );
     } else if (isInserting) {
-      context.missing(_startersaftrekMeta);
+      context.missing(_vatNumberMeta);
     }
-    if (data.containsKey('mkb_winstvrijstelling_pct')) {
+    if (data.containsKey('kvk_number')) {
       context.handle(
-        _mkbWinstvrijstellingPctMeta,
-        mkbWinstvrijstellingPct.isAcceptableOrUnknown(
-          data['mkb_winstvrijstelling_pct']!,
-          _mkbWinstvrijstellingPctMeta,
-        ),
+        _kvkNumberMeta,
+        kvkNumber.isAcceptableOrUnknown(data['kvk_number']!, _kvkNumberMeta),
       );
     } else if (isInserting) {
-      context.missing(_mkbWinstvrijstellingPctMeta);
+      context.missing(_kvkNumberMeta);
     }
-    if (data.containsKey('bracket1_rate')) {
+    if (data.containsKey('address')) {
       context.handle(
-        _bracket1RateMeta,
-        bracket1Rate.isAcceptableOrUnknown(
-          data['bracket1_rate']!,
-          _bracket1RateMeta,
-        ),
+        _addressMeta,
+        address.isAcceptableOrUnknown(data['address']!, _addressMeta),
       );
     } else if (isInserting) {
-      context.missing(_bracket1RateMeta);
+      context.missing(_addressMeta);
     }
-    if (data.containsKey('bracket1_threshold')) {
+    if (data.containsKey('iban')) {
       context.handle(
-        _bracket1ThresholdMeta,
-        bracket1Threshold.isAcceptableOrUnknown(
-          data['bracket1_threshold']!,
-          _bracket1ThresholdMeta,
-        ),
+        _ibanMeta,
+        iban.isAcceptableOrUnknown(data['iban']!, _ibanMeta),
       );
     } else if (isInserting) {
-      context.missing(_bracket1ThresholdMeta);
+      context.missing(_ibanMeta);
     }
-    if (data.containsKey('bracket2_rate')) {
+    if (data.containsKey('is_starter')) {
       context.handle(
-        _bracket2RateMeta,
-        bracket2Rate.isAcceptableOrUnknown(
-          data['bracket2_rate']!,
-          _bracket2RateMeta,
-        ),
+        _isStarterMeta,
+        isStarter.isAcceptableOrUnknown(data['is_starter']!, _isStarterMeta),
       );
-    } else if (isInserting) {
-      context.missing(_bracket2RateMeta);
-    }
-    if (data.containsKey('bracket2_threshold')) {
-      context.handle(
-        _bracket2ThresholdMeta,
-        bracket2Threshold.isAcceptableOrUnknown(
-          data['bracket2_threshold']!,
-          _bracket2ThresholdMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_bracket2ThresholdMeta);
-    }
-    if (data.containsKey('bracket3_rate')) {
-      context.handle(
-        _bracket3RateMeta,
-        bracket3Rate.isAcceptableOrUnknown(
-          data['bracket3_rate']!,
-          _bracket3RateMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_bracket3RateMeta);
-    }
-    if (data.containsKey('alg_heffingskorting_max')) {
-      context.handle(
-        _algHeffingskortingMaxMeta,
-        algHeffingskortingMax.isAcceptableOrUnknown(
-          data['alg_heffingskorting_max']!,
-          _algHeffingskortingMaxMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_algHeffingskortingMaxMeta);
-    }
-    if (data.containsKey('arbeidskorting_max')) {
-      context.handle(
-        _arbeidskortingMaxMeta,
-        arbeidskortingMax.isAcceptableOrUnknown(
-          data['arbeidskorting_max']!,
-          _arbeidskortingMaxMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_arbeidskortingMaxMeta);
-    }
-    if (data.containsKey('zvw_rate')) {
-      context.handle(
-        _zvwRateMeta,
-        zvwRate.isAcceptableOrUnknown(data['zvw_rate']!, _zvwRateMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_zvwRateMeta);
-    }
-    if (data.containsKey('zvw_max')) {
-      context.handle(
-        _zvwMaxMeta,
-        zvwMax.isAcceptableOrUnknown(data['zvw_max']!, _zvwMaxMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_zvwMaxMeta);
-    }
-    if (data.containsKey('mixed_costs_threshold')) {
-      context.handle(
-        _mixedCostsThresholdMeta,
-        mixedCostsThreshold.isAcceptableOrUnknown(
-          data['mixed_costs_threshold']!,
-          _mixedCostsThresholdMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_mixedCostsThresholdMeta);
-    }
-    if (data.containsKey('mixed_costs80_pct')) {
-      context.handle(
-        _mixedCosts80PctMeta,
-        mixedCosts80Pct.isAcceptableOrUnknown(
-          data['mixed_costs80_pct']!,
-          _mixedCosts80PctMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_mixedCosts80PctMeta);
-    }
-    if (data.containsKey('jaarruimte_pct')) {
-      context.handle(
-        _jaarruimtePctMeta,
-        jaarruimtePct.isAcceptableOrUnknown(
-          data['jaarruimte_pct']!,
-          _jaarruimtePctMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_jaarruimtePctMeta);
-    }
-    if (data.containsKey('jaarruimte_max')) {
-      context.handle(
-        _jaarruimteMaxMeta,
-        jaarruimteMax.isAcceptableOrUnknown(
-          data['jaarruimte_max']!,
-          _jaarruimteMaxMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_jaarruimteMaxMeta);
-    }
-    if (data.containsKey('aow_franchise')) {
-      context.handle(
-        _aowFranchiseMeta,
-        aowFranchise.isAcceptableOrUnknown(
-          data['aow_franchise']!,
-          _aowFranchiseMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_aowFranchiseMeta);
-    }
-    if (data.containsKey('reserveringsruimte_max')) {
-      context.handle(
-        _reserveringsruimteMaxMeta,
-        reserveringsruimteMax.isAcceptableOrUnknown(
-          data['reserveringsruimte_max']!,
-          _reserveringsruimteMaxMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_reserveringsruimteMaxMeta);
-    }
-    if (data.containsKey('factor_a_multiplier')) {
-      context.handle(
-        _factorAMultiplierMeta,
-        factorAMultiplier.isAcceptableOrUnknown(
-          data['factor_a_multiplier']!,
-          _factorAMultiplierMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_factorAMultiplierMeta);
-    }
-    if (data.containsKey('kia_lower_threshold')) {
-      context.handle(
-        _kiaLowerThresholdMeta,
-        kiaLowerThreshold.isAcceptableOrUnknown(
-          data['kia_lower_threshold']!,
-          _kiaLowerThresholdMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_kiaLowerThresholdMeta);
-    }
-    if (data.containsKey('kia_upper_threshold')) {
-      context.handle(
-        _kiaUpperThresholdMeta,
-        kiaUpperThreshold.isAcceptableOrUnknown(
-          data['kia_upper_threshold']!,
-          _kiaUpperThresholdMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_kiaUpperThresholdMeta);
-    }
-    if (data.containsKey('kia_flat_threshold')) {
-      context.handle(
-        _kiaFlatThresholdMeta,
-        kiaFlatThreshold.isAcceptableOrUnknown(
-          data['kia_flat_threshold']!,
-          _kiaFlatThresholdMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_kiaFlatThresholdMeta);
-    }
-    if (data.containsKey('kia_rate')) {
-      context.handle(
-        _kiaRateMeta,
-        kiaRate.isAcceptableOrUnknown(data['kia_rate']!, _kiaRateMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_kiaRateMeta);
-    }
-    if (data.containsKey('kia_flat_amount')) {
-      context.handle(
-        _kiaFlatAmountMeta,
-        kiaFlatAmount.isAcceptableOrUnknown(
-          data['kia_flat_amount']!,
-          _kiaFlatAmountMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_kiaFlatAmountMeta);
-    }
-    if (data.containsKey('kia_decrease_rate')) {
-      context.handle(
-        _kiaDecreaseRateMeta,
-        kiaDecreaseRate.isAcceptableOrUnknown(
-          data['kia_decrease_rate']!,
-          _kiaDecreaseRateMeta,
-        ),
-      );
-    }
-    if (data.containsKey('urencriterium_threshold')) {
-      context.handle(
-        _urencriteriumThresholdMeta,
-        urencriteriumThreshold.isAcceptableOrUnknown(
-          data['urencriterium_threshold']!,
-          _urencriteriumThresholdMeta,
-        ),
-      );
-    }
-    if (data.containsKey('mileage_rate_per_km')) {
-      context.handle(
-        _mileageRatePerKmMeta,
-        mileageRatePerKm.isAcceptableOrUnknown(
-          data['mileage_rate_per_km']!,
-          _mileageRatePerKmMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_mileageRatePerKmMeta);
-    }
-    if (data.containsKey('kor_threshold')) {
-      context.handle(
-        _korThresholdMeta,
-        korThreshold.isAcceptableOrUnknown(
-          data['kor_threshold']!,
-          _korThresholdMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_korThresholdMeta);
-    }
-    if (data.containsKey('oss_threshold')) {
-      context.handle(
-        _ossThresholdMeta,
-        ossThreshold.isAcceptableOrUnknown(
-          data['oss_threshold']!,
-          _ossThresholdMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_ossThresholdMeta);
-    }
-    if (data.containsKey('belastingrente_pct')) {
-      context.handle(
-        _belastingrentePctMeta,
-        belastingrentePct.isAcceptableOrUnknown(
-          data['belastingrente_pct']!,
-          _belastingrentePctMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_belastingrentePctMeta);
     }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {year};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  TaxParam map(Map<String, dynamic> data, {String? tablePrefix}) {
+  BusinessProfile map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return TaxParam(
-      year: attachedDatabase.typeMapping.read(
+    return BusinessProfile(
+      id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}year'],
+        data['${effectivePrefix}id'],
       )!,
-      zelfstandigenaftrek: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}zelfstandigenaftrek'],
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
       )!,
-      startersaftrek: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}startersaftrek'],
+      vatNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vat_number'],
       )!,
-      mkbWinstvrijstellingPct: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}mkb_winstvrijstelling_pct'],
+      kvkNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kvk_number'],
       )!,
-      bracket1Rate: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}bracket1_rate'],
+      address: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}address'],
       )!,
-      bracket1Threshold: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}bracket1_threshold'],
+      iban: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}iban'],
       )!,
-      bracket2Rate: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}bracket2_rate'],
-      )!,
-      bracket2Threshold: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}bracket2_threshold'],
-      )!,
-      bracket3Rate: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}bracket3_rate'],
-      )!,
-      algHeffingskortingMax: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}alg_heffingskorting_max'],
-      )!,
-      arbeidskortingMax: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}arbeidskorting_max'],
-      )!,
-      zvwRate: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}zvw_rate'],
-      )!,
-      zvwMax: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}zvw_max'],
-      )!,
-      mixedCostsThreshold: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}mixed_costs_threshold'],
-      )!,
-      mixedCosts80Pct: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}mixed_costs80_pct'],
-      )!,
-      jaarruimtePct: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}jaarruimte_pct'],
-      )!,
-      jaarruimteMax: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}jaarruimte_max'],
-      )!,
-      aowFranchise: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}aow_franchise'],
-      )!,
-      reserveringsruimteMax: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}reserveringsruimte_max'],
-      )!,
-      factorAMultiplier: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}factor_a_multiplier'],
-      )!,
-      kiaLowerThreshold: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}kia_lower_threshold'],
-      )!,
-      kiaUpperThreshold: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}kia_upper_threshold'],
-      )!,
-      kiaFlatThreshold: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}kia_flat_threshold'],
-      )!,
-      kiaRate: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}kia_rate'],
-      )!,
-      kiaFlatAmount: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}kia_flat_amount'],
-      )!,
-      kiaDecreaseRate: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}kia_decrease_rate'],
-      )!,
-      urencriteriumThreshold: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}urencriterium_threshold'],
-      )!,
-      mileageRatePerKm: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}mileage_rate_per_km'],
-      )!,
-      korThreshold: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}kor_threshold'],
-      )!,
-      ossThreshold: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}oss_threshold'],
-      )!,
-      belastingrentePct: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}belastingrente_pct'],
+      isStarter: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_starter'],
       )!,
     );
   }
 
   @override
-  $TaxParamsTable createAlias(String alias) {
-    return $TaxParamsTable(attachedDatabase, alias);
+  $BusinessProfilesTable createAlias(String alias) {
+    return $BusinessProfilesTable(attachedDatabase, alias);
   }
 }
 
-class TaxParam extends DataClass implements Insertable<TaxParam> {
-  final int year;
-  final int zelfstandigenaftrek;
-  final int startersaftrek;
-  final double mkbWinstvrijstellingPct;
-  final double bracket1Rate;
-  final int bracket1Threshold;
-  final double bracket2Rate;
-  final int bracket2Threshold;
-  final double bracket3Rate;
-  final int algHeffingskortingMax;
-  final int arbeidskortingMax;
-  final double zvwRate;
-  final int zvwMax;
-  final int mixedCostsThreshold;
-  final double mixedCosts80Pct;
-  final double jaarruimtePct;
-  final int jaarruimteMax;
-  final int aowFranchise;
-  final int reserveringsruimteMax;
-  final double factorAMultiplier;
-  final int kiaLowerThreshold;
-  final int kiaUpperThreshold;
-  final int kiaFlatThreshold;
-  final double kiaRate;
-  final int kiaFlatAmount;
-  final double kiaDecreaseRate;
-  final int urencriteriumThreshold;
-  final double mileageRatePerKm;
-  final int korThreshold;
-  final int ossThreshold;
-  final double belastingrentePct;
-  const TaxParam({
-    required this.year,
-    required this.zelfstandigenaftrek,
-    required this.startersaftrek,
-    required this.mkbWinstvrijstellingPct,
-    required this.bracket1Rate,
-    required this.bracket1Threshold,
-    required this.bracket2Rate,
-    required this.bracket2Threshold,
-    required this.bracket3Rate,
-    required this.algHeffingskortingMax,
-    required this.arbeidskortingMax,
-    required this.zvwRate,
-    required this.zvwMax,
-    required this.mixedCostsThreshold,
-    required this.mixedCosts80Pct,
-    required this.jaarruimtePct,
-    required this.jaarruimteMax,
-    required this.aowFranchise,
-    required this.reserveringsruimteMax,
-    required this.factorAMultiplier,
-    required this.kiaLowerThreshold,
-    required this.kiaUpperThreshold,
-    required this.kiaFlatThreshold,
-    required this.kiaRate,
-    required this.kiaFlatAmount,
-    required this.kiaDecreaseRate,
-    required this.urencriteriumThreshold,
-    required this.mileageRatePerKm,
-    required this.korThreshold,
-    required this.ossThreshold,
-    required this.belastingrentePct,
+class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
+  final int id;
+  final String name;
+  final String vatNumber;
+  final String kvkNumber;
+  final String address;
+  final String iban;
+  final bool isStarter;
+  const BusinessProfile({
+    required this.id,
+    required this.name,
+    required this.vatNumber,
+    required this.kvkNumber,
+    required this.address,
+    required this.iban,
+    required this.isStarter,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['year'] = Variable<int>(year);
-    map['zelfstandigenaftrek'] = Variable<int>(zelfstandigenaftrek);
-    map['startersaftrek'] = Variable<int>(startersaftrek);
-    map['mkb_winstvrijstelling_pct'] = Variable<double>(
-      mkbWinstvrijstellingPct,
-    );
-    map['bracket1_rate'] = Variable<double>(bracket1Rate);
-    map['bracket1_threshold'] = Variable<int>(bracket1Threshold);
-    map['bracket2_rate'] = Variable<double>(bracket2Rate);
-    map['bracket2_threshold'] = Variable<int>(bracket2Threshold);
-    map['bracket3_rate'] = Variable<double>(bracket3Rate);
-    map['alg_heffingskorting_max'] = Variable<int>(algHeffingskortingMax);
-    map['arbeidskorting_max'] = Variable<int>(arbeidskortingMax);
-    map['zvw_rate'] = Variable<double>(zvwRate);
-    map['zvw_max'] = Variable<int>(zvwMax);
-    map['mixed_costs_threshold'] = Variable<int>(mixedCostsThreshold);
-    map['mixed_costs80_pct'] = Variable<double>(mixedCosts80Pct);
-    map['jaarruimte_pct'] = Variable<double>(jaarruimtePct);
-    map['jaarruimte_max'] = Variable<int>(jaarruimteMax);
-    map['aow_franchise'] = Variable<int>(aowFranchise);
-    map['reserveringsruimte_max'] = Variable<int>(reserveringsruimteMax);
-    map['factor_a_multiplier'] = Variable<double>(factorAMultiplier);
-    map['kia_lower_threshold'] = Variable<int>(kiaLowerThreshold);
-    map['kia_upper_threshold'] = Variable<int>(kiaUpperThreshold);
-    map['kia_flat_threshold'] = Variable<int>(kiaFlatThreshold);
-    map['kia_rate'] = Variable<double>(kiaRate);
-    map['kia_flat_amount'] = Variable<int>(kiaFlatAmount);
-    map['kia_decrease_rate'] = Variable<double>(kiaDecreaseRate);
-    map['urencriterium_threshold'] = Variable<int>(urencriteriumThreshold);
-    map['mileage_rate_per_km'] = Variable<double>(mileageRatePerKm);
-    map['kor_threshold'] = Variable<int>(korThreshold);
-    map['oss_threshold'] = Variable<int>(ossThreshold);
-    map['belastingrente_pct'] = Variable<double>(belastingrentePct);
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['vat_number'] = Variable<String>(vatNumber);
+    map['kvk_number'] = Variable<String>(kvkNumber);
+    map['address'] = Variable<String>(address);
+    map['iban'] = Variable<String>(iban);
+    map['is_starter'] = Variable<bool>(isStarter);
     return map;
   }
 
-  TaxParamsCompanion toCompanion(bool nullToAbsent) {
-    return TaxParamsCompanion(
-      year: Value(year),
-      zelfstandigenaftrek: Value(zelfstandigenaftrek),
-      startersaftrek: Value(startersaftrek),
-      mkbWinstvrijstellingPct: Value(mkbWinstvrijstellingPct),
-      bracket1Rate: Value(bracket1Rate),
-      bracket1Threshold: Value(bracket1Threshold),
-      bracket2Rate: Value(bracket2Rate),
-      bracket2Threshold: Value(bracket2Threshold),
-      bracket3Rate: Value(bracket3Rate),
-      algHeffingskortingMax: Value(algHeffingskortingMax),
-      arbeidskortingMax: Value(arbeidskortingMax),
-      zvwRate: Value(zvwRate),
-      zvwMax: Value(zvwMax),
-      mixedCostsThreshold: Value(mixedCostsThreshold),
-      mixedCosts80Pct: Value(mixedCosts80Pct),
-      jaarruimtePct: Value(jaarruimtePct),
-      jaarruimteMax: Value(jaarruimteMax),
-      aowFranchise: Value(aowFranchise),
-      reserveringsruimteMax: Value(reserveringsruimteMax),
-      factorAMultiplier: Value(factorAMultiplier),
-      kiaLowerThreshold: Value(kiaLowerThreshold),
-      kiaUpperThreshold: Value(kiaUpperThreshold),
-      kiaFlatThreshold: Value(kiaFlatThreshold),
-      kiaRate: Value(kiaRate),
-      kiaFlatAmount: Value(kiaFlatAmount),
-      kiaDecreaseRate: Value(kiaDecreaseRate),
-      urencriteriumThreshold: Value(urencriteriumThreshold),
-      mileageRatePerKm: Value(mileageRatePerKm),
-      korThreshold: Value(korThreshold),
-      ossThreshold: Value(ossThreshold),
-      belastingrentePct: Value(belastingrentePct),
+  BusinessProfilesCompanion toCompanion(bool nullToAbsent) {
+    return BusinessProfilesCompanion(
+      id: Value(id),
+      name: Value(name),
+      vatNumber: Value(vatNumber),
+      kvkNumber: Value(kvkNumber),
+      address: Value(address),
+      iban: Value(iban),
+      isStarter: Value(isStarter),
     );
   }
 
-  factory TaxParam.fromJson(
+  factory BusinessProfile.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return TaxParam(
-      year: serializer.fromJson<int>(json['year']),
-      zelfstandigenaftrek: serializer.fromJson<int>(
-        json['zelfstandigenaftrek'],
-      ),
-      startersaftrek: serializer.fromJson<int>(json['startersaftrek']),
-      mkbWinstvrijstellingPct: serializer.fromJson<double>(
-        json['mkbWinstvrijstellingPct'],
-      ),
-      bracket1Rate: serializer.fromJson<double>(json['bracket1Rate']),
-      bracket1Threshold: serializer.fromJson<int>(json['bracket1Threshold']),
-      bracket2Rate: serializer.fromJson<double>(json['bracket2Rate']),
-      bracket2Threshold: serializer.fromJson<int>(json['bracket2Threshold']),
-      bracket3Rate: serializer.fromJson<double>(json['bracket3Rate']),
-      algHeffingskortingMax: serializer.fromJson<int>(
-        json['algHeffingskortingMax'],
-      ),
-      arbeidskortingMax: serializer.fromJson<int>(json['arbeidskortingMax']),
-      zvwRate: serializer.fromJson<double>(json['zvwRate']),
-      zvwMax: serializer.fromJson<int>(json['zvwMax']),
-      mixedCostsThreshold: serializer.fromJson<int>(
-        json['mixedCostsThreshold'],
-      ),
-      mixedCosts80Pct: serializer.fromJson<double>(json['mixedCosts80Pct']),
-      jaarruimtePct: serializer.fromJson<double>(json['jaarruimtePct']),
-      jaarruimteMax: serializer.fromJson<int>(json['jaarruimteMax']),
-      aowFranchise: serializer.fromJson<int>(json['aowFranchise']),
-      reserveringsruimteMax: serializer.fromJson<int>(
-        json['reserveringsruimteMax'],
-      ),
-      factorAMultiplier: serializer.fromJson<double>(json['factorAMultiplier']),
-      kiaLowerThreshold: serializer.fromJson<int>(json['kiaLowerThreshold']),
-      kiaUpperThreshold: serializer.fromJson<int>(json['kiaUpperThreshold']),
-      kiaFlatThreshold: serializer.fromJson<int>(json['kiaFlatThreshold']),
-      kiaRate: serializer.fromJson<double>(json['kiaRate']),
-      kiaFlatAmount: serializer.fromJson<int>(json['kiaFlatAmount']),
-      kiaDecreaseRate: serializer.fromJson<double>(json['kiaDecreaseRate']),
-      urencriteriumThreshold: serializer.fromJson<int>(
-        json['urencriteriumThreshold'],
-      ),
-      mileageRatePerKm: serializer.fromJson<double>(json['mileageRatePerKm']),
-      korThreshold: serializer.fromJson<int>(json['korThreshold']),
-      ossThreshold: serializer.fromJson<int>(json['ossThreshold']),
-      belastingrentePct: serializer.fromJson<double>(json['belastingrentePct']),
+    return BusinessProfile(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      vatNumber: serializer.fromJson<String>(json['vatNumber']),
+      kvkNumber: serializer.fromJson<String>(json['kvkNumber']),
+      address: serializer.fromJson<String>(json['address']),
+      iban: serializer.fromJson<String>(json['iban']),
+      isStarter: serializer.fromJson<bool>(json['isStarter']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'year': serializer.toJson<int>(year),
-      'zelfstandigenaftrek': serializer.toJson<int>(zelfstandigenaftrek),
-      'startersaftrek': serializer.toJson<int>(startersaftrek),
-      'mkbWinstvrijstellingPct': serializer.toJson<double>(
-        mkbWinstvrijstellingPct,
-      ),
-      'bracket1Rate': serializer.toJson<double>(bracket1Rate),
-      'bracket1Threshold': serializer.toJson<int>(bracket1Threshold),
-      'bracket2Rate': serializer.toJson<double>(bracket2Rate),
-      'bracket2Threshold': serializer.toJson<int>(bracket2Threshold),
-      'bracket3Rate': serializer.toJson<double>(bracket3Rate),
-      'algHeffingskortingMax': serializer.toJson<int>(algHeffingskortingMax),
-      'arbeidskortingMax': serializer.toJson<int>(arbeidskortingMax),
-      'zvwRate': serializer.toJson<double>(zvwRate),
-      'zvwMax': serializer.toJson<int>(zvwMax),
-      'mixedCostsThreshold': serializer.toJson<int>(mixedCostsThreshold),
-      'mixedCosts80Pct': serializer.toJson<double>(mixedCosts80Pct),
-      'jaarruimtePct': serializer.toJson<double>(jaarruimtePct),
-      'jaarruimteMax': serializer.toJson<int>(jaarruimteMax),
-      'aowFranchise': serializer.toJson<int>(aowFranchise),
-      'reserveringsruimteMax': serializer.toJson<int>(reserveringsruimteMax),
-      'factorAMultiplier': serializer.toJson<double>(factorAMultiplier),
-      'kiaLowerThreshold': serializer.toJson<int>(kiaLowerThreshold),
-      'kiaUpperThreshold': serializer.toJson<int>(kiaUpperThreshold),
-      'kiaFlatThreshold': serializer.toJson<int>(kiaFlatThreshold),
-      'kiaRate': serializer.toJson<double>(kiaRate),
-      'kiaFlatAmount': serializer.toJson<int>(kiaFlatAmount),
-      'kiaDecreaseRate': serializer.toJson<double>(kiaDecreaseRate),
-      'urencriteriumThreshold': serializer.toJson<int>(urencriteriumThreshold),
-      'mileageRatePerKm': serializer.toJson<double>(mileageRatePerKm),
-      'korThreshold': serializer.toJson<int>(korThreshold),
-      'ossThreshold': serializer.toJson<int>(ossThreshold),
-      'belastingrentePct': serializer.toJson<double>(belastingrentePct),
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'vatNumber': serializer.toJson<String>(vatNumber),
+      'kvkNumber': serializer.toJson<String>(kvkNumber),
+      'address': serializer.toJson<String>(address),
+      'iban': serializer.toJson<String>(iban),
+      'isStarter': serializer.toJson<bool>(isStarter),
     };
   }
 
-  TaxParam copyWith({
-    int? year,
-    int? zelfstandigenaftrek,
-    int? startersaftrek,
-    double? mkbWinstvrijstellingPct,
-    double? bracket1Rate,
-    int? bracket1Threshold,
-    double? bracket2Rate,
-    int? bracket2Threshold,
-    double? bracket3Rate,
-    int? algHeffingskortingMax,
-    int? arbeidskortingMax,
-    double? zvwRate,
-    int? zvwMax,
-    int? mixedCostsThreshold,
-    double? mixedCosts80Pct,
-    double? jaarruimtePct,
-    int? jaarruimteMax,
-    int? aowFranchise,
-    int? reserveringsruimteMax,
-    double? factorAMultiplier,
-    int? kiaLowerThreshold,
-    int? kiaUpperThreshold,
-    int? kiaFlatThreshold,
-    double? kiaRate,
-    int? kiaFlatAmount,
-    double? kiaDecreaseRate,
-    int? urencriteriumThreshold,
-    double? mileageRatePerKm,
-    int? korThreshold,
-    int? ossThreshold,
-    double? belastingrentePct,
-  }) => TaxParam(
-    year: year ?? this.year,
-    zelfstandigenaftrek: zelfstandigenaftrek ?? this.zelfstandigenaftrek,
-    startersaftrek: startersaftrek ?? this.startersaftrek,
-    mkbWinstvrijstellingPct:
-        mkbWinstvrijstellingPct ?? this.mkbWinstvrijstellingPct,
-    bracket1Rate: bracket1Rate ?? this.bracket1Rate,
-    bracket1Threshold: bracket1Threshold ?? this.bracket1Threshold,
-    bracket2Rate: bracket2Rate ?? this.bracket2Rate,
-    bracket2Threshold: bracket2Threshold ?? this.bracket2Threshold,
-    bracket3Rate: bracket3Rate ?? this.bracket3Rate,
-    algHeffingskortingMax: algHeffingskortingMax ?? this.algHeffingskortingMax,
-    arbeidskortingMax: arbeidskortingMax ?? this.arbeidskortingMax,
-    zvwRate: zvwRate ?? this.zvwRate,
-    zvwMax: zvwMax ?? this.zvwMax,
-    mixedCostsThreshold: mixedCostsThreshold ?? this.mixedCostsThreshold,
-    mixedCosts80Pct: mixedCosts80Pct ?? this.mixedCosts80Pct,
-    jaarruimtePct: jaarruimtePct ?? this.jaarruimtePct,
-    jaarruimteMax: jaarruimteMax ?? this.jaarruimteMax,
-    aowFranchise: aowFranchise ?? this.aowFranchise,
-    reserveringsruimteMax: reserveringsruimteMax ?? this.reserveringsruimteMax,
-    factorAMultiplier: factorAMultiplier ?? this.factorAMultiplier,
-    kiaLowerThreshold: kiaLowerThreshold ?? this.kiaLowerThreshold,
-    kiaUpperThreshold: kiaUpperThreshold ?? this.kiaUpperThreshold,
-    kiaFlatThreshold: kiaFlatThreshold ?? this.kiaFlatThreshold,
-    kiaRate: kiaRate ?? this.kiaRate,
-    kiaFlatAmount: kiaFlatAmount ?? this.kiaFlatAmount,
-    kiaDecreaseRate: kiaDecreaseRate ?? this.kiaDecreaseRate,
-    urencriteriumThreshold:
-        urencriteriumThreshold ?? this.urencriteriumThreshold,
-    mileageRatePerKm: mileageRatePerKm ?? this.mileageRatePerKm,
-    korThreshold: korThreshold ?? this.korThreshold,
-    ossThreshold: ossThreshold ?? this.ossThreshold,
-    belastingrentePct: belastingrentePct ?? this.belastingrentePct,
+  BusinessProfile copyWith({
+    int? id,
+    String? name,
+    String? vatNumber,
+    String? kvkNumber,
+    String? address,
+    String? iban,
+    bool? isStarter,
+  }) => BusinessProfile(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    vatNumber: vatNumber ?? this.vatNumber,
+    kvkNumber: kvkNumber ?? this.kvkNumber,
+    address: address ?? this.address,
+    iban: iban ?? this.iban,
+    isStarter: isStarter ?? this.isStarter,
   );
-  TaxParam copyWithCompanion(TaxParamsCompanion data) {
-    return TaxParam(
-      year: data.year.present ? data.year.value : this.year,
-      zelfstandigenaftrek: data.zelfstandigenaftrek.present
-          ? data.zelfstandigenaftrek.value
-          : this.zelfstandigenaftrek,
-      startersaftrek: data.startersaftrek.present
-          ? data.startersaftrek.value
-          : this.startersaftrek,
-      mkbWinstvrijstellingPct: data.mkbWinstvrijstellingPct.present
-          ? data.mkbWinstvrijstellingPct.value
-          : this.mkbWinstvrijstellingPct,
-      bracket1Rate: data.bracket1Rate.present
-          ? data.bracket1Rate.value
-          : this.bracket1Rate,
-      bracket1Threshold: data.bracket1Threshold.present
-          ? data.bracket1Threshold.value
-          : this.bracket1Threshold,
-      bracket2Rate: data.bracket2Rate.present
-          ? data.bracket2Rate.value
-          : this.bracket2Rate,
-      bracket2Threshold: data.bracket2Threshold.present
-          ? data.bracket2Threshold.value
-          : this.bracket2Threshold,
-      bracket3Rate: data.bracket3Rate.present
-          ? data.bracket3Rate.value
-          : this.bracket3Rate,
-      algHeffingskortingMax: data.algHeffingskortingMax.present
-          ? data.algHeffingskortingMax.value
-          : this.algHeffingskortingMax,
-      arbeidskortingMax: data.arbeidskortingMax.present
-          ? data.arbeidskortingMax.value
-          : this.arbeidskortingMax,
-      zvwRate: data.zvwRate.present ? data.zvwRate.value : this.zvwRate,
-      zvwMax: data.zvwMax.present ? data.zvwMax.value : this.zvwMax,
-      mixedCostsThreshold: data.mixedCostsThreshold.present
-          ? data.mixedCostsThreshold.value
-          : this.mixedCostsThreshold,
-      mixedCosts80Pct: data.mixedCosts80Pct.present
-          ? data.mixedCosts80Pct.value
-          : this.mixedCosts80Pct,
-      jaarruimtePct: data.jaarruimtePct.present
-          ? data.jaarruimtePct.value
-          : this.jaarruimtePct,
-      jaarruimteMax: data.jaarruimteMax.present
-          ? data.jaarruimteMax.value
-          : this.jaarruimteMax,
-      aowFranchise: data.aowFranchise.present
-          ? data.aowFranchise.value
-          : this.aowFranchise,
-      reserveringsruimteMax: data.reserveringsruimteMax.present
-          ? data.reserveringsruimteMax.value
-          : this.reserveringsruimteMax,
-      factorAMultiplier: data.factorAMultiplier.present
-          ? data.factorAMultiplier.value
-          : this.factorAMultiplier,
-      kiaLowerThreshold: data.kiaLowerThreshold.present
-          ? data.kiaLowerThreshold.value
-          : this.kiaLowerThreshold,
-      kiaUpperThreshold: data.kiaUpperThreshold.present
-          ? data.kiaUpperThreshold.value
-          : this.kiaUpperThreshold,
-      kiaFlatThreshold: data.kiaFlatThreshold.present
-          ? data.kiaFlatThreshold.value
-          : this.kiaFlatThreshold,
-      kiaRate: data.kiaRate.present ? data.kiaRate.value : this.kiaRate,
-      kiaFlatAmount: data.kiaFlatAmount.present
-          ? data.kiaFlatAmount.value
-          : this.kiaFlatAmount,
-      kiaDecreaseRate: data.kiaDecreaseRate.present
-          ? data.kiaDecreaseRate.value
-          : this.kiaDecreaseRate,
-      urencriteriumThreshold: data.urencriteriumThreshold.present
-          ? data.urencriteriumThreshold.value
-          : this.urencriteriumThreshold,
-      mileageRatePerKm: data.mileageRatePerKm.present
-          ? data.mileageRatePerKm.value
-          : this.mileageRatePerKm,
-      korThreshold: data.korThreshold.present
-          ? data.korThreshold.value
-          : this.korThreshold,
-      ossThreshold: data.ossThreshold.present
-          ? data.ossThreshold.value
-          : this.ossThreshold,
-      belastingrentePct: data.belastingrentePct.present
-          ? data.belastingrentePct.value
-          : this.belastingrentePct,
+  BusinessProfile copyWithCompanion(BusinessProfilesCompanion data) {
+    return BusinessProfile(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      vatNumber: data.vatNumber.present ? data.vatNumber.value : this.vatNumber,
+      kvkNumber: data.kvkNumber.present ? data.kvkNumber.value : this.kvkNumber,
+      address: data.address.present ? data.address.value : this.address,
+      iban: data.iban.present ? data.iban.value : this.iban,
+      isStarter: data.isStarter.present ? data.isStarter.value : this.isStarter,
     );
   }
 
   @override
   String toString() {
-    return (StringBuffer('TaxParam(')
-          ..write('year: $year, ')
-          ..write('zelfstandigenaftrek: $zelfstandigenaftrek, ')
-          ..write('startersaftrek: $startersaftrek, ')
-          ..write('mkbWinstvrijstellingPct: $mkbWinstvrijstellingPct, ')
-          ..write('bracket1Rate: $bracket1Rate, ')
-          ..write('bracket1Threshold: $bracket1Threshold, ')
-          ..write('bracket2Rate: $bracket2Rate, ')
-          ..write('bracket2Threshold: $bracket2Threshold, ')
-          ..write('bracket3Rate: $bracket3Rate, ')
-          ..write('algHeffingskortingMax: $algHeffingskortingMax, ')
-          ..write('arbeidskortingMax: $arbeidskortingMax, ')
-          ..write('zvwRate: $zvwRate, ')
-          ..write('zvwMax: $zvwMax, ')
-          ..write('mixedCostsThreshold: $mixedCostsThreshold, ')
-          ..write('mixedCosts80Pct: $mixedCosts80Pct, ')
-          ..write('jaarruimtePct: $jaarruimtePct, ')
-          ..write('jaarruimteMax: $jaarruimteMax, ')
-          ..write('aowFranchise: $aowFranchise, ')
-          ..write('reserveringsruimteMax: $reserveringsruimteMax, ')
-          ..write('factorAMultiplier: $factorAMultiplier, ')
-          ..write('kiaLowerThreshold: $kiaLowerThreshold, ')
-          ..write('kiaUpperThreshold: $kiaUpperThreshold, ')
-          ..write('kiaFlatThreshold: $kiaFlatThreshold, ')
-          ..write('kiaRate: $kiaRate, ')
-          ..write('kiaFlatAmount: $kiaFlatAmount, ')
-          ..write('kiaDecreaseRate: $kiaDecreaseRate, ')
-          ..write('urencriteriumThreshold: $urencriteriumThreshold, ')
-          ..write('mileageRatePerKm: $mileageRatePerKm, ')
-          ..write('korThreshold: $korThreshold, ')
-          ..write('ossThreshold: $ossThreshold, ')
-          ..write('belastingrentePct: $belastingrentePct')
+    return (StringBuffer('BusinessProfile(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('vatNumber: $vatNumber, ')
+          ..write('kvkNumber: $kvkNumber, ')
+          ..write('address: $address, ')
+          ..write('iban: $iban, ')
+          ..write('isStarter: $isStarter')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hashAll([
-    year,
-    zelfstandigenaftrek,
-    startersaftrek,
-    mkbWinstvrijstellingPct,
-    bracket1Rate,
-    bracket1Threshold,
-    bracket2Rate,
-    bracket2Threshold,
-    bracket3Rate,
-    algHeffingskortingMax,
-    arbeidskortingMax,
-    zvwRate,
-    zvwMax,
-    mixedCostsThreshold,
-    mixedCosts80Pct,
-    jaarruimtePct,
-    jaarruimteMax,
-    aowFranchise,
-    reserveringsruimteMax,
-    factorAMultiplier,
-    kiaLowerThreshold,
-    kiaUpperThreshold,
-    kiaFlatThreshold,
-    kiaRate,
-    kiaFlatAmount,
-    kiaDecreaseRate,
-    urencriteriumThreshold,
-    mileageRatePerKm,
-    korThreshold,
-    ossThreshold,
-    belastingrentePct,
-  ]);
+  int get hashCode =>
+      Object.hash(id, name, vatNumber, kvkNumber, address, iban, isStarter);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is TaxParam &&
-          other.year == this.year &&
-          other.zelfstandigenaftrek == this.zelfstandigenaftrek &&
-          other.startersaftrek == this.startersaftrek &&
-          other.mkbWinstvrijstellingPct == this.mkbWinstvrijstellingPct &&
-          other.bracket1Rate == this.bracket1Rate &&
-          other.bracket1Threshold == this.bracket1Threshold &&
-          other.bracket2Rate == this.bracket2Rate &&
-          other.bracket2Threshold == this.bracket2Threshold &&
-          other.bracket3Rate == this.bracket3Rate &&
-          other.algHeffingskortingMax == this.algHeffingskortingMax &&
-          other.arbeidskortingMax == this.arbeidskortingMax &&
-          other.zvwRate == this.zvwRate &&
-          other.zvwMax == this.zvwMax &&
-          other.mixedCostsThreshold == this.mixedCostsThreshold &&
-          other.mixedCosts80Pct == this.mixedCosts80Pct &&
-          other.jaarruimtePct == this.jaarruimtePct &&
-          other.jaarruimteMax == this.jaarruimteMax &&
-          other.aowFranchise == this.aowFranchise &&
-          other.reserveringsruimteMax == this.reserveringsruimteMax &&
-          other.factorAMultiplier == this.factorAMultiplier &&
-          other.kiaLowerThreshold == this.kiaLowerThreshold &&
-          other.kiaUpperThreshold == this.kiaUpperThreshold &&
-          other.kiaFlatThreshold == this.kiaFlatThreshold &&
-          other.kiaRate == this.kiaRate &&
-          other.kiaFlatAmount == this.kiaFlatAmount &&
-          other.kiaDecreaseRate == this.kiaDecreaseRate &&
-          other.urencriteriumThreshold == this.urencriteriumThreshold &&
-          other.mileageRatePerKm == this.mileageRatePerKm &&
-          other.korThreshold == this.korThreshold &&
-          other.ossThreshold == this.ossThreshold &&
-          other.belastingrentePct == this.belastingrentePct);
+      (other is BusinessProfile &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.vatNumber == this.vatNumber &&
+          other.kvkNumber == this.kvkNumber &&
+          other.address == this.address &&
+          other.iban == this.iban &&
+          other.isStarter == this.isStarter);
 }
 
-class TaxParamsCompanion extends UpdateCompanion<TaxParam> {
-  final Value<int> year;
-  final Value<int> zelfstandigenaftrek;
-  final Value<int> startersaftrek;
-  final Value<double> mkbWinstvrijstellingPct;
-  final Value<double> bracket1Rate;
-  final Value<int> bracket1Threshold;
-  final Value<double> bracket2Rate;
-  final Value<int> bracket2Threshold;
-  final Value<double> bracket3Rate;
-  final Value<int> algHeffingskortingMax;
-  final Value<int> arbeidskortingMax;
-  final Value<double> zvwRate;
-  final Value<int> zvwMax;
-  final Value<int> mixedCostsThreshold;
-  final Value<double> mixedCosts80Pct;
-  final Value<double> jaarruimtePct;
-  final Value<int> jaarruimteMax;
-  final Value<int> aowFranchise;
-  final Value<int> reserveringsruimteMax;
-  final Value<double> factorAMultiplier;
-  final Value<int> kiaLowerThreshold;
-  final Value<int> kiaUpperThreshold;
-  final Value<int> kiaFlatThreshold;
-  final Value<double> kiaRate;
-  final Value<int> kiaFlatAmount;
-  final Value<double> kiaDecreaseRate;
-  final Value<int> urencriteriumThreshold;
-  final Value<double> mileageRatePerKm;
-  final Value<int> korThreshold;
-  final Value<int> ossThreshold;
-  final Value<double> belastingrentePct;
-  const TaxParamsCompanion({
-    this.year = const Value.absent(),
-    this.zelfstandigenaftrek = const Value.absent(),
-    this.startersaftrek = const Value.absent(),
-    this.mkbWinstvrijstellingPct = const Value.absent(),
-    this.bracket1Rate = const Value.absent(),
-    this.bracket1Threshold = const Value.absent(),
-    this.bracket2Rate = const Value.absent(),
-    this.bracket2Threshold = const Value.absent(),
-    this.bracket3Rate = const Value.absent(),
-    this.algHeffingskortingMax = const Value.absent(),
-    this.arbeidskortingMax = const Value.absent(),
-    this.zvwRate = const Value.absent(),
-    this.zvwMax = const Value.absent(),
-    this.mixedCostsThreshold = const Value.absent(),
-    this.mixedCosts80Pct = const Value.absent(),
-    this.jaarruimtePct = const Value.absent(),
-    this.jaarruimteMax = const Value.absent(),
-    this.aowFranchise = const Value.absent(),
-    this.reserveringsruimteMax = const Value.absent(),
-    this.factorAMultiplier = const Value.absent(),
-    this.kiaLowerThreshold = const Value.absent(),
-    this.kiaUpperThreshold = const Value.absent(),
-    this.kiaFlatThreshold = const Value.absent(),
-    this.kiaRate = const Value.absent(),
-    this.kiaFlatAmount = const Value.absent(),
-    this.kiaDecreaseRate = const Value.absent(),
-    this.urencriteriumThreshold = const Value.absent(),
-    this.mileageRatePerKm = const Value.absent(),
-    this.korThreshold = const Value.absent(),
-    this.ossThreshold = const Value.absent(),
-    this.belastingrentePct = const Value.absent(),
+class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<String> vatNumber;
+  final Value<String> kvkNumber;
+  final Value<String> address;
+  final Value<String> iban;
+  final Value<bool> isStarter;
+  const BusinessProfilesCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.vatNumber = const Value.absent(),
+    this.kvkNumber = const Value.absent(),
+    this.address = const Value.absent(),
+    this.iban = const Value.absent(),
+    this.isStarter = const Value.absent(),
   });
-  TaxParamsCompanion.insert({
-    this.year = const Value.absent(),
-    required int zelfstandigenaftrek,
-    required int startersaftrek,
-    required double mkbWinstvrijstellingPct,
-    required double bracket1Rate,
-    required int bracket1Threshold,
-    required double bracket2Rate,
-    required int bracket2Threshold,
-    required double bracket3Rate,
-    required int algHeffingskortingMax,
-    required int arbeidskortingMax,
-    required double zvwRate,
-    required int zvwMax,
-    required int mixedCostsThreshold,
-    required double mixedCosts80Pct,
-    required double jaarruimtePct,
-    required int jaarruimteMax,
-    required int aowFranchise,
-    required int reserveringsruimteMax,
-    required double factorAMultiplier,
-    required int kiaLowerThreshold,
-    required int kiaUpperThreshold,
-    required int kiaFlatThreshold,
-    required double kiaRate,
-    required int kiaFlatAmount,
-    this.kiaDecreaseRate = const Value.absent(),
-    this.urencriteriumThreshold = const Value.absent(),
-    required double mileageRatePerKm,
-    required int korThreshold,
-    required int ossThreshold,
-    required double belastingrentePct,
-  }) : zelfstandigenaftrek = Value(zelfstandigenaftrek),
-       startersaftrek = Value(startersaftrek),
-       mkbWinstvrijstellingPct = Value(mkbWinstvrijstellingPct),
-       bracket1Rate = Value(bracket1Rate),
-       bracket1Threshold = Value(bracket1Threshold),
-       bracket2Rate = Value(bracket2Rate),
-       bracket2Threshold = Value(bracket2Threshold),
-       bracket3Rate = Value(bracket3Rate),
-       algHeffingskortingMax = Value(algHeffingskortingMax),
-       arbeidskortingMax = Value(arbeidskortingMax),
-       zvwRate = Value(zvwRate),
-       zvwMax = Value(zvwMax),
-       mixedCostsThreshold = Value(mixedCostsThreshold),
-       mixedCosts80Pct = Value(mixedCosts80Pct),
-       jaarruimtePct = Value(jaarruimtePct),
-       jaarruimteMax = Value(jaarruimteMax),
-       aowFranchise = Value(aowFranchise),
-       reserveringsruimteMax = Value(reserveringsruimteMax),
-       factorAMultiplier = Value(factorAMultiplier),
-       kiaLowerThreshold = Value(kiaLowerThreshold),
-       kiaUpperThreshold = Value(kiaUpperThreshold),
-       kiaFlatThreshold = Value(kiaFlatThreshold),
-       kiaRate = Value(kiaRate),
-       kiaFlatAmount = Value(kiaFlatAmount),
-       mileageRatePerKm = Value(mileageRatePerKm),
-       korThreshold = Value(korThreshold),
-       ossThreshold = Value(ossThreshold),
-       belastingrentePct = Value(belastingrentePct);
-  static Insertable<TaxParam> custom({
-    Expression<int>? year,
-    Expression<int>? zelfstandigenaftrek,
-    Expression<int>? startersaftrek,
-    Expression<double>? mkbWinstvrijstellingPct,
-    Expression<double>? bracket1Rate,
-    Expression<int>? bracket1Threshold,
-    Expression<double>? bracket2Rate,
-    Expression<int>? bracket2Threshold,
-    Expression<double>? bracket3Rate,
-    Expression<int>? algHeffingskortingMax,
-    Expression<int>? arbeidskortingMax,
-    Expression<double>? zvwRate,
-    Expression<int>? zvwMax,
-    Expression<int>? mixedCostsThreshold,
-    Expression<double>? mixedCosts80Pct,
-    Expression<double>? jaarruimtePct,
-    Expression<int>? jaarruimteMax,
-    Expression<int>? aowFranchise,
-    Expression<int>? reserveringsruimteMax,
-    Expression<double>? factorAMultiplier,
-    Expression<int>? kiaLowerThreshold,
-    Expression<int>? kiaUpperThreshold,
-    Expression<int>? kiaFlatThreshold,
-    Expression<double>? kiaRate,
-    Expression<int>? kiaFlatAmount,
-    Expression<double>? kiaDecreaseRate,
-    Expression<int>? urencriteriumThreshold,
-    Expression<double>? mileageRatePerKm,
-    Expression<int>? korThreshold,
-    Expression<int>? ossThreshold,
-    Expression<double>? belastingrentePct,
+  BusinessProfilesCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    required String vatNumber,
+    required String kvkNumber,
+    required String address,
+    required String iban,
+    this.isStarter = const Value.absent(),
+  }) : name = Value(name),
+       vatNumber = Value(vatNumber),
+       kvkNumber = Value(kvkNumber),
+       address = Value(address),
+       iban = Value(iban);
+  static Insertable<BusinessProfile> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? vatNumber,
+    Expression<String>? kvkNumber,
+    Expression<String>? address,
+    Expression<String>? iban,
+    Expression<bool>? isStarter,
   }) {
     return RawValuesInsertable({
-      if (year != null) 'year': year,
-      if (zelfstandigenaftrek != null)
-        'zelfstandigenaftrek': zelfstandigenaftrek,
-      if (startersaftrek != null) 'startersaftrek': startersaftrek,
-      if (mkbWinstvrijstellingPct != null)
-        'mkb_winstvrijstelling_pct': mkbWinstvrijstellingPct,
-      if (bracket1Rate != null) 'bracket1_rate': bracket1Rate,
-      if (bracket1Threshold != null) 'bracket1_threshold': bracket1Threshold,
-      if (bracket2Rate != null) 'bracket2_rate': bracket2Rate,
-      if (bracket2Threshold != null) 'bracket2_threshold': bracket2Threshold,
-      if (bracket3Rate != null) 'bracket3_rate': bracket3Rate,
-      if (algHeffingskortingMax != null)
-        'alg_heffingskorting_max': algHeffingskortingMax,
-      if (arbeidskortingMax != null) 'arbeidskorting_max': arbeidskortingMax,
-      if (zvwRate != null) 'zvw_rate': zvwRate,
-      if (zvwMax != null) 'zvw_max': zvwMax,
-      if (mixedCostsThreshold != null)
-        'mixed_costs_threshold': mixedCostsThreshold,
-      if (mixedCosts80Pct != null) 'mixed_costs80_pct': mixedCosts80Pct,
-      if (jaarruimtePct != null) 'jaarruimte_pct': jaarruimtePct,
-      if (jaarruimteMax != null) 'jaarruimte_max': jaarruimteMax,
-      if (aowFranchise != null) 'aow_franchise': aowFranchise,
-      if (reserveringsruimteMax != null)
-        'reserveringsruimte_max': reserveringsruimteMax,
-      if (factorAMultiplier != null) 'factor_a_multiplier': factorAMultiplier,
-      if (kiaLowerThreshold != null) 'kia_lower_threshold': kiaLowerThreshold,
-      if (kiaUpperThreshold != null) 'kia_upper_threshold': kiaUpperThreshold,
-      if (kiaFlatThreshold != null) 'kia_flat_threshold': kiaFlatThreshold,
-      if (kiaRate != null) 'kia_rate': kiaRate,
-      if (kiaFlatAmount != null) 'kia_flat_amount': kiaFlatAmount,
-      if (kiaDecreaseRate != null) 'kia_decrease_rate': kiaDecreaseRate,
-      if (urencriteriumThreshold != null)
-        'urencriterium_threshold': urencriteriumThreshold,
-      if (mileageRatePerKm != null) 'mileage_rate_per_km': mileageRatePerKm,
-      if (korThreshold != null) 'kor_threshold': korThreshold,
-      if (ossThreshold != null) 'oss_threshold': ossThreshold,
-      if (belastingrentePct != null) 'belastingrente_pct': belastingrentePct,
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (vatNumber != null) 'vat_number': vatNumber,
+      if (kvkNumber != null) 'kvk_number': kvkNumber,
+      if (address != null) 'address': address,
+      if (iban != null) 'iban': iban,
+      if (isStarter != null) 'is_starter': isStarter,
     });
   }
 
-  TaxParamsCompanion copyWith({
-    Value<int>? year,
-    Value<int>? zelfstandigenaftrek,
-    Value<int>? startersaftrek,
-    Value<double>? mkbWinstvrijstellingPct,
-    Value<double>? bracket1Rate,
-    Value<int>? bracket1Threshold,
-    Value<double>? bracket2Rate,
-    Value<int>? bracket2Threshold,
-    Value<double>? bracket3Rate,
-    Value<int>? algHeffingskortingMax,
-    Value<int>? arbeidskortingMax,
-    Value<double>? zvwRate,
-    Value<int>? zvwMax,
-    Value<int>? mixedCostsThreshold,
-    Value<double>? mixedCosts80Pct,
-    Value<double>? jaarruimtePct,
-    Value<int>? jaarruimteMax,
-    Value<int>? aowFranchise,
-    Value<int>? reserveringsruimteMax,
-    Value<double>? factorAMultiplier,
-    Value<int>? kiaLowerThreshold,
-    Value<int>? kiaUpperThreshold,
-    Value<int>? kiaFlatThreshold,
-    Value<double>? kiaRate,
-    Value<int>? kiaFlatAmount,
-    Value<double>? kiaDecreaseRate,
-    Value<int>? urencriteriumThreshold,
-    Value<double>? mileageRatePerKm,
-    Value<int>? korThreshold,
-    Value<int>? ossThreshold,
-    Value<double>? belastingrentePct,
+  BusinessProfilesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<String>? vatNumber,
+    Value<String>? kvkNumber,
+    Value<String>? address,
+    Value<String>? iban,
+    Value<bool>? isStarter,
   }) {
-    return TaxParamsCompanion(
-      year: year ?? this.year,
-      zelfstandigenaftrek: zelfstandigenaftrek ?? this.zelfstandigenaftrek,
-      startersaftrek: startersaftrek ?? this.startersaftrek,
-      mkbWinstvrijstellingPct:
-          mkbWinstvrijstellingPct ?? this.mkbWinstvrijstellingPct,
-      bracket1Rate: bracket1Rate ?? this.bracket1Rate,
-      bracket1Threshold: bracket1Threshold ?? this.bracket1Threshold,
-      bracket2Rate: bracket2Rate ?? this.bracket2Rate,
-      bracket2Threshold: bracket2Threshold ?? this.bracket2Threshold,
-      bracket3Rate: bracket3Rate ?? this.bracket3Rate,
-      algHeffingskortingMax:
-          algHeffingskortingMax ?? this.algHeffingskortingMax,
-      arbeidskortingMax: arbeidskortingMax ?? this.arbeidskortingMax,
-      zvwRate: zvwRate ?? this.zvwRate,
-      zvwMax: zvwMax ?? this.zvwMax,
-      mixedCostsThreshold: mixedCostsThreshold ?? this.mixedCostsThreshold,
-      mixedCosts80Pct: mixedCosts80Pct ?? this.mixedCosts80Pct,
-      jaarruimtePct: jaarruimtePct ?? this.jaarruimtePct,
-      jaarruimteMax: jaarruimteMax ?? this.jaarruimteMax,
-      aowFranchise: aowFranchise ?? this.aowFranchise,
-      reserveringsruimteMax:
-          reserveringsruimteMax ?? this.reserveringsruimteMax,
-      factorAMultiplier: factorAMultiplier ?? this.factorAMultiplier,
-      kiaLowerThreshold: kiaLowerThreshold ?? this.kiaLowerThreshold,
-      kiaUpperThreshold: kiaUpperThreshold ?? this.kiaUpperThreshold,
-      kiaFlatThreshold: kiaFlatThreshold ?? this.kiaFlatThreshold,
-      kiaRate: kiaRate ?? this.kiaRate,
-      kiaFlatAmount: kiaFlatAmount ?? this.kiaFlatAmount,
-      kiaDecreaseRate: kiaDecreaseRate ?? this.kiaDecreaseRate,
-      urencriteriumThreshold:
-          urencriteriumThreshold ?? this.urencriteriumThreshold,
-      mileageRatePerKm: mileageRatePerKm ?? this.mileageRatePerKm,
-      korThreshold: korThreshold ?? this.korThreshold,
-      ossThreshold: ossThreshold ?? this.ossThreshold,
-      belastingrentePct: belastingrentePct ?? this.belastingrentePct,
+    return BusinessProfilesCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      vatNumber: vatNumber ?? this.vatNumber,
+      kvkNumber: kvkNumber ?? this.kvkNumber,
+      address: address ?? this.address,
+      iban: iban ?? this.iban,
+      isStarter: isStarter ?? this.isStarter,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (year.present) {
-      map['year'] = Variable<int>(year.value);
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
     }
-    if (zelfstandigenaftrek.present) {
-      map['zelfstandigenaftrek'] = Variable<int>(zelfstandigenaftrek.value);
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
     }
-    if (startersaftrek.present) {
-      map['startersaftrek'] = Variable<int>(startersaftrek.value);
+    if (vatNumber.present) {
+      map['vat_number'] = Variable<String>(vatNumber.value);
     }
-    if (mkbWinstvrijstellingPct.present) {
-      map['mkb_winstvrijstelling_pct'] = Variable<double>(
-        mkbWinstvrijstellingPct.value,
-      );
+    if (kvkNumber.present) {
+      map['kvk_number'] = Variable<String>(kvkNumber.value);
     }
-    if (bracket1Rate.present) {
-      map['bracket1_rate'] = Variable<double>(bracket1Rate.value);
+    if (address.present) {
+      map['address'] = Variable<String>(address.value);
     }
-    if (bracket1Threshold.present) {
-      map['bracket1_threshold'] = Variable<int>(bracket1Threshold.value);
+    if (iban.present) {
+      map['iban'] = Variable<String>(iban.value);
     }
-    if (bracket2Rate.present) {
-      map['bracket2_rate'] = Variable<double>(bracket2Rate.value);
-    }
-    if (bracket2Threshold.present) {
-      map['bracket2_threshold'] = Variable<int>(bracket2Threshold.value);
-    }
-    if (bracket3Rate.present) {
-      map['bracket3_rate'] = Variable<double>(bracket3Rate.value);
-    }
-    if (algHeffingskortingMax.present) {
-      map['alg_heffingskorting_max'] = Variable<int>(
-        algHeffingskortingMax.value,
-      );
-    }
-    if (arbeidskortingMax.present) {
-      map['arbeidskorting_max'] = Variable<int>(arbeidskortingMax.value);
-    }
-    if (zvwRate.present) {
-      map['zvw_rate'] = Variable<double>(zvwRate.value);
-    }
-    if (zvwMax.present) {
-      map['zvw_max'] = Variable<int>(zvwMax.value);
-    }
-    if (mixedCostsThreshold.present) {
-      map['mixed_costs_threshold'] = Variable<int>(mixedCostsThreshold.value);
-    }
-    if (mixedCosts80Pct.present) {
-      map['mixed_costs80_pct'] = Variable<double>(mixedCosts80Pct.value);
-    }
-    if (jaarruimtePct.present) {
-      map['jaarruimte_pct'] = Variable<double>(jaarruimtePct.value);
-    }
-    if (jaarruimteMax.present) {
-      map['jaarruimte_max'] = Variable<int>(jaarruimteMax.value);
-    }
-    if (aowFranchise.present) {
-      map['aow_franchise'] = Variable<int>(aowFranchise.value);
-    }
-    if (reserveringsruimteMax.present) {
-      map['reserveringsruimte_max'] = Variable<int>(
-        reserveringsruimteMax.value,
-      );
-    }
-    if (factorAMultiplier.present) {
-      map['factor_a_multiplier'] = Variable<double>(factorAMultiplier.value);
-    }
-    if (kiaLowerThreshold.present) {
-      map['kia_lower_threshold'] = Variable<int>(kiaLowerThreshold.value);
-    }
-    if (kiaUpperThreshold.present) {
-      map['kia_upper_threshold'] = Variable<int>(kiaUpperThreshold.value);
-    }
-    if (kiaFlatThreshold.present) {
-      map['kia_flat_threshold'] = Variable<int>(kiaFlatThreshold.value);
-    }
-    if (kiaRate.present) {
-      map['kia_rate'] = Variable<double>(kiaRate.value);
-    }
-    if (kiaFlatAmount.present) {
-      map['kia_flat_amount'] = Variable<int>(kiaFlatAmount.value);
-    }
-    if (kiaDecreaseRate.present) {
-      map['kia_decrease_rate'] = Variable<double>(kiaDecreaseRate.value);
-    }
-    if (urencriteriumThreshold.present) {
-      map['urencriterium_threshold'] = Variable<int>(
-        urencriteriumThreshold.value,
-      );
-    }
-    if (mileageRatePerKm.present) {
-      map['mileage_rate_per_km'] = Variable<double>(mileageRatePerKm.value);
-    }
-    if (korThreshold.present) {
-      map['kor_threshold'] = Variable<int>(korThreshold.value);
-    }
-    if (ossThreshold.present) {
-      map['oss_threshold'] = Variable<int>(ossThreshold.value);
-    }
-    if (belastingrentePct.present) {
-      map['belastingrente_pct'] = Variable<double>(belastingrentePct.value);
+    if (isStarter.present) {
+      map['is_starter'] = Variable<bool>(isStarter.value);
     }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('TaxParamsCompanion(')
-          ..write('year: $year, ')
-          ..write('zelfstandigenaftrek: $zelfstandigenaftrek, ')
-          ..write('startersaftrek: $startersaftrek, ')
-          ..write('mkbWinstvrijstellingPct: $mkbWinstvrijstellingPct, ')
-          ..write('bracket1Rate: $bracket1Rate, ')
-          ..write('bracket1Threshold: $bracket1Threshold, ')
-          ..write('bracket2Rate: $bracket2Rate, ')
-          ..write('bracket2Threshold: $bracket2Threshold, ')
-          ..write('bracket3Rate: $bracket3Rate, ')
-          ..write('algHeffingskortingMax: $algHeffingskortingMax, ')
-          ..write('arbeidskortingMax: $arbeidskortingMax, ')
-          ..write('zvwRate: $zvwRate, ')
-          ..write('zvwMax: $zvwMax, ')
-          ..write('mixedCostsThreshold: $mixedCostsThreshold, ')
-          ..write('mixedCosts80Pct: $mixedCosts80Pct, ')
-          ..write('jaarruimtePct: $jaarruimtePct, ')
-          ..write('jaarruimteMax: $jaarruimteMax, ')
-          ..write('aowFranchise: $aowFranchise, ')
-          ..write('reserveringsruimteMax: $reserveringsruimteMax, ')
-          ..write('factorAMultiplier: $factorAMultiplier, ')
-          ..write('kiaLowerThreshold: $kiaLowerThreshold, ')
-          ..write('kiaUpperThreshold: $kiaUpperThreshold, ')
-          ..write('kiaFlatThreshold: $kiaFlatThreshold, ')
-          ..write('kiaRate: $kiaRate, ')
-          ..write('kiaFlatAmount: $kiaFlatAmount, ')
-          ..write('kiaDecreaseRate: $kiaDecreaseRate, ')
-          ..write('urencriteriumThreshold: $urencriteriumThreshold, ')
-          ..write('mileageRatePerKm: $mileageRatePerKm, ')
-          ..write('korThreshold: $korThreshold, ')
-          ..write('ossThreshold: $ossThreshold, ')
-          ..write('belastingrentePct: $belastingrentePct')
+    return (StringBuffer('BusinessProfilesCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('vatNumber: $vatNumber, ')
+          ..write('kvkNumber: $kvkNumber, ')
+          ..write('address: $address, ')
+          ..write('iban: $iban, ')
+          ..write('isStarter: $isStarter')
           ..write(')'))
         .toString();
   }
@@ -1840,8 +514,7 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
     aliasedName,
     false,
     type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(''),
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _contactPersonMeta = const VerificationMeta(
     'contactPerson',
@@ -1872,18 +545,15 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _wetDbaRiskLevelMeta = const VerificationMeta(
-    'wetDbaRiskLevel',
-  );
   @override
-  late final GeneratedColumn<String> wetDbaRiskLevel = GeneratedColumn<String>(
-    'wet_dba_risk_level',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('Low'),
-  );
+  late final GeneratedColumnWithTypeConverter<WetDbaRisk, String> wetDbaRisk =
+      GeneratedColumn<String>(
+        'wet_dba_risk',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<WetDbaRisk>($ClientsTable.$converterwetDbaRisk);
   static const VerificationMeta _contractSignedMeta = const VerificationMeta(
     'contractSigned',
   );
@@ -1946,7 +616,7 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
     contactPerson,
     email,
     phone,
-    wetDbaRiskLevel,
+    wetDbaRisk,
     contractSigned,
     contractExpiry,
     notes,
@@ -1998,6 +668,8 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
         _addressMeta,
         address.isAcceptableOrUnknown(data['address']!, _addressMeta),
       );
+    } else if (isInserting) {
+      context.missing(_addressMeta);
     }
     if (data.containsKey('contact_person')) {
       context.handle(
@@ -2018,15 +690,6 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
       context.handle(
         _phoneMeta,
         phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta),
-      );
-    }
-    if (data.containsKey('wet_dba_risk_level')) {
-      context.handle(
-        _wetDbaRiskLevelMeta,
-        wetDbaRiskLevel.isAcceptableOrUnknown(
-          data['wet_dba_risk_level']!,
-          _wetDbaRiskLevelMeta,
-        ),
       );
     }
     if (data.containsKey('contract_signed')) {
@@ -2104,10 +767,12 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
         DriftSqlType.string,
         data['${effectivePrefix}phone'],
       ),
-      wetDbaRiskLevel: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}wet_dba_risk_level'],
-      )!,
+      wetDbaRisk: $ClientsTable.$converterwetDbaRisk.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}wet_dba_risk'],
+        )!,
+      ),
       contractSigned: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}contract_signed'],
@@ -2131,6 +796,9 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
   $ClientsTable createAlias(String alias) {
     return $ClientsTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<WetDbaRisk, String, String> $converterwetDbaRisk =
+      const EnumNameConverter<WetDbaRisk>(WetDbaRisk.values);
 }
 
 class Client extends DataClass implements Insertable<Client> {
@@ -2143,7 +811,7 @@ class Client extends DataClass implements Insertable<Client> {
   final String? contactPerson;
   final String? email;
   final String? phone;
-  final String wetDbaRiskLevel;
+  final WetDbaRisk wetDbaRisk;
   final bool contractSigned;
   final DateTime? contractExpiry;
   final String? notes;
@@ -2158,7 +826,7 @@ class Client extends DataClass implements Insertable<Client> {
     this.contactPerson,
     this.email,
     this.phone,
-    required this.wetDbaRiskLevel,
+    required this.wetDbaRisk,
     required this.contractSigned,
     this.contractExpiry,
     this.notes,
@@ -2186,7 +854,11 @@ class Client extends DataClass implements Insertable<Client> {
     if (!nullToAbsent || phone != null) {
       map['phone'] = Variable<String>(phone);
     }
-    map['wet_dba_risk_level'] = Variable<String>(wetDbaRiskLevel);
+    {
+      map['wet_dba_risk'] = Variable<String>(
+        $ClientsTable.$converterwetDbaRisk.toSql(wetDbaRisk),
+      );
+    }
     map['contract_signed'] = Variable<bool>(contractSigned);
     if (!nullToAbsent || contractExpiry != null) {
       map['contract_expiry'] = Variable<DateTime>(contractExpiry);
@@ -2219,7 +891,7 @@ class Client extends DataClass implements Insertable<Client> {
       phone: phone == null && nullToAbsent
           ? const Value.absent()
           : Value(phone),
-      wetDbaRiskLevel: Value(wetDbaRiskLevel),
+      wetDbaRisk: Value(wetDbaRisk),
       contractSigned: Value(contractSigned),
       contractExpiry: contractExpiry == null && nullToAbsent
           ? const Value.absent()
@@ -2246,7 +918,9 @@ class Client extends DataClass implements Insertable<Client> {
       contactPerson: serializer.fromJson<String?>(json['contactPerson']),
       email: serializer.fromJson<String?>(json['email']),
       phone: serializer.fromJson<String?>(json['phone']),
-      wetDbaRiskLevel: serializer.fromJson<String>(json['wetDbaRiskLevel']),
+      wetDbaRisk: $ClientsTable.$converterwetDbaRisk.fromJson(
+        serializer.fromJson<String>(json['wetDbaRisk']),
+      ),
       contractSigned: serializer.fromJson<bool>(json['contractSigned']),
       contractExpiry: serializer.fromJson<DateTime?>(json['contractExpiry']),
       notes: serializer.fromJson<String?>(json['notes']),
@@ -2266,7 +940,9 @@ class Client extends DataClass implements Insertable<Client> {
       'contactPerson': serializer.toJson<String?>(contactPerson),
       'email': serializer.toJson<String?>(email),
       'phone': serializer.toJson<String?>(phone),
-      'wetDbaRiskLevel': serializer.toJson<String>(wetDbaRiskLevel),
+      'wetDbaRisk': serializer.toJson<String>(
+        $ClientsTable.$converterwetDbaRisk.toJson(wetDbaRisk),
+      ),
       'contractSigned': serializer.toJson<bool>(contractSigned),
       'contractExpiry': serializer.toJson<DateTime?>(contractExpiry),
       'notes': serializer.toJson<String?>(notes),
@@ -2284,7 +960,7 @@ class Client extends DataClass implements Insertable<Client> {
     Value<String?> contactPerson = const Value.absent(),
     Value<String?> email = const Value.absent(),
     Value<String?> phone = const Value.absent(),
-    String? wetDbaRiskLevel,
+    WetDbaRisk? wetDbaRisk,
     bool? contractSigned,
     Value<DateTime?> contractExpiry = const Value.absent(),
     Value<String?> notes = const Value.absent(),
@@ -2301,7 +977,7 @@ class Client extends DataClass implements Insertable<Client> {
         : this.contactPerson,
     email: email.present ? email.value : this.email,
     phone: phone.present ? phone.value : this.phone,
-    wetDbaRiskLevel: wetDbaRiskLevel ?? this.wetDbaRiskLevel,
+    wetDbaRisk: wetDbaRisk ?? this.wetDbaRisk,
     contractSigned: contractSigned ?? this.contractSigned,
     contractExpiry: contractExpiry.present
         ? contractExpiry.value
@@ -2322,9 +998,9 @@ class Client extends DataClass implements Insertable<Client> {
           : this.contactPerson,
       email: data.email.present ? data.email.value : this.email,
       phone: data.phone.present ? data.phone.value : this.phone,
-      wetDbaRiskLevel: data.wetDbaRiskLevel.present
-          ? data.wetDbaRiskLevel.value
-          : this.wetDbaRiskLevel,
+      wetDbaRisk: data.wetDbaRisk.present
+          ? data.wetDbaRisk.value
+          : this.wetDbaRisk,
       contractSigned: data.contractSigned.present
           ? data.contractSigned.value
           : this.contractSigned,
@@ -2348,7 +1024,7 @@ class Client extends DataClass implements Insertable<Client> {
           ..write('contactPerson: $contactPerson, ')
           ..write('email: $email, ')
           ..write('phone: $phone, ')
-          ..write('wetDbaRiskLevel: $wetDbaRiskLevel, ')
+          ..write('wetDbaRisk: $wetDbaRisk, ')
           ..write('contractSigned: $contractSigned, ')
           ..write('contractExpiry: $contractExpiry, ')
           ..write('notes: $notes, ')
@@ -2368,7 +1044,7 @@ class Client extends DataClass implements Insertable<Client> {
     contactPerson,
     email,
     phone,
-    wetDbaRiskLevel,
+    wetDbaRisk,
     contractSigned,
     contractExpiry,
     notes,
@@ -2387,7 +1063,7 @@ class Client extends DataClass implements Insertable<Client> {
           other.contactPerson == this.contactPerson &&
           other.email == this.email &&
           other.phone == this.phone &&
-          other.wetDbaRiskLevel == this.wetDbaRiskLevel &&
+          other.wetDbaRisk == this.wetDbaRisk &&
           other.contractSigned == this.contractSigned &&
           other.contractExpiry == this.contractExpiry &&
           other.notes == this.notes &&
@@ -2404,7 +1080,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
   final Value<String?> contactPerson;
   final Value<String?> email;
   final Value<String?> phone;
-  final Value<String> wetDbaRiskLevel;
+  final Value<WetDbaRisk> wetDbaRisk;
   final Value<bool> contractSigned;
   final Value<DateTime?> contractExpiry;
   final Value<String?> notes;
@@ -2419,7 +1095,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     this.contactPerson = const Value.absent(),
     this.email = const Value.absent(),
     this.phone = const Value.absent(),
-    this.wetDbaRiskLevel = const Value.absent(),
+    this.wetDbaRisk = const Value.absent(),
     this.contractSigned = const Value.absent(),
     this.contractExpiry = const Value.absent(),
     this.notes = const Value.absent(),
@@ -2431,16 +1107,18 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     this.country = const Value.absent(),
     this.vatNumber = const Value.absent(),
     this.kvkNumber = const Value.absent(),
-    this.address = const Value.absent(),
+    required String address,
     this.contactPerson = const Value.absent(),
     this.email = const Value.absent(),
     this.phone = const Value.absent(),
-    this.wetDbaRiskLevel = const Value.absent(),
+    required WetDbaRisk wetDbaRisk,
     this.contractSigned = const Value.absent(),
     this.contractExpiry = const Value.absent(),
     this.notes = const Value.absent(),
     this.isActive = const Value.absent(),
-  }) : name = Value(name);
+  }) : name = Value(name),
+       address = Value(address),
+       wetDbaRisk = Value(wetDbaRisk);
   static Insertable<Client> custom({
     Expression<int>? id,
     Expression<String>? name,
@@ -2451,7 +1129,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     Expression<String>? contactPerson,
     Expression<String>? email,
     Expression<String>? phone,
-    Expression<String>? wetDbaRiskLevel,
+    Expression<String>? wetDbaRisk,
     Expression<bool>? contractSigned,
     Expression<DateTime>? contractExpiry,
     Expression<String>? notes,
@@ -2467,7 +1145,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
       if (contactPerson != null) 'contact_person': contactPerson,
       if (email != null) 'email': email,
       if (phone != null) 'phone': phone,
-      if (wetDbaRiskLevel != null) 'wet_dba_risk_level': wetDbaRiskLevel,
+      if (wetDbaRisk != null) 'wet_dba_risk': wetDbaRisk,
       if (contractSigned != null) 'contract_signed': contractSigned,
       if (contractExpiry != null) 'contract_expiry': contractExpiry,
       if (notes != null) 'notes': notes,
@@ -2485,7 +1163,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     Value<String?>? contactPerson,
     Value<String?>? email,
     Value<String?>? phone,
-    Value<String>? wetDbaRiskLevel,
+    Value<WetDbaRisk>? wetDbaRisk,
     Value<bool>? contractSigned,
     Value<DateTime?>? contractExpiry,
     Value<String?>? notes,
@@ -2501,7 +1179,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
       contactPerson: contactPerson ?? this.contactPerson,
       email: email ?? this.email,
       phone: phone ?? this.phone,
-      wetDbaRiskLevel: wetDbaRiskLevel ?? this.wetDbaRiskLevel,
+      wetDbaRisk: wetDbaRisk ?? this.wetDbaRisk,
       contractSigned: contractSigned ?? this.contractSigned,
       contractExpiry: contractExpiry ?? this.contractExpiry,
       notes: notes ?? this.notes,
@@ -2539,8 +1217,10 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     if (phone.present) {
       map['phone'] = Variable<String>(phone.value);
     }
-    if (wetDbaRiskLevel.present) {
-      map['wet_dba_risk_level'] = Variable<String>(wetDbaRiskLevel.value);
+    if (wetDbaRisk.present) {
+      map['wet_dba_risk'] = Variable<String>(
+        $ClientsTable.$converterwetDbaRisk.toSql(wetDbaRisk.value),
+      );
     }
     if (contractSigned.present) {
       map['contract_signed'] = Variable<bool>(contractSigned.value);
@@ -2569,7 +1249,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
           ..write('contactPerson: $contactPerson, ')
           ..write('email: $email, ')
           ..write('phone: $phone, ')
-          ..write('wetDbaRiskLevel: $wetDbaRiskLevel, ')
+          ..write('wetDbaRisk: $wetDbaRisk, ')
           ..write('contractSigned: $contractSigned, ')
           ..write('contractExpiry: $contractExpiry, ')
           ..write('notes: $notes, ')
@@ -2609,6 +1289,28 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
+  @override
+  late final GeneratedColumnWithTypeConverter<InvoiceType, String> invoiceType =
+      GeneratedColumn<String>(
+        'invoice_type',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<InvoiceType>($InvoicesTable.$converterinvoiceType);
+  static const VerificationMeta _correctedInvoiceIdMeta =
+      const VerificationMeta('correctedInvoiceId');
+  @override
+  late final GeneratedColumn<int> correctedInvoiceId = GeneratedColumn<int>(
+    'corrected_invoice_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES invoices (id) ON DELETE RESTRICT',
+    ),
+  );
   static const VerificationMeta _invoiceDateMeta = const VerificationMeta(
     'invoiceDate',
   );
@@ -2642,21 +1344,18 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES clients (id)',
+      'REFERENCES clients (id) ON DELETE RESTRICT',
     ),
   );
-  static const VerificationMeta _invoiceTypeMeta = const VerificationMeta(
-    'invoiceType',
-  );
   @override
-  late final GeneratedColumn<String> invoiceType = GeneratedColumn<String>(
-    'invoice_type',
+  late final GeneratedColumnWithTypeConverter<VatTreatment, String>
+  vatTreatment = GeneratedColumn<String>(
+    'vat_treatment',
     aliasedName,
     false,
     type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('Invoice'),
-  );
+    requiredDuringInsert: true,
+  ).withConverter<VatTreatment>($InvoicesTable.$convertervatTreatment);
   static const VerificationMeta _sellerNameMeta = const VerificationMeta(
     'sellerName',
   );
@@ -2708,9 +1407,9 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
   late final GeneratedColumn<String> sellerIban = GeneratedColumn<String>(
     'seller_iban',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.string,
-    requiredDuringInsert: false,
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _paymentTermDaysMeta = const VerificationMeta(
     'paymentTermDays',
@@ -2721,47 +1420,23 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     aliasedName,
     false,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(kDefaultPaymentTermDays),
-  );
-  static const VerificationMeta _dueDateMeta = const VerificationMeta(
-    'dueDate',
-  );
-  @override
-  late final GeneratedColumn<DateTime> dueDate = GeneratedColumn<DateTime>(
-    'due_date',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
-  late final GeneratedColumn<String> status = GeneratedColumn<String>(
-    'status',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('Draft'),
-  );
+  late final GeneratedColumnWithTypeConverter<InvoiceStatus, String> status =
+      GeneratedColumn<String>(
+        'status',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<InvoiceStatus>($InvoicesTable.$converterstatus);
   static const VerificationMeta _paidDateMeta = const VerificationMeta(
     'paidDate',
   );
   @override
   late final GeneratedColumn<DateTime> paidDate = GeneratedColumn<DateTime>(
     'paid_date',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _refundDateMeta = const VerificationMeta(
-    'refundDate',
-  );
-  @override
-  late final GeneratedColumn<DateTime> refundDate = GeneratedColumn<DateTime>(
-    'refund_date',
     aliasedName,
     true,
     type: DriftSqlType.dateTime,
@@ -2776,46 +1451,6 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _isReverseChargeMeta = const VerificationMeta(
-    'isReverseCharge',
-  );
-  @override
-  late final GeneratedColumn<bool> isReverseCharge = GeneratedColumn<bool>(
-    'is_reverse_charge',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_reverse_charge" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
-  static const VerificationMeta _isIcpMeta = const VerificationMeta('isIcp');
-  @override
-  late final GeneratedColumn<bool> isIcp = GeneratedColumn<bool>(
-    'is_icp',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_icp" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
-  static const VerificationMeta _reverseChargeNoteMeta = const VerificationMeta(
-    'reverseChargeNote',
-  );
-  @override
-  late final GeneratedColumn<String> reverseChargeNote =
-      GeneratedColumn<String>(
-        'reverse_charge_note',
-        aliasedName,
-        true,
-        type: DriftSqlType.string,
-        requiredDuringInsert: false,
-      );
   static const VerificationMeta _totalExclVatMeta = const VerificationMeta(
     'totalExclVat',
   );
@@ -2825,8 +1460,7 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     aliasedName,
     false,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _totalVatMeta = const VerificationMeta(
     'totalVat',
@@ -2837,8 +1471,7 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     aliasedName,
     false,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _totalInclVatMeta = const VerificationMeta(
     'totalInclVat',
@@ -2849,58 +1482,30 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     aliasedName,
     false,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
-  );
-  static const VerificationMeta _fiscalYearMeta = const VerificationMeta(
-    'fiscalYear',
-  );
-  @override
-  late final GeneratedColumn<int> fiscalYear = GeneratedColumn<int>(
-    'fiscal_year',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _quarterMeta = const VerificationMeta(
-    'quarter',
-  );
-  @override
-  late final GeneratedColumn<String> quarter = GeneratedColumn<String>(
-    'quarter',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
   @override
   List<GeneratedColumn> get $columns => [
     id,
     invoiceNumber,
+    invoiceType,
+    correctedInvoiceId,
     invoiceDate,
     supplyDate,
     clientId,
-    invoiceType,
+    vatTreatment,
     sellerName,
     sellerVatNumber,
     sellerKvkNumber,
     sellerAddress,
     sellerIban,
     paymentTermDays,
-    dueDate,
     status,
     paidDate,
-    refundDate,
     notes,
-    isReverseCharge,
-    isIcp,
-    reverseChargeNote,
     totalExclVat,
     totalVat,
     totalInclVat,
-    fiscalYear,
-    quarter,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2928,6 +1533,15 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     } else if (isInserting) {
       context.missing(_invoiceNumberMeta);
     }
+    if (data.containsKey('corrected_invoice_id')) {
+      context.handle(
+        _correctedInvoiceIdMeta,
+        correctedInvoiceId.isAcceptableOrUnknown(
+          data['corrected_invoice_id']!,
+          _correctedInvoiceIdMeta,
+        ),
+      );
+    }
     if (data.containsKey('invoice_date')) {
       context.handle(
         _invoiceDateMeta,
@@ -2952,15 +1566,6 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
       );
     } else if (isInserting) {
       context.missing(_clientIdMeta);
-    }
-    if (data.containsKey('invoice_type')) {
-      context.handle(
-        _invoiceTypeMeta,
-        invoiceType.isAcceptableOrUnknown(
-          data['invoice_type']!,
-          _invoiceTypeMeta,
-        ),
-      );
     }
     if (data.containsKey('seller_name')) {
       context.handle(
@@ -3008,6 +1613,8 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
         _sellerIbanMeta,
         sellerIban.isAcceptableOrUnknown(data['seller_iban']!, _sellerIbanMeta),
       );
+    } else if (isInserting) {
+      context.missing(_sellerIbanMeta);
     }
     if (data.containsKey('payment_term_days')) {
       context.handle(
@@ -3017,20 +1624,8 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
           _paymentTermDaysMeta,
         ),
       );
-    }
-    if (data.containsKey('due_date')) {
-      context.handle(
-        _dueDateMeta,
-        dueDate.isAcceptableOrUnknown(data['due_date']!, _dueDateMeta),
-      );
     } else if (isInserting) {
-      context.missing(_dueDateMeta);
-    }
-    if (data.containsKey('status')) {
-      context.handle(
-        _statusMeta,
-        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
-      );
+      context.missing(_paymentTermDaysMeta);
     }
     if (data.containsKey('paid_date')) {
       context.handle(
@@ -3038,40 +1633,10 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
         paidDate.isAcceptableOrUnknown(data['paid_date']!, _paidDateMeta),
       );
     }
-    if (data.containsKey('refund_date')) {
-      context.handle(
-        _refundDateMeta,
-        refundDate.isAcceptableOrUnknown(data['refund_date']!, _refundDateMeta),
-      );
-    }
     if (data.containsKey('notes')) {
       context.handle(
         _notesMeta,
         notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
-      );
-    }
-    if (data.containsKey('is_reverse_charge')) {
-      context.handle(
-        _isReverseChargeMeta,
-        isReverseCharge.isAcceptableOrUnknown(
-          data['is_reverse_charge']!,
-          _isReverseChargeMeta,
-        ),
-      );
-    }
-    if (data.containsKey('is_icp')) {
-      context.handle(
-        _isIcpMeta,
-        isIcp.isAcceptableOrUnknown(data['is_icp']!, _isIcpMeta),
-      );
-    }
-    if (data.containsKey('reverse_charge_note')) {
-      context.handle(
-        _reverseChargeNoteMeta,
-        reverseChargeNote.isAcceptableOrUnknown(
-          data['reverse_charge_note']!,
-          _reverseChargeNoteMeta,
-        ),
       );
     }
     if (data.containsKey('total_excl_vat')) {
@@ -3082,12 +1647,16 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
           _totalExclVatMeta,
         ),
       );
+    } else if (isInserting) {
+      context.missing(_totalExclVatMeta);
     }
     if (data.containsKey('total_vat')) {
       context.handle(
         _totalVatMeta,
         totalVat.isAcceptableOrUnknown(data['total_vat']!, _totalVatMeta),
       );
+    } else if (isInserting) {
+      context.missing(_totalVatMeta);
     }
     if (data.containsKey('total_incl_vat')) {
       context.handle(
@@ -3097,22 +1666,8 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
           _totalInclVatMeta,
         ),
       );
-    }
-    if (data.containsKey('fiscal_year')) {
-      context.handle(
-        _fiscalYearMeta,
-        fiscalYear.isAcceptableOrUnknown(data['fiscal_year']!, _fiscalYearMeta),
-      );
     } else if (isInserting) {
-      context.missing(_fiscalYearMeta);
-    }
-    if (data.containsKey('quarter')) {
-      context.handle(
-        _quarterMeta,
-        quarter.isAcceptableOrUnknown(data['quarter']!, _quarterMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_quarterMeta);
+      context.missing(_totalInclVatMeta);
     }
     return context;
   }
@@ -3131,6 +1686,16 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
         DriftSqlType.string,
         data['${effectivePrefix}invoice_number'],
       )!,
+      invoiceType: $InvoicesTable.$converterinvoiceType.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}invoice_type'],
+        )!,
+      ),
+      correctedInvoiceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}corrected_invoice_id'],
+      ),
       invoiceDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}invoice_date'],
@@ -3143,10 +1708,12 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
         DriftSqlType.int,
         data['${effectivePrefix}client_id'],
       )!,
-      invoiceType: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}invoice_type'],
-      )!,
+      vatTreatment: $InvoicesTable.$convertervatTreatment.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}vat_treatment'],
+        )!,
+      ),
       sellerName: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}seller_name'],
@@ -3166,42 +1733,24 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
       sellerIban: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}seller_iban'],
-      ),
+      )!,
       paymentTermDays: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}payment_term_days'],
       )!,
-      dueDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}due_date'],
-      )!,
-      status: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}status'],
-      )!,
+      status: $InvoicesTable.$converterstatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}status'],
+        )!,
+      ),
       paidDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}paid_date'],
       ),
-      refundDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}refund_date'],
-      ),
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
-      ),
-      isReverseCharge: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_reverse_charge'],
-      )!,
-      isIcp: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_icp'],
-      )!,
-      reverseChargeNote: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}reverse_charge_note'],
       ),
       totalExclVat: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -3215,14 +1764,6 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
         DriftSqlType.int,
         data['${effectivePrefix}total_incl_vat'],
       )!,
-      fiscalYear: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}fiscal_year'],
-      )!,
-      quarter: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}quarter'],
-      )!,
     );
   }
 
@@ -3230,101 +1771,105 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
   $InvoicesTable createAlias(String alias) {
     return $InvoicesTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<InvoiceType, String, String> $converterinvoiceType =
+      const EnumNameConverter<InvoiceType>(InvoiceType.values);
+  static JsonTypeConverter2<VatTreatment, String, String>
+  $convertervatTreatment = const EnumNameConverter<VatTreatment>(
+    VatTreatment.values,
+  );
+  static JsonTypeConverter2<InvoiceStatus, String, String> $converterstatus =
+      const EnumNameConverter<InvoiceStatus>(InvoiceStatus.values);
 }
 
 class Invoice extends DataClass implements Insertable<Invoice> {
   final int id;
   final String invoiceNumber;
+  final InvoiceType invoiceType;
+
+  /// The invoice a credit note corrects (Wet OB 1968 art. 35a lid 2 e).
+  final int? correctedInvoiceId;
   final DateTime invoiceDate;
   final DateTime? supplyDate;
   final int clientId;
-  final String invoiceType;
+  final VatTreatment vatTreatment;
   final String sellerName;
   final String sellerVatNumber;
   final String sellerKvkNumber;
   final String sellerAddress;
-  final String? sellerIban;
+  final String sellerIban;
   final int paymentTermDays;
-  final DateTime dueDate;
-  final String status;
+  final InvoiceStatus status;
   final DateTime? paidDate;
-  final DateTime? refundDate;
   final String? notes;
-  final bool isReverseCharge;
-  final bool isIcp;
-  final String? reverseChargeNote;
   final int totalExclVat;
   final int totalVat;
   final int totalInclVat;
-  final int fiscalYear;
-  final String quarter;
   const Invoice({
     required this.id,
     required this.invoiceNumber,
+    required this.invoiceType,
+    this.correctedInvoiceId,
     required this.invoiceDate,
     this.supplyDate,
     required this.clientId,
-    required this.invoiceType,
+    required this.vatTreatment,
     required this.sellerName,
     required this.sellerVatNumber,
     required this.sellerKvkNumber,
     required this.sellerAddress,
-    this.sellerIban,
+    required this.sellerIban,
     required this.paymentTermDays,
-    required this.dueDate,
     required this.status,
     this.paidDate,
-    this.refundDate,
     this.notes,
-    required this.isReverseCharge,
-    required this.isIcp,
-    this.reverseChargeNote,
     required this.totalExclVat,
     required this.totalVat,
     required this.totalInclVat,
-    required this.fiscalYear,
-    required this.quarter,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['invoice_number'] = Variable<String>(invoiceNumber);
+    {
+      map['invoice_type'] = Variable<String>(
+        $InvoicesTable.$converterinvoiceType.toSql(invoiceType),
+      );
+    }
+    if (!nullToAbsent || correctedInvoiceId != null) {
+      map['corrected_invoice_id'] = Variable<int>(correctedInvoiceId);
+    }
     map['invoice_date'] = Variable<DateTime>(invoiceDate);
     if (!nullToAbsent || supplyDate != null) {
       map['supply_date'] = Variable<DateTime>(supplyDate);
     }
     map['client_id'] = Variable<int>(clientId);
-    map['invoice_type'] = Variable<String>(invoiceType);
+    {
+      map['vat_treatment'] = Variable<String>(
+        $InvoicesTable.$convertervatTreatment.toSql(vatTreatment),
+      );
+    }
     map['seller_name'] = Variable<String>(sellerName);
     map['seller_vat_number'] = Variable<String>(sellerVatNumber);
     map['seller_kvk_number'] = Variable<String>(sellerKvkNumber);
     map['seller_address'] = Variable<String>(sellerAddress);
-    if (!nullToAbsent || sellerIban != null) {
-      map['seller_iban'] = Variable<String>(sellerIban);
-    }
+    map['seller_iban'] = Variable<String>(sellerIban);
     map['payment_term_days'] = Variable<int>(paymentTermDays);
-    map['due_date'] = Variable<DateTime>(dueDate);
-    map['status'] = Variable<String>(status);
+    {
+      map['status'] = Variable<String>(
+        $InvoicesTable.$converterstatus.toSql(status),
+      );
+    }
     if (!nullToAbsent || paidDate != null) {
       map['paid_date'] = Variable<DateTime>(paidDate);
-    }
-    if (!nullToAbsent || refundDate != null) {
-      map['refund_date'] = Variable<DateTime>(refundDate);
     }
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
-    map['is_reverse_charge'] = Variable<bool>(isReverseCharge);
-    map['is_icp'] = Variable<bool>(isIcp);
-    if (!nullToAbsent || reverseChargeNote != null) {
-      map['reverse_charge_note'] = Variable<String>(reverseChargeNote);
-    }
     map['total_excl_vat'] = Variable<int>(totalExclVat);
     map['total_vat'] = Variable<int>(totalVat);
     map['total_incl_vat'] = Variable<int>(totalInclVat);
-    map['fiscal_year'] = Variable<int>(fiscalYear);
-    map['quarter'] = Variable<String>(quarter);
     return map;
   }
 
@@ -3332,41 +1877,32 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     return InvoicesCompanion(
       id: Value(id),
       invoiceNumber: Value(invoiceNumber),
+      invoiceType: Value(invoiceType),
+      correctedInvoiceId: correctedInvoiceId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(correctedInvoiceId),
       invoiceDate: Value(invoiceDate),
       supplyDate: supplyDate == null && nullToAbsent
           ? const Value.absent()
           : Value(supplyDate),
       clientId: Value(clientId),
-      invoiceType: Value(invoiceType),
+      vatTreatment: Value(vatTreatment),
       sellerName: Value(sellerName),
       sellerVatNumber: Value(sellerVatNumber),
       sellerKvkNumber: Value(sellerKvkNumber),
       sellerAddress: Value(sellerAddress),
-      sellerIban: sellerIban == null && nullToAbsent
-          ? const Value.absent()
-          : Value(sellerIban),
+      sellerIban: Value(sellerIban),
       paymentTermDays: Value(paymentTermDays),
-      dueDate: Value(dueDate),
       status: Value(status),
       paidDate: paidDate == null && nullToAbsent
           ? const Value.absent()
           : Value(paidDate),
-      refundDate: refundDate == null && nullToAbsent
-          ? const Value.absent()
-          : Value(refundDate),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
-      isReverseCharge: Value(isReverseCharge),
-      isIcp: Value(isIcp),
-      reverseChargeNote: reverseChargeNote == null && nullToAbsent
-          ? const Value.absent()
-          : Value(reverseChargeNote),
       totalExclVat: Value(totalExclVat),
       totalVat: Value(totalVat),
       totalInclVat: Value(totalInclVat),
-      fiscalYear: Value(fiscalYear),
-      quarter: Value(quarter),
     );
   }
 
@@ -3378,31 +1914,30 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     return Invoice(
       id: serializer.fromJson<int>(json['id']),
       invoiceNumber: serializer.fromJson<String>(json['invoiceNumber']),
+      invoiceType: $InvoicesTable.$converterinvoiceType.fromJson(
+        serializer.fromJson<String>(json['invoiceType']),
+      ),
+      correctedInvoiceId: serializer.fromJson<int?>(json['correctedInvoiceId']),
       invoiceDate: serializer.fromJson<DateTime>(json['invoiceDate']),
       supplyDate: serializer.fromJson<DateTime?>(json['supplyDate']),
       clientId: serializer.fromJson<int>(json['clientId']),
-      invoiceType: serializer.fromJson<String>(json['invoiceType']),
+      vatTreatment: $InvoicesTable.$convertervatTreatment.fromJson(
+        serializer.fromJson<String>(json['vatTreatment']),
+      ),
       sellerName: serializer.fromJson<String>(json['sellerName']),
       sellerVatNumber: serializer.fromJson<String>(json['sellerVatNumber']),
       sellerKvkNumber: serializer.fromJson<String>(json['sellerKvkNumber']),
       sellerAddress: serializer.fromJson<String>(json['sellerAddress']),
-      sellerIban: serializer.fromJson<String?>(json['sellerIban']),
+      sellerIban: serializer.fromJson<String>(json['sellerIban']),
       paymentTermDays: serializer.fromJson<int>(json['paymentTermDays']),
-      dueDate: serializer.fromJson<DateTime>(json['dueDate']),
-      status: serializer.fromJson<String>(json['status']),
-      paidDate: serializer.fromJson<DateTime?>(json['paidDate']),
-      refundDate: serializer.fromJson<DateTime?>(json['refundDate']),
-      notes: serializer.fromJson<String?>(json['notes']),
-      isReverseCharge: serializer.fromJson<bool>(json['isReverseCharge']),
-      isIcp: serializer.fromJson<bool>(json['isIcp']),
-      reverseChargeNote: serializer.fromJson<String?>(
-        json['reverseChargeNote'],
+      status: $InvoicesTable.$converterstatus.fromJson(
+        serializer.fromJson<String>(json['status']),
       ),
+      paidDate: serializer.fromJson<DateTime?>(json['paidDate']),
+      notes: serializer.fromJson<String?>(json['notes']),
       totalExclVat: serializer.fromJson<int>(json['totalExclVat']),
       totalVat: serializer.fromJson<int>(json['totalVat']),
       totalInclVat: serializer.fromJson<int>(json['totalInclVat']),
-      fiscalYear: serializer.fromJson<int>(json['fiscalYear']),
-      quarter: serializer.fromJson<String>(json['quarter']),
     );
   }
   @override
@@ -3411,86 +1946,77 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'invoiceNumber': serializer.toJson<String>(invoiceNumber),
+      'invoiceType': serializer.toJson<String>(
+        $InvoicesTable.$converterinvoiceType.toJson(invoiceType),
+      ),
+      'correctedInvoiceId': serializer.toJson<int?>(correctedInvoiceId),
       'invoiceDate': serializer.toJson<DateTime>(invoiceDate),
       'supplyDate': serializer.toJson<DateTime?>(supplyDate),
       'clientId': serializer.toJson<int>(clientId),
-      'invoiceType': serializer.toJson<String>(invoiceType),
+      'vatTreatment': serializer.toJson<String>(
+        $InvoicesTable.$convertervatTreatment.toJson(vatTreatment),
+      ),
       'sellerName': serializer.toJson<String>(sellerName),
       'sellerVatNumber': serializer.toJson<String>(sellerVatNumber),
       'sellerKvkNumber': serializer.toJson<String>(sellerKvkNumber),
       'sellerAddress': serializer.toJson<String>(sellerAddress),
-      'sellerIban': serializer.toJson<String?>(sellerIban),
+      'sellerIban': serializer.toJson<String>(sellerIban),
       'paymentTermDays': serializer.toJson<int>(paymentTermDays),
-      'dueDate': serializer.toJson<DateTime>(dueDate),
-      'status': serializer.toJson<String>(status),
+      'status': serializer.toJson<String>(
+        $InvoicesTable.$converterstatus.toJson(status),
+      ),
       'paidDate': serializer.toJson<DateTime?>(paidDate),
-      'refundDate': serializer.toJson<DateTime?>(refundDate),
       'notes': serializer.toJson<String?>(notes),
-      'isReverseCharge': serializer.toJson<bool>(isReverseCharge),
-      'isIcp': serializer.toJson<bool>(isIcp),
-      'reverseChargeNote': serializer.toJson<String?>(reverseChargeNote),
       'totalExclVat': serializer.toJson<int>(totalExclVat),
       'totalVat': serializer.toJson<int>(totalVat),
       'totalInclVat': serializer.toJson<int>(totalInclVat),
-      'fiscalYear': serializer.toJson<int>(fiscalYear),
-      'quarter': serializer.toJson<String>(quarter),
     };
   }
 
   Invoice copyWith({
     int? id,
     String? invoiceNumber,
+    InvoiceType? invoiceType,
+    Value<int?> correctedInvoiceId = const Value.absent(),
     DateTime? invoiceDate,
     Value<DateTime?> supplyDate = const Value.absent(),
     int? clientId,
-    String? invoiceType,
+    VatTreatment? vatTreatment,
     String? sellerName,
     String? sellerVatNumber,
     String? sellerKvkNumber,
     String? sellerAddress,
-    Value<String?> sellerIban = const Value.absent(),
+    String? sellerIban,
     int? paymentTermDays,
-    DateTime? dueDate,
-    String? status,
+    InvoiceStatus? status,
     Value<DateTime?> paidDate = const Value.absent(),
-    Value<DateTime?> refundDate = const Value.absent(),
     Value<String?> notes = const Value.absent(),
-    bool? isReverseCharge,
-    bool? isIcp,
-    Value<String?> reverseChargeNote = const Value.absent(),
     int? totalExclVat,
     int? totalVat,
     int? totalInclVat,
-    int? fiscalYear,
-    String? quarter,
   }) => Invoice(
     id: id ?? this.id,
     invoiceNumber: invoiceNumber ?? this.invoiceNumber,
+    invoiceType: invoiceType ?? this.invoiceType,
+    correctedInvoiceId: correctedInvoiceId.present
+        ? correctedInvoiceId.value
+        : this.correctedInvoiceId,
     invoiceDate: invoiceDate ?? this.invoiceDate,
     supplyDate: supplyDate.present ? supplyDate.value : this.supplyDate,
     clientId: clientId ?? this.clientId,
-    invoiceType: invoiceType ?? this.invoiceType,
+    vatTreatment: vatTreatment ?? this.vatTreatment,
     sellerName: sellerName ?? this.sellerName,
     sellerVatNumber: sellerVatNumber ?? this.sellerVatNumber,
     sellerKvkNumber: sellerKvkNumber ?? this.sellerKvkNumber,
     sellerAddress: sellerAddress ?? this.sellerAddress,
-    sellerIban: sellerIban.present ? sellerIban.value : this.sellerIban,
+    sellerIban: sellerIban ?? this.sellerIban,
     paymentTermDays: paymentTermDays ?? this.paymentTermDays,
-    dueDate: dueDate ?? this.dueDate,
     status: status ?? this.status,
     paidDate: paidDate.present ? paidDate.value : this.paidDate,
-    refundDate: refundDate.present ? refundDate.value : this.refundDate,
     notes: notes.present ? notes.value : this.notes,
-    isReverseCharge: isReverseCharge ?? this.isReverseCharge,
-    isIcp: isIcp ?? this.isIcp,
-    reverseChargeNote: reverseChargeNote.present
-        ? reverseChargeNote.value
-        : this.reverseChargeNote,
     totalExclVat: totalExclVat ?? this.totalExclVat,
     totalVat: totalVat ?? this.totalVat,
     totalInclVat: totalInclVat ?? this.totalInclVat,
-    fiscalYear: fiscalYear ?? this.fiscalYear,
-    quarter: quarter ?? this.quarter,
   );
   Invoice copyWithCompanion(InvoicesCompanion data) {
     return Invoice(
@@ -3498,6 +2024,12 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       invoiceNumber: data.invoiceNumber.present
           ? data.invoiceNumber.value
           : this.invoiceNumber,
+      invoiceType: data.invoiceType.present
+          ? data.invoiceType.value
+          : this.invoiceType,
+      correctedInvoiceId: data.correctedInvoiceId.present
+          ? data.correctedInvoiceId.value
+          : this.correctedInvoiceId,
       invoiceDate: data.invoiceDate.present
           ? data.invoiceDate.value
           : this.invoiceDate,
@@ -3505,9 +2037,9 @@ class Invoice extends DataClass implements Insertable<Invoice> {
           ? data.supplyDate.value
           : this.supplyDate,
       clientId: data.clientId.present ? data.clientId.value : this.clientId,
-      invoiceType: data.invoiceType.present
-          ? data.invoiceType.value
-          : this.invoiceType,
+      vatTreatment: data.vatTreatment.present
+          ? data.vatTreatment.value
+          : this.vatTreatment,
       sellerName: data.sellerName.present
           ? data.sellerName.value
           : this.sellerName,
@@ -3526,20 +2058,9 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       paymentTermDays: data.paymentTermDays.present
           ? data.paymentTermDays.value
           : this.paymentTermDays,
-      dueDate: data.dueDate.present ? data.dueDate.value : this.dueDate,
       status: data.status.present ? data.status.value : this.status,
       paidDate: data.paidDate.present ? data.paidDate.value : this.paidDate,
-      refundDate: data.refundDate.present
-          ? data.refundDate.value
-          : this.refundDate,
       notes: data.notes.present ? data.notes.value : this.notes,
-      isReverseCharge: data.isReverseCharge.present
-          ? data.isReverseCharge.value
-          : this.isReverseCharge,
-      isIcp: data.isIcp.present ? data.isIcp.value : this.isIcp,
-      reverseChargeNote: data.reverseChargeNote.present
-          ? data.reverseChargeNote.value
-          : this.reverseChargeNote,
       totalExclVat: data.totalExclVat.present
           ? data.totalExclVat.value
           : this.totalExclVat,
@@ -3547,10 +2068,6 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       totalInclVat: data.totalInclVat.present
           ? data.totalInclVat.value
           : this.totalInclVat,
-      fiscalYear: data.fiscalYear.present
-          ? data.fiscalYear.value
-          : this.fiscalYear,
-      quarter: data.quarter.present ? data.quarter.value : this.quarter,
     );
   }
 
@@ -3559,290 +2076,246 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     return (StringBuffer('Invoice(')
           ..write('id: $id, ')
           ..write('invoiceNumber: $invoiceNumber, ')
+          ..write('invoiceType: $invoiceType, ')
+          ..write('correctedInvoiceId: $correctedInvoiceId, ')
           ..write('invoiceDate: $invoiceDate, ')
           ..write('supplyDate: $supplyDate, ')
           ..write('clientId: $clientId, ')
-          ..write('invoiceType: $invoiceType, ')
+          ..write('vatTreatment: $vatTreatment, ')
           ..write('sellerName: $sellerName, ')
           ..write('sellerVatNumber: $sellerVatNumber, ')
           ..write('sellerKvkNumber: $sellerKvkNumber, ')
           ..write('sellerAddress: $sellerAddress, ')
           ..write('sellerIban: $sellerIban, ')
           ..write('paymentTermDays: $paymentTermDays, ')
-          ..write('dueDate: $dueDate, ')
           ..write('status: $status, ')
           ..write('paidDate: $paidDate, ')
-          ..write('refundDate: $refundDate, ')
           ..write('notes: $notes, ')
-          ..write('isReverseCharge: $isReverseCharge, ')
-          ..write('isIcp: $isIcp, ')
-          ..write('reverseChargeNote: $reverseChargeNote, ')
           ..write('totalExclVat: $totalExclVat, ')
           ..write('totalVat: $totalVat, ')
-          ..write('totalInclVat: $totalInclVat, ')
-          ..write('fiscalYear: $fiscalYear, ')
-          ..write('quarter: $quarter')
+          ..write('totalInclVat: $totalInclVat')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hashAll([
+  int get hashCode => Object.hash(
     id,
     invoiceNumber,
+    invoiceType,
+    correctedInvoiceId,
     invoiceDate,
     supplyDate,
     clientId,
-    invoiceType,
+    vatTreatment,
     sellerName,
     sellerVatNumber,
     sellerKvkNumber,
     sellerAddress,
     sellerIban,
     paymentTermDays,
-    dueDate,
     status,
     paidDate,
-    refundDate,
     notes,
-    isReverseCharge,
-    isIcp,
-    reverseChargeNote,
     totalExclVat,
     totalVat,
     totalInclVat,
-    fiscalYear,
-    quarter,
-  ]);
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Invoice &&
           other.id == this.id &&
           other.invoiceNumber == this.invoiceNumber &&
+          other.invoiceType == this.invoiceType &&
+          other.correctedInvoiceId == this.correctedInvoiceId &&
           other.invoiceDate == this.invoiceDate &&
           other.supplyDate == this.supplyDate &&
           other.clientId == this.clientId &&
-          other.invoiceType == this.invoiceType &&
+          other.vatTreatment == this.vatTreatment &&
           other.sellerName == this.sellerName &&
           other.sellerVatNumber == this.sellerVatNumber &&
           other.sellerKvkNumber == this.sellerKvkNumber &&
           other.sellerAddress == this.sellerAddress &&
           other.sellerIban == this.sellerIban &&
           other.paymentTermDays == this.paymentTermDays &&
-          other.dueDate == this.dueDate &&
           other.status == this.status &&
           other.paidDate == this.paidDate &&
-          other.refundDate == this.refundDate &&
           other.notes == this.notes &&
-          other.isReverseCharge == this.isReverseCharge &&
-          other.isIcp == this.isIcp &&
-          other.reverseChargeNote == this.reverseChargeNote &&
           other.totalExclVat == this.totalExclVat &&
           other.totalVat == this.totalVat &&
-          other.totalInclVat == this.totalInclVat &&
-          other.fiscalYear == this.fiscalYear &&
-          other.quarter == this.quarter);
+          other.totalInclVat == this.totalInclVat);
 }
 
 class InvoicesCompanion extends UpdateCompanion<Invoice> {
   final Value<int> id;
   final Value<String> invoiceNumber;
+  final Value<InvoiceType> invoiceType;
+  final Value<int?> correctedInvoiceId;
   final Value<DateTime> invoiceDate;
   final Value<DateTime?> supplyDate;
   final Value<int> clientId;
-  final Value<String> invoiceType;
+  final Value<VatTreatment> vatTreatment;
   final Value<String> sellerName;
   final Value<String> sellerVatNumber;
   final Value<String> sellerKvkNumber;
   final Value<String> sellerAddress;
-  final Value<String?> sellerIban;
+  final Value<String> sellerIban;
   final Value<int> paymentTermDays;
-  final Value<DateTime> dueDate;
-  final Value<String> status;
+  final Value<InvoiceStatus> status;
   final Value<DateTime?> paidDate;
-  final Value<DateTime?> refundDate;
   final Value<String?> notes;
-  final Value<bool> isReverseCharge;
-  final Value<bool> isIcp;
-  final Value<String?> reverseChargeNote;
   final Value<int> totalExclVat;
   final Value<int> totalVat;
   final Value<int> totalInclVat;
-  final Value<int> fiscalYear;
-  final Value<String> quarter;
   const InvoicesCompanion({
     this.id = const Value.absent(),
     this.invoiceNumber = const Value.absent(),
+    this.invoiceType = const Value.absent(),
+    this.correctedInvoiceId = const Value.absent(),
     this.invoiceDate = const Value.absent(),
     this.supplyDate = const Value.absent(),
     this.clientId = const Value.absent(),
-    this.invoiceType = const Value.absent(),
+    this.vatTreatment = const Value.absent(),
     this.sellerName = const Value.absent(),
     this.sellerVatNumber = const Value.absent(),
     this.sellerKvkNumber = const Value.absent(),
     this.sellerAddress = const Value.absent(),
     this.sellerIban = const Value.absent(),
     this.paymentTermDays = const Value.absent(),
-    this.dueDate = const Value.absent(),
     this.status = const Value.absent(),
     this.paidDate = const Value.absent(),
-    this.refundDate = const Value.absent(),
     this.notes = const Value.absent(),
-    this.isReverseCharge = const Value.absent(),
-    this.isIcp = const Value.absent(),
-    this.reverseChargeNote = const Value.absent(),
     this.totalExclVat = const Value.absent(),
     this.totalVat = const Value.absent(),
     this.totalInclVat = const Value.absent(),
-    this.fiscalYear = const Value.absent(),
-    this.quarter = const Value.absent(),
   });
   InvoicesCompanion.insert({
     this.id = const Value.absent(),
     required String invoiceNumber,
+    required InvoiceType invoiceType,
+    this.correctedInvoiceId = const Value.absent(),
     required DateTime invoiceDate,
     this.supplyDate = const Value.absent(),
     required int clientId,
-    this.invoiceType = const Value.absent(),
+    required VatTreatment vatTreatment,
     required String sellerName,
     required String sellerVatNumber,
     required String sellerKvkNumber,
     required String sellerAddress,
-    this.sellerIban = const Value.absent(),
-    this.paymentTermDays = const Value.absent(),
-    required DateTime dueDate,
-    this.status = const Value.absent(),
+    required String sellerIban,
+    required int paymentTermDays,
+    required InvoiceStatus status,
     this.paidDate = const Value.absent(),
-    this.refundDate = const Value.absent(),
     this.notes = const Value.absent(),
-    this.isReverseCharge = const Value.absent(),
-    this.isIcp = const Value.absent(),
-    this.reverseChargeNote = const Value.absent(),
-    this.totalExclVat = const Value.absent(),
-    this.totalVat = const Value.absent(),
-    this.totalInclVat = const Value.absent(),
-    required int fiscalYear,
-    required String quarter,
+    required int totalExclVat,
+    required int totalVat,
+    required int totalInclVat,
   }) : invoiceNumber = Value(invoiceNumber),
+       invoiceType = Value(invoiceType),
        invoiceDate = Value(invoiceDate),
        clientId = Value(clientId),
+       vatTreatment = Value(vatTreatment),
        sellerName = Value(sellerName),
        sellerVatNumber = Value(sellerVatNumber),
        sellerKvkNumber = Value(sellerKvkNumber),
        sellerAddress = Value(sellerAddress),
-       dueDate = Value(dueDate),
-       fiscalYear = Value(fiscalYear),
-       quarter = Value(quarter);
+       sellerIban = Value(sellerIban),
+       paymentTermDays = Value(paymentTermDays),
+       status = Value(status),
+       totalExclVat = Value(totalExclVat),
+       totalVat = Value(totalVat),
+       totalInclVat = Value(totalInclVat);
   static Insertable<Invoice> custom({
     Expression<int>? id,
     Expression<String>? invoiceNumber,
+    Expression<String>? invoiceType,
+    Expression<int>? correctedInvoiceId,
     Expression<DateTime>? invoiceDate,
     Expression<DateTime>? supplyDate,
     Expression<int>? clientId,
-    Expression<String>? invoiceType,
+    Expression<String>? vatTreatment,
     Expression<String>? sellerName,
     Expression<String>? sellerVatNumber,
     Expression<String>? sellerKvkNumber,
     Expression<String>? sellerAddress,
     Expression<String>? sellerIban,
     Expression<int>? paymentTermDays,
-    Expression<DateTime>? dueDate,
     Expression<String>? status,
     Expression<DateTime>? paidDate,
-    Expression<DateTime>? refundDate,
     Expression<String>? notes,
-    Expression<bool>? isReverseCharge,
-    Expression<bool>? isIcp,
-    Expression<String>? reverseChargeNote,
     Expression<int>? totalExclVat,
     Expression<int>? totalVat,
     Expression<int>? totalInclVat,
-    Expression<int>? fiscalYear,
-    Expression<String>? quarter,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (invoiceNumber != null) 'invoice_number': invoiceNumber,
+      if (invoiceType != null) 'invoice_type': invoiceType,
+      if (correctedInvoiceId != null)
+        'corrected_invoice_id': correctedInvoiceId,
       if (invoiceDate != null) 'invoice_date': invoiceDate,
       if (supplyDate != null) 'supply_date': supplyDate,
       if (clientId != null) 'client_id': clientId,
-      if (invoiceType != null) 'invoice_type': invoiceType,
+      if (vatTreatment != null) 'vat_treatment': vatTreatment,
       if (sellerName != null) 'seller_name': sellerName,
       if (sellerVatNumber != null) 'seller_vat_number': sellerVatNumber,
       if (sellerKvkNumber != null) 'seller_kvk_number': sellerKvkNumber,
       if (sellerAddress != null) 'seller_address': sellerAddress,
       if (sellerIban != null) 'seller_iban': sellerIban,
       if (paymentTermDays != null) 'payment_term_days': paymentTermDays,
-      if (dueDate != null) 'due_date': dueDate,
       if (status != null) 'status': status,
       if (paidDate != null) 'paid_date': paidDate,
-      if (refundDate != null) 'refund_date': refundDate,
       if (notes != null) 'notes': notes,
-      if (isReverseCharge != null) 'is_reverse_charge': isReverseCharge,
-      if (isIcp != null) 'is_icp': isIcp,
-      if (reverseChargeNote != null) 'reverse_charge_note': reverseChargeNote,
       if (totalExclVat != null) 'total_excl_vat': totalExclVat,
       if (totalVat != null) 'total_vat': totalVat,
       if (totalInclVat != null) 'total_incl_vat': totalInclVat,
-      if (fiscalYear != null) 'fiscal_year': fiscalYear,
-      if (quarter != null) 'quarter': quarter,
     });
   }
 
   InvoicesCompanion copyWith({
     Value<int>? id,
     Value<String>? invoiceNumber,
+    Value<InvoiceType>? invoiceType,
+    Value<int?>? correctedInvoiceId,
     Value<DateTime>? invoiceDate,
     Value<DateTime?>? supplyDate,
     Value<int>? clientId,
-    Value<String>? invoiceType,
+    Value<VatTreatment>? vatTreatment,
     Value<String>? sellerName,
     Value<String>? sellerVatNumber,
     Value<String>? sellerKvkNumber,
     Value<String>? sellerAddress,
-    Value<String?>? sellerIban,
+    Value<String>? sellerIban,
     Value<int>? paymentTermDays,
-    Value<DateTime>? dueDate,
-    Value<String>? status,
+    Value<InvoiceStatus>? status,
     Value<DateTime?>? paidDate,
-    Value<DateTime?>? refundDate,
     Value<String?>? notes,
-    Value<bool>? isReverseCharge,
-    Value<bool>? isIcp,
-    Value<String?>? reverseChargeNote,
     Value<int>? totalExclVat,
     Value<int>? totalVat,
     Value<int>? totalInclVat,
-    Value<int>? fiscalYear,
-    Value<String>? quarter,
   }) {
     return InvoicesCompanion(
       id: id ?? this.id,
       invoiceNumber: invoiceNumber ?? this.invoiceNumber,
+      invoiceType: invoiceType ?? this.invoiceType,
+      correctedInvoiceId: correctedInvoiceId ?? this.correctedInvoiceId,
       invoiceDate: invoiceDate ?? this.invoiceDate,
       supplyDate: supplyDate ?? this.supplyDate,
       clientId: clientId ?? this.clientId,
-      invoiceType: invoiceType ?? this.invoiceType,
+      vatTreatment: vatTreatment ?? this.vatTreatment,
       sellerName: sellerName ?? this.sellerName,
       sellerVatNumber: sellerVatNumber ?? this.sellerVatNumber,
       sellerKvkNumber: sellerKvkNumber ?? this.sellerKvkNumber,
       sellerAddress: sellerAddress ?? this.sellerAddress,
       sellerIban: sellerIban ?? this.sellerIban,
       paymentTermDays: paymentTermDays ?? this.paymentTermDays,
-      dueDate: dueDate ?? this.dueDate,
       status: status ?? this.status,
       paidDate: paidDate ?? this.paidDate,
-      refundDate: refundDate ?? this.refundDate,
       notes: notes ?? this.notes,
-      isReverseCharge: isReverseCharge ?? this.isReverseCharge,
-      isIcp: isIcp ?? this.isIcp,
-      reverseChargeNote: reverseChargeNote ?? this.reverseChargeNote,
       totalExclVat: totalExclVat ?? this.totalExclVat,
       totalVat: totalVat ?? this.totalVat,
       totalInclVat: totalInclVat ?? this.totalInclVat,
-      fiscalYear: fiscalYear ?? this.fiscalYear,
-      quarter: quarter ?? this.quarter,
     );
   }
 
@@ -3855,6 +2328,14 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     if (invoiceNumber.present) {
       map['invoice_number'] = Variable<String>(invoiceNumber.value);
     }
+    if (invoiceType.present) {
+      map['invoice_type'] = Variable<String>(
+        $InvoicesTable.$converterinvoiceType.toSql(invoiceType.value),
+      );
+    }
+    if (correctedInvoiceId.present) {
+      map['corrected_invoice_id'] = Variable<int>(correctedInvoiceId.value);
+    }
     if (invoiceDate.present) {
       map['invoice_date'] = Variable<DateTime>(invoiceDate.value);
     }
@@ -3864,8 +2345,10 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     if (clientId.present) {
       map['client_id'] = Variable<int>(clientId.value);
     }
-    if (invoiceType.present) {
-      map['invoice_type'] = Variable<String>(invoiceType.value);
+    if (vatTreatment.present) {
+      map['vat_treatment'] = Variable<String>(
+        $InvoicesTable.$convertervatTreatment.toSql(vatTreatment.value),
+      );
     }
     if (sellerName.present) {
       map['seller_name'] = Variable<String>(sellerName.value);
@@ -3885,29 +2368,16 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     if (paymentTermDays.present) {
       map['payment_term_days'] = Variable<int>(paymentTermDays.value);
     }
-    if (dueDate.present) {
-      map['due_date'] = Variable<DateTime>(dueDate.value);
-    }
     if (status.present) {
-      map['status'] = Variable<String>(status.value);
+      map['status'] = Variable<String>(
+        $InvoicesTable.$converterstatus.toSql(status.value),
+      );
     }
     if (paidDate.present) {
       map['paid_date'] = Variable<DateTime>(paidDate.value);
     }
-    if (refundDate.present) {
-      map['refund_date'] = Variable<DateTime>(refundDate.value);
-    }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
-    }
-    if (isReverseCharge.present) {
-      map['is_reverse_charge'] = Variable<bool>(isReverseCharge.value);
-    }
-    if (isIcp.present) {
-      map['is_icp'] = Variable<bool>(isIcp.value);
-    }
-    if (reverseChargeNote.present) {
-      map['reverse_charge_note'] = Variable<String>(reverseChargeNote.value);
     }
     if (totalExclVat.present) {
       map['total_excl_vat'] = Variable<int>(totalExclVat.value);
@@ -3918,12 +2388,6 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     if (totalInclVat.present) {
       map['total_incl_vat'] = Variable<int>(totalInclVat.value);
     }
-    if (fiscalYear.present) {
-      map['fiscal_year'] = Variable<int>(fiscalYear.value);
-    }
-    if (quarter.present) {
-      map['quarter'] = Variable<String>(quarter.value);
-    }
     return map;
   }
 
@@ -3932,29 +2396,24 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     return (StringBuffer('InvoicesCompanion(')
           ..write('id: $id, ')
           ..write('invoiceNumber: $invoiceNumber, ')
+          ..write('invoiceType: $invoiceType, ')
+          ..write('correctedInvoiceId: $correctedInvoiceId, ')
           ..write('invoiceDate: $invoiceDate, ')
           ..write('supplyDate: $supplyDate, ')
           ..write('clientId: $clientId, ')
-          ..write('invoiceType: $invoiceType, ')
+          ..write('vatTreatment: $vatTreatment, ')
           ..write('sellerName: $sellerName, ')
           ..write('sellerVatNumber: $sellerVatNumber, ')
           ..write('sellerKvkNumber: $sellerKvkNumber, ')
           ..write('sellerAddress: $sellerAddress, ')
           ..write('sellerIban: $sellerIban, ')
           ..write('paymentTermDays: $paymentTermDays, ')
-          ..write('dueDate: $dueDate, ')
           ..write('status: $status, ')
           ..write('paidDate: $paidDate, ')
-          ..write('refundDate: $refundDate, ')
           ..write('notes: $notes, ')
-          ..write('isReverseCharge: $isReverseCharge, ')
-          ..write('isIcp: $isIcp, ')
-          ..write('reverseChargeNote: $reverseChargeNote, ')
           ..write('totalExclVat: $totalExclVat, ')
           ..write('totalVat: $totalVat, ')
-          ..write('totalInclVat: $totalInclVat, ')
-          ..write('fiscalYear: $fiscalYear, ')
-          ..write('quarter: $quarter')
+          ..write('totalInclVat: $totalInclVat')
           ..write(')'))
         .toString();
   }
@@ -3990,7 +2449,7 @@ class $InvoiceLinesTable extends InvoiceLines
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES invoices (id)',
+      'REFERENCES invoices (id) ON DELETE CASCADE',
     ),
   );
   static const VerificationMeta _descriptionMeta = const VerificationMeta(
@@ -4004,18 +2463,6 @@ class $InvoiceLinesTable extends InvoiceLines
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _quantityUnitMeta = const VerificationMeta(
-    'quantityUnit',
-  );
-  @override
-  late final GeneratedColumn<String> quantityUnit = GeneratedColumn<String>(
-    'quantity_unit',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('1'),
-  );
   static const VerificationMeta _quantityMeta = const VerificationMeta(
     'quantity',
   );
@@ -4025,8 +2472,16 @@ class $InvoiceLinesTable extends InvoiceLines
     aliasedName,
     false,
     type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _unitMeta = const VerificationMeta('unit');
+  @override
+  late final GeneratedColumn<String> unit = GeneratedColumn<String>(
+    'unit',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
-    defaultValue: const Constant(1.0),
   );
   static const VerificationMeta _unitPriceExclVatMeta = const VerificationMeta(
     'unitPriceExclVat',
@@ -4039,18 +2494,15 @@ class $InvoiceLinesTable extends InvoiceLines
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _vatRateMeta = const VerificationMeta(
-    'vatRate',
-  );
   @override
-  late final GeneratedColumn<String> vatRate = GeneratedColumn<String>(
-    'vat_rate',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('21%'),
-  );
+  late final GeneratedColumnWithTypeConverter<VatRate, String> vatRate =
+      GeneratedColumn<String>(
+        'vat_rate',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<VatRate>($InvoiceLinesTable.$convertervatRate);
   static const VerificationMeta _vatAmountMeta = const VerificationMeta(
     'vatAmount',
   );
@@ -4060,8 +2512,7 @@ class $InvoiceLinesTable extends InvoiceLines
     aliasedName,
     false,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _lineTotalExclVatMeta = const VerificationMeta(
     'lineTotalExclVat',
@@ -4072,8 +2523,7 @@ class $InvoiceLinesTable extends InvoiceLines
     aliasedName,
     false,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _sortOrderMeta = const VerificationMeta(
     'sortOrder',
@@ -4084,16 +2534,15 @@ class $InvoiceLinesTable extends InvoiceLines
     aliasedName,
     false,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
+    requiredDuringInsert: true,
   );
   @override
   List<GeneratedColumn> get $columns => [
     id,
     invoiceId,
     description,
-    quantityUnit,
     quantity,
+    unit,
     unitPriceExclVat,
     vatRate,
     vatAmount,
@@ -4134,19 +2583,18 @@ class $InvoiceLinesTable extends InvoiceLines
     } else if (isInserting) {
       context.missing(_descriptionMeta);
     }
-    if (data.containsKey('quantity_unit')) {
-      context.handle(
-        _quantityUnitMeta,
-        quantityUnit.isAcceptableOrUnknown(
-          data['quantity_unit']!,
-          _quantityUnitMeta,
-        ),
-      );
-    }
     if (data.containsKey('quantity')) {
       context.handle(
         _quantityMeta,
         quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_quantityMeta);
+    }
+    if (data.containsKey('unit')) {
+      context.handle(
+        _unitMeta,
+        unit.isAcceptableOrUnknown(data['unit']!, _unitMeta),
       );
     }
     if (data.containsKey('unit_price_excl_vat')) {
@@ -4160,17 +2608,13 @@ class $InvoiceLinesTable extends InvoiceLines
     } else if (isInserting) {
       context.missing(_unitPriceExclVatMeta);
     }
-    if (data.containsKey('vat_rate')) {
-      context.handle(
-        _vatRateMeta,
-        vatRate.isAcceptableOrUnknown(data['vat_rate']!, _vatRateMeta),
-      );
-    }
     if (data.containsKey('vat_amount')) {
       context.handle(
         _vatAmountMeta,
         vatAmount.isAcceptableOrUnknown(data['vat_amount']!, _vatAmountMeta),
       );
+    } else if (isInserting) {
+      context.missing(_vatAmountMeta);
     }
     if (data.containsKey('line_total_excl_vat')) {
       context.handle(
@@ -4180,12 +2624,16 @@ class $InvoiceLinesTable extends InvoiceLines
           _lineTotalExclVatMeta,
         ),
       );
+    } else if (isInserting) {
+      context.missing(_lineTotalExclVatMeta);
     }
     if (data.containsKey('sort_order')) {
       context.handle(
         _sortOrderMeta,
         sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
       );
+    } else if (isInserting) {
+      context.missing(_sortOrderMeta);
     }
     return context;
   }
@@ -4208,22 +2656,24 @@ class $InvoiceLinesTable extends InvoiceLines
         DriftSqlType.string,
         data['${effectivePrefix}description'],
       )!,
-      quantityUnit: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}quantity_unit'],
-      )!,
       quantity: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}quantity'],
       )!,
+      unit: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}unit'],
+      ),
       unitPriceExclVat: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}unit_price_excl_vat'],
       )!,
-      vatRate: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}vat_rate'],
-      )!,
+      vatRate: $InvoiceLinesTable.$convertervatRate.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}vat_rate'],
+        )!,
+      ),
       vatAmount: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}vat_amount'],
@@ -4243,16 +2693,19 @@ class $InvoiceLinesTable extends InvoiceLines
   $InvoiceLinesTable createAlias(String alias) {
     return $InvoiceLinesTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<VatRate, String, String> $convertervatRate =
+      const EnumNameConverter<VatRate>(VatRate.values);
 }
 
 class InvoiceLine extends DataClass implements Insertable<InvoiceLine> {
   final int id;
   final int invoiceId;
   final String description;
-  final String quantityUnit;
   final double quantity;
+  final String? unit;
   final int unitPriceExclVat;
-  final String vatRate;
+  final VatRate vatRate;
   final int vatAmount;
   final int lineTotalExclVat;
   final int sortOrder;
@@ -4260,8 +2713,8 @@ class InvoiceLine extends DataClass implements Insertable<InvoiceLine> {
     required this.id,
     required this.invoiceId,
     required this.description,
-    required this.quantityUnit,
     required this.quantity,
+    this.unit,
     required this.unitPriceExclVat,
     required this.vatRate,
     required this.vatAmount,
@@ -4274,10 +2727,16 @@ class InvoiceLine extends DataClass implements Insertable<InvoiceLine> {
     map['id'] = Variable<int>(id);
     map['invoice_id'] = Variable<int>(invoiceId);
     map['description'] = Variable<String>(description);
-    map['quantity_unit'] = Variable<String>(quantityUnit);
     map['quantity'] = Variable<double>(quantity);
+    if (!nullToAbsent || unit != null) {
+      map['unit'] = Variable<String>(unit);
+    }
     map['unit_price_excl_vat'] = Variable<int>(unitPriceExclVat);
-    map['vat_rate'] = Variable<String>(vatRate);
+    {
+      map['vat_rate'] = Variable<String>(
+        $InvoiceLinesTable.$convertervatRate.toSql(vatRate),
+      );
+    }
     map['vat_amount'] = Variable<int>(vatAmount);
     map['line_total_excl_vat'] = Variable<int>(lineTotalExclVat);
     map['sort_order'] = Variable<int>(sortOrder);
@@ -4289,8 +2748,8 @@ class InvoiceLine extends DataClass implements Insertable<InvoiceLine> {
       id: Value(id),
       invoiceId: Value(invoiceId),
       description: Value(description),
-      quantityUnit: Value(quantityUnit),
       quantity: Value(quantity),
+      unit: unit == null && nullToAbsent ? const Value.absent() : Value(unit),
       unitPriceExclVat: Value(unitPriceExclVat),
       vatRate: Value(vatRate),
       vatAmount: Value(vatAmount),
@@ -4308,10 +2767,12 @@ class InvoiceLine extends DataClass implements Insertable<InvoiceLine> {
       id: serializer.fromJson<int>(json['id']),
       invoiceId: serializer.fromJson<int>(json['invoiceId']),
       description: serializer.fromJson<String>(json['description']),
-      quantityUnit: serializer.fromJson<String>(json['quantityUnit']),
       quantity: serializer.fromJson<double>(json['quantity']),
+      unit: serializer.fromJson<String?>(json['unit']),
       unitPriceExclVat: serializer.fromJson<int>(json['unitPriceExclVat']),
-      vatRate: serializer.fromJson<String>(json['vatRate']),
+      vatRate: $InvoiceLinesTable.$convertervatRate.fromJson(
+        serializer.fromJson<String>(json['vatRate']),
+      ),
       vatAmount: serializer.fromJson<int>(json['vatAmount']),
       lineTotalExclVat: serializer.fromJson<int>(json['lineTotalExclVat']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
@@ -4324,10 +2785,12 @@ class InvoiceLine extends DataClass implements Insertable<InvoiceLine> {
       'id': serializer.toJson<int>(id),
       'invoiceId': serializer.toJson<int>(invoiceId),
       'description': serializer.toJson<String>(description),
-      'quantityUnit': serializer.toJson<String>(quantityUnit),
       'quantity': serializer.toJson<double>(quantity),
+      'unit': serializer.toJson<String?>(unit),
       'unitPriceExclVat': serializer.toJson<int>(unitPriceExclVat),
-      'vatRate': serializer.toJson<String>(vatRate),
+      'vatRate': serializer.toJson<String>(
+        $InvoiceLinesTable.$convertervatRate.toJson(vatRate),
+      ),
       'vatAmount': serializer.toJson<int>(vatAmount),
       'lineTotalExclVat': serializer.toJson<int>(lineTotalExclVat),
       'sortOrder': serializer.toJson<int>(sortOrder),
@@ -4338,10 +2801,10 @@ class InvoiceLine extends DataClass implements Insertable<InvoiceLine> {
     int? id,
     int? invoiceId,
     String? description,
-    String? quantityUnit,
     double? quantity,
+    Value<String?> unit = const Value.absent(),
     int? unitPriceExclVat,
-    String? vatRate,
+    VatRate? vatRate,
     int? vatAmount,
     int? lineTotalExclVat,
     int? sortOrder,
@@ -4349,8 +2812,8 @@ class InvoiceLine extends DataClass implements Insertable<InvoiceLine> {
     id: id ?? this.id,
     invoiceId: invoiceId ?? this.invoiceId,
     description: description ?? this.description,
-    quantityUnit: quantityUnit ?? this.quantityUnit,
     quantity: quantity ?? this.quantity,
+    unit: unit.present ? unit.value : this.unit,
     unitPriceExclVat: unitPriceExclVat ?? this.unitPriceExclVat,
     vatRate: vatRate ?? this.vatRate,
     vatAmount: vatAmount ?? this.vatAmount,
@@ -4364,10 +2827,8 @@ class InvoiceLine extends DataClass implements Insertable<InvoiceLine> {
       description: data.description.present
           ? data.description.value
           : this.description,
-      quantityUnit: data.quantityUnit.present
-          ? data.quantityUnit.value
-          : this.quantityUnit,
       quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      unit: data.unit.present ? data.unit.value : this.unit,
       unitPriceExclVat: data.unitPriceExclVat.present
           ? data.unitPriceExclVat.value
           : this.unitPriceExclVat,
@@ -4386,8 +2847,8 @@ class InvoiceLine extends DataClass implements Insertable<InvoiceLine> {
           ..write('id: $id, ')
           ..write('invoiceId: $invoiceId, ')
           ..write('description: $description, ')
-          ..write('quantityUnit: $quantityUnit, ')
           ..write('quantity: $quantity, ')
+          ..write('unit: $unit, ')
           ..write('unitPriceExclVat: $unitPriceExclVat, ')
           ..write('vatRate: $vatRate, ')
           ..write('vatAmount: $vatAmount, ')
@@ -4402,8 +2863,8 @@ class InvoiceLine extends DataClass implements Insertable<InvoiceLine> {
     id,
     invoiceId,
     description,
-    quantityUnit,
     quantity,
+    unit,
     unitPriceExclVat,
     vatRate,
     vatAmount,
@@ -4417,8 +2878,8 @@ class InvoiceLine extends DataClass implements Insertable<InvoiceLine> {
           other.id == this.id &&
           other.invoiceId == this.invoiceId &&
           other.description == this.description &&
-          other.quantityUnit == this.quantityUnit &&
           other.quantity == this.quantity &&
+          other.unit == this.unit &&
           other.unitPriceExclVat == this.unitPriceExclVat &&
           other.vatRate == this.vatRate &&
           other.vatAmount == this.vatAmount &&
@@ -4430,10 +2891,10 @@ class InvoiceLinesCompanion extends UpdateCompanion<InvoiceLine> {
   final Value<int> id;
   final Value<int> invoiceId;
   final Value<String> description;
-  final Value<String> quantityUnit;
   final Value<double> quantity;
+  final Value<String?> unit;
   final Value<int> unitPriceExclVat;
-  final Value<String> vatRate;
+  final Value<VatRate> vatRate;
   final Value<int> vatAmount;
   final Value<int> lineTotalExclVat;
   final Value<int> sortOrder;
@@ -4441,8 +2902,8 @@ class InvoiceLinesCompanion extends UpdateCompanion<InvoiceLine> {
     this.id = const Value.absent(),
     this.invoiceId = const Value.absent(),
     this.description = const Value.absent(),
-    this.quantityUnit = const Value.absent(),
     this.quantity = const Value.absent(),
+    this.unit = const Value.absent(),
     this.unitPriceExclVat = const Value.absent(),
     this.vatRate = const Value.absent(),
     this.vatAmount = const Value.absent(),
@@ -4453,22 +2914,27 @@ class InvoiceLinesCompanion extends UpdateCompanion<InvoiceLine> {
     this.id = const Value.absent(),
     required int invoiceId,
     required String description,
-    this.quantityUnit = const Value.absent(),
-    this.quantity = const Value.absent(),
+    required double quantity,
+    this.unit = const Value.absent(),
     required int unitPriceExclVat,
-    this.vatRate = const Value.absent(),
-    this.vatAmount = const Value.absent(),
-    this.lineTotalExclVat = const Value.absent(),
-    this.sortOrder = const Value.absent(),
+    required VatRate vatRate,
+    required int vatAmount,
+    required int lineTotalExclVat,
+    required int sortOrder,
   }) : invoiceId = Value(invoiceId),
        description = Value(description),
-       unitPriceExclVat = Value(unitPriceExclVat);
+       quantity = Value(quantity),
+       unitPriceExclVat = Value(unitPriceExclVat),
+       vatRate = Value(vatRate),
+       vatAmount = Value(vatAmount),
+       lineTotalExclVat = Value(lineTotalExclVat),
+       sortOrder = Value(sortOrder);
   static Insertable<InvoiceLine> custom({
     Expression<int>? id,
     Expression<int>? invoiceId,
     Expression<String>? description,
-    Expression<String>? quantityUnit,
     Expression<double>? quantity,
+    Expression<String>? unit,
     Expression<int>? unitPriceExclVat,
     Expression<String>? vatRate,
     Expression<int>? vatAmount,
@@ -4479,8 +2945,8 @@ class InvoiceLinesCompanion extends UpdateCompanion<InvoiceLine> {
       if (id != null) 'id': id,
       if (invoiceId != null) 'invoice_id': invoiceId,
       if (description != null) 'description': description,
-      if (quantityUnit != null) 'quantity_unit': quantityUnit,
       if (quantity != null) 'quantity': quantity,
+      if (unit != null) 'unit': unit,
       if (unitPriceExclVat != null) 'unit_price_excl_vat': unitPriceExclVat,
       if (vatRate != null) 'vat_rate': vatRate,
       if (vatAmount != null) 'vat_amount': vatAmount,
@@ -4493,10 +2959,10 @@ class InvoiceLinesCompanion extends UpdateCompanion<InvoiceLine> {
     Value<int>? id,
     Value<int>? invoiceId,
     Value<String>? description,
-    Value<String>? quantityUnit,
     Value<double>? quantity,
+    Value<String?>? unit,
     Value<int>? unitPriceExclVat,
-    Value<String>? vatRate,
+    Value<VatRate>? vatRate,
     Value<int>? vatAmount,
     Value<int>? lineTotalExclVat,
     Value<int>? sortOrder,
@@ -4505,8 +2971,8 @@ class InvoiceLinesCompanion extends UpdateCompanion<InvoiceLine> {
       id: id ?? this.id,
       invoiceId: invoiceId ?? this.invoiceId,
       description: description ?? this.description,
-      quantityUnit: quantityUnit ?? this.quantityUnit,
       quantity: quantity ?? this.quantity,
+      unit: unit ?? this.unit,
       unitPriceExclVat: unitPriceExclVat ?? this.unitPriceExclVat,
       vatRate: vatRate ?? this.vatRate,
       vatAmount: vatAmount ?? this.vatAmount,
@@ -4527,17 +2993,19 @@ class InvoiceLinesCompanion extends UpdateCompanion<InvoiceLine> {
     if (description.present) {
       map['description'] = Variable<String>(description.value);
     }
-    if (quantityUnit.present) {
-      map['quantity_unit'] = Variable<String>(quantityUnit.value);
-    }
     if (quantity.present) {
       map['quantity'] = Variable<double>(quantity.value);
+    }
+    if (unit.present) {
+      map['unit'] = Variable<String>(unit.value);
     }
     if (unitPriceExclVat.present) {
       map['unit_price_excl_vat'] = Variable<int>(unitPriceExclVat.value);
     }
     if (vatRate.present) {
-      map['vat_rate'] = Variable<String>(vatRate.value);
+      map['vat_rate'] = Variable<String>(
+        $InvoiceLinesTable.$convertervatRate.toSql(vatRate.value),
+      );
     }
     if (vatAmount.present) {
       map['vat_amount'] = Variable<int>(vatAmount.value);
@@ -4557,13 +3025,1395 @@ class InvoiceLinesCompanion extends UpdateCompanion<InvoiceLine> {
           ..write('id: $id, ')
           ..write('invoiceId: $invoiceId, ')
           ..write('description: $description, ')
-          ..write('quantityUnit: $quantityUnit, ')
           ..write('quantity: $quantity, ')
+          ..write('unit: $unit, ')
           ..write('unitPriceExclVat: $unitPriceExclVat, ')
           ..write('vatRate: $vatRate, ')
           ..write('vatAmount: $vatAmount, ')
           ..write('lineTotalExclVat: $lineTotalExclVat, ')
           ..write('sortOrder: $sortOrder')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $FixedAssetsTable extends FixedAssets
+    with TableInfo<$FixedAssetsTable, FixedAsset> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FixedAssetsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<AssetKind, String> kind =
+      GeneratedColumn<String>(
+        'kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(AssetKind.general.name),
+      ).withConverter<AssetKind>($FixedAssetsTable.$converterkind);
+  static const VerificationMeta _assetNameMeta = const VerificationMeta(
+    'assetName',
+  );
+  @override
+  late final GeneratedColumn<String> assetName = GeneratedColumn<String>(
+    'asset_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _costExclVatMeta = const VerificationMeta(
+    'costExclVat',
+  );
+  @override
+  late final GeneratedColumn<int> costExclVat = GeneratedColumn<int>(
+    'cost_excl_vat',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _residualValueMeta = const VerificationMeta(
+    'residualValue',
+  );
+  @override
+  late final GeneratedColumn<int> residualValue = GeneratedColumn<int>(
+    'residual_value',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _purchaseDateMeta = const VerificationMeta(
+    'purchaseDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> purchaseDate = GeneratedColumn<DateTime>(
+    'purchase_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _businessUsePctMeta = const VerificationMeta(
+    'businessUsePct',
+  );
+  @override
+  late final GeneratedColumn<double> businessUsePct = GeneratedColumn<double>(
+    'business_use_pct',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _usefulLifeYearsMeta = const VerificationMeta(
+    'usefulLifeYears',
+  );
+  @override
+  late final GeneratedColumn<int> usefulLifeYears = GeneratedColumn<int>(
+    'useful_life_years',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _kiaEligibleMeta = const VerificationMeta(
+    'kiaEligible',
+  );
+  @override
+  late final GeneratedColumn<bool> kiaEligible = GeneratedColumn<bool>(
+    'kia_eligible',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("kia_eligible" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _eiaEligibleMeta = const VerificationMeta(
+    'eiaEligible',
+  );
+  @override
+  late final GeneratedColumn<bool> eiaEligible = GeneratedColumn<bool>(
+    'eia_eligible',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("eia_eligible" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<MiaCategory?, String>
+  miaCategory = GeneratedColumn<String>(
+    'mia_category',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  ).withConverter<MiaCategory?>($FixedAssetsTable.$convertermiaCategoryn);
+  static const VerificationMeta _investmentDeductionReceivedMeta =
+      const VerificationMeta('investmentDeductionReceived');
+  @override
+  late final GeneratedColumn<int> investmentDeductionReceived =
+      GeneratedColumn<int>(
+        'investment_deduction_received',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _reinvestmentReserveAppliedMeta =
+      const VerificationMeta('reinvestmentReserveApplied');
+  @override
+  late final GeneratedColumn<int> reinvestmentReserveApplied =
+      GeneratedColumn<int>(
+        'reinvestment_reserve_applied',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(0),
+      );
+  static const VerificationMeta _reserveGainMeta = const VerificationMeta(
+    'reserveGain',
+  );
+  @override
+  late final GeneratedColumn<bool> reserveGain = GeneratedColumn<bool>(
+    'reserve_gain',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("reserve_gain" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _catalogueValueMeta = const VerificationMeta(
+    'catalogueValue',
+  );
+  @override
+  late final GeneratedColumn<int> catalogueValue = GeneratedColumn<int>(
+    'catalogue_value',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _firstRegistrationMeta = const VerificationMeta(
+    'firstRegistration',
+  );
+  @override
+  late final GeneratedColumn<DateTime> firstRegistration =
+      GeneratedColumn<DateTime>(
+        'first_registration',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  @override
+  late final GeneratedColumnWithTypeConverter<ZeroEmission, String>
+  zeroEmission = GeneratedColumn<String>(
+    'zero_emission',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: Constant(ZeroEmission.none.name),
+  ).withConverter<ZeroEmission>($FixedAssetsTable.$converterzeroEmission);
+  static const VerificationMeta _marketValueMeta = const VerificationMeta(
+    'marketValue',
+  );
+  @override
+  late final GeneratedColumn<int> marketValue = GeneratedColumn<int>(
+    'market_value',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _keepsTripLogMeta = const VerificationMeta(
+    'keepsTripLog',
+  );
+  @override
+  late final GeneratedColumn<bool> keepsTripLog = GeneratedColumn<bool>(
+    'keeps_trip_log',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("keeps_trip_log" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _vatDeductedOnPurchaseMeta =
+      const VerificationMeta('vatDeductedOnPurchase');
+  @override
+  late final GeneratedColumn<int> vatDeductedOnPurchase = GeneratedColumn<int>(
+    'vat_deducted_on_purchase',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _disposalDateMeta = const VerificationMeta(
+    'disposalDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> disposalDate = GeneratedColumn<DateTime>(
+    'disposal_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _disposalProceedsMeta = const VerificationMeta(
+    'disposalProceeds',
+  );
+  @override
+  late final GeneratedColumn<int> disposalProceeds = GeneratedColumn<int>(
+    'disposal_proceeds',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    kind,
+    assetName,
+    costExclVat,
+    residualValue,
+    purchaseDate,
+    businessUsePct,
+    usefulLifeYears,
+    kiaEligible,
+    eiaEligible,
+    miaCategory,
+    investmentDeductionReceived,
+    reinvestmentReserveApplied,
+    reserveGain,
+    catalogueValue,
+    firstRegistration,
+    zeroEmission,
+    marketValue,
+    keepsTripLog,
+    vatDeductedOnPurchase,
+    notes,
+    disposalDate,
+    disposalProceeds,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'fixed_assets';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FixedAsset> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('asset_name')) {
+      context.handle(
+        _assetNameMeta,
+        assetName.isAcceptableOrUnknown(data['asset_name']!, _assetNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_assetNameMeta);
+    }
+    if (data.containsKey('cost_excl_vat')) {
+      context.handle(
+        _costExclVatMeta,
+        costExclVat.isAcceptableOrUnknown(
+          data['cost_excl_vat']!,
+          _costExclVatMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_costExclVatMeta);
+    }
+    if (data.containsKey('residual_value')) {
+      context.handle(
+        _residualValueMeta,
+        residualValue.isAcceptableOrUnknown(
+          data['residual_value']!,
+          _residualValueMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_residualValueMeta);
+    }
+    if (data.containsKey('purchase_date')) {
+      context.handle(
+        _purchaseDateMeta,
+        purchaseDate.isAcceptableOrUnknown(
+          data['purchase_date']!,
+          _purchaseDateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_purchaseDateMeta);
+    }
+    if (data.containsKey('business_use_pct')) {
+      context.handle(
+        _businessUsePctMeta,
+        businessUsePct.isAcceptableOrUnknown(
+          data['business_use_pct']!,
+          _businessUsePctMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_businessUsePctMeta);
+    }
+    if (data.containsKey('useful_life_years')) {
+      context.handle(
+        _usefulLifeYearsMeta,
+        usefulLifeYears.isAcceptableOrUnknown(
+          data['useful_life_years']!,
+          _usefulLifeYearsMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_usefulLifeYearsMeta);
+    }
+    if (data.containsKey('kia_eligible')) {
+      context.handle(
+        _kiaEligibleMeta,
+        kiaEligible.isAcceptableOrUnknown(
+          data['kia_eligible']!,
+          _kiaEligibleMeta,
+        ),
+      );
+    }
+    if (data.containsKey('eia_eligible')) {
+      context.handle(
+        _eiaEligibleMeta,
+        eiaEligible.isAcceptableOrUnknown(
+          data['eia_eligible']!,
+          _eiaEligibleMeta,
+        ),
+      );
+    }
+    if (data.containsKey('investment_deduction_received')) {
+      context.handle(
+        _investmentDeductionReceivedMeta,
+        investmentDeductionReceived.isAcceptableOrUnknown(
+          data['investment_deduction_received']!,
+          _investmentDeductionReceivedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('reinvestment_reserve_applied')) {
+      context.handle(
+        _reinvestmentReserveAppliedMeta,
+        reinvestmentReserveApplied.isAcceptableOrUnknown(
+          data['reinvestment_reserve_applied']!,
+          _reinvestmentReserveAppliedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('reserve_gain')) {
+      context.handle(
+        _reserveGainMeta,
+        reserveGain.isAcceptableOrUnknown(
+          data['reserve_gain']!,
+          _reserveGainMeta,
+        ),
+      );
+    }
+    if (data.containsKey('catalogue_value')) {
+      context.handle(
+        _catalogueValueMeta,
+        catalogueValue.isAcceptableOrUnknown(
+          data['catalogue_value']!,
+          _catalogueValueMeta,
+        ),
+      );
+    }
+    if (data.containsKey('first_registration')) {
+      context.handle(
+        _firstRegistrationMeta,
+        firstRegistration.isAcceptableOrUnknown(
+          data['first_registration']!,
+          _firstRegistrationMeta,
+        ),
+      );
+    }
+    if (data.containsKey('market_value')) {
+      context.handle(
+        _marketValueMeta,
+        marketValue.isAcceptableOrUnknown(
+          data['market_value']!,
+          _marketValueMeta,
+        ),
+      );
+    }
+    if (data.containsKey('keeps_trip_log')) {
+      context.handle(
+        _keepsTripLogMeta,
+        keepsTripLog.isAcceptableOrUnknown(
+          data['keeps_trip_log']!,
+          _keepsTripLogMeta,
+        ),
+      );
+    }
+    if (data.containsKey('vat_deducted_on_purchase')) {
+      context.handle(
+        _vatDeductedOnPurchaseMeta,
+        vatDeductedOnPurchase.isAcceptableOrUnknown(
+          data['vat_deducted_on_purchase']!,
+          _vatDeductedOnPurchaseMeta,
+        ),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('disposal_date')) {
+      context.handle(
+        _disposalDateMeta,
+        disposalDate.isAcceptableOrUnknown(
+          data['disposal_date']!,
+          _disposalDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('disposal_proceeds')) {
+      context.handle(
+        _disposalProceedsMeta,
+        disposalProceeds.isAcceptableOrUnknown(
+          data['disposal_proceeds']!,
+          _disposalProceedsMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  FixedAsset map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FixedAsset(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      kind: $FixedAssetsTable.$converterkind.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}kind'],
+        )!,
+      ),
+      assetName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}asset_name'],
+      )!,
+      costExclVat: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}cost_excl_vat'],
+      )!,
+      residualValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}residual_value'],
+      )!,
+      purchaseDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}purchase_date'],
+      )!,
+      businessUsePct: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}business_use_pct'],
+      )!,
+      usefulLifeYears: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}useful_life_years'],
+      )!,
+      kiaEligible: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}kia_eligible'],
+      )!,
+      eiaEligible: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}eia_eligible'],
+      )!,
+      miaCategory: $FixedAssetsTable.$convertermiaCategoryn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}mia_category'],
+        ),
+      ),
+      investmentDeductionReceived: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}investment_deduction_received'],
+      ),
+      reinvestmentReserveApplied: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}reinvestment_reserve_applied'],
+      )!,
+      reserveGain: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}reserve_gain'],
+      )!,
+      catalogueValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}catalogue_value'],
+      ),
+      firstRegistration: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}first_registration'],
+      ),
+      zeroEmission: $FixedAssetsTable.$converterzeroEmission.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}zero_emission'],
+        )!,
+      ),
+      marketValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}market_value'],
+      ),
+      keepsTripLog: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}keeps_trip_log'],
+      )!,
+      vatDeductedOnPurchase: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}vat_deducted_on_purchase'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      disposalDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}disposal_date'],
+      ),
+      disposalProceeds: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}disposal_proceeds'],
+      ),
+    );
+  }
+
+  @override
+  $FixedAssetsTable createAlias(String alias) {
+    return $FixedAssetsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<AssetKind, String, String> $converterkind =
+      const EnumNameConverter<AssetKind>(AssetKind.values);
+  static JsonTypeConverter2<MiaCategory, String, String> $convertermiaCategory =
+      const EnumNameConverter<MiaCategory>(MiaCategory.values);
+  static JsonTypeConverter2<MiaCategory?, String?, String?>
+  $convertermiaCategoryn = JsonTypeConverter2.asNullable($convertermiaCategory);
+  static JsonTypeConverter2<ZeroEmission, String, String>
+  $converterzeroEmission = const EnumNameConverter<ZeroEmission>(
+    ZeroEmission.values,
+  );
+}
+
+class FixedAsset extends DataClass implements Insertable<FixedAsset> {
+  final int id;
+  final AssetKind kind;
+  final String assetName;
+  final int costExclVat;
+
+  /// Depreciation stops at this value.
+  final int residualValue;
+  final DateTime purchaseDate;
+  final double businessUsePct;
+  final int usefulLifeYears;
+  final bool kiaEligible;
+  final bool eiaEligible;
+  final MiaCategory? miaCategory;
+
+  /// Investeringsaftrek received, for a purchase year Florin has no rules
+  /// for; used for the desinvesteringsbijtelling.
+  final int? investmentDeductionReceived;
+
+  /// Herinvesteringsreserve booked off on this asset's cost.
+  final int reinvestmentReserveApplied;
+
+  /// The gain on sale goes to the herinvesteringsreserve.
+  final bool reserveGain;
+  final int? catalogueValue;
+  final DateTime? firstRegistration;
+  final ZeroEmission zeroEmission;
+  final int? marketValue;
+  final bool keepsTripLog;
+  final int vatDeductedOnPurchase;
+  final String? notes;
+  final DateTime? disposalDate;
+  final int? disposalProceeds;
+  const FixedAsset({
+    required this.id,
+    required this.kind,
+    required this.assetName,
+    required this.costExclVat,
+    required this.residualValue,
+    required this.purchaseDate,
+    required this.businessUsePct,
+    required this.usefulLifeYears,
+    required this.kiaEligible,
+    required this.eiaEligible,
+    this.miaCategory,
+    this.investmentDeductionReceived,
+    required this.reinvestmentReserveApplied,
+    required this.reserveGain,
+    this.catalogueValue,
+    this.firstRegistration,
+    required this.zeroEmission,
+    this.marketValue,
+    required this.keepsTripLog,
+    required this.vatDeductedOnPurchase,
+    this.notes,
+    this.disposalDate,
+    this.disposalProceeds,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    {
+      map['kind'] = Variable<String>(
+        $FixedAssetsTable.$converterkind.toSql(kind),
+      );
+    }
+    map['asset_name'] = Variable<String>(assetName);
+    map['cost_excl_vat'] = Variable<int>(costExclVat);
+    map['residual_value'] = Variable<int>(residualValue);
+    map['purchase_date'] = Variable<DateTime>(purchaseDate);
+    map['business_use_pct'] = Variable<double>(businessUsePct);
+    map['useful_life_years'] = Variable<int>(usefulLifeYears);
+    map['kia_eligible'] = Variable<bool>(kiaEligible);
+    map['eia_eligible'] = Variable<bool>(eiaEligible);
+    if (!nullToAbsent || miaCategory != null) {
+      map['mia_category'] = Variable<String>(
+        $FixedAssetsTable.$convertermiaCategoryn.toSql(miaCategory),
+      );
+    }
+    if (!nullToAbsent || investmentDeductionReceived != null) {
+      map['investment_deduction_received'] = Variable<int>(
+        investmentDeductionReceived,
+      );
+    }
+    map['reinvestment_reserve_applied'] = Variable<int>(
+      reinvestmentReserveApplied,
+    );
+    map['reserve_gain'] = Variable<bool>(reserveGain);
+    if (!nullToAbsent || catalogueValue != null) {
+      map['catalogue_value'] = Variable<int>(catalogueValue);
+    }
+    if (!nullToAbsent || firstRegistration != null) {
+      map['first_registration'] = Variable<DateTime>(firstRegistration);
+    }
+    {
+      map['zero_emission'] = Variable<String>(
+        $FixedAssetsTable.$converterzeroEmission.toSql(zeroEmission),
+      );
+    }
+    if (!nullToAbsent || marketValue != null) {
+      map['market_value'] = Variable<int>(marketValue);
+    }
+    map['keeps_trip_log'] = Variable<bool>(keepsTripLog);
+    map['vat_deducted_on_purchase'] = Variable<int>(vatDeductedOnPurchase);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    if (!nullToAbsent || disposalDate != null) {
+      map['disposal_date'] = Variable<DateTime>(disposalDate);
+    }
+    if (!nullToAbsent || disposalProceeds != null) {
+      map['disposal_proceeds'] = Variable<int>(disposalProceeds);
+    }
+    return map;
+  }
+
+  FixedAssetsCompanion toCompanion(bool nullToAbsent) {
+    return FixedAssetsCompanion(
+      id: Value(id),
+      kind: Value(kind),
+      assetName: Value(assetName),
+      costExclVat: Value(costExclVat),
+      residualValue: Value(residualValue),
+      purchaseDate: Value(purchaseDate),
+      businessUsePct: Value(businessUsePct),
+      usefulLifeYears: Value(usefulLifeYears),
+      kiaEligible: Value(kiaEligible),
+      eiaEligible: Value(eiaEligible),
+      miaCategory: miaCategory == null && nullToAbsent
+          ? const Value.absent()
+          : Value(miaCategory),
+      investmentDeductionReceived:
+          investmentDeductionReceived == null && nullToAbsent
+          ? const Value.absent()
+          : Value(investmentDeductionReceived),
+      reinvestmentReserveApplied: Value(reinvestmentReserveApplied),
+      reserveGain: Value(reserveGain),
+      catalogueValue: catalogueValue == null && nullToAbsent
+          ? const Value.absent()
+          : Value(catalogueValue),
+      firstRegistration: firstRegistration == null && nullToAbsent
+          ? const Value.absent()
+          : Value(firstRegistration),
+      zeroEmission: Value(zeroEmission),
+      marketValue: marketValue == null && nullToAbsent
+          ? const Value.absent()
+          : Value(marketValue),
+      keepsTripLog: Value(keepsTripLog),
+      vatDeductedOnPurchase: Value(vatDeductedOnPurchase),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      disposalDate: disposalDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(disposalDate),
+      disposalProceeds: disposalProceeds == null && nullToAbsent
+          ? const Value.absent()
+          : Value(disposalProceeds),
+    );
+  }
+
+  factory FixedAsset.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FixedAsset(
+      id: serializer.fromJson<int>(json['id']),
+      kind: $FixedAssetsTable.$converterkind.fromJson(
+        serializer.fromJson<String>(json['kind']),
+      ),
+      assetName: serializer.fromJson<String>(json['assetName']),
+      costExclVat: serializer.fromJson<int>(json['costExclVat']),
+      residualValue: serializer.fromJson<int>(json['residualValue']),
+      purchaseDate: serializer.fromJson<DateTime>(json['purchaseDate']),
+      businessUsePct: serializer.fromJson<double>(json['businessUsePct']),
+      usefulLifeYears: serializer.fromJson<int>(json['usefulLifeYears']),
+      kiaEligible: serializer.fromJson<bool>(json['kiaEligible']),
+      eiaEligible: serializer.fromJson<bool>(json['eiaEligible']),
+      miaCategory: $FixedAssetsTable.$convertermiaCategoryn.fromJson(
+        serializer.fromJson<String?>(json['miaCategory']),
+      ),
+      investmentDeductionReceived: serializer.fromJson<int?>(
+        json['investmentDeductionReceived'],
+      ),
+      reinvestmentReserveApplied: serializer.fromJson<int>(
+        json['reinvestmentReserveApplied'],
+      ),
+      reserveGain: serializer.fromJson<bool>(json['reserveGain']),
+      catalogueValue: serializer.fromJson<int?>(json['catalogueValue']),
+      firstRegistration: serializer.fromJson<DateTime?>(
+        json['firstRegistration'],
+      ),
+      zeroEmission: $FixedAssetsTable.$converterzeroEmission.fromJson(
+        serializer.fromJson<String>(json['zeroEmission']),
+      ),
+      marketValue: serializer.fromJson<int?>(json['marketValue']),
+      keepsTripLog: serializer.fromJson<bool>(json['keepsTripLog']),
+      vatDeductedOnPurchase: serializer.fromJson<int>(
+        json['vatDeductedOnPurchase'],
+      ),
+      notes: serializer.fromJson<String?>(json['notes']),
+      disposalDate: serializer.fromJson<DateTime?>(json['disposalDate']),
+      disposalProceeds: serializer.fromJson<int?>(json['disposalProceeds']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'kind': serializer.toJson<String>(
+        $FixedAssetsTable.$converterkind.toJson(kind),
+      ),
+      'assetName': serializer.toJson<String>(assetName),
+      'costExclVat': serializer.toJson<int>(costExclVat),
+      'residualValue': serializer.toJson<int>(residualValue),
+      'purchaseDate': serializer.toJson<DateTime>(purchaseDate),
+      'businessUsePct': serializer.toJson<double>(businessUsePct),
+      'usefulLifeYears': serializer.toJson<int>(usefulLifeYears),
+      'kiaEligible': serializer.toJson<bool>(kiaEligible),
+      'eiaEligible': serializer.toJson<bool>(eiaEligible),
+      'miaCategory': serializer.toJson<String?>(
+        $FixedAssetsTable.$convertermiaCategoryn.toJson(miaCategory),
+      ),
+      'investmentDeductionReceived': serializer.toJson<int?>(
+        investmentDeductionReceived,
+      ),
+      'reinvestmentReserveApplied': serializer.toJson<int>(
+        reinvestmentReserveApplied,
+      ),
+      'reserveGain': serializer.toJson<bool>(reserveGain),
+      'catalogueValue': serializer.toJson<int?>(catalogueValue),
+      'firstRegistration': serializer.toJson<DateTime?>(firstRegistration),
+      'zeroEmission': serializer.toJson<String>(
+        $FixedAssetsTable.$converterzeroEmission.toJson(zeroEmission),
+      ),
+      'marketValue': serializer.toJson<int?>(marketValue),
+      'keepsTripLog': serializer.toJson<bool>(keepsTripLog),
+      'vatDeductedOnPurchase': serializer.toJson<int>(vatDeductedOnPurchase),
+      'notes': serializer.toJson<String?>(notes),
+      'disposalDate': serializer.toJson<DateTime?>(disposalDate),
+      'disposalProceeds': serializer.toJson<int?>(disposalProceeds),
+    };
+  }
+
+  FixedAsset copyWith({
+    int? id,
+    AssetKind? kind,
+    String? assetName,
+    int? costExclVat,
+    int? residualValue,
+    DateTime? purchaseDate,
+    double? businessUsePct,
+    int? usefulLifeYears,
+    bool? kiaEligible,
+    bool? eiaEligible,
+    Value<MiaCategory?> miaCategory = const Value.absent(),
+    Value<int?> investmentDeductionReceived = const Value.absent(),
+    int? reinvestmentReserveApplied,
+    bool? reserveGain,
+    Value<int?> catalogueValue = const Value.absent(),
+    Value<DateTime?> firstRegistration = const Value.absent(),
+    ZeroEmission? zeroEmission,
+    Value<int?> marketValue = const Value.absent(),
+    bool? keepsTripLog,
+    int? vatDeductedOnPurchase,
+    Value<String?> notes = const Value.absent(),
+    Value<DateTime?> disposalDate = const Value.absent(),
+    Value<int?> disposalProceeds = const Value.absent(),
+  }) => FixedAsset(
+    id: id ?? this.id,
+    kind: kind ?? this.kind,
+    assetName: assetName ?? this.assetName,
+    costExclVat: costExclVat ?? this.costExclVat,
+    residualValue: residualValue ?? this.residualValue,
+    purchaseDate: purchaseDate ?? this.purchaseDate,
+    businessUsePct: businessUsePct ?? this.businessUsePct,
+    usefulLifeYears: usefulLifeYears ?? this.usefulLifeYears,
+    kiaEligible: kiaEligible ?? this.kiaEligible,
+    eiaEligible: eiaEligible ?? this.eiaEligible,
+    miaCategory: miaCategory.present ? miaCategory.value : this.miaCategory,
+    investmentDeductionReceived: investmentDeductionReceived.present
+        ? investmentDeductionReceived.value
+        : this.investmentDeductionReceived,
+    reinvestmentReserveApplied:
+        reinvestmentReserveApplied ?? this.reinvestmentReserveApplied,
+    reserveGain: reserveGain ?? this.reserveGain,
+    catalogueValue: catalogueValue.present
+        ? catalogueValue.value
+        : this.catalogueValue,
+    firstRegistration: firstRegistration.present
+        ? firstRegistration.value
+        : this.firstRegistration,
+    zeroEmission: zeroEmission ?? this.zeroEmission,
+    marketValue: marketValue.present ? marketValue.value : this.marketValue,
+    keepsTripLog: keepsTripLog ?? this.keepsTripLog,
+    vatDeductedOnPurchase: vatDeductedOnPurchase ?? this.vatDeductedOnPurchase,
+    notes: notes.present ? notes.value : this.notes,
+    disposalDate: disposalDate.present ? disposalDate.value : this.disposalDate,
+    disposalProceeds: disposalProceeds.present
+        ? disposalProceeds.value
+        : this.disposalProceeds,
+  );
+  FixedAsset copyWithCompanion(FixedAssetsCompanion data) {
+    return FixedAsset(
+      id: data.id.present ? data.id.value : this.id,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      assetName: data.assetName.present ? data.assetName.value : this.assetName,
+      costExclVat: data.costExclVat.present
+          ? data.costExclVat.value
+          : this.costExclVat,
+      residualValue: data.residualValue.present
+          ? data.residualValue.value
+          : this.residualValue,
+      purchaseDate: data.purchaseDate.present
+          ? data.purchaseDate.value
+          : this.purchaseDate,
+      businessUsePct: data.businessUsePct.present
+          ? data.businessUsePct.value
+          : this.businessUsePct,
+      usefulLifeYears: data.usefulLifeYears.present
+          ? data.usefulLifeYears.value
+          : this.usefulLifeYears,
+      kiaEligible: data.kiaEligible.present
+          ? data.kiaEligible.value
+          : this.kiaEligible,
+      eiaEligible: data.eiaEligible.present
+          ? data.eiaEligible.value
+          : this.eiaEligible,
+      miaCategory: data.miaCategory.present
+          ? data.miaCategory.value
+          : this.miaCategory,
+      investmentDeductionReceived: data.investmentDeductionReceived.present
+          ? data.investmentDeductionReceived.value
+          : this.investmentDeductionReceived,
+      reinvestmentReserveApplied: data.reinvestmentReserveApplied.present
+          ? data.reinvestmentReserveApplied.value
+          : this.reinvestmentReserveApplied,
+      reserveGain: data.reserveGain.present
+          ? data.reserveGain.value
+          : this.reserveGain,
+      catalogueValue: data.catalogueValue.present
+          ? data.catalogueValue.value
+          : this.catalogueValue,
+      firstRegistration: data.firstRegistration.present
+          ? data.firstRegistration.value
+          : this.firstRegistration,
+      zeroEmission: data.zeroEmission.present
+          ? data.zeroEmission.value
+          : this.zeroEmission,
+      marketValue: data.marketValue.present
+          ? data.marketValue.value
+          : this.marketValue,
+      keepsTripLog: data.keepsTripLog.present
+          ? data.keepsTripLog.value
+          : this.keepsTripLog,
+      vatDeductedOnPurchase: data.vatDeductedOnPurchase.present
+          ? data.vatDeductedOnPurchase.value
+          : this.vatDeductedOnPurchase,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      disposalDate: data.disposalDate.present
+          ? data.disposalDate.value
+          : this.disposalDate,
+      disposalProceeds: data.disposalProceeds.present
+          ? data.disposalProceeds.value
+          : this.disposalProceeds,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FixedAsset(')
+          ..write('id: $id, ')
+          ..write('kind: $kind, ')
+          ..write('assetName: $assetName, ')
+          ..write('costExclVat: $costExclVat, ')
+          ..write('residualValue: $residualValue, ')
+          ..write('purchaseDate: $purchaseDate, ')
+          ..write('businessUsePct: $businessUsePct, ')
+          ..write('usefulLifeYears: $usefulLifeYears, ')
+          ..write('kiaEligible: $kiaEligible, ')
+          ..write('eiaEligible: $eiaEligible, ')
+          ..write('miaCategory: $miaCategory, ')
+          ..write('investmentDeductionReceived: $investmentDeductionReceived, ')
+          ..write('reinvestmentReserveApplied: $reinvestmentReserveApplied, ')
+          ..write('reserveGain: $reserveGain, ')
+          ..write('catalogueValue: $catalogueValue, ')
+          ..write('firstRegistration: $firstRegistration, ')
+          ..write('zeroEmission: $zeroEmission, ')
+          ..write('marketValue: $marketValue, ')
+          ..write('keepsTripLog: $keepsTripLog, ')
+          ..write('vatDeductedOnPurchase: $vatDeductedOnPurchase, ')
+          ..write('notes: $notes, ')
+          ..write('disposalDate: $disposalDate, ')
+          ..write('disposalProceeds: $disposalProceeds')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    kind,
+    assetName,
+    costExclVat,
+    residualValue,
+    purchaseDate,
+    businessUsePct,
+    usefulLifeYears,
+    kiaEligible,
+    eiaEligible,
+    miaCategory,
+    investmentDeductionReceived,
+    reinvestmentReserveApplied,
+    reserveGain,
+    catalogueValue,
+    firstRegistration,
+    zeroEmission,
+    marketValue,
+    keepsTripLog,
+    vatDeductedOnPurchase,
+    notes,
+    disposalDate,
+    disposalProceeds,
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FixedAsset &&
+          other.id == this.id &&
+          other.kind == this.kind &&
+          other.assetName == this.assetName &&
+          other.costExclVat == this.costExclVat &&
+          other.residualValue == this.residualValue &&
+          other.purchaseDate == this.purchaseDate &&
+          other.businessUsePct == this.businessUsePct &&
+          other.usefulLifeYears == this.usefulLifeYears &&
+          other.kiaEligible == this.kiaEligible &&
+          other.eiaEligible == this.eiaEligible &&
+          other.miaCategory == this.miaCategory &&
+          other.investmentDeductionReceived ==
+              this.investmentDeductionReceived &&
+          other.reinvestmentReserveApplied == this.reinvestmentReserveApplied &&
+          other.reserveGain == this.reserveGain &&
+          other.catalogueValue == this.catalogueValue &&
+          other.firstRegistration == this.firstRegistration &&
+          other.zeroEmission == this.zeroEmission &&
+          other.marketValue == this.marketValue &&
+          other.keepsTripLog == this.keepsTripLog &&
+          other.vatDeductedOnPurchase == this.vatDeductedOnPurchase &&
+          other.notes == this.notes &&
+          other.disposalDate == this.disposalDate &&
+          other.disposalProceeds == this.disposalProceeds);
+}
+
+class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
+  final Value<int> id;
+  final Value<AssetKind> kind;
+  final Value<String> assetName;
+  final Value<int> costExclVat;
+  final Value<int> residualValue;
+  final Value<DateTime> purchaseDate;
+  final Value<double> businessUsePct;
+  final Value<int> usefulLifeYears;
+  final Value<bool> kiaEligible;
+  final Value<bool> eiaEligible;
+  final Value<MiaCategory?> miaCategory;
+  final Value<int?> investmentDeductionReceived;
+  final Value<int> reinvestmentReserveApplied;
+  final Value<bool> reserveGain;
+  final Value<int?> catalogueValue;
+  final Value<DateTime?> firstRegistration;
+  final Value<ZeroEmission> zeroEmission;
+  final Value<int?> marketValue;
+  final Value<bool> keepsTripLog;
+  final Value<int> vatDeductedOnPurchase;
+  final Value<String?> notes;
+  final Value<DateTime?> disposalDate;
+  final Value<int?> disposalProceeds;
+  const FixedAssetsCompanion({
+    this.id = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.assetName = const Value.absent(),
+    this.costExclVat = const Value.absent(),
+    this.residualValue = const Value.absent(),
+    this.purchaseDate = const Value.absent(),
+    this.businessUsePct = const Value.absent(),
+    this.usefulLifeYears = const Value.absent(),
+    this.kiaEligible = const Value.absent(),
+    this.eiaEligible = const Value.absent(),
+    this.miaCategory = const Value.absent(),
+    this.investmentDeductionReceived = const Value.absent(),
+    this.reinvestmentReserveApplied = const Value.absent(),
+    this.reserveGain = const Value.absent(),
+    this.catalogueValue = const Value.absent(),
+    this.firstRegistration = const Value.absent(),
+    this.zeroEmission = const Value.absent(),
+    this.marketValue = const Value.absent(),
+    this.keepsTripLog = const Value.absent(),
+    this.vatDeductedOnPurchase = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.disposalDate = const Value.absent(),
+    this.disposalProceeds = const Value.absent(),
+  });
+  FixedAssetsCompanion.insert({
+    this.id = const Value.absent(),
+    this.kind = const Value.absent(),
+    required String assetName,
+    required int costExclVat,
+    required int residualValue,
+    required DateTime purchaseDate,
+    required double businessUsePct,
+    required int usefulLifeYears,
+    this.kiaEligible = const Value.absent(),
+    this.eiaEligible = const Value.absent(),
+    this.miaCategory = const Value.absent(),
+    this.investmentDeductionReceived = const Value.absent(),
+    this.reinvestmentReserveApplied = const Value.absent(),
+    this.reserveGain = const Value.absent(),
+    this.catalogueValue = const Value.absent(),
+    this.firstRegistration = const Value.absent(),
+    this.zeroEmission = const Value.absent(),
+    this.marketValue = const Value.absent(),
+    this.keepsTripLog = const Value.absent(),
+    this.vatDeductedOnPurchase = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.disposalDate = const Value.absent(),
+    this.disposalProceeds = const Value.absent(),
+  }) : assetName = Value(assetName),
+       costExclVat = Value(costExclVat),
+       residualValue = Value(residualValue),
+       purchaseDate = Value(purchaseDate),
+       businessUsePct = Value(businessUsePct),
+       usefulLifeYears = Value(usefulLifeYears);
+  static Insertable<FixedAsset> custom({
+    Expression<int>? id,
+    Expression<String>? kind,
+    Expression<String>? assetName,
+    Expression<int>? costExclVat,
+    Expression<int>? residualValue,
+    Expression<DateTime>? purchaseDate,
+    Expression<double>? businessUsePct,
+    Expression<int>? usefulLifeYears,
+    Expression<bool>? kiaEligible,
+    Expression<bool>? eiaEligible,
+    Expression<String>? miaCategory,
+    Expression<int>? investmentDeductionReceived,
+    Expression<int>? reinvestmentReserveApplied,
+    Expression<bool>? reserveGain,
+    Expression<int>? catalogueValue,
+    Expression<DateTime>? firstRegistration,
+    Expression<String>? zeroEmission,
+    Expression<int>? marketValue,
+    Expression<bool>? keepsTripLog,
+    Expression<int>? vatDeductedOnPurchase,
+    Expression<String>? notes,
+    Expression<DateTime>? disposalDate,
+    Expression<int>? disposalProceeds,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (kind != null) 'kind': kind,
+      if (assetName != null) 'asset_name': assetName,
+      if (costExclVat != null) 'cost_excl_vat': costExclVat,
+      if (residualValue != null) 'residual_value': residualValue,
+      if (purchaseDate != null) 'purchase_date': purchaseDate,
+      if (businessUsePct != null) 'business_use_pct': businessUsePct,
+      if (usefulLifeYears != null) 'useful_life_years': usefulLifeYears,
+      if (kiaEligible != null) 'kia_eligible': kiaEligible,
+      if (eiaEligible != null) 'eia_eligible': eiaEligible,
+      if (miaCategory != null) 'mia_category': miaCategory,
+      if (investmentDeductionReceived != null)
+        'investment_deduction_received': investmentDeductionReceived,
+      if (reinvestmentReserveApplied != null)
+        'reinvestment_reserve_applied': reinvestmentReserveApplied,
+      if (reserveGain != null) 'reserve_gain': reserveGain,
+      if (catalogueValue != null) 'catalogue_value': catalogueValue,
+      if (firstRegistration != null) 'first_registration': firstRegistration,
+      if (zeroEmission != null) 'zero_emission': zeroEmission,
+      if (marketValue != null) 'market_value': marketValue,
+      if (keepsTripLog != null) 'keeps_trip_log': keepsTripLog,
+      if (vatDeductedOnPurchase != null)
+        'vat_deducted_on_purchase': vatDeductedOnPurchase,
+      if (notes != null) 'notes': notes,
+      if (disposalDate != null) 'disposal_date': disposalDate,
+      if (disposalProceeds != null) 'disposal_proceeds': disposalProceeds,
+    });
+  }
+
+  FixedAssetsCompanion copyWith({
+    Value<int>? id,
+    Value<AssetKind>? kind,
+    Value<String>? assetName,
+    Value<int>? costExclVat,
+    Value<int>? residualValue,
+    Value<DateTime>? purchaseDate,
+    Value<double>? businessUsePct,
+    Value<int>? usefulLifeYears,
+    Value<bool>? kiaEligible,
+    Value<bool>? eiaEligible,
+    Value<MiaCategory?>? miaCategory,
+    Value<int?>? investmentDeductionReceived,
+    Value<int>? reinvestmentReserveApplied,
+    Value<bool>? reserveGain,
+    Value<int?>? catalogueValue,
+    Value<DateTime?>? firstRegistration,
+    Value<ZeroEmission>? zeroEmission,
+    Value<int?>? marketValue,
+    Value<bool>? keepsTripLog,
+    Value<int>? vatDeductedOnPurchase,
+    Value<String?>? notes,
+    Value<DateTime?>? disposalDate,
+    Value<int?>? disposalProceeds,
+  }) {
+    return FixedAssetsCompanion(
+      id: id ?? this.id,
+      kind: kind ?? this.kind,
+      assetName: assetName ?? this.assetName,
+      costExclVat: costExclVat ?? this.costExclVat,
+      residualValue: residualValue ?? this.residualValue,
+      purchaseDate: purchaseDate ?? this.purchaseDate,
+      businessUsePct: businessUsePct ?? this.businessUsePct,
+      usefulLifeYears: usefulLifeYears ?? this.usefulLifeYears,
+      kiaEligible: kiaEligible ?? this.kiaEligible,
+      eiaEligible: eiaEligible ?? this.eiaEligible,
+      miaCategory: miaCategory ?? this.miaCategory,
+      investmentDeductionReceived:
+          investmentDeductionReceived ?? this.investmentDeductionReceived,
+      reinvestmentReserveApplied:
+          reinvestmentReserveApplied ?? this.reinvestmentReserveApplied,
+      reserveGain: reserveGain ?? this.reserveGain,
+      catalogueValue: catalogueValue ?? this.catalogueValue,
+      firstRegistration: firstRegistration ?? this.firstRegistration,
+      zeroEmission: zeroEmission ?? this.zeroEmission,
+      marketValue: marketValue ?? this.marketValue,
+      keepsTripLog: keepsTripLog ?? this.keepsTripLog,
+      vatDeductedOnPurchase:
+          vatDeductedOnPurchase ?? this.vatDeductedOnPurchase,
+      notes: notes ?? this.notes,
+      disposalDate: disposalDate ?? this.disposalDate,
+      disposalProceeds: disposalProceeds ?? this.disposalProceeds,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(
+        $FixedAssetsTable.$converterkind.toSql(kind.value),
+      );
+    }
+    if (assetName.present) {
+      map['asset_name'] = Variable<String>(assetName.value);
+    }
+    if (costExclVat.present) {
+      map['cost_excl_vat'] = Variable<int>(costExclVat.value);
+    }
+    if (residualValue.present) {
+      map['residual_value'] = Variable<int>(residualValue.value);
+    }
+    if (purchaseDate.present) {
+      map['purchase_date'] = Variable<DateTime>(purchaseDate.value);
+    }
+    if (businessUsePct.present) {
+      map['business_use_pct'] = Variable<double>(businessUsePct.value);
+    }
+    if (usefulLifeYears.present) {
+      map['useful_life_years'] = Variable<int>(usefulLifeYears.value);
+    }
+    if (kiaEligible.present) {
+      map['kia_eligible'] = Variable<bool>(kiaEligible.value);
+    }
+    if (eiaEligible.present) {
+      map['eia_eligible'] = Variable<bool>(eiaEligible.value);
+    }
+    if (miaCategory.present) {
+      map['mia_category'] = Variable<String>(
+        $FixedAssetsTable.$convertermiaCategoryn.toSql(miaCategory.value),
+      );
+    }
+    if (investmentDeductionReceived.present) {
+      map['investment_deduction_received'] = Variable<int>(
+        investmentDeductionReceived.value,
+      );
+    }
+    if (reinvestmentReserveApplied.present) {
+      map['reinvestment_reserve_applied'] = Variable<int>(
+        reinvestmentReserveApplied.value,
+      );
+    }
+    if (reserveGain.present) {
+      map['reserve_gain'] = Variable<bool>(reserveGain.value);
+    }
+    if (catalogueValue.present) {
+      map['catalogue_value'] = Variable<int>(catalogueValue.value);
+    }
+    if (firstRegistration.present) {
+      map['first_registration'] = Variable<DateTime>(firstRegistration.value);
+    }
+    if (zeroEmission.present) {
+      map['zero_emission'] = Variable<String>(
+        $FixedAssetsTable.$converterzeroEmission.toSql(zeroEmission.value),
+      );
+    }
+    if (marketValue.present) {
+      map['market_value'] = Variable<int>(marketValue.value);
+    }
+    if (keepsTripLog.present) {
+      map['keeps_trip_log'] = Variable<bool>(keepsTripLog.value);
+    }
+    if (vatDeductedOnPurchase.present) {
+      map['vat_deducted_on_purchase'] = Variable<int>(
+        vatDeductedOnPurchase.value,
+      );
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (disposalDate.present) {
+      map['disposal_date'] = Variable<DateTime>(disposalDate.value);
+    }
+    if (disposalProceeds.present) {
+      map['disposal_proceeds'] = Variable<int>(disposalProceeds.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FixedAssetsCompanion(')
+          ..write('id: $id, ')
+          ..write('kind: $kind, ')
+          ..write('assetName: $assetName, ')
+          ..write('costExclVat: $costExclVat, ')
+          ..write('residualValue: $residualValue, ')
+          ..write('purchaseDate: $purchaseDate, ')
+          ..write('businessUsePct: $businessUsePct, ')
+          ..write('usefulLifeYears: $usefulLifeYears, ')
+          ..write('kiaEligible: $kiaEligible, ')
+          ..write('eiaEligible: $eiaEligible, ')
+          ..write('miaCategory: $miaCategory, ')
+          ..write('investmentDeductionReceived: $investmentDeductionReceived, ')
+          ..write('reinvestmentReserveApplied: $reinvestmentReserveApplied, ')
+          ..write('reserveGain: $reserveGain, ')
+          ..write('catalogueValue: $catalogueValue, ')
+          ..write('firstRegistration: $firstRegistration, ')
+          ..write('zeroEmission: $zeroEmission, ')
+          ..write('marketValue: $marketValue, ')
+          ..write('keepsTripLog: $keepsTripLog, ')
+          ..write('vatDeductedOnPurchase: $vatDeductedOnPurchase, ')
+          ..write('notes: $notes, ')
+          ..write('disposalDate: $disposalDate, ')
+          ..write('disposalProceeds: $disposalProceeds')
           ..write(')'))
         .toString();
   }
@@ -4618,17 +4468,15 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _categoryMeta = const VerificationMeta(
-    'category',
-  );
   @override
-  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+  late final GeneratedColumnWithTypeConverter<ExpenseCategory, String>
+  category = GeneratedColumn<String>(
     'category',
     aliasedName,
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-  );
+  ).withConverter<ExpenseCategory>($ExpensesTable.$convertercategory);
   static const VerificationMeta _receiptAttachedMeta = const VerificationMeta(
     'receiptAttached',
   );
@@ -4655,18 +4503,25 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _vatRateMeta = const VerificationMeta(
-    'vatRate',
-  );
   @override
-  late final GeneratedColumn<String> vatRate = GeneratedColumn<String>(
-    'vat_rate',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('21%'),
-  );
+  late final GeneratedColumnWithTypeConverter<VatRate, String> vatRate =
+      GeneratedColumn<String>(
+        'vat_rate',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<VatRate>($ExpensesTable.$convertervatRate);
+  @override
+  late final GeneratedColumnWithTypeConverter<PurchaseVat, String> purchaseVat =
+      GeneratedColumn<String>(
+        'purchase_vat',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(PurchaseVat.domestic.name),
+      ).withConverter<PurchaseVat>($ExpensesTable.$converterpurchaseVat);
   static const VerificationMeta _vatAmountMeta = const VerificationMeta(
     'vatAmount',
   );
@@ -4676,8 +4531,7 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     aliasedName,
     false,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _totalInclVatMeta = const VerificationMeta(
     'totalInclVat',
@@ -4688,8 +4542,7 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     aliasedName,
     false,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _businessUsePctMeta = const VerificationMeta(
     'businessUsePct',
@@ -4700,8 +4553,7 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     aliasedName,
     false,
     type: DriftSqlType.double,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(1.0),
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _deductibleAmountMeta = const VerificationMeta(
     'deductibleAmount',
@@ -4712,8 +4564,7 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     aliasedName,
     false,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _vatReclaimableMeta = const VerificationMeta(
     'vatReclaimable',
@@ -4724,11 +4575,10 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     aliasedName,
     false,
     type: DriftSqlType.bool,
-    requiredDuringInsert: false,
+    requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'CHECK ("vat_reclaimable" IN (0, 1))',
     ),
-    defaultValue: const Constant(true),
   );
   static const VerificationMeta _vatToReclaimMeta = const VerificationMeta(
     'vatToReclaim',
@@ -4739,23 +4589,7 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     aliasedName,
     false,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
-  );
-  static const VerificationMeta _isMixedCostMeta = const VerificationMeta(
-    'isMixedCost',
-  );
-  @override
-  late final GeneratedColumn<bool> isMixedCost = GeneratedColumn<bool>(
-    'is_mixed_cost',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_mixed_cost" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   @override
@@ -4788,27 +4622,19 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _fiscalYearMeta = const VerificationMeta(
-    'fiscalYear',
+  static const VerificationMeta _carAssetIdMeta = const VerificationMeta(
+    'carAssetId',
   );
   @override
-  late final GeneratedColumn<int> fiscalYear = GeneratedColumn<int>(
-    'fiscal_year',
+  late final GeneratedColumn<int> carAssetId = GeneratedColumn<int>(
+    'car_asset_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _quarterMeta = const VerificationMeta(
-    'quarter',
-  );
-  @override
-  late final GeneratedColumn<String> quarter = GeneratedColumn<String>(
-    'quarter',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES fixed_assets (id) ON DELETE RESTRICT',
+    ),
   );
   @override
   List<GeneratedColumn> get $columns => [
@@ -4820,18 +4646,17 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     receiptAttached,
     amountExclVat,
     vatRate,
+    purchaseVat,
     vatAmount,
     totalInclVat,
     businessUsePct,
     deductibleAmount,
     vatReclaimable,
     vatToReclaim,
-    isMixedCost,
     notes,
     paidFrom,
     paymentReference,
-    fiscalYear,
-    quarter,
+    carAssetId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4875,14 +4700,6 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     } else if (isInserting) {
       context.missing(_descriptionMeta);
     }
-    if (data.containsKey('category')) {
-      context.handle(
-        _categoryMeta,
-        category.isAcceptableOrUnknown(data['category']!, _categoryMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_categoryMeta);
-    }
     if (data.containsKey('receipt_attached')) {
       context.handle(
         _receiptAttachedMeta,
@@ -4903,17 +4720,13 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     } else if (isInserting) {
       context.missing(_amountExclVatMeta);
     }
-    if (data.containsKey('vat_rate')) {
-      context.handle(
-        _vatRateMeta,
-        vatRate.isAcceptableOrUnknown(data['vat_rate']!, _vatRateMeta),
-      );
-    }
     if (data.containsKey('vat_amount')) {
       context.handle(
         _vatAmountMeta,
         vatAmount.isAcceptableOrUnknown(data['vat_amount']!, _vatAmountMeta),
       );
+    } else if (isInserting) {
+      context.missing(_vatAmountMeta);
     }
     if (data.containsKey('total_incl_vat')) {
       context.handle(
@@ -4923,6 +4736,8 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
           _totalInclVatMeta,
         ),
       );
+    } else if (isInserting) {
+      context.missing(_totalInclVatMeta);
     }
     if (data.containsKey('business_use_pct')) {
       context.handle(
@@ -4932,6 +4747,8 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
           _businessUsePctMeta,
         ),
       );
+    } else if (isInserting) {
+      context.missing(_businessUsePctMeta);
     }
     if (data.containsKey('deductible_amount')) {
       context.handle(
@@ -4941,6 +4758,8 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
           _deductibleAmountMeta,
         ),
       );
+    } else if (isInserting) {
+      context.missing(_deductibleAmountMeta);
     }
     if (data.containsKey('vat_reclaimable')) {
       context.handle(
@@ -4950,6 +4769,8 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
           _vatReclaimableMeta,
         ),
       );
+    } else if (isInserting) {
+      context.missing(_vatReclaimableMeta);
     }
     if (data.containsKey('vat_to_reclaim')) {
       context.handle(
@@ -4959,15 +4780,8 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
           _vatToReclaimMeta,
         ),
       );
-    }
-    if (data.containsKey('is_mixed_cost')) {
-      context.handle(
-        _isMixedCostMeta,
-        isMixedCost.isAcceptableOrUnknown(
-          data['is_mixed_cost']!,
-          _isMixedCostMeta,
-        ),
-      );
+    } else if (isInserting) {
+      context.missing(_vatToReclaimMeta);
     }
     if (data.containsKey('notes')) {
       context.handle(
@@ -4990,21 +4804,14 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
         ),
       );
     }
-    if (data.containsKey('fiscal_year')) {
+    if (data.containsKey('car_asset_id')) {
       context.handle(
-        _fiscalYearMeta,
-        fiscalYear.isAcceptableOrUnknown(data['fiscal_year']!, _fiscalYearMeta),
+        _carAssetIdMeta,
+        carAssetId.isAcceptableOrUnknown(
+          data['car_asset_id']!,
+          _carAssetIdMeta,
+        ),
       );
-    } else if (isInserting) {
-      context.missing(_fiscalYearMeta);
-    }
-    if (data.containsKey('quarter')) {
-      context.handle(
-        _quarterMeta,
-        quarter.isAcceptableOrUnknown(data['quarter']!, _quarterMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_quarterMeta);
     }
     return context;
   }
@@ -5031,10 +4838,12 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
         DriftSqlType.string,
         data['${effectivePrefix}description'],
       )!,
-      category: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}category'],
-      )!,
+      category: $ExpensesTable.$convertercategory.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}category'],
+        )!,
+      ),
       receiptAttached: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}receipt_attached'],
@@ -5043,10 +4852,18 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
         DriftSqlType.int,
         data['${effectivePrefix}amount_excl_vat'],
       )!,
-      vatRate: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}vat_rate'],
-      )!,
+      vatRate: $ExpensesTable.$convertervatRate.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}vat_rate'],
+        )!,
+      ),
+      purchaseVat: $ExpensesTable.$converterpurchaseVat.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}purchase_vat'],
+        )!,
+      ),
       vatAmount: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}vat_amount'],
@@ -5071,10 +4888,6 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
         DriftSqlType.int,
         data['${effectivePrefix}vat_to_reclaim'],
       )!,
-      isMixedCost: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_mixed_cost'],
-      )!,
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
@@ -5087,14 +4900,10 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
         DriftSqlType.string,
         data['${effectivePrefix}payment_reference'],
       ),
-      fiscalYear: attachedDatabase.typeMapping.read(
+      carAssetId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}fiscal_year'],
-      )!,
-      quarter: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}quarter'],
-      )!,
+        data['${effectivePrefix}car_asset_id'],
+      ),
     );
   }
 
@@ -5102,6 +4911,15 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
   $ExpensesTable createAlias(String alias) {
     return $ExpensesTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<ExpenseCategory, String, String>
+  $convertercategory = const EnumNameConverter<ExpenseCategory>(
+    ExpenseCategory.values,
+  );
+  static JsonTypeConverter2<VatRate, String, String> $convertervatRate =
+      const EnumNameConverter<VatRate>(VatRate.values);
+  static JsonTypeConverter2<PurchaseVat, String, String> $converterpurchaseVat =
+      const EnumNameConverter<PurchaseVat>(PurchaseVat.values);
 }
 
 class Expense extends DataClass implements Insertable<Expense> {
@@ -5109,22 +4927,23 @@ class Expense extends DataClass implements Insertable<Expense> {
   final DateTime date;
   final String supplier;
   final String description;
-  final String category;
+  final ExpenseCategory category;
   final bool receiptAttached;
   final int amountExclVat;
-  final String vatRate;
+  final VatRate vatRate;
+  final PurchaseVat purchaseVat;
   final int vatAmount;
   final int totalInclVat;
   final double businessUsePct;
   final int deductibleAmount;
   final bool vatReclaimable;
   final int vatToReclaim;
-  final bool isMixedCost;
   final String? notes;
   final String? paidFrom;
   final String? paymentReference;
-  final int fiscalYear;
-  final String quarter;
+
+  /// The business car this cost belongs to.
+  final int? carAssetId;
   const Expense({
     required this.id,
     required this.date,
@@ -5134,18 +4953,17 @@ class Expense extends DataClass implements Insertable<Expense> {
     required this.receiptAttached,
     required this.amountExclVat,
     required this.vatRate,
+    required this.purchaseVat,
     required this.vatAmount,
     required this.totalInclVat,
     required this.businessUsePct,
     required this.deductibleAmount,
     required this.vatReclaimable,
     required this.vatToReclaim,
-    required this.isMixedCost,
     this.notes,
     this.paidFrom,
     this.paymentReference,
-    required this.fiscalYear,
-    required this.quarter,
+    this.carAssetId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -5154,17 +4972,29 @@ class Expense extends DataClass implements Insertable<Expense> {
     map['date'] = Variable<DateTime>(date);
     map['supplier'] = Variable<String>(supplier);
     map['description'] = Variable<String>(description);
-    map['category'] = Variable<String>(category);
+    {
+      map['category'] = Variable<String>(
+        $ExpensesTable.$convertercategory.toSql(category),
+      );
+    }
     map['receipt_attached'] = Variable<bool>(receiptAttached);
     map['amount_excl_vat'] = Variable<int>(amountExclVat);
-    map['vat_rate'] = Variable<String>(vatRate);
+    {
+      map['vat_rate'] = Variable<String>(
+        $ExpensesTable.$convertervatRate.toSql(vatRate),
+      );
+    }
+    {
+      map['purchase_vat'] = Variable<String>(
+        $ExpensesTable.$converterpurchaseVat.toSql(purchaseVat),
+      );
+    }
     map['vat_amount'] = Variable<int>(vatAmount);
     map['total_incl_vat'] = Variable<int>(totalInclVat);
     map['business_use_pct'] = Variable<double>(businessUsePct);
     map['deductible_amount'] = Variable<int>(deductibleAmount);
     map['vat_reclaimable'] = Variable<bool>(vatReclaimable);
     map['vat_to_reclaim'] = Variable<int>(vatToReclaim);
-    map['is_mixed_cost'] = Variable<bool>(isMixedCost);
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
@@ -5174,8 +5004,9 @@ class Expense extends DataClass implements Insertable<Expense> {
     if (!nullToAbsent || paymentReference != null) {
       map['payment_reference'] = Variable<String>(paymentReference);
     }
-    map['fiscal_year'] = Variable<int>(fiscalYear);
-    map['quarter'] = Variable<String>(quarter);
+    if (!nullToAbsent || carAssetId != null) {
+      map['car_asset_id'] = Variable<int>(carAssetId);
+    }
     return map;
   }
 
@@ -5189,13 +5020,13 @@ class Expense extends DataClass implements Insertable<Expense> {
       receiptAttached: Value(receiptAttached),
       amountExclVat: Value(amountExclVat),
       vatRate: Value(vatRate),
+      purchaseVat: Value(purchaseVat),
       vatAmount: Value(vatAmount),
       totalInclVat: Value(totalInclVat),
       businessUsePct: Value(businessUsePct),
       deductibleAmount: Value(deductibleAmount),
       vatReclaimable: Value(vatReclaimable),
       vatToReclaim: Value(vatToReclaim),
-      isMixedCost: Value(isMixedCost),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
@@ -5205,8 +5036,9 @@ class Expense extends DataClass implements Insertable<Expense> {
       paymentReference: paymentReference == null && nullToAbsent
           ? const Value.absent()
           : Value(paymentReference),
-      fiscalYear: Value(fiscalYear),
-      quarter: Value(quarter),
+      carAssetId: carAssetId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(carAssetId),
     );
   }
 
@@ -5220,22 +5052,27 @@ class Expense extends DataClass implements Insertable<Expense> {
       date: serializer.fromJson<DateTime>(json['date']),
       supplier: serializer.fromJson<String>(json['supplier']),
       description: serializer.fromJson<String>(json['description']),
-      category: serializer.fromJson<String>(json['category']),
+      category: $ExpensesTable.$convertercategory.fromJson(
+        serializer.fromJson<String>(json['category']),
+      ),
       receiptAttached: serializer.fromJson<bool>(json['receiptAttached']),
       amountExclVat: serializer.fromJson<int>(json['amountExclVat']),
-      vatRate: serializer.fromJson<String>(json['vatRate']),
+      vatRate: $ExpensesTable.$convertervatRate.fromJson(
+        serializer.fromJson<String>(json['vatRate']),
+      ),
+      purchaseVat: $ExpensesTable.$converterpurchaseVat.fromJson(
+        serializer.fromJson<String>(json['purchaseVat']),
+      ),
       vatAmount: serializer.fromJson<int>(json['vatAmount']),
       totalInclVat: serializer.fromJson<int>(json['totalInclVat']),
       businessUsePct: serializer.fromJson<double>(json['businessUsePct']),
       deductibleAmount: serializer.fromJson<int>(json['deductibleAmount']),
       vatReclaimable: serializer.fromJson<bool>(json['vatReclaimable']),
       vatToReclaim: serializer.fromJson<int>(json['vatToReclaim']),
-      isMixedCost: serializer.fromJson<bool>(json['isMixedCost']),
       notes: serializer.fromJson<String?>(json['notes']),
       paidFrom: serializer.fromJson<String?>(json['paidFrom']),
       paymentReference: serializer.fromJson<String?>(json['paymentReference']),
-      fiscalYear: serializer.fromJson<int>(json['fiscalYear']),
-      quarter: serializer.fromJson<String>(json['quarter']),
+      carAssetId: serializer.fromJson<int?>(json['carAssetId']),
     );
   }
   @override
@@ -5246,22 +5083,27 @@ class Expense extends DataClass implements Insertable<Expense> {
       'date': serializer.toJson<DateTime>(date),
       'supplier': serializer.toJson<String>(supplier),
       'description': serializer.toJson<String>(description),
-      'category': serializer.toJson<String>(category),
+      'category': serializer.toJson<String>(
+        $ExpensesTable.$convertercategory.toJson(category),
+      ),
       'receiptAttached': serializer.toJson<bool>(receiptAttached),
       'amountExclVat': serializer.toJson<int>(amountExclVat),
-      'vatRate': serializer.toJson<String>(vatRate),
+      'vatRate': serializer.toJson<String>(
+        $ExpensesTable.$convertervatRate.toJson(vatRate),
+      ),
+      'purchaseVat': serializer.toJson<String>(
+        $ExpensesTable.$converterpurchaseVat.toJson(purchaseVat),
+      ),
       'vatAmount': serializer.toJson<int>(vatAmount),
       'totalInclVat': serializer.toJson<int>(totalInclVat),
       'businessUsePct': serializer.toJson<double>(businessUsePct),
       'deductibleAmount': serializer.toJson<int>(deductibleAmount),
       'vatReclaimable': serializer.toJson<bool>(vatReclaimable),
       'vatToReclaim': serializer.toJson<int>(vatToReclaim),
-      'isMixedCost': serializer.toJson<bool>(isMixedCost),
       'notes': serializer.toJson<String?>(notes),
       'paidFrom': serializer.toJson<String?>(paidFrom),
       'paymentReference': serializer.toJson<String?>(paymentReference),
-      'fiscalYear': serializer.toJson<int>(fiscalYear),
-      'quarter': serializer.toJson<String>(quarter),
+      'carAssetId': serializer.toJson<int?>(carAssetId),
     };
   }
 
@@ -5270,22 +5112,21 @@ class Expense extends DataClass implements Insertable<Expense> {
     DateTime? date,
     String? supplier,
     String? description,
-    String? category,
+    ExpenseCategory? category,
     bool? receiptAttached,
     int? amountExclVat,
-    String? vatRate,
+    VatRate? vatRate,
+    PurchaseVat? purchaseVat,
     int? vatAmount,
     int? totalInclVat,
     double? businessUsePct,
     int? deductibleAmount,
     bool? vatReclaimable,
     int? vatToReclaim,
-    bool? isMixedCost,
     Value<String?> notes = const Value.absent(),
     Value<String?> paidFrom = const Value.absent(),
     Value<String?> paymentReference = const Value.absent(),
-    int? fiscalYear,
-    String? quarter,
+    Value<int?> carAssetId = const Value.absent(),
   }) => Expense(
     id: id ?? this.id,
     date: date ?? this.date,
@@ -5295,20 +5136,19 @@ class Expense extends DataClass implements Insertable<Expense> {
     receiptAttached: receiptAttached ?? this.receiptAttached,
     amountExclVat: amountExclVat ?? this.amountExclVat,
     vatRate: vatRate ?? this.vatRate,
+    purchaseVat: purchaseVat ?? this.purchaseVat,
     vatAmount: vatAmount ?? this.vatAmount,
     totalInclVat: totalInclVat ?? this.totalInclVat,
     businessUsePct: businessUsePct ?? this.businessUsePct,
     deductibleAmount: deductibleAmount ?? this.deductibleAmount,
     vatReclaimable: vatReclaimable ?? this.vatReclaimable,
     vatToReclaim: vatToReclaim ?? this.vatToReclaim,
-    isMixedCost: isMixedCost ?? this.isMixedCost,
     notes: notes.present ? notes.value : this.notes,
     paidFrom: paidFrom.present ? paidFrom.value : this.paidFrom,
     paymentReference: paymentReference.present
         ? paymentReference.value
         : this.paymentReference,
-    fiscalYear: fiscalYear ?? this.fiscalYear,
-    quarter: quarter ?? this.quarter,
+    carAssetId: carAssetId.present ? carAssetId.value : this.carAssetId,
   );
   Expense copyWithCompanion(ExpensesCompanion data) {
     return Expense(
@@ -5326,6 +5166,9 @@ class Expense extends DataClass implements Insertable<Expense> {
           ? data.amountExclVat.value
           : this.amountExclVat,
       vatRate: data.vatRate.present ? data.vatRate.value : this.vatRate,
+      purchaseVat: data.purchaseVat.present
+          ? data.purchaseVat.value
+          : this.purchaseVat,
       vatAmount: data.vatAmount.present ? data.vatAmount.value : this.vatAmount,
       totalInclVat: data.totalInclVat.present
           ? data.totalInclVat.value
@@ -5342,18 +5185,14 @@ class Expense extends DataClass implements Insertable<Expense> {
       vatToReclaim: data.vatToReclaim.present
           ? data.vatToReclaim.value
           : this.vatToReclaim,
-      isMixedCost: data.isMixedCost.present
-          ? data.isMixedCost.value
-          : this.isMixedCost,
       notes: data.notes.present ? data.notes.value : this.notes,
       paidFrom: data.paidFrom.present ? data.paidFrom.value : this.paidFrom,
       paymentReference: data.paymentReference.present
           ? data.paymentReference.value
           : this.paymentReference,
-      fiscalYear: data.fiscalYear.present
-          ? data.fiscalYear.value
-          : this.fiscalYear,
-      quarter: data.quarter.present ? data.quarter.value : this.quarter,
+      carAssetId: data.carAssetId.present
+          ? data.carAssetId.value
+          : this.carAssetId,
     );
   }
 
@@ -5368,18 +5207,17 @@ class Expense extends DataClass implements Insertable<Expense> {
           ..write('receiptAttached: $receiptAttached, ')
           ..write('amountExclVat: $amountExclVat, ')
           ..write('vatRate: $vatRate, ')
+          ..write('purchaseVat: $purchaseVat, ')
           ..write('vatAmount: $vatAmount, ')
           ..write('totalInclVat: $totalInclVat, ')
           ..write('businessUsePct: $businessUsePct, ')
           ..write('deductibleAmount: $deductibleAmount, ')
           ..write('vatReclaimable: $vatReclaimable, ')
           ..write('vatToReclaim: $vatToReclaim, ')
-          ..write('isMixedCost: $isMixedCost, ')
           ..write('notes: $notes, ')
           ..write('paidFrom: $paidFrom, ')
           ..write('paymentReference: $paymentReference, ')
-          ..write('fiscalYear: $fiscalYear, ')
-          ..write('quarter: $quarter')
+          ..write('carAssetId: $carAssetId')
           ..write(')'))
         .toString();
   }
@@ -5394,18 +5232,17 @@ class Expense extends DataClass implements Insertable<Expense> {
     receiptAttached,
     amountExclVat,
     vatRate,
+    purchaseVat,
     vatAmount,
     totalInclVat,
     businessUsePct,
     deductibleAmount,
     vatReclaimable,
     vatToReclaim,
-    isMixedCost,
     notes,
     paidFrom,
     paymentReference,
-    fiscalYear,
-    quarter,
+    carAssetId,
   );
   @override
   bool operator ==(Object other) =>
@@ -5419,18 +5256,17 @@ class Expense extends DataClass implements Insertable<Expense> {
           other.receiptAttached == this.receiptAttached &&
           other.amountExclVat == this.amountExclVat &&
           other.vatRate == this.vatRate &&
+          other.purchaseVat == this.purchaseVat &&
           other.vatAmount == this.vatAmount &&
           other.totalInclVat == this.totalInclVat &&
           other.businessUsePct == this.businessUsePct &&
           other.deductibleAmount == this.deductibleAmount &&
           other.vatReclaimable == this.vatReclaimable &&
           other.vatToReclaim == this.vatToReclaim &&
-          other.isMixedCost == this.isMixedCost &&
           other.notes == this.notes &&
           other.paidFrom == this.paidFrom &&
           other.paymentReference == this.paymentReference &&
-          other.fiscalYear == this.fiscalYear &&
-          other.quarter == this.quarter);
+          other.carAssetId == this.carAssetId);
 }
 
 class ExpensesCompanion extends UpdateCompanion<Expense> {
@@ -5438,22 +5274,21 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
   final Value<DateTime> date;
   final Value<String> supplier;
   final Value<String> description;
-  final Value<String> category;
+  final Value<ExpenseCategory> category;
   final Value<bool> receiptAttached;
   final Value<int> amountExclVat;
-  final Value<String> vatRate;
+  final Value<VatRate> vatRate;
+  final Value<PurchaseVat> purchaseVat;
   final Value<int> vatAmount;
   final Value<int> totalInclVat;
   final Value<double> businessUsePct;
   final Value<int> deductibleAmount;
   final Value<bool> vatReclaimable;
   final Value<int> vatToReclaim;
-  final Value<bool> isMixedCost;
   final Value<String?> notes;
   final Value<String?> paidFrom;
   final Value<String?> paymentReference;
-  final Value<int> fiscalYear;
-  final Value<String> quarter;
+  final Value<int?> carAssetId;
   const ExpensesCompanion({
     this.id = const Value.absent(),
     this.date = const Value.absent(),
@@ -5463,47 +5298,50 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     this.receiptAttached = const Value.absent(),
     this.amountExclVat = const Value.absent(),
     this.vatRate = const Value.absent(),
+    this.purchaseVat = const Value.absent(),
     this.vatAmount = const Value.absent(),
     this.totalInclVat = const Value.absent(),
     this.businessUsePct = const Value.absent(),
     this.deductibleAmount = const Value.absent(),
     this.vatReclaimable = const Value.absent(),
     this.vatToReclaim = const Value.absent(),
-    this.isMixedCost = const Value.absent(),
     this.notes = const Value.absent(),
     this.paidFrom = const Value.absent(),
     this.paymentReference = const Value.absent(),
-    this.fiscalYear = const Value.absent(),
-    this.quarter = const Value.absent(),
+    this.carAssetId = const Value.absent(),
   });
   ExpensesCompanion.insert({
     this.id = const Value.absent(),
     required DateTime date,
     required String supplier,
     required String description,
-    required String category,
+    required ExpenseCategory category,
     this.receiptAttached = const Value.absent(),
     required int amountExclVat,
-    this.vatRate = const Value.absent(),
-    this.vatAmount = const Value.absent(),
-    this.totalInclVat = const Value.absent(),
-    this.businessUsePct = const Value.absent(),
-    this.deductibleAmount = const Value.absent(),
-    this.vatReclaimable = const Value.absent(),
-    this.vatToReclaim = const Value.absent(),
-    this.isMixedCost = const Value.absent(),
+    required VatRate vatRate,
+    this.purchaseVat = const Value.absent(),
+    required int vatAmount,
+    required int totalInclVat,
+    required double businessUsePct,
+    required int deductibleAmount,
+    required bool vatReclaimable,
+    required int vatToReclaim,
     this.notes = const Value.absent(),
     this.paidFrom = const Value.absent(),
     this.paymentReference = const Value.absent(),
-    required int fiscalYear,
-    required String quarter,
+    this.carAssetId = const Value.absent(),
   }) : date = Value(date),
        supplier = Value(supplier),
        description = Value(description),
        category = Value(category),
        amountExclVat = Value(amountExclVat),
-       fiscalYear = Value(fiscalYear),
-       quarter = Value(quarter);
+       vatRate = Value(vatRate),
+       vatAmount = Value(vatAmount),
+       totalInclVat = Value(totalInclVat),
+       businessUsePct = Value(businessUsePct),
+       deductibleAmount = Value(deductibleAmount),
+       vatReclaimable = Value(vatReclaimable),
+       vatToReclaim = Value(vatToReclaim);
   static Insertable<Expense> custom({
     Expression<int>? id,
     Expression<DateTime>? date,
@@ -5513,18 +5351,17 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     Expression<bool>? receiptAttached,
     Expression<int>? amountExclVat,
     Expression<String>? vatRate,
+    Expression<String>? purchaseVat,
     Expression<int>? vatAmount,
     Expression<int>? totalInclVat,
     Expression<double>? businessUsePct,
     Expression<int>? deductibleAmount,
     Expression<bool>? vatReclaimable,
     Expression<int>? vatToReclaim,
-    Expression<bool>? isMixedCost,
     Expression<String>? notes,
     Expression<String>? paidFrom,
     Expression<String>? paymentReference,
-    Expression<int>? fiscalYear,
-    Expression<String>? quarter,
+    Expression<int>? carAssetId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -5535,18 +5372,17 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
       if (receiptAttached != null) 'receipt_attached': receiptAttached,
       if (amountExclVat != null) 'amount_excl_vat': amountExclVat,
       if (vatRate != null) 'vat_rate': vatRate,
+      if (purchaseVat != null) 'purchase_vat': purchaseVat,
       if (vatAmount != null) 'vat_amount': vatAmount,
       if (totalInclVat != null) 'total_incl_vat': totalInclVat,
       if (businessUsePct != null) 'business_use_pct': businessUsePct,
       if (deductibleAmount != null) 'deductible_amount': deductibleAmount,
       if (vatReclaimable != null) 'vat_reclaimable': vatReclaimable,
       if (vatToReclaim != null) 'vat_to_reclaim': vatToReclaim,
-      if (isMixedCost != null) 'is_mixed_cost': isMixedCost,
       if (notes != null) 'notes': notes,
       if (paidFrom != null) 'paid_from': paidFrom,
       if (paymentReference != null) 'payment_reference': paymentReference,
-      if (fiscalYear != null) 'fiscal_year': fiscalYear,
-      if (quarter != null) 'quarter': quarter,
+      if (carAssetId != null) 'car_asset_id': carAssetId,
     });
   }
 
@@ -5555,22 +5391,21 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     Value<DateTime>? date,
     Value<String>? supplier,
     Value<String>? description,
-    Value<String>? category,
+    Value<ExpenseCategory>? category,
     Value<bool>? receiptAttached,
     Value<int>? amountExclVat,
-    Value<String>? vatRate,
+    Value<VatRate>? vatRate,
+    Value<PurchaseVat>? purchaseVat,
     Value<int>? vatAmount,
     Value<int>? totalInclVat,
     Value<double>? businessUsePct,
     Value<int>? deductibleAmount,
     Value<bool>? vatReclaimable,
     Value<int>? vatToReclaim,
-    Value<bool>? isMixedCost,
     Value<String?>? notes,
     Value<String?>? paidFrom,
     Value<String?>? paymentReference,
-    Value<int>? fiscalYear,
-    Value<String>? quarter,
+    Value<int?>? carAssetId,
   }) {
     return ExpensesCompanion(
       id: id ?? this.id,
@@ -5581,18 +5416,17 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
       receiptAttached: receiptAttached ?? this.receiptAttached,
       amountExclVat: amountExclVat ?? this.amountExclVat,
       vatRate: vatRate ?? this.vatRate,
+      purchaseVat: purchaseVat ?? this.purchaseVat,
       vatAmount: vatAmount ?? this.vatAmount,
       totalInclVat: totalInclVat ?? this.totalInclVat,
       businessUsePct: businessUsePct ?? this.businessUsePct,
       deductibleAmount: deductibleAmount ?? this.deductibleAmount,
       vatReclaimable: vatReclaimable ?? this.vatReclaimable,
       vatToReclaim: vatToReclaim ?? this.vatToReclaim,
-      isMixedCost: isMixedCost ?? this.isMixedCost,
       notes: notes ?? this.notes,
       paidFrom: paidFrom ?? this.paidFrom,
       paymentReference: paymentReference ?? this.paymentReference,
-      fiscalYear: fiscalYear ?? this.fiscalYear,
-      quarter: quarter ?? this.quarter,
+      carAssetId: carAssetId ?? this.carAssetId,
     );
   }
 
@@ -5612,7 +5446,9 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
       map['description'] = Variable<String>(description.value);
     }
     if (category.present) {
-      map['category'] = Variable<String>(category.value);
+      map['category'] = Variable<String>(
+        $ExpensesTable.$convertercategory.toSql(category.value),
+      );
     }
     if (receiptAttached.present) {
       map['receipt_attached'] = Variable<bool>(receiptAttached.value);
@@ -5621,7 +5457,14 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
       map['amount_excl_vat'] = Variable<int>(amountExclVat.value);
     }
     if (vatRate.present) {
-      map['vat_rate'] = Variable<String>(vatRate.value);
+      map['vat_rate'] = Variable<String>(
+        $ExpensesTable.$convertervatRate.toSql(vatRate.value),
+      );
+    }
+    if (purchaseVat.present) {
+      map['purchase_vat'] = Variable<String>(
+        $ExpensesTable.$converterpurchaseVat.toSql(purchaseVat.value),
+      );
     }
     if (vatAmount.present) {
       map['vat_amount'] = Variable<int>(vatAmount.value);
@@ -5641,9 +5484,6 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     if (vatToReclaim.present) {
       map['vat_to_reclaim'] = Variable<int>(vatToReclaim.value);
     }
-    if (isMixedCost.present) {
-      map['is_mixed_cost'] = Variable<bool>(isMixedCost.value);
-    }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
@@ -5653,11 +5493,8 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     if (paymentReference.present) {
       map['payment_reference'] = Variable<String>(paymentReference.value);
     }
-    if (fiscalYear.present) {
-      map['fiscal_year'] = Variable<int>(fiscalYear.value);
-    }
-    if (quarter.present) {
-      map['quarter'] = Variable<String>(quarter.value);
+    if (carAssetId.present) {
+      map['car_asset_id'] = Variable<int>(carAssetId.value);
     }
     return map;
   }
@@ -5673,18 +5510,17 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
           ..write('receiptAttached: $receiptAttached, ')
           ..write('amountExclVat: $amountExclVat, ')
           ..write('vatRate: $vatRate, ')
+          ..write('purchaseVat: $purchaseVat, ')
           ..write('vatAmount: $vatAmount, ')
           ..write('totalInclVat: $totalInclVat, ')
           ..write('businessUsePct: $businessUsePct, ')
           ..write('deductibleAmount: $deductibleAmount, ')
           ..write('vatReclaimable: $vatReclaimable, ')
           ..write('vatToReclaim: $vatToReclaim, ')
-          ..write('isMixedCost: $isMixedCost, ')
           ..write('notes: $notes, ')
           ..write('paidFrom: $paidFrom, ')
           ..write('paymentReference: $paymentReference, ')
-          ..write('fiscalYear: $fiscalYear, ')
-          ..write('quarter: $quarter')
+          ..write('carAssetId: $carAssetId')
           ..write(')'))
         .toString();
   }
@@ -5729,17 +5565,15 @@ class $HourEntriesTable extends HourEntries
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _workTypeMeta = const VerificationMeta(
-    'workType',
-  );
   @override
-  late final GeneratedColumn<String> workType = GeneratedColumn<String>(
-    'work_type',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+  late final GeneratedColumnWithTypeConverter<WorkType, String> workType =
+      GeneratedColumn<String>(
+        'work_type',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<WorkType>($HourEntriesTable.$converterworkType);
   static const VerificationMeta _hoursMeta = const VerificationMeta('hours');
   @override
   late final GeneratedColumn<double> hours = GeneratedColumn<double>(
@@ -5748,21 +5582,6 @@ class $HourEntriesTable extends HourEntries
     false,
     type: DriftSqlType.double,
     requiredDuringInsert: true,
-  );
-  static const VerificationMeta _billableMeta = const VerificationMeta(
-    'billable',
-  );
-  @override
-  late final GeneratedColumn<bool> billable = GeneratedColumn<bool>(
-    'billable',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("billable" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
   );
   static const VerificationMeta _clientProjectMeta = const VerificationMeta(
     'clientProject',
@@ -5775,19 +5594,6 @@ class $HourEntriesTable extends HourEntries
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _isWbsoMeta = const VerificationMeta('isWbso');
-  @override
-  late final GeneratedColumn<bool> isWbso = GeneratedColumn<bool>(
-    'is_wbso',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_wbso" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   @override
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
@@ -5797,28 +5603,6 @@ class $HourEntriesTable extends HourEntries
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _fiscalYearMeta = const VerificationMeta(
-    'fiscalYear',
-  );
-  @override
-  late final GeneratedColumn<int> fiscalYear = GeneratedColumn<int>(
-    'fiscal_year',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _weekNumberMeta = const VerificationMeta(
-    'weekNumber',
-  );
-  @override
-  late final GeneratedColumn<int> weekNumber = GeneratedColumn<int>(
-    'week_number',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -5826,12 +5610,8 @@ class $HourEntriesTable extends HourEntries
     description,
     workType,
     hours,
-    billable,
     clientProject,
-    isWbso,
     notes,
-    fiscalYear,
-    weekNumber,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -5867,14 +5647,6 @@ class $HourEntriesTable extends HourEntries
     } else if (isInserting) {
       context.missing(_descriptionMeta);
     }
-    if (data.containsKey('work_type')) {
-      context.handle(
-        _workTypeMeta,
-        workType.isAcceptableOrUnknown(data['work_type']!, _workTypeMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_workTypeMeta);
-    }
     if (data.containsKey('hours')) {
       context.handle(
         _hoursMeta,
@@ -5882,12 +5654,6 @@ class $HourEntriesTable extends HourEntries
       );
     } else if (isInserting) {
       context.missing(_hoursMeta);
-    }
-    if (data.containsKey('billable')) {
-      context.handle(
-        _billableMeta,
-        billable.isAcceptableOrUnknown(data['billable']!, _billableMeta),
-      );
     }
     if (data.containsKey('client_project')) {
       context.handle(
@@ -5898,33 +5664,11 @@ class $HourEntriesTable extends HourEntries
         ),
       );
     }
-    if (data.containsKey('is_wbso')) {
-      context.handle(
-        _isWbsoMeta,
-        isWbso.isAcceptableOrUnknown(data['is_wbso']!, _isWbsoMeta),
-      );
-    }
     if (data.containsKey('notes')) {
       context.handle(
         _notesMeta,
         notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
       );
-    }
-    if (data.containsKey('fiscal_year')) {
-      context.handle(
-        _fiscalYearMeta,
-        fiscalYear.isAcceptableOrUnknown(data['fiscal_year']!, _fiscalYearMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_fiscalYearMeta);
-    }
-    if (data.containsKey('week_number')) {
-      context.handle(
-        _weekNumberMeta,
-        weekNumber.isAcceptableOrUnknown(data['week_number']!, _weekNumberMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_weekNumberMeta);
     }
     return context;
   }
@@ -5947,38 +5691,24 @@ class $HourEntriesTable extends HourEntries
         DriftSqlType.string,
         data['${effectivePrefix}description'],
       )!,
-      workType: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}work_type'],
-      )!,
+      workType: $HourEntriesTable.$converterworkType.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}work_type'],
+        )!,
+      ),
       hours: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}hours'],
-      )!,
-      billable: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}billable'],
       )!,
       clientProject: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}client_project'],
       ),
-      isWbso: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_wbso'],
-      )!,
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
       ),
-      fiscalYear: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}fiscal_year'],
-      )!,
-      weekNumber: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}week_number'],
-      )!,
     );
   }
 
@@ -5986,32 +5716,27 @@ class $HourEntriesTable extends HourEntries
   $HourEntriesTable createAlias(String alias) {
     return $HourEntriesTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<WorkType, String, String> $converterworkType =
+      const EnumNameConverter<WorkType>(WorkType.values);
 }
 
 class HourEntry extends DataClass implements Insertable<HourEntry> {
   final int id;
   final DateTime date;
   final String description;
-  final String workType;
+  final WorkType workType;
   final double hours;
-  final bool billable;
   final String? clientProject;
-  final bool isWbso;
   final String? notes;
-  final int fiscalYear;
-  final int weekNumber;
   const HourEntry({
     required this.id,
     required this.date,
     required this.description,
     required this.workType,
     required this.hours,
-    required this.billable,
     this.clientProject,
-    required this.isWbso,
     this.notes,
-    required this.fiscalYear,
-    required this.weekNumber,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -6019,18 +5744,18 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
     map['id'] = Variable<int>(id);
     map['date'] = Variable<DateTime>(date);
     map['description'] = Variable<String>(description);
-    map['work_type'] = Variable<String>(workType);
+    {
+      map['work_type'] = Variable<String>(
+        $HourEntriesTable.$converterworkType.toSql(workType),
+      );
+    }
     map['hours'] = Variable<double>(hours);
-    map['billable'] = Variable<bool>(billable);
     if (!nullToAbsent || clientProject != null) {
       map['client_project'] = Variable<String>(clientProject);
     }
-    map['is_wbso'] = Variable<bool>(isWbso);
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
-    map['fiscal_year'] = Variable<int>(fiscalYear);
-    map['week_number'] = Variable<int>(weekNumber);
     return map;
   }
 
@@ -6041,16 +5766,12 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
       description: Value(description),
       workType: Value(workType),
       hours: Value(hours),
-      billable: Value(billable),
       clientProject: clientProject == null && nullToAbsent
           ? const Value.absent()
           : Value(clientProject),
-      isWbso: Value(isWbso),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
-      fiscalYear: Value(fiscalYear),
-      weekNumber: Value(weekNumber),
     );
   }
 
@@ -6063,14 +5784,12 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
       id: serializer.fromJson<int>(json['id']),
       date: serializer.fromJson<DateTime>(json['date']),
       description: serializer.fromJson<String>(json['description']),
-      workType: serializer.fromJson<String>(json['workType']),
+      workType: $HourEntriesTable.$converterworkType.fromJson(
+        serializer.fromJson<String>(json['workType']),
+      ),
       hours: serializer.fromJson<double>(json['hours']),
-      billable: serializer.fromJson<bool>(json['billable']),
       clientProject: serializer.fromJson<String?>(json['clientProject']),
-      isWbso: serializer.fromJson<bool>(json['isWbso']),
       notes: serializer.fromJson<String?>(json['notes']),
-      fiscalYear: serializer.fromJson<int>(json['fiscalYear']),
-      weekNumber: serializer.fromJson<int>(json['weekNumber']),
     );
   }
   @override
@@ -6080,14 +5799,12 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
       'id': serializer.toJson<int>(id),
       'date': serializer.toJson<DateTime>(date),
       'description': serializer.toJson<String>(description),
-      'workType': serializer.toJson<String>(workType),
+      'workType': serializer.toJson<String>(
+        $HourEntriesTable.$converterworkType.toJson(workType),
+      ),
       'hours': serializer.toJson<double>(hours),
-      'billable': serializer.toJson<bool>(billable),
       'clientProject': serializer.toJson<String?>(clientProject),
-      'isWbso': serializer.toJson<bool>(isWbso),
       'notes': serializer.toJson<String?>(notes),
-      'fiscalYear': serializer.toJson<int>(fiscalYear),
-      'weekNumber': serializer.toJson<int>(weekNumber),
     };
   }
 
@@ -6095,28 +5812,20 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
     int? id,
     DateTime? date,
     String? description,
-    String? workType,
+    WorkType? workType,
     double? hours,
-    bool? billable,
     Value<String?> clientProject = const Value.absent(),
-    bool? isWbso,
     Value<String?> notes = const Value.absent(),
-    int? fiscalYear,
-    int? weekNumber,
   }) => HourEntry(
     id: id ?? this.id,
     date: date ?? this.date,
     description: description ?? this.description,
     workType: workType ?? this.workType,
     hours: hours ?? this.hours,
-    billable: billable ?? this.billable,
     clientProject: clientProject.present
         ? clientProject.value
         : this.clientProject,
-    isWbso: isWbso ?? this.isWbso,
     notes: notes.present ? notes.value : this.notes,
-    fiscalYear: fiscalYear ?? this.fiscalYear,
-    weekNumber: weekNumber ?? this.weekNumber,
   );
   HourEntry copyWithCompanion(HourEntriesCompanion data) {
     return HourEntry(
@@ -6127,18 +5836,10 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
           : this.description,
       workType: data.workType.present ? data.workType.value : this.workType,
       hours: data.hours.present ? data.hours.value : this.hours,
-      billable: data.billable.present ? data.billable.value : this.billable,
       clientProject: data.clientProject.present
           ? data.clientProject.value
           : this.clientProject,
-      isWbso: data.isWbso.present ? data.isWbso.value : this.isWbso,
       notes: data.notes.present ? data.notes.value : this.notes,
-      fiscalYear: data.fiscalYear.present
-          ? data.fiscalYear.value
-          : this.fiscalYear,
-      weekNumber: data.weekNumber.present
-          ? data.weekNumber.value
-          : this.weekNumber,
     );
   }
 
@@ -6150,30 +5851,15 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
           ..write('description: $description, ')
           ..write('workType: $workType, ')
           ..write('hours: $hours, ')
-          ..write('billable: $billable, ')
           ..write('clientProject: $clientProject, ')
-          ..write('isWbso: $isWbso, ')
-          ..write('notes: $notes, ')
-          ..write('fiscalYear: $fiscalYear, ')
-          ..write('weekNumber: $weekNumber')
+          ..write('notes: $notes')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-    id,
-    date,
-    description,
-    workType,
-    hours,
-    billable,
-    clientProject,
-    isWbso,
-    notes,
-    fiscalYear,
-    weekNumber,
-  );
+  int get hashCode =>
+      Object.hash(id, date, description, workType, hours, clientProject, notes);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -6183,69 +5869,47 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
           other.description == this.description &&
           other.workType == this.workType &&
           other.hours == this.hours &&
-          other.billable == this.billable &&
           other.clientProject == this.clientProject &&
-          other.isWbso == this.isWbso &&
-          other.notes == this.notes &&
-          other.fiscalYear == this.fiscalYear &&
-          other.weekNumber == this.weekNumber);
+          other.notes == this.notes);
 }
 
 class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
   final Value<int> id;
   final Value<DateTime> date;
   final Value<String> description;
-  final Value<String> workType;
+  final Value<WorkType> workType;
   final Value<double> hours;
-  final Value<bool> billable;
   final Value<String?> clientProject;
-  final Value<bool> isWbso;
   final Value<String?> notes;
-  final Value<int> fiscalYear;
-  final Value<int> weekNumber;
   const HourEntriesCompanion({
     this.id = const Value.absent(),
     this.date = const Value.absent(),
     this.description = const Value.absent(),
     this.workType = const Value.absent(),
     this.hours = const Value.absent(),
-    this.billable = const Value.absent(),
     this.clientProject = const Value.absent(),
-    this.isWbso = const Value.absent(),
     this.notes = const Value.absent(),
-    this.fiscalYear = const Value.absent(),
-    this.weekNumber = const Value.absent(),
   });
   HourEntriesCompanion.insert({
     this.id = const Value.absent(),
     required DateTime date,
     required String description,
-    required String workType,
+    required WorkType workType,
     required double hours,
-    this.billable = const Value.absent(),
     this.clientProject = const Value.absent(),
-    this.isWbso = const Value.absent(),
     this.notes = const Value.absent(),
-    required int fiscalYear,
-    required int weekNumber,
   }) : date = Value(date),
        description = Value(description),
        workType = Value(workType),
-       hours = Value(hours),
-       fiscalYear = Value(fiscalYear),
-       weekNumber = Value(weekNumber);
+       hours = Value(hours);
   static Insertable<HourEntry> custom({
     Expression<int>? id,
     Expression<DateTime>? date,
     Expression<String>? description,
     Expression<String>? workType,
     Expression<double>? hours,
-    Expression<bool>? billable,
     Expression<String>? clientProject,
-    Expression<bool>? isWbso,
     Expression<String>? notes,
-    Expression<int>? fiscalYear,
-    Expression<int>? weekNumber,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -6253,12 +5917,8 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
       if (description != null) 'description': description,
       if (workType != null) 'work_type': workType,
       if (hours != null) 'hours': hours,
-      if (billable != null) 'billable': billable,
       if (clientProject != null) 'client_project': clientProject,
-      if (isWbso != null) 'is_wbso': isWbso,
       if (notes != null) 'notes': notes,
-      if (fiscalYear != null) 'fiscal_year': fiscalYear,
-      if (weekNumber != null) 'week_number': weekNumber,
     });
   }
 
@@ -6266,14 +5926,10 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
     Value<int>? id,
     Value<DateTime>? date,
     Value<String>? description,
-    Value<String>? workType,
+    Value<WorkType>? workType,
     Value<double>? hours,
-    Value<bool>? billable,
     Value<String?>? clientProject,
-    Value<bool>? isWbso,
     Value<String?>? notes,
-    Value<int>? fiscalYear,
-    Value<int>? weekNumber,
   }) {
     return HourEntriesCompanion(
       id: id ?? this.id,
@@ -6281,12 +5937,8 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
       description: description ?? this.description,
       workType: workType ?? this.workType,
       hours: hours ?? this.hours,
-      billable: billable ?? this.billable,
       clientProject: clientProject ?? this.clientProject,
-      isWbso: isWbso ?? this.isWbso,
       notes: notes ?? this.notes,
-      fiscalYear: fiscalYear ?? this.fiscalYear,
-      weekNumber: weekNumber ?? this.weekNumber,
     );
   }
 
@@ -6303,28 +5955,18 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
       map['description'] = Variable<String>(description.value);
     }
     if (workType.present) {
-      map['work_type'] = Variable<String>(workType.value);
+      map['work_type'] = Variable<String>(
+        $HourEntriesTable.$converterworkType.toSql(workType.value),
+      );
     }
     if (hours.present) {
       map['hours'] = Variable<double>(hours.value);
     }
-    if (billable.present) {
-      map['billable'] = Variable<bool>(billable.value);
-    }
     if (clientProject.present) {
       map['client_project'] = Variable<String>(clientProject.value);
     }
-    if (isWbso.present) {
-      map['is_wbso'] = Variable<bool>(isWbso.value);
-    }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
-    }
-    if (fiscalYear.present) {
-      map['fiscal_year'] = Variable<int>(fiscalYear.value);
-    }
-    if (weekNumber.present) {
-      map['week_number'] = Variable<int>(weekNumber.value);
     }
     return map;
   }
@@ -6337,12 +5979,8 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
           ..write('description: $description, ')
           ..write('workType: $workType, ')
           ..write('hours: $hours, ')
-          ..write('billable: $billable, ')
           ..write('clientProject: $clientProject, ')
-          ..write('isWbso: $isWbso, ')
-          ..write('notes: $notes, ')
-          ..write('fiscalYear: $fiscalYear, ')
-          ..write('weekNumber: $weekNumber')
+          ..write('notes: $notes')
           ..write(')'))
         .toString();
   }
@@ -6375,6 +6013,20 @@ class $MileageTripsTable extends MileageTrips
     false,
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _carAssetIdMeta = const VerificationMeta(
+    'carAssetId',
+  );
+  @override
+  late final GeneratedColumn<int> carAssetId = GeneratedColumn<int>(
+    'car_asset_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES fixed_assets (id) ON DELETE RESTRICT',
+    ),
   );
   static const VerificationMeta _vehicleMakeModelMeta = const VerificationMeta(
     'vehicleMakeModel',
@@ -6442,29 +6094,15 @@ class $MileageTripsTable extends MileageTrips
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _distanceKmMeta = const VerificationMeta(
-    'distanceKm',
-  );
   @override
-  late final GeneratedColumn<int> distanceKm = GeneratedColumn<int>(
-    'distance_km',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _tripTypeMeta = const VerificationMeta(
-    'tripType',
-  );
-  @override
-  late final GeneratedColumn<String> tripType = GeneratedColumn<String>(
-    'trip_type',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('Business'),
-  );
+  late final GeneratedColumnWithTypeConverter<TripType, String> tripType =
+      GeneratedColumn<String>(
+        'trip_type',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<TripType>($MileageTripsTable.$convertertripType);
   static const VerificationMeta _purposeMeta = const VerificationMeta(
     'purpose',
   );
@@ -6500,33 +6138,21 @@ class $MileageTripsTable extends MileageTrips
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _fiscalYearMeta = const VerificationMeta(
-    'fiscalYear',
-  );
-  @override
-  late final GeneratedColumn<int> fiscalYear = GeneratedColumn<int>(
-    'fiscal_year',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
     date,
+    carAssetId,
     vehicleMakeModel,
     vehicleLicensePlate,
     departureAddress,
     arrivalAddress,
     odometerStart,
     odometerEnd,
-    distanceKm,
     tripType,
     purpose,
     routeDeviation,
     notes,
-    fiscalYear,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -6550,6 +6176,15 @@ class $MileageTripsTable extends MileageTrips
       );
     } else if (isInserting) {
       context.missing(_dateMeta);
+    }
+    if (data.containsKey('car_asset_id')) {
+      context.handle(
+        _carAssetIdMeta,
+        carAssetId.isAcceptableOrUnknown(
+          data['car_asset_id']!,
+          _carAssetIdMeta,
+        ),
+      );
     }
     if (data.containsKey('vehicle_make_model')) {
       context.handle(
@@ -6617,20 +6252,6 @@ class $MileageTripsTable extends MileageTrips
     } else if (isInserting) {
       context.missing(_odometerEndMeta);
     }
-    if (data.containsKey('distance_km')) {
-      context.handle(
-        _distanceKmMeta,
-        distanceKm.isAcceptableOrUnknown(data['distance_km']!, _distanceKmMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_distanceKmMeta);
-    }
-    if (data.containsKey('trip_type')) {
-      context.handle(
-        _tripTypeMeta,
-        tripType.isAcceptableOrUnknown(data['trip_type']!, _tripTypeMeta),
-      );
-    }
     if (data.containsKey('purpose')) {
       context.handle(
         _purposeMeta,
@@ -6654,14 +6275,6 @@ class $MileageTripsTable extends MileageTrips
         notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
       );
     }
-    if (data.containsKey('fiscal_year')) {
-      context.handle(
-        _fiscalYearMeta,
-        fiscalYear.isAcceptableOrUnknown(data['fiscal_year']!, _fiscalYearMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_fiscalYearMeta);
-    }
     return context;
   }
 
@@ -6679,6 +6292,10 @@ class $MileageTripsTable extends MileageTrips
         DriftSqlType.dateTime,
         data['${effectivePrefix}date'],
       )!,
+      carAssetId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}car_asset_id'],
+      ),
       vehicleMakeModel: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}vehicle_make_model'],
@@ -6703,14 +6320,12 @@ class $MileageTripsTable extends MileageTrips
         DriftSqlType.int,
         data['${effectivePrefix}odometer_end'],
       )!,
-      distanceKm: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}distance_km'],
-      )!,
-      tripType: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}trip_type'],
-      )!,
+      tripType: $MileageTripsTable.$convertertripType.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}trip_type'],
+        )!,
+      ),
       purpose: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}purpose'],
@@ -6723,10 +6338,6 @@ class $MileageTripsTable extends MileageTrips
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
       ),
-      fiscalYear: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}fiscal_year'],
-      )!,
     );
   }
 
@@ -6734,58 +6345,66 @@ class $MileageTripsTable extends MileageTrips
   $MileageTripsTable createAlias(String alias) {
     return $MileageTripsTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<TripType, String, String> $convertertripType =
+      const EnumNameConverter<TripType>(TripType.values);
 }
 
 class MileageTrip extends DataClass implements Insertable<MileageTrip> {
   final int id;
   final DateTime date;
+
+  /// The business car driven, or null for a private vehicle.
+  final int? carAssetId;
   final String vehicleMakeModel;
   final String vehicleLicensePlate;
   final String departureAddress;
   final String arrivalAddress;
   final int odometerStart;
   final int odometerEnd;
-  final int distanceKm;
-  final String tripType;
+  final TripType tripType;
   final String purpose;
   final bool routeDeviation;
   final String? notes;
-  final int fiscalYear;
   const MileageTrip({
     required this.id,
     required this.date,
+    this.carAssetId,
     required this.vehicleMakeModel,
     required this.vehicleLicensePlate,
     required this.departureAddress,
     required this.arrivalAddress,
     required this.odometerStart,
     required this.odometerEnd,
-    required this.distanceKm,
     required this.tripType,
     required this.purpose,
     required this.routeDeviation,
     this.notes,
-    required this.fiscalYear,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['date'] = Variable<DateTime>(date);
+    if (!nullToAbsent || carAssetId != null) {
+      map['car_asset_id'] = Variable<int>(carAssetId);
+    }
     map['vehicle_make_model'] = Variable<String>(vehicleMakeModel);
     map['vehicle_license_plate'] = Variable<String>(vehicleLicensePlate);
     map['departure_address'] = Variable<String>(departureAddress);
     map['arrival_address'] = Variable<String>(arrivalAddress);
     map['odometer_start'] = Variable<int>(odometerStart);
     map['odometer_end'] = Variable<int>(odometerEnd);
-    map['distance_km'] = Variable<int>(distanceKm);
-    map['trip_type'] = Variable<String>(tripType);
+    {
+      map['trip_type'] = Variable<String>(
+        $MileageTripsTable.$convertertripType.toSql(tripType),
+      );
+    }
     map['purpose'] = Variable<String>(purpose);
     map['route_deviation'] = Variable<bool>(routeDeviation);
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
-    map['fiscal_year'] = Variable<int>(fiscalYear);
     return map;
   }
 
@@ -6793,20 +6412,21 @@ class MileageTrip extends DataClass implements Insertable<MileageTrip> {
     return MileageTripsCompanion(
       id: Value(id),
       date: Value(date),
+      carAssetId: carAssetId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(carAssetId),
       vehicleMakeModel: Value(vehicleMakeModel),
       vehicleLicensePlate: Value(vehicleLicensePlate),
       departureAddress: Value(departureAddress),
       arrivalAddress: Value(arrivalAddress),
       odometerStart: Value(odometerStart),
       odometerEnd: Value(odometerEnd),
-      distanceKm: Value(distanceKm),
       tripType: Value(tripType),
       purpose: Value(purpose),
       routeDeviation: Value(routeDeviation),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
-      fiscalYear: Value(fiscalYear),
     );
   }
 
@@ -6818,6 +6438,7 @@ class MileageTrip extends DataClass implements Insertable<MileageTrip> {
     return MileageTrip(
       id: serializer.fromJson<int>(json['id']),
       date: serializer.fromJson<DateTime>(json['date']),
+      carAssetId: serializer.fromJson<int?>(json['carAssetId']),
       vehicleMakeModel: serializer.fromJson<String>(json['vehicleMakeModel']),
       vehicleLicensePlate: serializer.fromJson<String>(
         json['vehicleLicensePlate'],
@@ -6826,12 +6447,12 @@ class MileageTrip extends DataClass implements Insertable<MileageTrip> {
       arrivalAddress: serializer.fromJson<String>(json['arrivalAddress']),
       odometerStart: serializer.fromJson<int>(json['odometerStart']),
       odometerEnd: serializer.fromJson<int>(json['odometerEnd']),
-      distanceKm: serializer.fromJson<int>(json['distanceKm']),
-      tripType: serializer.fromJson<String>(json['tripType']),
+      tripType: $MileageTripsTable.$convertertripType.fromJson(
+        serializer.fromJson<String>(json['tripType']),
+      ),
       purpose: serializer.fromJson<String>(json['purpose']),
       routeDeviation: serializer.fromJson<bool>(json['routeDeviation']),
       notes: serializer.fromJson<String?>(json['notes']),
-      fiscalYear: serializer.fromJson<int>(json['fiscalYear']),
     );
   }
   @override
@@ -6840,56 +6461,58 @@ class MileageTrip extends DataClass implements Insertable<MileageTrip> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'date': serializer.toJson<DateTime>(date),
+      'carAssetId': serializer.toJson<int?>(carAssetId),
       'vehicleMakeModel': serializer.toJson<String>(vehicleMakeModel),
       'vehicleLicensePlate': serializer.toJson<String>(vehicleLicensePlate),
       'departureAddress': serializer.toJson<String>(departureAddress),
       'arrivalAddress': serializer.toJson<String>(arrivalAddress),
       'odometerStart': serializer.toJson<int>(odometerStart),
       'odometerEnd': serializer.toJson<int>(odometerEnd),
-      'distanceKm': serializer.toJson<int>(distanceKm),
-      'tripType': serializer.toJson<String>(tripType),
+      'tripType': serializer.toJson<String>(
+        $MileageTripsTable.$convertertripType.toJson(tripType),
+      ),
       'purpose': serializer.toJson<String>(purpose),
       'routeDeviation': serializer.toJson<bool>(routeDeviation),
       'notes': serializer.toJson<String?>(notes),
-      'fiscalYear': serializer.toJson<int>(fiscalYear),
     };
   }
 
   MileageTrip copyWith({
     int? id,
     DateTime? date,
+    Value<int?> carAssetId = const Value.absent(),
     String? vehicleMakeModel,
     String? vehicleLicensePlate,
     String? departureAddress,
     String? arrivalAddress,
     int? odometerStart,
     int? odometerEnd,
-    int? distanceKm,
-    String? tripType,
+    TripType? tripType,
     String? purpose,
     bool? routeDeviation,
     Value<String?> notes = const Value.absent(),
-    int? fiscalYear,
   }) => MileageTrip(
     id: id ?? this.id,
     date: date ?? this.date,
+    carAssetId: carAssetId.present ? carAssetId.value : this.carAssetId,
     vehicleMakeModel: vehicleMakeModel ?? this.vehicleMakeModel,
     vehicleLicensePlate: vehicleLicensePlate ?? this.vehicleLicensePlate,
     departureAddress: departureAddress ?? this.departureAddress,
     arrivalAddress: arrivalAddress ?? this.arrivalAddress,
     odometerStart: odometerStart ?? this.odometerStart,
     odometerEnd: odometerEnd ?? this.odometerEnd,
-    distanceKm: distanceKm ?? this.distanceKm,
     tripType: tripType ?? this.tripType,
     purpose: purpose ?? this.purpose,
     routeDeviation: routeDeviation ?? this.routeDeviation,
     notes: notes.present ? notes.value : this.notes,
-    fiscalYear: fiscalYear ?? this.fiscalYear,
   );
   MileageTrip copyWithCompanion(MileageTripsCompanion data) {
     return MileageTrip(
       id: data.id.present ? data.id.value : this.id,
       date: data.date.present ? data.date.value : this.date,
+      carAssetId: data.carAssetId.present
+          ? data.carAssetId.value
+          : this.carAssetId,
       vehicleMakeModel: data.vehicleMakeModel.present
           ? data.vehicleMakeModel.value
           : this.vehicleMakeModel,
@@ -6908,18 +6531,12 @@ class MileageTrip extends DataClass implements Insertable<MileageTrip> {
       odometerEnd: data.odometerEnd.present
           ? data.odometerEnd.value
           : this.odometerEnd,
-      distanceKm: data.distanceKm.present
-          ? data.distanceKm.value
-          : this.distanceKm,
       tripType: data.tripType.present ? data.tripType.value : this.tripType,
       purpose: data.purpose.present ? data.purpose.value : this.purpose,
       routeDeviation: data.routeDeviation.present
           ? data.routeDeviation.value
           : this.routeDeviation,
       notes: data.notes.present ? data.notes.value : this.notes,
-      fiscalYear: data.fiscalYear.present
-          ? data.fiscalYear.value
-          : this.fiscalYear,
     );
   }
 
@@ -6928,18 +6545,17 @@ class MileageTrip extends DataClass implements Insertable<MileageTrip> {
     return (StringBuffer('MileageTrip(')
           ..write('id: $id, ')
           ..write('date: $date, ')
+          ..write('carAssetId: $carAssetId, ')
           ..write('vehicleMakeModel: $vehicleMakeModel, ')
           ..write('vehicleLicensePlate: $vehicleLicensePlate, ')
           ..write('departureAddress: $departureAddress, ')
           ..write('arrivalAddress: $arrivalAddress, ')
           ..write('odometerStart: $odometerStart, ')
           ..write('odometerEnd: $odometerEnd, ')
-          ..write('distanceKm: $distanceKm, ')
           ..write('tripType: $tripType, ')
           ..write('purpose: $purpose, ')
           ..write('routeDeviation: $routeDeviation, ')
-          ..write('notes: $notes, ')
-          ..write('fiscalYear: $fiscalYear')
+          ..write('notes: $notes')
           ..write(')'))
         .toString();
   }
@@ -6948,18 +6564,17 @@ class MileageTrip extends DataClass implements Insertable<MileageTrip> {
   int get hashCode => Object.hash(
     id,
     date,
+    carAssetId,
     vehicleMakeModel,
     vehicleLicensePlate,
     departureAddress,
     arrivalAddress,
     odometerStart,
     odometerEnd,
-    distanceKm,
     tripType,
     purpose,
     routeDeviation,
     notes,
-    fiscalYear,
   );
   @override
   bool operator ==(Object other) =>
@@ -6967,66 +6582,62 @@ class MileageTrip extends DataClass implements Insertable<MileageTrip> {
       (other is MileageTrip &&
           other.id == this.id &&
           other.date == this.date &&
+          other.carAssetId == this.carAssetId &&
           other.vehicleMakeModel == this.vehicleMakeModel &&
           other.vehicleLicensePlate == this.vehicleLicensePlate &&
           other.departureAddress == this.departureAddress &&
           other.arrivalAddress == this.arrivalAddress &&
           other.odometerStart == this.odometerStart &&
           other.odometerEnd == this.odometerEnd &&
-          other.distanceKm == this.distanceKm &&
           other.tripType == this.tripType &&
           other.purpose == this.purpose &&
           other.routeDeviation == this.routeDeviation &&
-          other.notes == this.notes &&
-          other.fiscalYear == this.fiscalYear);
+          other.notes == this.notes);
 }
 
 class MileageTripsCompanion extends UpdateCompanion<MileageTrip> {
   final Value<int> id;
   final Value<DateTime> date;
+  final Value<int?> carAssetId;
   final Value<String> vehicleMakeModel;
   final Value<String> vehicleLicensePlate;
   final Value<String> departureAddress;
   final Value<String> arrivalAddress;
   final Value<int> odometerStart;
   final Value<int> odometerEnd;
-  final Value<int> distanceKm;
-  final Value<String> tripType;
+  final Value<TripType> tripType;
   final Value<String> purpose;
   final Value<bool> routeDeviation;
   final Value<String?> notes;
-  final Value<int> fiscalYear;
   const MileageTripsCompanion({
     this.id = const Value.absent(),
     this.date = const Value.absent(),
+    this.carAssetId = const Value.absent(),
     this.vehicleMakeModel = const Value.absent(),
     this.vehicleLicensePlate = const Value.absent(),
     this.departureAddress = const Value.absent(),
     this.arrivalAddress = const Value.absent(),
     this.odometerStart = const Value.absent(),
     this.odometerEnd = const Value.absent(),
-    this.distanceKm = const Value.absent(),
     this.tripType = const Value.absent(),
     this.purpose = const Value.absent(),
     this.routeDeviation = const Value.absent(),
     this.notes = const Value.absent(),
-    this.fiscalYear = const Value.absent(),
   });
   MileageTripsCompanion.insert({
     this.id = const Value.absent(),
     required DateTime date,
+    this.carAssetId = const Value.absent(),
     required String vehicleMakeModel,
     required String vehicleLicensePlate,
     required String departureAddress,
     required String arrivalAddress,
     required int odometerStart,
     required int odometerEnd,
-    required int distanceKm,
-    this.tripType = const Value.absent(),
+    required TripType tripType,
     required String purpose,
     this.routeDeviation = const Value.absent(),
     this.notes = const Value.absent(),
-    required int fiscalYear,
   }) : date = Value(date),
        vehicleMakeModel = Value(vehicleMakeModel),
        vehicleLicensePlate = Value(vehicleLicensePlate),
@@ -7034,28 +6645,27 @@ class MileageTripsCompanion extends UpdateCompanion<MileageTrip> {
        arrivalAddress = Value(arrivalAddress),
        odometerStart = Value(odometerStart),
        odometerEnd = Value(odometerEnd),
-       distanceKm = Value(distanceKm),
-       purpose = Value(purpose),
-       fiscalYear = Value(fiscalYear);
+       tripType = Value(tripType),
+       purpose = Value(purpose);
   static Insertable<MileageTrip> custom({
     Expression<int>? id,
     Expression<DateTime>? date,
+    Expression<int>? carAssetId,
     Expression<String>? vehicleMakeModel,
     Expression<String>? vehicleLicensePlate,
     Expression<String>? departureAddress,
     Expression<String>? arrivalAddress,
     Expression<int>? odometerStart,
     Expression<int>? odometerEnd,
-    Expression<int>? distanceKm,
     Expression<String>? tripType,
     Expression<String>? purpose,
     Expression<bool>? routeDeviation,
     Expression<String>? notes,
-    Expression<int>? fiscalYear,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (date != null) 'date': date,
+      if (carAssetId != null) 'car_asset_id': carAssetId,
       if (vehicleMakeModel != null) 'vehicle_make_model': vehicleMakeModel,
       if (vehicleLicensePlate != null)
         'vehicle_license_plate': vehicleLicensePlate,
@@ -7063,46 +6673,42 @@ class MileageTripsCompanion extends UpdateCompanion<MileageTrip> {
       if (arrivalAddress != null) 'arrival_address': arrivalAddress,
       if (odometerStart != null) 'odometer_start': odometerStart,
       if (odometerEnd != null) 'odometer_end': odometerEnd,
-      if (distanceKm != null) 'distance_km': distanceKm,
       if (tripType != null) 'trip_type': tripType,
       if (purpose != null) 'purpose': purpose,
       if (routeDeviation != null) 'route_deviation': routeDeviation,
       if (notes != null) 'notes': notes,
-      if (fiscalYear != null) 'fiscal_year': fiscalYear,
     });
   }
 
   MileageTripsCompanion copyWith({
     Value<int>? id,
     Value<DateTime>? date,
+    Value<int?>? carAssetId,
     Value<String>? vehicleMakeModel,
     Value<String>? vehicleLicensePlate,
     Value<String>? departureAddress,
     Value<String>? arrivalAddress,
     Value<int>? odometerStart,
     Value<int>? odometerEnd,
-    Value<int>? distanceKm,
-    Value<String>? tripType,
+    Value<TripType>? tripType,
     Value<String>? purpose,
     Value<bool>? routeDeviation,
     Value<String?>? notes,
-    Value<int>? fiscalYear,
   }) {
     return MileageTripsCompanion(
       id: id ?? this.id,
       date: date ?? this.date,
+      carAssetId: carAssetId ?? this.carAssetId,
       vehicleMakeModel: vehicleMakeModel ?? this.vehicleMakeModel,
       vehicleLicensePlate: vehicleLicensePlate ?? this.vehicleLicensePlate,
       departureAddress: departureAddress ?? this.departureAddress,
       arrivalAddress: arrivalAddress ?? this.arrivalAddress,
       odometerStart: odometerStart ?? this.odometerStart,
       odometerEnd: odometerEnd ?? this.odometerEnd,
-      distanceKm: distanceKm ?? this.distanceKm,
       tripType: tripType ?? this.tripType,
       purpose: purpose ?? this.purpose,
       routeDeviation: routeDeviation ?? this.routeDeviation,
       notes: notes ?? this.notes,
-      fiscalYear: fiscalYear ?? this.fiscalYear,
     );
   }
 
@@ -7114,6 +6720,9 @@ class MileageTripsCompanion extends UpdateCompanion<MileageTrip> {
     }
     if (date.present) {
       map['date'] = Variable<DateTime>(date.value);
+    }
+    if (carAssetId.present) {
+      map['car_asset_id'] = Variable<int>(carAssetId.value);
     }
     if (vehicleMakeModel.present) {
       map['vehicle_make_model'] = Variable<String>(vehicleMakeModel.value);
@@ -7135,11 +6744,10 @@ class MileageTripsCompanion extends UpdateCompanion<MileageTrip> {
     if (odometerEnd.present) {
       map['odometer_end'] = Variable<int>(odometerEnd.value);
     }
-    if (distanceKm.present) {
-      map['distance_km'] = Variable<int>(distanceKm.value);
-    }
     if (tripType.present) {
-      map['trip_type'] = Variable<String>(tripType.value);
+      map['trip_type'] = Variable<String>(
+        $MileageTripsTable.$convertertripType.toSql(tripType.value),
+      );
     }
     if (purpose.present) {
       map['purpose'] = Variable<String>(purpose.value);
@@ -7150,9 +6758,6 @@ class MileageTripsCompanion extends UpdateCompanion<MileageTrip> {
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
-    if (fiscalYear.present) {
-      map['fiscal_year'] = Variable<int>(fiscalYear.value);
-    }
     return map;
   }
 
@@ -7161,752 +6766,17 @@ class MileageTripsCompanion extends UpdateCompanion<MileageTrip> {
     return (StringBuffer('MileageTripsCompanion(')
           ..write('id: $id, ')
           ..write('date: $date, ')
+          ..write('carAssetId: $carAssetId, ')
           ..write('vehicleMakeModel: $vehicleMakeModel, ')
           ..write('vehicleLicensePlate: $vehicleLicensePlate, ')
           ..write('departureAddress: $departureAddress, ')
           ..write('arrivalAddress: $arrivalAddress, ')
           ..write('odometerStart: $odometerStart, ')
           ..write('odometerEnd: $odometerEnd, ')
-          ..write('distanceKm: $distanceKm, ')
           ..write('tripType: $tripType, ')
           ..write('purpose: $purpose, ')
           ..write('routeDeviation: $routeDeviation, ')
-          ..write('notes: $notes, ')
-          ..write('fiscalYear: $fiscalYear')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $FixedAssetsTable extends FixedAssets
-    with TableInfo<$FixedAssetsTable, FixedAsset> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $FixedAssetsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-    'id',
-    aliasedName,
-    false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
-  );
-  static const VerificationMeta _fiscalYearMeta = const VerificationMeta(
-    'fiscalYear',
-  );
-  @override
-  late final GeneratedColumn<int> fiscalYear = GeneratedColumn<int>(
-    'fiscal_year',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _assetNameMeta = const VerificationMeta(
-    'assetName',
-  );
-  @override
-  late final GeneratedColumn<String> assetName = GeneratedColumn<String>(
-    'asset_name',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _costExclVatMeta = const VerificationMeta(
-    'costExclVat',
-  );
-  @override
-  late final GeneratedColumn<int> costExclVat = GeneratedColumn<int>(
-    'cost_excl_vat',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _purchaseDateMeta = const VerificationMeta(
-    'purchaseDate',
-  );
-  @override
-  late final GeneratedColumn<DateTime> purchaseDate = GeneratedColumn<DateTime>(
-    'purchase_date',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _businessUsePctMeta = const VerificationMeta(
-    'businessUsePct',
-  );
-  @override
-  late final GeneratedColumn<double> businessUsePct = GeneratedColumn<double>(
-    'business_use_pct',
-    aliasedName,
-    false,
-    type: DriftSqlType.double,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(1.0),
-  );
-  static const VerificationMeta _usefulLifeYearsMeta = const VerificationMeta(
-    'usefulLifeYears',
-  );
-  @override
-  late final GeneratedColumn<int> usefulLifeYears = GeneratedColumn<int>(
-    'useful_life_years',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _kiaEligibleMeta = const VerificationMeta(
-    'kiaEligible',
-  );
-  @override
-  late final GeneratedColumn<bool> kiaEligible = GeneratedColumn<bool>(
-    'kia_eligible',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("kia_eligible" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
-  static const VerificationMeta _eiaOrMiaMeta = const VerificationMeta(
-    'eiaOrMia',
-  );
-  @override
-  late final GeneratedColumn<bool> eiaOrMia = GeneratedColumn<bool>(
-    'eia_or_mia',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("eia_or_mia" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
-  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
-  @override
-  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
-    'notes',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _disposalDateMeta = const VerificationMeta(
-    'disposalDate',
-  );
-  @override
-  late final GeneratedColumn<DateTime> disposalDate = GeneratedColumn<DateTime>(
-    'disposal_date',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _disposalProceedsMeta = const VerificationMeta(
-    'disposalProceeds',
-  );
-  @override
-  late final GeneratedColumn<int> disposalProceeds = GeneratedColumn<int>(
-    'disposal_proceeds',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    fiscalYear,
-    assetName,
-    costExclVat,
-    purchaseDate,
-    businessUsePct,
-    usefulLifeYears,
-    kiaEligible,
-    eiaOrMia,
-    notes,
-    disposalDate,
-    disposalProceeds,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'fixed_assets';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<FixedAsset> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('fiscal_year')) {
-      context.handle(
-        _fiscalYearMeta,
-        fiscalYear.isAcceptableOrUnknown(data['fiscal_year']!, _fiscalYearMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_fiscalYearMeta);
-    }
-    if (data.containsKey('asset_name')) {
-      context.handle(
-        _assetNameMeta,
-        assetName.isAcceptableOrUnknown(data['asset_name']!, _assetNameMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_assetNameMeta);
-    }
-    if (data.containsKey('cost_excl_vat')) {
-      context.handle(
-        _costExclVatMeta,
-        costExclVat.isAcceptableOrUnknown(
-          data['cost_excl_vat']!,
-          _costExclVatMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_costExclVatMeta);
-    }
-    if (data.containsKey('purchase_date')) {
-      context.handle(
-        _purchaseDateMeta,
-        purchaseDate.isAcceptableOrUnknown(
-          data['purchase_date']!,
-          _purchaseDateMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_purchaseDateMeta);
-    }
-    if (data.containsKey('business_use_pct')) {
-      context.handle(
-        _businessUsePctMeta,
-        businessUsePct.isAcceptableOrUnknown(
-          data['business_use_pct']!,
-          _businessUsePctMeta,
-        ),
-      );
-    }
-    if (data.containsKey('useful_life_years')) {
-      context.handle(
-        _usefulLifeYearsMeta,
-        usefulLifeYears.isAcceptableOrUnknown(
-          data['useful_life_years']!,
-          _usefulLifeYearsMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_usefulLifeYearsMeta);
-    }
-    if (data.containsKey('kia_eligible')) {
-      context.handle(
-        _kiaEligibleMeta,
-        kiaEligible.isAcceptableOrUnknown(
-          data['kia_eligible']!,
-          _kiaEligibleMeta,
-        ),
-      );
-    }
-    if (data.containsKey('eia_or_mia')) {
-      context.handle(
-        _eiaOrMiaMeta,
-        eiaOrMia.isAcceptableOrUnknown(data['eia_or_mia']!, _eiaOrMiaMeta),
-      );
-    }
-    if (data.containsKey('notes')) {
-      context.handle(
-        _notesMeta,
-        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
-      );
-    }
-    if (data.containsKey('disposal_date')) {
-      context.handle(
-        _disposalDateMeta,
-        disposalDate.isAcceptableOrUnknown(
-          data['disposal_date']!,
-          _disposalDateMeta,
-        ),
-      );
-    }
-    if (data.containsKey('disposal_proceeds')) {
-      context.handle(
-        _disposalProceedsMeta,
-        disposalProceeds.isAcceptableOrUnknown(
-          data['disposal_proceeds']!,
-          _disposalProceedsMeta,
-        ),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  FixedAsset map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return FixedAsset(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
-      fiscalYear: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}fiscal_year'],
-      )!,
-      assetName: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}asset_name'],
-      )!,
-      costExclVat: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}cost_excl_vat'],
-      )!,
-      purchaseDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}purchase_date'],
-      )!,
-      businessUsePct: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}business_use_pct'],
-      )!,
-      usefulLifeYears: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}useful_life_years'],
-      )!,
-      kiaEligible: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}kia_eligible'],
-      )!,
-      eiaOrMia: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}eia_or_mia'],
-      )!,
-      notes: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}notes'],
-      ),
-      disposalDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}disposal_date'],
-      ),
-      disposalProceeds: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}disposal_proceeds'],
-      ),
-    );
-  }
-
-  @override
-  $FixedAssetsTable createAlias(String alias) {
-    return $FixedAssetsTable(attachedDatabase, alias);
-  }
-}
-
-class FixedAsset extends DataClass implements Insertable<FixedAsset> {
-  final int id;
-  final int fiscalYear;
-  final String assetName;
-  final int costExclVat;
-  final DateTime purchaseDate;
-  final double businessUsePct;
-  final int usefulLifeYears;
-  final bool kiaEligible;
-  final bool eiaOrMia;
-  final String? notes;
-  final DateTime? disposalDate;
-  final int? disposalProceeds;
-  const FixedAsset({
-    required this.id,
-    required this.fiscalYear,
-    required this.assetName,
-    required this.costExclVat,
-    required this.purchaseDate,
-    required this.businessUsePct,
-    required this.usefulLifeYears,
-    required this.kiaEligible,
-    required this.eiaOrMia,
-    this.notes,
-    this.disposalDate,
-    this.disposalProceeds,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['fiscal_year'] = Variable<int>(fiscalYear);
-    map['asset_name'] = Variable<String>(assetName);
-    map['cost_excl_vat'] = Variable<int>(costExclVat);
-    map['purchase_date'] = Variable<DateTime>(purchaseDate);
-    map['business_use_pct'] = Variable<double>(businessUsePct);
-    map['useful_life_years'] = Variable<int>(usefulLifeYears);
-    map['kia_eligible'] = Variable<bool>(kiaEligible);
-    map['eia_or_mia'] = Variable<bool>(eiaOrMia);
-    if (!nullToAbsent || notes != null) {
-      map['notes'] = Variable<String>(notes);
-    }
-    if (!nullToAbsent || disposalDate != null) {
-      map['disposal_date'] = Variable<DateTime>(disposalDate);
-    }
-    if (!nullToAbsent || disposalProceeds != null) {
-      map['disposal_proceeds'] = Variable<int>(disposalProceeds);
-    }
-    return map;
-  }
-
-  FixedAssetsCompanion toCompanion(bool nullToAbsent) {
-    return FixedAssetsCompanion(
-      id: Value(id),
-      fiscalYear: Value(fiscalYear),
-      assetName: Value(assetName),
-      costExclVat: Value(costExclVat),
-      purchaseDate: Value(purchaseDate),
-      businessUsePct: Value(businessUsePct),
-      usefulLifeYears: Value(usefulLifeYears),
-      kiaEligible: Value(kiaEligible),
-      eiaOrMia: Value(eiaOrMia),
-      notes: notes == null && nullToAbsent
-          ? const Value.absent()
-          : Value(notes),
-      disposalDate: disposalDate == null && nullToAbsent
-          ? const Value.absent()
-          : Value(disposalDate),
-      disposalProceeds: disposalProceeds == null && nullToAbsent
-          ? const Value.absent()
-          : Value(disposalProceeds),
-    );
-  }
-
-  factory FixedAsset.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return FixedAsset(
-      id: serializer.fromJson<int>(json['id']),
-      fiscalYear: serializer.fromJson<int>(json['fiscalYear']),
-      assetName: serializer.fromJson<String>(json['assetName']),
-      costExclVat: serializer.fromJson<int>(json['costExclVat']),
-      purchaseDate: serializer.fromJson<DateTime>(json['purchaseDate']),
-      businessUsePct: serializer.fromJson<double>(json['businessUsePct']),
-      usefulLifeYears: serializer.fromJson<int>(json['usefulLifeYears']),
-      kiaEligible: serializer.fromJson<bool>(json['kiaEligible']),
-      eiaOrMia: serializer.fromJson<bool>(json['eiaOrMia']),
-      notes: serializer.fromJson<String?>(json['notes']),
-      disposalDate: serializer.fromJson<DateTime?>(json['disposalDate']),
-      disposalProceeds: serializer.fromJson<int?>(json['disposalProceeds']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'fiscalYear': serializer.toJson<int>(fiscalYear),
-      'assetName': serializer.toJson<String>(assetName),
-      'costExclVat': serializer.toJson<int>(costExclVat),
-      'purchaseDate': serializer.toJson<DateTime>(purchaseDate),
-      'businessUsePct': serializer.toJson<double>(businessUsePct),
-      'usefulLifeYears': serializer.toJson<int>(usefulLifeYears),
-      'kiaEligible': serializer.toJson<bool>(kiaEligible),
-      'eiaOrMia': serializer.toJson<bool>(eiaOrMia),
-      'notes': serializer.toJson<String?>(notes),
-      'disposalDate': serializer.toJson<DateTime?>(disposalDate),
-      'disposalProceeds': serializer.toJson<int?>(disposalProceeds),
-    };
-  }
-
-  FixedAsset copyWith({
-    int? id,
-    int? fiscalYear,
-    String? assetName,
-    int? costExclVat,
-    DateTime? purchaseDate,
-    double? businessUsePct,
-    int? usefulLifeYears,
-    bool? kiaEligible,
-    bool? eiaOrMia,
-    Value<String?> notes = const Value.absent(),
-    Value<DateTime?> disposalDate = const Value.absent(),
-    Value<int?> disposalProceeds = const Value.absent(),
-  }) => FixedAsset(
-    id: id ?? this.id,
-    fiscalYear: fiscalYear ?? this.fiscalYear,
-    assetName: assetName ?? this.assetName,
-    costExclVat: costExclVat ?? this.costExclVat,
-    purchaseDate: purchaseDate ?? this.purchaseDate,
-    businessUsePct: businessUsePct ?? this.businessUsePct,
-    usefulLifeYears: usefulLifeYears ?? this.usefulLifeYears,
-    kiaEligible: kiaEligible ?? this.kiaEligible,
-    eiaOrMia: eiaOrMia ?? this.eiaOrMia,
-    notes: notes.present ? notes.value : this.notes,
-    disposalDate: disposalDate.present ? disposalDate.value : this.disposalDate,
-    disposalProceeds: disposalProceeds.present
-        ? disposalProceeds.value
-        : this.disposalProceeds,
-  );
-  FixedAsset copyWithCompanion(FixedAssetsCompanion data) {
-    return FixedAsset(
-      id: data.id.present ? data.id.value : this.id,
-      fiscalYear: data.fiscalYear.present
-          ? data.fiscalYear.value
-          : this.fiscalYear,
-      assetName: data.assetName.present ? data.assetName.value : this.assetName,
-      costExclVat: data.costExclVat.present
-          ? data.costExclVat.value
-          : this.costExclVat,
-      purchaseDate: data.purchaseDate.present
-          ? data.purchaseDate.value
-          : this.purchaseDate,
-      businessUsePct: data.businessUsePct.present
-          ? data.businessUsePct.value
-          : this.businessUsePct,
-      usefulLifeYears: data.usefulLifeYears.present
-          ? data.usefulLifeYears.value
-          : this.usefulLifeYears,
-      kiaEligible: data.kiaEligible.present
-          ? data.kiaEligible.value
-          : this.kiaEligible,
-      eiaOrMia: data.eiaOrMia.present ? data.eiaOrMia.value : this.eiaOrMia,
-      notes: data.notes.present ? data.notes.value : this.notes,
-      disposalDate: data.disposalDate.present
-          ? data.disposalDate.value
-          : this.disposalDate,
-      disposalProceeds: data.disposalProceeds.present
-          ? data.disposalProceeds.value
-          : this.disposalProceeds,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('FixedAsset(')
-          ..write('id: $id, ')
-          ..write('fiscalYear: $fiscalYear, ')
-          ..write('assetName: $assetName, ')
-          ..write('costExclVat: $costExclVat, ')
-          ..write('purchaseDate: $purchaseDate, ')
-          ..write('businessUsePct: $businessUsePct, ')
-          ..write('usefulLifeYears: $usefulLifeYears, ')
-          ..write('kiaEligible: $kiaEligible, ')
-          ..write('eiaOrMia: $eiaOrMia, ')
-          ..write('notes: $notes, ')
-          ..write('disposalDate: $disposalDate, ')
-          ..write('disposalProceeds: $disposalProceeds')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    id,
-    fiscalYear,
-    assetName,
-    costExclVat,
-    purchaseDate,
-    businessUsePct,
-    usefulLifeYears,
-    kiaEligible,
-    eiaOrMia,
-    notes,
-    disposalDate,
-    disposalProceeds,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is FixedAsset &&
-          other.id == this.id &&
-          other.fiscalYear == this.fiscalYear &&
-          other.assetName == this.assetName &&
-          other.costExclVat == this.costExclVat &&
-          other.purchaseDate == this.purchaseDate &&
-          other.businessUsePct == this.businessUsePct &&
-          other.usefulLifeYears == this.usefulLifeYears &&
-          other.kiaEligible == this.kiaEligible &&
-          other.eiaOrMia == this.eiaOrMia &&
-          other.notes == this.notes &&
-          other.disposalDate == this.disposalDate &&
-          other.disposalProceeds == this.disposalProceeds);
-}
-
-class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
-  final Value<int> id;
-  final Value<int> fiscalYear;
-  final Value<String> assetName;
-  final Value<int> costExclVat;
-  final Value<DateTime> purchaseDate;
-  final Value<double> businessUsePct;
-  final Value<int> usefulLifeYears;
-  final Value<bool> kiaEligible;
-  final Value<bool> eiaOrMia;
-  final Value<String?> notes;
-  final Value<DateTime?> disposalDate;
-  final Value<int?> disposalProceeds;
-  const FixedAssetsCompanion({
-    this.id = const Value.absent(),
-    this.fiscalYear = const Value.absent(),
-    this.assetName = const Value.absent(),
-    this.costExclVat = const Value.absent(),
-    this.purchaseDate = const Value.absent(),
-    this.businessUsePct = const Value.absent(),
-    this.usefulLifeYears = const Value.absent(),
-    this.kiaEligible = const Value.absent(),
-    this.eiaOrMia = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.disposalDate = const Value.absent(),
-    this.disposalProceeds = const Value.absent(),
-  });
-  FixedAssetsCompanion.insert({
-    this.id = const Value.absent(),
-    required int fiscalYear,
-    required String assetName,
-    required int costExclVat,
-    required DateTime purchaseDate,
-    this.businessUsePct = const Value.absent(),
-    required int usefulLifeYears,
-    this.kiaEligible = const Value.absent(),
-    this.eiaOrMia = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.disposalDate = const Value.absent(),
-    this.disposalProceeds = const Value.absent(),
-  }) : fiscalYear = Value(fiscalYear),
-       assetName = Value(assetName),
-       costExclVat = Value(costExclVat),
-       purchaseDate = Value(purchaseDate),
-       usefulLifeYears = Value(usefulLifeYears);
-  static Insertable<FixedAsset> custom({
-    Expression<int>? id,
-    Expression<int>? fiscalYear,
-    Expression<String>? assetName,
-    Expression<int>? costExclVat,
-    Expression<DateTime>? purchaseDate,
-    Expression<double>? businessUsePct,
-    Expression<int>? usefulLifeYears,
-    Expression<bool>? kiaEligible,
-    Expression<bool>? eiaOrMia,
-    Expression<String>? notes,
-    Expression<DateTime>? disposalDate,
-    Expression<int>? disposalProceeds,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (fiscalYear != null) 'fiscal_year': fiscalYear,
-      if (assetName != null) 'asset_name': assetName,
-      if (costExclVat != null) 'cost_excl_vat': costExclVat,
-      if (purchaseDate != null) 'purchase_date': purchaseDate,
-      if (businessUsePct != null) 'business_use_pct': businessUsePct,
-      if (usefulLifeYears != null) 'useful_life_years': usefulLifeYears,
-      if (kiaEligible != null) 'kia_eligible': kiaEligible,
-      if (eiaOrMia != null) 'eia_or_mia': eiaOrMia,
-      if (notes != null) 'notes': notes,
-      if (disposalDate != null) 'disposal_date': disposalDate,
-      if (disposalProceeds != null) 'disposal_proceeds': disposalProceeds,
-    });
-  }
-
-  FixedAssetsCompanion copyWith({
-    Value<int>? id,
-    Value<int>? fiscalYear,
-    Value<String>? assetName,
-    Value<int>? costExclVat,
-    Value<DateTime>? purchaseDate,
-    Value<double>? businessUsePct,
-    Value<int>? usefulLifeYears,
-    Value<bool>? kiaEligible,
-    Value<bool>? eiaOrMia,
-    Value<String?>? notes,
-    Value<DateTime?>? disposalDate,
-    Value<int?>? disposalProceeds,
-  }) {
-    return FixedAssetsCompanion(
-      id: id ?? this.id,
-      fiscalYear: fiscalYear ?? this.fiscalYear,
-      assetName: assetName ?? this.assetName,
-      costExclVat: costExclVat ?? this.costExclVat,
-      purchaseDate: purchaseDate ?? this.purchaseDate,
-      businessUsePct: businessUsePct ?? this.businessUsePct,
-      usefulLifeYears: usefulLifeYears ?? this.usefulLifeYears,
-      kiaEligible: kiaEligible ?? this.kiaEligible,
-      eiaOrMia: eiaOrMia ?? this.eiaOrMia,
-      notes: notes ?? this.notes,
-      disposalDate: disposalDate ?? this.disposalDate,
-      disposalProceeds: disposalProceeds ?? this.disposalProceeds,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (fiscalYear.present) {
-      map['fiscal_year'] = Variable<int>(fiscalYear.value);
-    }
-    if (assetName.present) {
-      map['asset_name'] = Variable<String>(assetName.value);
-    }
-    if (costExclVat.present) {
-      map['cost_excl_vat'] = Variable<int>(costExclVat.value);
-    }
-    if (purchaseDate.present) {
-      map['purchase_date'] = Variable<DateTime>(purchaseDate.value);
-    }
-    if (businessUsePct.present) {
-      map['business_use_pct'] = Variable<double>(businessUsePct.value);
-    }
-    if (usefulLifeYears.present) {
-      map['useful_life_years'] = Variable<int>(usefulLifeYears.value);
-    }
-    if (kiaEligible.present) {
-      map['kia_eligible'] = Variable<bool>(kiaEligible.value);
-    }
-    if (eiaOrMia.present) {
-      map['eia_or_mia'] = Variable<bool>(eiaOrMia.value);
-    }
-    if (notes.present) {
-      map['notes'] = Variable<String>(notes.value);
-    }
-    if (disposalDate.present) {
-      map['disposal_date'] = Variable<DateTime>(disposalDate.value);
-    }
-    if (disposalProceeds.present) {
-      map['disposal_proceeds'] = Variable<int>(disposalProceeds.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('FixedAssetsCompanion(')
-          ..write('id: $id, ')
-          ..write('fiscalYear: $fiscalYear, ')
-          ..write('assetName: $assetName, ')
-          ..write('costExclVat: $costExclVat, ')
-          ..write('purchaseDate: $purchaseDate, ')
-          ..write('businessUsePct: $businessUsePct, ')
-          ..write('usefulLifeYears: $usefulLifeYears, ')
-          ..write('kiaEligible: $kiaEligible, ')
-          ..write('eiaOrMia: $eiaOrMia, ')
-          ..write('notes: $notes, ')
-          ..write('disposalDate: $disposalDate, ')
-          ..write('disposalProceeds: $disposalProceeds')
+          ..write('notes: $notes')
           ..write(')'))
         .toString();
   }
@@ -7918,34 +6788,44 @@ class $PensionEntriesTable extends PensionEntries
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $PensionEntriesTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _fiscalYearMeta = const VerificationMeta(
-    'fiscalYear',
-  );
+  static const VerificationMeta _yearMeta = const VerificationMeta('year');
   @override
-  late final GeneratedColumn<int> fiscalYear = GeneratedColumn<int>(
-    'fiscal_year',
+  late final GeneratedColumn<int> year = GeneratedColumn<int>(
+    'year',
     aliasedName,
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _priorYearIncomeMeta = const VerificationMeta(
+    'priorYearIncome',
+  );
+  @override
+  late final GeneratedColumn<int> priorYearIncome = GeneratedColumn<int>(
+    'prior_year_income',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   static const VerificationMeta _factorAMeta = const VerificationMeta(
     'factorA',
   );
   @override
-  late final GeneratedColumn<double> factorA = GeneratedColumn<double>(
+  late final GeneratedColumn<int> factorA = GeneratedColumn<int>(
     'factor_a',
     aliasedName,
     false,
-    type: DriftSqlType.double,
+    type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultValue: const Constant(0.0),
+    defaultValue: const Constant(0),
   );
-  static const VerificationMeta _unusedPriorYearsSpaceMeta =
-      const VerificationMeta('unusedPriorYearsSpace');
+  static const VerificationMeta _reserveringsruimteMeta =
+      const VerificationMeta('reserveringsruimte');
   @override
-  late final GeneratedColumn<int> unusedPriorYearsSpace = GeneratedColumn<int>(
-    'unused_prior_years_space',
+  late final GeneratedColumn<int> reserveringsruimte = GeneratedColumn<int>(
+    'reserveringsruimte',
     aliasedName,
     false,
     type: DriftSqlType.int,
@@ -7990,24 +6870,15 @@ class $PensionEntriesTable extends PensionEntries
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
-  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
-  @override
-  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
-    'notes',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
   @override
   List<GeneratedColumn> get $columns => [
-    fiscalYear,
+    year,
+    priorYearIncome,
     factorA,
-    unusedPriorYearsSpace,
+    reserveringsruimte,
     plannedContribution,
     aovInsured,
     monthlyAovPremium,
-    notes,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -8021,10 +6892,19 @@ class $PensionEntriesTable extends PensionEntries
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('fiscal_year')) {
+    if (data.containsKey('year')) {
       context.handle(
-        _fiscalYearMeta,
-        fiscalYear.isAcceptableOrUnknown(data['fiscal_year']!, _fiscalYearMeta),
+        _yearMeta,
+        year.isAcceptableOrUnknown(data['year']!, _yearMeta),
+      );
+    }
+    if (data.containsKey('prior_year_income')) {
+      context.handle(
+        _priorYearIncomeMeta,
+        priorYearIncome.isAcceptableOrUnknown(
+          data['prior_year_income']!,
+          _priorYearIncomeMeta,
+        ),
       );
     }
     if (data.containsKey('factor_a')) {
@@ -8033,12 +6913,12 @@ class $PensionEntriesTable extends PensionEntries
         factorA.isAcceptableOrUnknown(data['factor_a']!, _factorAMeta),
       );
     }
-    if (data.containsKey('unused_prior_years_space')) {
+    if (data.containsKey('reserveringsruimte')) {
       context.handle(
-        _unusedPriorYearsSpaceMeta,
-        unusedPriorYearsSpace.isAcceptableOrUnknown(
-          data['unused_prior_years_space']!,
-          _unusedPriorYearsSpaceMeta,
+        _reserveringsruimteMeta,
+        reserveringsruimte.isAcceptableOrUnknown(
+          data['reserveringsruimte']!,
+          _reserveringsruimteMeta,
         ),
       );
     }
@@ -8066,32 +6946,30 @@ class $PensionEntriesTable extends PensionEntries
         ),
       );
     }
-    if (data.containsKey('notes')) {
-      context.handle(
-        _notesMeta,
-        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
-      );
-    }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {fiscalYear};
+  Set<GeneratedColumn> get $primaryKey => {year};
   @override
   PensionEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return PensionEntry(
-      fiscalYear: attachedDatabase.typeMapping.read(
+      year: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}fiscal_year'],
+        data['${effectivePrefix}year'],
+      )!,
+      priorYearIncome: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}prior_year_income'],
       )!,
       factorA: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
+        DriftSqlType.int,
         data['${effectivePrefix}factor_a'],
       )!,
-      unusedPriorYearsSpace: attachedDatabase.typeMapping.read(
+      reserveringsruimte: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}unused_prior_years_space'],
+        data['${effectivePrefix}reserveringsruimte'],
       )!,
       plannedContribution: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -8105,10 +6983,6 @@ class $PensionEntriesTable extends PensionEntries
         DriftSqlType.int,
         data['${effectivePrefix}monthly_aov_premium'],
       )!,
-      notes: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}notes'],
-      ),
     );
   }
 
@@ -8119,48 +6993,47 @@ class $PensionEntriesTable extends PensionEntries
 }
 
 class PensionEntry extends DataClass implements Insertable<PensionEntry> {
-  final int fiscalYear;
-  final double factorA;
-  final int unusedPriorYearsSpace;
+  final int year;
+
+  /// Income from work in the previous year, the basis of the premiegrondslag
+  /// (Wet IB 2001 art. 3.127).
+  final int priorYearIncome;
+  final int factorA;
+  final int reserveringsruimte;
   final int plannedContribution;
   final bool aovInsured;
   final int monthlyAovPremium;
-  final String? notes;
   const PensionEntry({
-    required this.fiscalYear,
+    required this.year,
+    required this.priorYearIncome,
     required this.factorA,
-    required this.unusedPriorYearsSpace,
+    required this.reserveringsruimte,
     required this.plannedContribution,
     required this.aovInsured,
     required this.monthlyAovPremium,
-    this.notes,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['fiscal_year'] = Variable<int>(fiscalYear);
-    map['factor_a'] = Variable<double>(factorA);
-    map['unused_prior_years_space'] = Variable<int>(unusedPriorYearsSpace);
+    map['year'] = Variable<int>(year);
+    map['prior_year_income'] = Variable<int>(priorYearIncome);
+    map['factor_a'] = Variable<int>(factorA);
+    map['reserveringsruimte'] = Variable<int>(reserveringsruimte);
     map['planned_contribution'] = Variable<int>(plannedContribution);
     map['aov_insured'] = Variable<bool>(aovInsured);
     map['monthly_aov_premium'] = Variable<int>(monthlyAovPremium);
-    if (!nullToAbsent || notes != null) {
-      map['notes'] = Variable<String>(notes);
-    }
     return map;
   }
 
   PensionEntriesCompanion toCompanion(bool nullToAbsent) {
     return PensionEntriesCompanion(
-      fiscalYear: Value(fiscalYear),
+      year: Value(year),
+      priorYearIncome: Value(priorYearIncome),
       factorA: Value(factorA),
-      unusedPriorYearsSpace: Value(unusedPriorYearsSpace),
+      reserveringsruimte: Value(reserveringsruimte),
       plannedContribution: Value(plannedContribution),
       aovInsured: Value(aovInsured),
       monthlyAovPremium: Value(monthlyAovPremium),
-      notes: notes == null && nullToAbsent
-          ? const Value.absent()
-          : Value(notes),
     );
   }
 
@@ -8170,59 +7043,58 @@ class PensionEntry extends DataClass implements Insertable<PensionEntry> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return PensionEntry(
-      fiscalYear: serializer.fromJson<int>(json['fiscalYear']),
-      factorA: serializer.fromJson<double>(json['factorA']),
-      unusedPriorYearsSpace: serializer.fromJson<int>(
-        json['unusedPriorYearsSpace'],
-      ),
+      year: serializer.fromJson<int>(json['year']),
+      priorYearIncome: serializer.fromJson<int>(json['priorYearIncome']),
+      factorA: serializer.fromJson<int>(json['factorA']),
+      reserveringsruimte: serializer.fromJson<int>(json['reserveringsruimte']),
       plannedContribution: serializer.fromJson<int>(
         json['plannedContribution'],
       ),
       aovInsured: serializer.fromJson<bool>(json['aovInsured']),
       monthlyAovPremium: serializer.fromJson<int>(json['monthlyAovPremium']),
-      notes: serializer.fromJson<String?>(json['notes']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'fiscalYear': serializer.toJson<int>(fiscalYear),
-      'factorA': serializer.toJson<double>(factorA),
-      'unusedPriorYearsSpace': serializer.toJson<int>(unusedPriorYearsSpace),
+      'year': serializer.toJson<int>(year),
+      'priorYearIncome': serializer.toJson<int>(priorYearIncome),
+      'factorA': serializer.toJson<int>(factorA),
+      'reserveringsruimte': serializer.toJson<int>(reserveringsruimte),
       'plannedContribution': serializer.toJson<int>(plannedContribution),
       'aovInsured': serializer.toJson<bool>(aovInsured),
       'monthlyAovPremium': serializer.toJson<int>(monthlyAovPremium),
-      'notes': serializer.toJson<String?>(notes),
     };
   }
 
   PensionEntry copyWith({
-    int? fiscalYear,
-    double? factorA,
-    int? unusedPriorYearsSpace,
+    int? year,
+    int? priorYearIncome,
+    int? factorA,
+    int? reserveringsruimte,
     int? plannedContribution,
     bool? aovInsured,
     int? monthlyAovPremium,
-    Value<String?> notes = const Value.absent(),
   }) => PensionEntry(
-    fiscalYear: fiscalYear ?? this.fiscalYear,
+    year: year ?? this.year,
+    priorYearIncome: priorYearIncome ?? this.priorYearIncome,
     factorA: factorA ?? this.factorA,
-    unusedPriorYearsSpace: unusedPriorYearsSpace ?? this.unusedPriorYearsSpace,
+    reserveringsruimte: reserveringsruimte ?? this.reserveringsruimte,
     plannedContribution: plannedContribution ?? this.plannedContribution,
     aovInsured: aovInsured ?? this.aovInsured,
     monthlyAovPremium: monthlyAovPremium ?? this.monthlyAovPremium,
-    notes: notes.present ? notes.value : this.notes,
   );
   PensionEntry copyWithCompanion(PensionEntriesCompanion data) {
     return PensionEntry(
-      fiscalYear: data.fiscalYear.present
-          ? data.fiscalYear.value
-          : this.fiscalYear,
+      year: data.year.present ? data.year.value : this.year,
+      priorYearIncome: data.priorYearIncome.present
+          ? data.priorYearIncome.value
+          : this.priorYearIncome,
       factorA: data.factorA.present ? data.factorA.value : this.factorA,
-      unusedPriorYearsSpace: data.unusedPriorYearsSpace.present
-          ? data.unusedPriorYearsSpace.value
-          : this.unusedPriorYearsSpace,
+      reserveringsruimte: data.reserveringsruimte.present
+          ? data.reserveringsruimte.value
+          : this.reserveringsruimte,
       plannedContribution: data.plannedContribution.present
           ? data.plannedContribution.value
           : this.plannedContribution,
@@ -8232,129 +7104,127 @@ class PensionEntry extends DataClass implements Insertable<PensionEntry> {
       monthlyAovPremium: data.monthlyAovPremium.present
           ? data.monthlyAovPremium.value
           : this.monthlyAovPremium,
-      notes: data.notes.present ? data.notes.value : this.notes,
     );
   }
 
   @override
   String toString() {
     return (StringBuffer('PensionEntry(')
-          ..write('fiscalYear: $fiscalYear, ')
+          ..write('year: $year, ')
+          ..write('priorYearIncome: $priorYearIncome, ')
           ..write('factorA: $factorA, ')
-          ..write('unusedPriorYearsSpace: $unusedPriorYearsSpace, ')
+          ..write('reserveringsruimte: $reserveringsruimte, ')
           ..write('plannedContribution: $plannedContribution, ')
           ..write('aovInsured: $aovInsured, ')
-          ..write('monthlyAovPremium: $monthlyAovPremium, ')
-          ..write('notes: $notes')
+          ..write('monthlyAovPremium: $monthlyAovPremium')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(
-    fiscalYear,
+    year,
+    priorYearIncome,
     factorA,
-    unusedPriorYearsSpace,
+    reserveringsruimte,
     plannedContribution,
     aovInsured,
     monthlyAovPremium,
-    notes,
   );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is PensionEntry &&
-          other.fiscalYear == this.fiscalYear &&
+          other.year == this.year &&
+          other.priorYearIncome == this.priorYearIncome &&
           other.factorA == this.factorA &&
-          other.unusedPriorYearsSpace == this.unusedPriorYearsSpace &&
+          other.reserveringsruimte == this.reserveringsruimte &&
           other.plannedContribution == this.plannedContribution &&
           other.aovInsured == this.aovInsured &&
-          other.monthlyAovPremium == this.monthlyAovPremium &&
-          other.notes == this.notes);
+          other.monthlyAovPremium == this.monthlyAovPremium);
 }
 
 class PensionEntriesCompanion extends UpdateCompanion<PensionEntry> {
-  final Value<int> fiscalYear;
-  final Value<double> factorA;
-  final Value<int> unusedPriorYearsSpace;
+  final Value<int> year;
+  final Value<int> priorYearIncome;
+  final Value<int> factorA;
+  final Value<int> reserveringsruimte;
   final Value<int> plannedContribution;
   final Value<bool> aovInsured;
   final Value<int> monthlyAovPremium;
-  final Value<String?> notes;
   const PensionEntriesCompanion({
-    this.fiscalYear = const Value.absent(),
+    this.year = const Value.absent(),
+    this.priorYearIncome = const Value.absent(),
     this.factorA = const Value.absent(),
-    this.unusedPriorYearsSpace = const Value.absent(),
+    this.reserveringsruimte = const Value.absent(),
     this.plannedContribution = const Value.absent(),
     this.aovInsured = const Value.absent(),
     this.monthlyAovPremium = const Value.absent(),
-    this.notes = const Value.absent(),
   });
   PensionEntriesCompanion.insert({
-    this.fiscalYear = const Value.absent(),
+    this.year = const Value.absent(),
+    this.priorYearIncome = const Value.absent(),
     this.factorA = const Value.absent(),
-    this.unusedPriorYearsSpace = const Value.absent(),
+    this.reserveringsruimte = const Value.absent(),
     this.plannedContribution = const Value.absent(),
     this.aovInsured = const Value.absent(),
     this.monthlyAovPremium = const Value.absent(),
-    this.notes = const Value.absent(),
   });
   static Insertable<PensionEntry> custom({
-    Expression<int>? fiscalYear,
-    Expression<double>? factorA,
-    Expression<int>? unusedPriorYearsSpace,
+    Expression<int>? year,
+    Expression<int>? priorYearIncome,
+    Expression<int>? factorA,
+    Expression<int>? reserveringsruimte,
     Expression<int>? plannedContribution,
     Expression<bool>? aovInsured,
     Expression<int>? monthlyAovPremium,
-    Expression<String>? notes,
   }) {
     return RawValuesInsertable({
-      if (fiscalYear != null) 'fiscal_year': fiscalYear,
+      if (year != null) 'year': year,
+      if (priorYearIncome != null) 'prior_year_income': priorYearIncome,
       if (factorA != null) 'factor_a': factorA,
-      if (unusedPriorYearsSpace != null)
-        'unused_prior_years_space': unusedPriorYearsSpace,
+      if (reserveringsruimte != null) 'reserveringsruimte': reserveringsruimte,
       if (plannedContribution != null)
         'planned_contribution': plannedContribution,
       if (aovInsured != null) 'aov_insured': aovInsured,
       if (monthlyAovPremium != null) 'monthly_aov_premium': monthlyAovPremium,
-      if (notes != null) 'notes': notes,
     });
   }
 
   PensionEntriesCompanion copyWith({
-    Value<int>? fiscalYear,
-    Value<double>? factorA,
-    Value<int>? unusedPriorYearsSpace,
+    Value<int>? year,
+    Value<int>? priorYearIncome,
+    Value<int>? factorA,
+    Value<int>? reserveringsruimte,
     Value<int>? plannedContribution,
     Value<bool>? aovInsured,
     Value<int>? monthlyAovPremium,
-    Value<String?>? notes,
   }) {
     return PensionEntriesCompanion(
-      fiscalYear: fiscalYear ?? this.fiscalYear,
+      year: year ?? this.year,
+      priorYearIncome: priorYearIncome ?? this.priorYearIncome,
       factorA: factorA ?? this.factorA,
-      unusedPriorYearsSpace:
-          unusedPriorYearsSpace ?? this.unusedPriorYearsSpace,
+      reserveringsruimte: reserveringsruimte ?? this.reserveringsruimte,
       plannedContribution: plannedContribution ?? this.plannedContribution,
       aovInsured: aovInsured ?? this.aovInsured,
       monthlyAovPremium: monthlyAovPremium ?? this.monthlyAovPremium,
-      notes: notes ?? this.notes,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (fiscalYear.present) {
-      map['fiscal_year'] = Variable<int>(fiscalYear.value);
+    if (year.present) {
+      map['year'] = Variable<int>(year.value);
+    }
+    if (priorYearIncome.present) {
+      map['prior_year_income'] = Variable<int>(priorYearIncome.value);
     }
     if (factorA.present) {
-      map['factor_a'] = Variable<double>(factorA.value);
+      map['factor_a'] = Variable<int>(factorA.value);
     }
-    if (unusedPriorYearsSpace.present) {
-      map['unused_prior_years_space'] = Variable<int>(
-        unusedPriorYearsSpace.value,
-      );
+    if (reserveringsruimte.present) {
+      map['reserveringsruimte'] = Variable<int>(reserveringsruimte.value);
     }
     if (plannedContribution.present) {
       map['planned_contribution'] = Variable<int>(plannedContribution.value);
@@ -8365,22 +7235,1006 @@ class PensionEntriesCompanion extends UpdateCompanion<PensionEntry> {
     if (monthlyAovPremium.present) {
       map['monthly_aov_premium'] = Variable<int>(monthlyAovPremium.value);
     }
-    if (notes.present) {
-      map['notes'] = Variable<String>(notes.value);
-    }
     return map;
   }
 
   @override
   String toString() {
     return (StringBuffer('PensionEntriesCompanion(')
-          ..write('fiscalYear: $fiscalYear, ')
+          ..write('year: $year, ')
+          ..write('priorYearIncome: $priorYearIncome, ')
           ..write('factorA: $factorA, ')
-          ..write('unusedPriorYearsSpace: $unusedPriorYearsSpace, ')
+          ..write('reserveringsruimte: $reserveringsruimte, ')
           ..write('plannedContribution: $plannedContribution, ')
           ..write('aovInsured: $aovInsured, ')
-          ..write('monthlyAovPremium: $monthlyAovPremium, ')
-          ..write('notes: $notes')
+          ..write('monthlyAovPremium: $monthlyAovPremium')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $VatReturnsTable extends VatReturns
+    with TableInfo<$VatReturnsTable, VatReturn> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $VatReturnsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _yearMeta = const VerificationMeta('year');
+  @override
+  late final GeneratedColumn<int> year = GeneratedColumn<int>(
+    'year',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _quarterMeta = const VerificationMeta(
+    'quarter',
+  );
+  @override
+  late final GeneratedColumn<int> quarter = GeneratedColumn<int>(
+    'quarter',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(quarter).isBetweenValues(1, 4),
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _filedMeta = const VerificationMeta('filed');
+  @override
+  late final GeneratedColumn<bool> filed = GeneratedColumn<bool>(
+    'filed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("filed" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _paidMeta = const VerificationMeta('paid');
+  @override
+  late final GeneratedColumn<bool> paid = GeneratedColumn<bool>(
+    'paid',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("paid" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [year, quarter, filed, paid];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'vat_returns';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<VatReturn> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('year')) {
+      context.handle(
+        _yearMeta,
+        year.isAcceptableOrUnknown(data['year']!, _yearMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_yearMeta);
+    }
+    if (data.containsKey('quarter')) {
+      context.handle(
+        _quarterMeta,
+        quarter.isAcceptableOrUnknown(data['quarter']!, _quarterMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_quarterMeta);
+    }
+    if (data.containsKey('filed')) {
+      context.handle(
+        _filedMeta,
+        filed.isAcceptableOrUnknown(data['filed']!, _filedMeta),
+      );
+    }
+    if (data.containsKey('paid')) {
+      context.handle(
+        _paidMeta,
+        paid.isAcceptableOrUnknown(data['paid']!, _paidMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {year, quarter};
+  @override
+  VatReturn map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return VatReturn(
+      year: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year'],
+      )!,
+      quarter: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quarter'],
+      )!,
+      filed: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}filed'],
+      )!,
+      paid: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}paid'],
+      )!,
+    );
+  }
+
+  @override
+  $VatReturnsTable createAlias(String alias) {
+    return $VatReturnsTable(attachedDatabase, alias);
+  }
+}
+
+class VatReturn extends DataClass implements Insertable<VatReturn> {
+  final int year;
+  final int quarter;
+  final bool filed;
+  final bool paid;
+  const VatReturn({
+    required this.year,
+    required this.quarter,
+    required this.filed,
+    required this.paid,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['year'] = Variable<int>(year);
+    map['quarter'] = Variable<int>(quarter);
+    map['filed'] = Variable<bool>(filed);
+    map['paid'] = Variable<bool>(paid);
+    return map;
+  }
+
+  VatReturnsCompanion toCompanion(bool nullToAbsent) {
+    return VatReturnsCompanion(
+      year: Value(year),
+      quarter: Value(quarter),
+      filed: Value(filed),
+      paid: Value(paid),
+    );
+  }
+
+  factory VatReturn.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return VatReturn(
+      year: serializer.fromJson<int>(json['year']),
+      quarter: serializer.fromJson<int>(json['quarter']),
+      filed: serializer.fromJson<bool>(json['filed']),
+      paid: serializer.fromJson<bool>(json['paid']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'year': serializer.toJson<int>(year),
+      'quarter': serializer.toJson<int>(quarter),
+      'filed': serializer.toJson<bool>(filed),
+      'paid': serializer.toJson<bool>(paid),
+    };
+  }
+
+  VatReturn copyWith({int? year, int? quarter, bool? filed, bool? paid}) =>
+      VatReturn(
+        year: year ?? this.year,
+        quarter: quarter ?? this.quarter,
+        filed: filed ?? this.filed,
+        paid: paid ?? this.paid,
+      );
+  VatReturn copyWithCompanion(VatReturnsCompanion data) {
+    return VatReturn(
+      year: data.year.present ? data.year.value : this.year,
+      quarter: data.quarter.present ? data.quarter.value : this.quarter,
+      filed: data.filed.present ? data.filed.value : this.filed,
+      paid: data.paid.present ? data.paid.value : this.paid,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VatReturn(')
+          ..write('year: $year, ')
+          ..write('quarter: $quarter, ')
+          ..write('filed: $filed, ')
+          ..write('paid: $paid')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(year, quarter, filed, paid);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is VatReturn &&
+          other.year == this.year &&
+          other.quarter == this.quarter &&
+          other.filed == this.filed &&
+          other.paid == this.paid);
+}
+
+class VatReturnsCompanion extends UpdateCompanion<VatReturn> {
+  final Value<int> year;
+  final Value<int> quarter;
+  final Value<bool> filed;
+  final Value<bool> paid;
+  final Value<int> rowid;
+  const VatReturnsCompanion({
+    this.year = const Value.absent(),
+    this.quarter = const Value.absent(),
+    this.filed = const Value.absent(),
+    this.paid = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  VatReturnsCompanion.insert({
+    required int year,
+    required int quarter,
+    this.filed = const Value.absent(),
+    this.paid = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : year = Value(year),
+       quarter = Value(quarter);
+  static Insertable<VatReturn> custom({
+    Expression<int>? year,
+    Expression<int>? quarter,
+    Expression<bool>? filed,
+    Expression<bool>? paid,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (year != null) 'year': year,
+      if (quarter != null) 'quarter': quarter,
+      if (filed != null) 'filed': filed,
+      if (paid != null) 'paid': paid,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  VatReturnsCompanion copyWith({
+    Value<int>? year,
+    Value<int>? quarter,
+    Value<bool>? filed,
+    Value<bool>? paid,
+    Value<int>? rowid,
+  }) {
+    return VatReturnsCompanion(
+      year: year ?? this.year,
+      quarter: quarter ?? this.quarter,
+      filed: filed ?? this.filed,
+      paid: paid ?? this.paid,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (year.present) {
+      map['year'] = Variable<int>(year.value);
+    }
+    if (quarter.present) {
+      map['quarter'] = Variable<int>(quarter.value);
+    }
+    if (filed.present) {
+      map['filed'] = Variable<bool>(filed.value);
+    }
+    if (paid.present) {
+      map['paid'] = Variable<bool>(paid.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VatReturnsCompanion(')
+          ..write('year: $year, ')
+          ..write('quarter: $quarter, ')
+          ..write('filed: $filed, ')
+          ..write('paid: $paid, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $TaxYearInputsTable extends TaxYearInputs
+    with TableInfo<$TaxYearInputsTable, TaxYearInput> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TaxYearInputsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _yearMeta = const VerificationMeta('year');
+  @override
+  late final GeneratedColumn<int> year = GeneratedColumn<int>(
+    'year',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _partnerHoursMeta = const VerificationMeta(
+    'partnerHours',
+  );
+  @override
+  late final GeneratedColumn<int> partnerHours = GeneratedColumn<int>(
+    'partner_hours',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _hasSoVerklaringMeta = const VerificationMeta(
+    'hasSoVerklaring',
+  );
+  @override
+  late final GeneratedColumn<bool> hasSoVerklaring = GeneratedColumn<bool>(
+    'has_so_verklaring',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("has_so_verklaring" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _soStarterMeta = const VerificationMeta(
+    'soStarter',
+  );
+  @override
+  late final GeneratedColumn<bool> soStarter = GeneratedColumn<bool>(
+    'so_starter',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("so_starter" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _businessCeasedMeta = const VerificationMeta(
+    'businessCeased',
+  );
+  @override
+  late final GeneratedColumn<bool> businessCeased = GeneratedColumn<bool>(
+    'business_ceased',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("business_ceased" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _stakingsaftrekUsedBeforeMeta =
+      const VerificationMeta('stakingsaftrekUsedBefore');
+  @override
+  late final GeneratedColumn<int> stakingsaftrekUsedBefore =
+      GeneratedColumn<int>(
+        'stakingsaftrek_used_before',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(0),
+      );
+  static const VerificationMeta _disabilityBenefitMeta = const VerificationMeta(
+    'disabilityBenefit',
+  );
+  @override
+  late final GeneratedColumn<bool> disabilityBenefit = GeneratedColumn<bool>(
+    'disability_benefit',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("disability_benefit" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _disabilityStartersUsedMeta =
+      const VerificationMeta('disabilityStartersUsed');
+  @override
+  late final GeneratedColumn<int> disabilityStartersUsed = GeneratedColumn<int>(
+    'disability_starters_used',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _unrealisedZelfstandigenaftrekMeta =
+      const VerificationMeta('unrealisedZelfstandigenaftrek');
+  @override
+  late final GeneratedColumn<int> unrealisedZelfstandigenaftrek =
+      GeneratedColumn<int>(
+        'unrealised_zelfstandigenaftrek',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(0),
+      );
+  static const VerificationMeta _lossCarryForwardMeta = const VerificationMeta(
+    'lossCarryForward',
+  );
+  @override
+  late final GeneratedColumn<int> lossCarryForward = GeneratedColumn<int>(
+    'loss_carry_forward',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    year,
+    partnerHours,
+    hasSoVerklaring,
+    soStarter,
+    businessCeased,
+    stakingsaftrekUsedBefore,
+    disabilityBenefit,
+    disabilityStartersUsed,
+    unrealisedZelfstandigenaftrek,
+    lossCarryForward,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'tax_year_inputs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TaxYearInput> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('year')) {
+      context.handle(
+        _yearMeta,
+        year.isAcceptableOrUnknown(data['year']!, _yearMeta),
+      );
+    }
+    if (data.containsKey('partner_hours')) {
+      context.handle(
+        _partnerHoursMeta,
+        partnerHours.isAcceptableOrUnknown(
+          data['partner_hours']!,
+          _partnerHoursMeta,
+        ),
+      );
+    }
+    if (data.containsKey('has_so_verklaring')) {
+      context.handle(
+        _hasSoVerklaringMeta,
+        hasSoVerklaring.isAcceptableOrUnknown(
+          data['has_so_verklaring']!,
+          _hasSoVerklaringMeta,
+        ),
+      );
+    }
+    if (data.containsKey('so_starter')) {
+      context.handle(
+        _soStarterMeta,
+        soStarter.isAcceptableOrUnknown(data['so_starter']!, _soStarterMeta),
+      );
+    }
+    if (data.containsKey('business_ceased')) {
+      context.handle(
+        _businessCeasedMeta,
+        businessCeased.isAcceptableOrUnknown(
+          data['business_ceased']!,
+          _businessCeasedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('stakingsaftrek_used_before')) {
+      context.handle(
+        _stakingsaftrekUsedBeforeMeta,
+        stakingsaftrekUsedBefore.isAcceptableOrUnknown(
+          data['stakingsaftrek_used_before']!,
+          _stakingsaftrekUsedBeforeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('disability_benefit')) {
+      context.handle(
+        _disabilityBenefitMeta,
+        disabilityBenefit.isAcceptableOrUnknown(
+          data['disability_benefit']!,
+          _disabilityBenefitMeta,
+        ),
+      );
+    }
+    if (data.containsKey('disability_starters_used')) {
+      context.handle(
+        _disabilityStartersUsedMeta,
+        disabilityStartersUsed.isAcceptableOrUnknown(
+          data['disability_starters_used']!,
+          _disabilityStartersUsedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('unrealised_zelfstandigenaftrek')) {
+      context.handle(
+        _unrealisedZelfstandigenaftrekMeta,
+        unrealisedZelfstandigenaftrek.isAcceptableOrUnknown(
+          data['unrealised_zelfstandigenaftrek']!,
+          _unrealisedZelfstandigenaftrekMeta,
+        ),
+      );
+    }
+    if (data.containsKey('loss_carry_forward')) {
+      context.handle(
+        _lossCarryForwardMeta,
+        lossCarryForward.isAcceptableOrUnknown(
+          data['loss_carry_forward']!,
+          _lossCarryForwardMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {year};
+  @override
+  TaxYearInput map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TaxYearInput(
+      year: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year'],
+      )!,
+      partnerHours: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}partner_hours'],
+      )!,
+      hasSoVerklaring: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}has_so_verklaring'],
+      )!,
+      soStarter: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}so_starter'],
+      )!,
+      businessCeased: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}business_ceased'],
+      )!,
+      stakingsaftrekUsedBefore: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}stakingsaftrek_used_before'],
+      )!,
+      disabilityBenefit: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}disability_benefit'],
+      )!,
+      disabilityStartersUsed: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}disability_starters_used'],
+      )!,
+      unrealisedZelfstandigenaftrek: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}unrealised_zelfstandigenaftrek'],
+      )!,
+      lossCarryForward: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}loss_carry_forward'],
+      )!,
+    );
+  }
+
+  @override
+  $TaxYearInputsTable createAlias(String alias) {
+    return $TaxYearInputsTable(attachedDatabase, alias);
+  }
+}
+
+class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
+  final int year;
+
+  /// Hours the fiscal partner worked in the business unpaid or for less than
+  /// € 5.000 (meewerkaftrek).
+  final int partnerHours;
+  final bool hasSoVerklaring;
+
+  /// Not an ondernemer in one of the five previous years and at most two
+  /// S&O-verklaringen in that period (art. 3.77 lid 2).
+  final bool soStarter;
+
+  /// The whole business stopped this year (stakingsaftrek).
+  final bool businessCeased;
+  final int stakingsaftrekUsedBefore;
+
+  /// A disability benefit this year (startersaftrek bij arbeidsongeschiktheid).
+  final bool disabilityBenefit;
+
+  /// Years in the previous five this startersaftrek was used: 0 to 3.
+  final int disabilityStartersUsed;
+
+  /// Niet-gerealiseerde zelfstandigenaftrek from earlier years.
+  final int unrealisedZelfstandigenaftrek;
+
+  /// Box 1 losses from earlier years still to offset.
+  final int lossCarryForward;
+  const TaxYearInput({
+    required this.year,
+    required this.partnerHours,
+    required this.hasSoVerklaring,
+    required this.soStarter,
+    required this.businessCeased,
+    required this.stakingsaftrekUsedBefore,
+    required this.disabilityBenefit,
+    required this.disabilityStartersUsed,
+    required this.unrealisedZelfstandigenaftrek,
+    required this.lossCarryForward,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['year'] = Variable<int>(year);
+    map['partner_hours'] = Variable<int>(partnerHours);
+    map['has_so_verklaring'] = Variable<bool>(hasSoVerklaring);
+    map['so_starter'] = Variable<bool>(soStarter);
+    map['business_ceased'] = Variable<bool>(businessCeased);
+    map['stakingsaftrek_used_before'] = Variable<int>(stakingsaftrekUsedBefore);
+    map['disability_benefit'] = Variable<bool>(disabilityBenefit);
+    map['disability_starters_used'] = Variable<int>(disabilityStartersUsed);
+    map['unrealised_zelfstandigenaftrek'] = Variable<int>(
+      unrealisedZelfstandigenaftrek,
+    );
+    map['loss_carry_forward'] = Variable<int>(lossCarryForward);
+    return map;
+  }
+
+  TaxYearInputsCompanion toCompanion(bool nullToAbsent) {
+    return TaxYearInputsCompanion(
+      year: Value(year),
+      partnerHours: Value(partnerHours),
+      hasSoVerklaring: Value(hasSoVerklaring),
+      soStarter: Value(soStarter),
+      businessCeased: Value(businessCeased),
+      stakingsaftrekUsedBefore: Value(stakingsaftrekUsedBefore),
+      disabilityBenefit: Value(disabilityBenefit),
+      disabilityStartersUsed: Value(disabilityStartersUsed),
+      unrealisedZelfstandigenaftrek: Value(unrealisedZelfstandigenaftrek),
+      lossCarryForward: Value(lossCarryForward),
+    );
+  }
+
+  factory TaxYearInput.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TaxYearInput(
+      year: serializer.fromJson<int>(json['year']),
+      partnerHours: serializer.fromJson<int>(json['partnerHours']),
+      hasSoVerklaring: serializer.fromJson<bool>(json['hasSoVerklaring']),
+      soStarter: serializer.fromJson<bool>(json['soStarter']),
+      businessCeased: serializer.fromJson<bool>(json['businessCeased']),
+      stakingsaftrekUsedBefore: serializer.fromJson<int>(
+        json['stakingsaftrekUsedBefore'],
+      ),
+      disabilityBenefit: serializer.fromJson<bool>(json['disabilityBenefit']),
+      disabilityStartersUsed: serializer.fromJson<int>(
+        json['disabilityStartersUsed'],
+      ),
+      unrealisedZelfstandigenaftrek: serializer.fromJson<int>(
+        json['unrealisedZelfstandigenaftrek'],
+      ),
+      lossCarryForward: serializer.fromJson<int>(json['lossCarryForward']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'year': serializer.toJson<int>(year),
+      'partnerHours': serializer.toJson<int>(partnerHours),
+      'hasSoVerklaring': serializer.toJson<bool>(hasSoVerklaring),
+      'soStarter': serializer.toJson<bool>(soStarter),
+      'businessCeased': serializer.toJson<bool>(businessCeased),
+      'stakingsaftrekUsedBefore': serializer.toJson<int>(
+        stakingsaftrekUsedBefore,
+      ),
+      'disabilityBenefit': serializer.toJson<bool>(disabilityBenefit),
+      'disabilityStartersUsed': serializer.toJson<int>(disabilityStartersUsed),
+      'unrealisedZelfstandigenaftrek': serializer.toJson<int>(
+        unrealisedZelfstandigenaftrek,
+      ),
+      'lossCarryForward': serializer.toJson<int>(lossCarryForward),
+    };
+  }
+
+  TaxYearInput copyWith({
+    int? year,
+    int? partnerHours,
+    bool? hasSoVerklaring,
+    bool? soStarter,
+    bool? businessCeased,
+    int? stakingsaftrekUsedBefore,
+    bool? disabilityBenefit,
+    int? disabilityStartersUsed,
+    int? unrealisedZelfstandigenaftrek,
+    int? lossCarryForward,
+  }) => TaxYearInput(
+    year: year ?? this.year,
+    partnerHours: partnerHours ?? this.partnerHours,
+    hasSoVerklaring: hasSoVerklaring ?? this.hasSoVerklaring,
+    soStarter: soStarter ?? this.soStarter,
+    businessCeased: businessCeased ?? this.businessCeased,
+    stakingsaftrekUsedBefore:
+        stakingsaftrekUsedBefore ?? this.stakingsaftrekUsedBefore,
+    disabilityBenefit: disabilityBenefit ?? this.disabilityBenefit,
+    disabilityStartersUsed:
+        disabilityStartersUsed ?? this.disabilityStartersUsed,
+    unrealisedZelfstandigenaftrek:
+        unrealisedZelfstandigenaftrek ?? this.unrealisedZelfstandigenaftrek,
+    lossCarryForward: lossCarryForward ?? this.lossCarryForward,
+  );
+  TaxYearInput copyWithCompanion(TaxYearInputsCompanion data) {
+    return TaxYearInput(
+      year: data.year.present ? data.year.value : this.year,
+      partnerHours: data.partnerHours.present
+          ? data.partnerHours.value
+          : this.partnerHours,
+      hasSoVerklaring: data.hasSoVerklaring.present
+          ? data.hasSoVerklaring.value
+          : this.hasSoVerklaring,
+      soStarter: data.soStarter.present ? data.soStarter.value : this.soStarter,
+      businessCeased: data.businessCeased.present
+          ? data.businessCeased.value
+          : this.businessCeased,
+      stakingsaftrekUsedBefore: data.stakingsaftrekUsedBefore.present
+          ? data.stakingsaftrekUsedBefore.value
+          : this.stakingsaftrekUsedBefore,
+      disabilityBenefit: data.disabilityBenefit.present
+          ? data.disabilityBenefit.value
+          : this.disabilityBenefit,
+      disabilityStartersUsed: data.disabilityStartersUsed.present
+          ? data.disabilityStartersUsed.value
+          : this.disabilityStartersUsed,
+      unrealisedZelfstandigenaftrek: data.unrealisedZelfstandigenaftrek.present
+          ? data.unrealisedZelfstandigenaftrek.value
+          : this.unrealisedZelfstandigenaftrek,
+      lossCarryForward: data.lossCarryForward.present
+          ? data.lossCarryForward.value
+          : this.lossCarryForward,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TaxYearInput(')
+          ..write('year: $year, ')
+          ..write('partnerHours: $partnerHours, ')
+          ..write('hasSoVerklaring: $hasSoVerklaring, ')
+          ..write('soStarter: $soStarter, ')
+          ..write('businessCeased: $businessCeased, ')
+          ..write('stakingsaftrekUsedBefore: $stakingsaftrekUsedBefore, ')
+          ..write('disabilityBenefit: $disabilityBenefit, ')
+          ..write('disabilityStartersUsed: $disabilityStartersUsed, ')
+          ..write(
+            'unrealisedZelfstandigenaftrek: $unrealisedZelfstandigenaftrek, ',
+          )
+          ..write('lossCarryForward: $lossCarryForward')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    year,
+    partnerHours,
+    hasSoVerklaring,
+    soStarter,
+    businessCeased,
+    stakingsaftrekUsedBefore,
+    disabilityBenefit,
+    disabilityStartersUsed,
+    unrealisedZelfstandigenaftrek,
+    lossCarryForward,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TaxYearInput &&
+          other.year == this.year &&
+          other.partnerHours == this.partnerHours &&
+          other.hasSoVerklaring == this.hasSoVerklaring &&
+          other.soStarter == this.soStarter &&
+          other.businessCeased == this.businessCeased &&
+          other.stakingsaftrekUsedBefore == this.stakingsaftrekUsedBefore &&
+          other.disabilityBenefit == this.disabilityBenefit &&
+          other.disabilityStartersUsed == this.disabilityStartersUsed &&
+          other.unrealisedZelfstandigenaftrek ==
+              this.unrealisedZelfstandigenaftrek &&
+          other.lossCarryForward == this.lossCarryForward);
+}
+
+class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
+  final Value<int> year;
+  final Value<int> partnerHours;
+  final Value<bool> hasSoVerklaring;
+  final Value<bool> soStarter;
+  final Value<bool> businessCeased;
+  final Value<int> stakingsaftrekUsedBefore;
+  final Value<bool> disabilityBenefit;
+  final Value<int> disabilityStartersUsed;
+  final Value<int> unrealisedZelfstandigenaftrek;
+  final Value<int> lossCarryForward;
+  const TaxYearInputsCompanion({
+    this.year = const Value.absent(),
+    this.partnerHours = const Value.absent(),
+    this.hasSoVerklaring = const Value.absent(),
+    this.soStarter = const Value.absent(),
+    this.businessCeased = const Value.absent(),
+    this.stakingsaftrekUsedBefore = const Value.absent(),
+    this.disabilityBenefit = const Value.absent(),
+    this.disabilityStartersUsed = const Value.absent(),
+    this.unrealisedZelfstandigenaftrek = const Value.absent(),
+    this.lossCarryForward = const Value.absent(),
+  });
+  TaxYearInputsCompanion.insert({
+    this.year = const Value.absent(),
+    this.partnerHours = const Value.absent(),
+    this.hasSoVerklaring = const Value.absent(),
+    this.soStarter = const Value.absent(),
+    this.businessCeased = const Value.absent(),
+    this.stakingsaftrekUsedBefore = const Value.absent(),
+    this.disabilityBenefit = const Value.absent(),
+    this.disabilityStartersUsed = const Value.absent(),
+    this.unrealisedZelfstandigenaftrek = const Value.absent(),
+    this.lossCarryForward = const Value.absent(),
+  });
+  static Insertable<TaxYearInput> custom({
+    Expression<int>? year,
+    Expression<int>? partnerHours,
+    Expression<bool>? hasSoVerklaring,
+    Expression<bool>? soStarter,
+    Expression<bool>? businessCeased,
+    Expression<int>? stakingsaftrekUsedBefore,
+    Expression<bool>? disabilityBenefit,
+    Expression<int>? disabilityStartersUsed,
+    Expression<int>? unrealisedZelfstandigenaftrek,
+    Expression<int>? lossCarryForward,
+  }) {
+    return RawValuesInsertable({
+      if (year != null) 'year': year,
+      if (partnerHours != null) 'partner_hours': partnerHours,
+      if (hasSoVerklaring != null) 'has_so_verklaring': hasSoVerklaring,
+      if (soStarter != null) 'so_starter': soStarter,
+      if (businessCeased != null) 'business_ceased': businessCeased,
+      if (stakingsaftrekUsedBefore != null)
+        'stakingsaftrek_used_before': stakingsaftrekUsedBefore,
+      if (disabilityBenefit != null) 'disability_benefit': disabilityBenefit,
+      if (disabilityStartersUsed != null)
+        'disability_starters_used': disabilityStartersUsed,
+      if (unrealisedZelfstandigenaftrek != null)
+        'unrealised_zelfstandigenaftrek': unrealisedZelfstandigenaftrek,
+      if (lossCarryForward != null) 'loss_carry_forward': lossCarryForward,
+    });
+  }
+
+  TaxYearInputsCompanion copyWith({
+    Value<int>? year,
+    Value<int>? partnerHours,
+    Value<bool>? hasSoVerklaring,
+    Value<bool>? soStarter,
+    Value<bool>? businessCeased,
+    Value<int>? stakingsaftrekUsedBefore,
+    Value<bool>? disabilityBenefit,
+    Value<int>? disabilityStartersUsed,
+    Value<int>? unrealisedZelfstandigenaftrek,
+    Value<int>? lossCarryForward,
+  }) {
+    return TaxYearInputsCompanion(
+      year: year ?? this.year,
+      partnerHours: partnerHours ?? this.partnerHours,
+      hasSoVerklaring: hasSoVerklaring ?? this.hasSoVerklaring,
+      soStarter: soStarter ?? this.soStarter,
+      businessCeased: businessCeased ?? this.businessCeased,
+      stakingsaftrekUsedBefore:
+          stakingsaftrekUsedBefore ?? this.stakingsaftrekUsedBefore,
+      disabilityBenefit: disabilityBenefit ?? this.disabilityBenefit,
+      disabilityStartersUsed:
+          disabilityStartersUsed ?? this.disabilityStartersUsed,
+      unrealisedZelfstandigenaftrek:
+          unrealisedZelfstandigenaftrek ?? this.unrealisedZelfstandigenaftrek,
+      lossCarryForward: lossCarryForward ?? this.lossCarryForward,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (year.present) {
+      map['year'] = Variable<int>(year.value);
+    }
+    if (partnerHours.present) {
+      map['partner_hours'] = Variable<int>(partnerHours.value);
+    }
+    if (hasSoVerklaring.present) {
+      map['has_so_verklaring'] = Variable<bool>(hasSoVerklaring.value);
+    }
+    if (soStarter.present) {
+      map['so_starter'] = Variable<bool>(soStarter.value);
+    }
+    if (businessCeased.present) {
+      map['business_ceased'] = Variable<bool>(businessCeased.value);
+    }
+    if (stakingsaftrekUsedBefore.present) {
+      map['stakingsaftrek_used_before'] = Variable<int>(
+        stakingsaftrekUsedBefore.value,
+      );
+    }
+    if (disabilityBenefit.present) {
+      map['disability_benefit'] = Variable<bool>(disabilityBenefit.value);
+    }
+    if (disabilityStartersUsed.present) {
+      map['disability_starters_used'] = Variable<int>(
+        disabilityStartersUsed.value,
+      );
+    }
+    if (unrealisedZelfstandigenaftrek.present) {
+      map['unrealised_zelfstandigenaftrek'] = Variable<int>(
+        unrealisedZelfstandigenaftrek.value,
+      );
+    }
+    if (lossCarryForward.present) {
+      map['loss_carry_forward'] = Variable<int>(lossCarryForward.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TaxYearInputsCompanion(')
+          ..write('year: $year, ')
+          ..write('partnerHours: $partnerHours, ')
+          ..write('hasSoVerklaring: $hasSoVerklaring, ')
+          ..write('soStarter: $soStarter, ')
+          ..write('businessCeased: $businessCeased, ')
+          ..write('stakingsaftrekUsedBefore: $stakingsaftrekUsedBefore, ')
+          ..write('disabilityBenefit: $disabilityBenefit, ')
+          ..write('disabilityStartersUsed: $disabilityStartersUsed, ')
+          ..write(
+            'unrealisedZelfstandigenaftrek: $unrealisedZelfstandigenaftrek, ',
+          )
+          ..write('lossCarryForward: $lossCarryForward')
           ..write(')'))
         .toString();
   }
@@ -8389,766 +8243,313 @@ class PensionEntriesCompanion extends UpdateCompanion<PensionEntry> {
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
-  late final $TaxParamsTable taxParams = $TaxParamsTable(this);
+  late final $BusinessProfilesTable businessProfiles = $BusinessProfilesTable(
+    this,
+  );
   late final $ClientsTable clients = $ClientsTable(this);
   late final $InvoicesTable invoices = $InvoicesTable(this);
   late final $InvoiceLinesTable invoiceLines = $InvoiceLinesTable(this);
+  late final $FixedAssetsTable fixedAssets = $FixedAssetsTable(this);
   late final $ExpensesTable expenses = $ExpensesTable(this);
   late final $HourEntriesTable hourEntries = $HourEntriesTable(this);
   late final $MileageTripsTable mileageTrips = $MileageTripsTable(this);
-  late final $FixedAssetsTable fixedAssets = $FixedAssetsTable(this);
   late final $PensionEntriesTable pensionEntries = $PensionEntriesTable(this);
+  late final $VatReturnsTable vatReturns = $VatReturnsTable(this);
+  late final $TaxYearInputsTable taxYearInputs = $TaxYearInputsTable(this);
+  late final Index invoicesInvoiceDate = Index(
+    'invoices_invoice_date',
+    'CREATE INDEX invoices_invoice_date ON invoices (invoice_date)',
+  );
+  late final Index expensesDate = Index(
+    'expenses_date',
+    'CREATE INDEX expenses_date ON expenses (date)',
+  );
+  late final Index hourEntriesDate = Index(
+    'hour_entries_date',
+    'CREATE INDEX hour_entries_date ON hour_entries (date)',
+  );
+  late final Index mileageTripsDate = Index(
+    'mileage_trips_date',
+    'CREATE INDEX mileage_trips_date ON mileage_trips (date)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
-    taxParams,
+    businessProfiles,
     clients,
     invoices,
     invoiceLines,
+    fixedAssets,
     expenses,
     hourEntries,
     mileageTrips,
-    fixedAssets,
     pensionEntries,
+    vatReturns,
+    taxYearInputs,
+    invoicesInvoiceDate,
+    expensesDate,
+    hourEntriesDate,
+    mileageTripsDate,
   ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'invoices',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('invoice_lines', kind: UpdateKind.delete)],
+    ),
+  ]);
 }
 
-typedef $$TaxParamsTableCreateCompanionBuilder =
-    TaxParamsCompanion Function({
-      Value<int> year,
-      required int zelfstandigenaftrek,
-      required int startersaftrek,
-      required double mkbWinstvrijstellingPct,
-      required double bracket1Rate,
-      required int bracket1Threshold,
-      required double bracket2Rate,
-      required int bracket2Threshold,
-      required double bracket3Rate,
-      required int algHeffingskortingMax,
-      required int arbeidskortingMax,
-      required double zvwRate,
-      required int zvwMax,
-      required int mixedCostsThreshold,
-      required double mixedCosts80Pct,
-      required double jaarruimtePct,
-      required int jaarruimteMax,
-      required int aowFranchise,
-      required int reserveringsruimteMax,
-      required double factorAMultiplier,
-      required int kiaLowerThreshold,
-      required int kiaUpperThreshold,
-      required int kiaFlatThreshold,
-      required double kiaRate,
-      required int kiaFlatAmount,
-      Value<double> kiaDecreaseRate,
-      Value<int> urencriteriumThreshold,
-      required double mileageRatePerKm,
-      required int korThreshold,
-      required int ossThreshold,
-      required double belastingrentePct,
+typedef $$BusinessProfilesTableCreateCompanionBuilder =
+    BusinessProfilesCompanion Function({
+      Value<int> id,
+      required String name,
+      required String vatNumber,
+      required String kvkNumber,
+      required String address,
+      required String iban,
+      Value<bool> isStarter,
     });
-typedef $$TaxParamsTableUpdateCompanionBuilder =
-    TaxParamsCompanion Function({
-      Value<int> year,
-      Value<int> zelfstandigenaftrek,
-      Value<int> startersaftrek,
-      Value<double> mkbWinstvrijstellingPct,
-      Value<double> bracket1Rate,
-      Value<int> bracket1Threshold,
-      Value<double> bracket2Rate,
-      Value<int> bracket2Threshold,
-      Value<double> bracket3Rate,
-      Value<int> algHeffingskortingMax,
-      Value<int> arbeidskortingMax,
-      Value<double> zvwRate,
-      Value<int> zvwMax,
-      Value<int> mixedCostsThreshold,
-      Value<double> mixedCosts80Pct,
-      Value<double> jaarruimtePct,
-      Value<int> jaarruimteMax,
-      Value<int> aowFranchise,
-      Value<int> reserveringsruimteMax,
-      Value<double> factorAMultiplier,
-      Value<int> kiaLowerThreshold,
-      Value<int> kiaUpperThreshold,
-      Value<int> kiaFlatThreshold,
-      Value<double> kiaRate,
-      Value<int> kiaFlatAmount,
-      Value<double> kiaDecreaseRate,
-      Value<int> urencriteriumThreshold,
-      Value<double> mileageRatePerKm,
-      Value<int> korThreshold,
-      Value<int> ossThreshold,
-      Value<double> belastingrentePct,
+typedef $$BusinessProfilesTableUpdateCompanionBuilder =
+    BusinessProfilesCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<String> vatNumber,
+      Value<String> kvkNumber,
+      Value<String> address,
+      Value<String> iban,
+      Value<bool> isStarter,
     });
 
-class $$TaxParamsTableFilterComposer
-    extends Composer<_$AppDatabase, $TaxParamsTable> {
-  $$TaxParamsTableFilterComposer({
+class $$BusinessProfilesTableFilterComposer
+    extends Composer<_$AppDatabase, $BusinessProfilesTable> {
+  $$BusinessProfilesTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get year => $composableBuilder(
-    column: $table.year,
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get zelfstandigenaftrek => $composableBuilder(
-    column: $table.zelfstandigenaftrek,
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get startersaftrek => $composableBuilder(
-    column: $table.startersaftrek,
+  ColumnFilters<String> get vatNumber => $composableBuilder(
+    column: $table.vatNumber,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<double> get mkbWinstvrijstellingPct => $composableBuilder(
-    column: $table.mkbWinstvrijstellingPct,
+  ColumnFilters<String> get kvkNumber => $composableBuilder(
+    column: $table.kvkNumber,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<double> get bracket1Rate => $composableBuilder(
-    column: $table.bracket1Rate,
+  ColumnFilters<String> get address => $composableBuilder(
+    column: $table.address,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get bracket1Threshold => $composableBuilder(
-    column: $table.bracket1Threshold,
+  ColumnFilters<String> get iban => $composableBuilder(
+    column: $table.iban,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<double> get bracket2Rate => $composableBuilder(
-    column: $table.bracket2Rate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get bracket2Threshold => $composableBuilder(
-    column: $table.bracket2Threshold,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<double> get bracket3Rate => $composableBuilder(
-    column: $table.bracket3Rate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get algHeffingskortingMax => $composableBuilder(
-    column: $table.algHeffingskortingMax,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get arbeidskortingMax => $composableBuilder(
-    column: $table.arbeidskortingMax,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<double> get zvwRate => $composableBuilder(
-    column: $table.zvwRate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get zvwMax => $composableBuilder(
-    column: $table.zvwMax,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get mixedCostsThreshold => $composableBuilder(
-    column: $table.mixedCostsThreshold,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<double> get mixedCosts80Pct => $composableBuilder(
-    column: $table.mixedCosts80Pct,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<double> get jaarruimtePct => $composableBuilder(
-    column: $table.jaarruimtePct,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get jaarruimteMax => $composableBuilder(
-    column: $table.jaarruimteMax,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get aowFranchise => $composableBuilder(
-    column: $table.aowFranchise,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get reserveringsruimteMax => $composableBuilder(
-    column: $table.reserveringsruimteMax,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<double> get factorAMultiplier => $composableBuilder(
-    column: $table.factorAMultiplier,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get kiaLowerThreshold => $composableBuilder(
-    column: $table.kiaLowerThreshold,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get kiaUpperThreshold => $composableBuilder(
-    column: $table.kiaUpperThreshold,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get kiaFlatThreshold => $composableBuilder(
-    column: $table.kiaFlatThreshold,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<double> get kiaRate => $composableBuilder(
-    column: $table.kiaRate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get kiaFlatAmount => $composableBuilder(
-    column: $table.kiaFlatAmount,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<double> get kiaDecreaseRate => $composableBuilder(
-    column: $table.kiaDecreaseRate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get urencriteriumThreshold => $composableBuilder(
-    column: $table.urencriteriumThreshold,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<double> get mileageRatePerKm => $composableBuilder(
-    column: $table.mileageRatePerKm,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get korThreshold => $composableBuilder(
-    column: $table.korThreshold,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get ossThreshold => $composableBuilder(
-    column: $table.ossThreshold,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<double> get belastingrentePct => $composableBuilder(
-    column: $table.belastingrentePct,
+  ColumnFilters<bool> get isStarter => $composableBuilder(
+    column: $table.isStarter,
     builder: (column) => ColumnFilters(column),
   );
 }
 
-class $$TaxParamsTableOrderingComposer
-    extends Composer<_$AppDatabase, $TaxParamsTable> {
-  $$TaxParamsTableOrderingComposer({
+class $$BusinessProfilesTableOrderingComposer
+    extends Composer<_$AppDatabase, $BusinessProfilesTable> {
+  $$BusinessProfilesTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get year => $composableBuilder(
-    column: $table.year,
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get zelfstandigenaftrek => $composableBuilder(
-    column: $table.zelfstandigenaftrek,
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get startersaftrek => $composableBuilder(
-    column: $table.startersaftrek,
+  ColumnOrderings<String> get vatNumber => $composableBuilder(
+    column: $table.vatNumber,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get mkbWinstvrijstellingPct => $composableBuilder(
-    column: $table.mkbWinstvrijstellingPct,
+  ColumnOrderings<String> get kvkNumber => $composableBuilder(
+    column: $table.kvkNumber,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get bracket1Rate => $composableBuilder(
-    column: $table.bracket1Rate,
+  ColumnOrderings<String> get address => $composableBuilder(
+    column: $table.address,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get bracket1Threshold => $composableBuilder(
-    column: $table.bracket1Threshold,
+  ColumnOrderings<String> get iban => $composableBuilder(
+    column: $table.iban,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get bracket2Rate => $composableBuilder(
-    column: $table.bracket2Rate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get bracket2Threshold => $composableBuilder(
-    column: $table.bracket2Threshold,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<double> get bracket3Rate => $composableBuilder(
-    column: $table.bracket3Rate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get algHeffingskortingMax => $composableBuilder(
-    column: $table.algHeffingskortingMax,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get arbeidskortingMax => $composableBuilder(
-    column: $table.arbeidskortingMax,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<double> get zvwRate => $composableBuilder(
-    column: $table.zvwRate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get zvwMax => $composableBuilder(
-    column: $table.zvwMax,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get mixedCostsThreshold => $composableBuilder(
-    column: $table.mixedCostsThreshold,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<double> get mixedCosts80Pct => $composableBuilder(
-    column: $table.mixedCosts80Pct,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<double> get jaarruimtePct => $composableBuilder(
-    column: $table.jaarruimtePct,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get jaarruimteMax => $composableBuilder(
-    column: $table.jaarruimteMax,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get aowFranchise => $composableBuilder(
-    column: $table.aowFranchise,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get reserveringsruimteMax => $composableBuilder(
-    column: $table.reserveringsruimteMax,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<double> get factorAMultiplier => $composableBuilder(
-    column: $table.factorAMultiplier,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get kiaLowerThreshold => $composableBuilder(
-    column: $table.kiaLowerThreshold,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get kiaUpperThreshold => $composableBuilder(
-    column: $table.kiaUpperThreshold,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get kiaFlatThreshold => $composableBuilder(
-    column: $table.kiaFlatThreshold,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<double> get kiaRate => $composableBuilder(
-    column: $table.kiaRate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get kiaFlatAmount => $composableBuilder(
-    column: $table.kiaFlatAmount,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<double> get kiaDecreaseRate => $composableBuilder(
-    column: $table.kiaDecreaseRate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get urencriteriumThreshold => $composableBuilder(
-    column: $table.urencriteriumThreshold,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<double> get mileageRatePerKm => $composableBuilder(
-    column: $table.mileageRatePerKm,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get korThreshold => $composableBuilder(
-    column: $table.korThreshold,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get ossThreshold => $composableBuilder(
-    column: $table.ossThreshold,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<double> get belastingrentePct => $composableBuilder(
-    column: $table.belastingrentePct,
+  ColumnOrderings<bool> get isStarter => $composableBuilder(
+    column: $table.isStarter,
     builder: (column) => ColumnOrderings(column),
   );
 }
 
-class $$TaxParamsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $TaxParamsTable> {
-  $$TaxParamsTableAnnotationComposer({
+class $$BusinessProfilesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BusinessProfilesTable> {
+  $$BusinessProfilesTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get year =>
-      $composableBuilder(column: $table.year, builder: (column) => column);
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<int> get zelfstandigenaftrek => $composableBuilder(
-    column: $table.zelfstandigenaftrek,
-    builder: (column) => column,
-  );
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
 
-  GeneratedColumn<int> get startersaftrek => $composableBuilder(
-    column: $table.startersaftrek,
-    builder: (column) => column,
-  );
+  GeneratedColumn<String> get vatNumber =>
+      $composableBuilder(column: $table.vatNumber, builder: (column) => column);
 
-  GeneratedColumn<double> get mkbWinstvrijstellingPct => $composableBuilder(
-    column: $table.mkbWinstvrijstellingPct,
-    builder: (column) => column,
-  );
+  GeneratedColumn<String> get kvkNumber =>
+      $composableBuilder(column: $table.kvkNumber, builder: (column) => column);
 
-  GeneratedColumn<double> get bracket1Rate => $composableBuilder(
-    column: $table.bracket1Rate,
-    builder: (column) => column,
-  );
+  GeneratedColumn<String> get address =>
+      $composableBuilder(column: $table.address, builder: (column) => column);
 
-  GeneratedColumn<int> get bracket1Threshold => $composableBuilder(
-    column: $table.bracket1Threshold,
-    builder: (column) => column,
-  );
+  GeneratedColumn<String> get iban =>
+      $composableBuilder(column: $table.iban, builder: (column) => column);
 
-  GeneratedColumn<double> get bracket2Rate => $composableBuilder(
-    column: $table.bracket2Rate,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get bracket2Threshold => $composableBuilder(
-    column: $table.bracket2Threshold,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<double> get bracket3Rate => $composableBuilder(
-    column: $table.bracket3Rate,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get algHeffingskortingMax => $composableBuilder(
-    column: $table.algHeffingskortingMax,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get arbeidskortingMax => $composableBuilder(
-    column: $table.arbeidskortingMax,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<double> get zvwRate =>
-      $composableBuilder(column: $table.zvwRate, builder: (column) => column);
-
-  GeneratedColumn<int> get zvwMax =>
-      $composableBuilder(column: $table.zvwMax, builder: (column) => column);
-
-  GeneratedColumn<int> get mixedCostsThreshold => $composableBuilder(
-    column: $table.mixedCostsThreshold,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<double> get mixedCosts80Pct => $composableBuilder(
-    column: $table.mixedCosts80Pct,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<double> get jaarruimtePct => $composableBuilder(
-    column: $table.jaarruimtePct,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get jaarruimteMax => $composableBuilder(
-    column: $table.jaarruimteMax,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get aowFranchise => $composableBuilder(
-    column: $table.aowFranchise,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get reserveringsruimteMax => $composableBuilder(
-    column: $table.reserveringsruimteMax,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<double> get factorAMultiplier => $composableBuilder(
-    column: $table.factorAMultiplier,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get kiaLowerThreshold => $composableBuilder(
-    column: $table.kiaLowerThreshold,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get kiaUpperThreshold => $composableBuilder(
-    column: $table.kiaUpperThreshold,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get kiaFlatThreshold => $composableBuilder(
-    column: $table.kiaFlatThreshold,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<double> get kiaRate =>
-      $composableBuilder(column: $table.kiaRate, builder: (column) => column);
-
-  GeneratedColumn<int> get kiaFlatAmount => $composableBuilder(
-    column: $table.kiaFlatAmount,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<double> get kiaDecreaseRate => $composableBuilder(
-    column: $table.kiaDecreaseRate,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get urencriteriumThreshold => $composableBuilder(
-    column: $table.urencriteriumThreshold,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<double> get mileageRatePerKm => $composableBuilder(
-    column: $table.mileageRatePerKm,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get korThreshold => $composableBuilder(
-    column: $table.korThreshold,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get ossThreshold => $composableBuilder(
-    column: $table.ossThreshold,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<double> get belastingrentePct => $composableBuilder(
-    column: $table.belastingrentePct,
-    builder: (column) => column,
-  );
+  GeneratedColumn<bool> get isStarter =>
+      $composableBuilder(column: $table.isStarter, builder: (column) => column);
 }
 
-class $$TaxParamsTableTableManager
+class $$BusinessProfilesTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $TaxParamsTable,
-          TaxParam,
-          $$TaxParamsTableFilterComposer,
-          $$TaxParamsTableOrderingComposer,
-          $$TaxParamsTableAnnotationComposer,
-          $$TaxParamsTableCreateCompanionBuilder,
-          $$TaxParamsTableUpdateCompanionBuilder,
-          (TaxParam, BaseReferences<_$AppDatabase, $TaxParamsTable, TaxParam>),
-          TaxParam,
+          $BusinessProfilesTable,
+          BusinessProfile,
+          $$BusinessProfilesTableFilterComposer,
+          $$BusinessProfilesTableOrderingComposer,
+          $$BusinessProfilesTableAnnotationComposer,
+          $$BusinessProfilesTableCreateCompanionBuilder,
+          $$BusinessProfilesTableUpdateCompanionBuilder,
+          (
+            BusinessProfile,
+            BaseReferences<
+              _$AppDatabase,
+              $BusinessProfilesTable,
+              BusinessProfile
+            >,
+          ),
+          BusinessProfile,
           PrefetchHooks Function()
         > {
-  $$TaxParamsTableTableManager(_$AppDatabase db, $TaxParamsTable table)
-    : super(
+  $$BusinessProfilesTableTableManager(
+    _$AppDatabase db,
+    $BusinessProfilesTable table,
+  ) : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$TaxParamsTableFilterComposer($db: db, $table: table),
+              $$BusinessProfilesTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$TaxParamsTableOrderingComposer($db: db, $table: table),
+              $$BusinessProfilesTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$TaxParamsTableAnnotationComposer($db: db, $table: table),
+              $$BusinessProfilesTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> year = const Value.absent(),
-                Value<int> zelfstandigenaftrek = const Value.absent(),
-                Value<int> startersaftrek = const Value.absent(),
-                Value<double> mkbWinstvrijstellingPct = const Value.absent(),
-                Value<double> bracket1Rate = const Value.absent(),
-                Value<int> bracket1Threshold = const Value.absent(),
-                Value<double> bracket2Rate = const Value.absent(),
-                Value<int> bracket2Threshold = const Value.absent(),
-                Value<double> bracket3Rate = const Value.absent(),
-                Value<int> algHeffingskortingMax = const Value.absent(),
-                Value<int> arbeidskortingMax = const Value.absent(),
-                Value<double> zvwRate = const Value.absent(),
-                Value<int> zvwMax = const Value.absent(),
-                Value<int> mixedCostsThreshold = const Value.absent(),
-                Value<double> mixedCosts80Pct = const Value.absent(),
-                Value<double> jaarruimtePct = const Value.absent(),
-                Value<int> jaarruimteMax = const Value.absent(),
-                Value<int> aowFranchise = const Value.absent(),
-                Value<int> reserveringsruimteMax = const Value.absent(),
-                Value<double> factorAMultiplier = const Value.absent(),
-                Value<int> kiaLowerThreshold = const Value.absent(),
-                Value<int> kiaUpperThreshold = const Value.absent(),
-                Value<int> kiaFlatThreshold = const Value.absent(),
-                Value<double> kiaRate = const Value.absent(),
-                Value<int> kiaFlatAmount = const Value.absent(),
-                Value<double> kiaDecreaseRate = const Value.absent(),
-                Value<int> urencriteriumThreshold = const Value.absent(),
-                Value<double> mileageRatePerKm = const Value.absent(),
-                Value<int> korThreshold = const Value.absent(),
-                Value<int> ossThreshold = const Value.absent(),
-                Value<double> belastingrentePct = const Value.absent(),
-              }) => TaxParamsCompanion(
-                year: year,
-                zelfstandigenaftrek: zelfstandigenaftrek,
-                startersaftrek: startersaftrek,
-                mkbWinstvrijstellingPct: mkbWinstvrijstellingPct,
-                bracket1Rate: bracket1Rate,
-                bracket1Threshold: bracket1Threshold,
-                bracket2Rate: bracket2Rate,
-                bracket2Threshold: bracket2Threshold,
-                bracket3Rate: bracket3Rate,
-                algHeffingskortingMax: algHeffingskortingMax,
-                arbeidskortingMax: arbeidskortingMax,
-                zvwRate: zvwRate,
-                zvwMax: zvwMax,
-                mixedCostsThreshold: mixedCostsThreshold,
-                mixedCosts80Pct: mixedCosts80Pct,
-                jaarruimtePct: jaarruimtePct,
-                jaarruimteMax: jaarruimteMax,
-                aowFranchise: aowFranchise,
-                reserveringsruimteMax: reserveringsruimteMax,
-                factorAMultiplier: factorAMultiplier,
-                kiaLowerThreshold: kiaLowerThreshold,
-                kiaUpperThreshold: kiaUpperThreshold,
-                kiaFlatThreshold: kiaFlatThreshold,
-                kiaRate: kiaRate,
-                kiaFlatAmount: kiaFlatAmount,
-                kiaDecreaseRate: kiaDecreaseRate,
-                urencriteriumThreshold: urencriteriumThreshold,
-                mileageRatePerKm: mileageRatePerKm,
-                korThreshold: korThreshold,
-                ossThreshold: ossThreshold,
-                belastingrentePct: belastingrentePct,
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> vatNumber = const Value.absent(),
+                Value<String> kvkNumber = const Value.absent(),
+                Value<String> address = const Value.absent(),
+                Value<String> iban = const Value.absent(),
+                Value<bool> isStarter = const Value.absent(),
+              }) => BusinessProfilesCompanion(
+                id: id,
+                name: name,
+                vatNumber: vatNumber,
+                kvkNumber: kvkNumber,
+                address: address,
+                iban: iban,
+                isStarter: isStarter,
               ),
           createCompanionCallback:
               ({
-                Value<int> year = const Value.absent(),
-                required int zelfstandigenaftrek,
-                required int startersaftrek,
-                required double mkbWinstvrijstellingPct,
-                required double bracket1Rate,
-                required int bracket1Threshold,
-                required double bracket2Rate,
-                required int bracket2Threshold,
-                required double bracket3Rate,
-                required int algHeffingskortingMax,
-                required int arbeidskortingMax,
-                required double zvwRate,
-                required int zvwMax,
-                required int mixedCostsThreshold,
-                required double mixedCosts80Pct,
-                required double jaarruimtePct,
-                required int jaarruimteMax,
-                required int aowFranchise,
-                required int reserveringsruimteMax,
-                required double factorAMultiplier,
-                required int kiaLowerThreshold,
-                required int kiaUpperThreshold,
-                required int kiaFlatThreshold,
-                required double kiaRate,
-                required int kiaFlatAmount,
-                Value<double> kiaDecreaseRate = const Value.absent(),
-                Value<int> urencriteriumThreshold = const Value.absent(),
-                required double mileageRatePerKm,
-                required int korThreshold,
-                required int ossThreshold,
-                required double belastingrentePct,
-              }) => TaxParamsCompanion.insert(
-                year: year,
-                zelfstandigenaftrek: zelfstandigenaftrek,
-                startersaftrek: startersaftrek,
-                mkbWinstvrijstellingPct: mkbWinstvrijstellingPct,
-                bracket1Rate: bracket1Rate,
-                bracket1Threshold: bracket1Threshold,
-                bracket2Rate: bracket2Rate,
-                bracket2Threshold: bracket2Threshold,
-                bracket3Rate: bracket3Rate,
-                algHeffingskortingMax: algHeffingskortingMax,
-                arbeidskortingMax: arbeidskortingMax,
-                zvwRate: zvwRate,
-                zvwMax: zvwMax,
-                mixedCostsThreshold: mixedCostsThreshold,
-                mixedCosts80Pct: mixedCosts80Pct,
-                jaarruimtePct: jaarruimtePct,
-                jaarruimteMax: jaarruimteMax,
-                aowFranchise: aowFranchise,
-                reserveringsruimteMax: reserveringsruimteMax,
-                factorAMultiplier: factorAMultiplier,
-                kiaLowerThreshold: kiaLowerThreshold,
-                kiaUpperThreshold: kiaUpperThreshold,
-                kiaFlatThreshold: kiaFlatThreshold,
-                kiaRate: kiaRate,
-                kiaFlatAmount: kiaFlatAmount,
-                kiaDecreaseRate: kiaDecreaseRate,
-                urencriteriumThreshold: urencriteriumThreshold,
-                mileageRatePerKm: mileageRatePerKm,
-                korThreshold: korThreshold,
-                ossThreshold: ossThreshold,
-                belastingrentePct: belastingrentePct,
+                Value<int> id = const Value.absent(),
+                required String name,
+                required String vatNumber,
+                required String kvkNumber,
+                required String address,
+                required String iban,
+                Value<bool> isStarter = const Value.absent(),
+              }) => BusinessProfilesCompanion.insert(
+                id: id,
+                name: name,
+                vatNumber: vatNumber,
+                kvkNumber: kvkNumber,
+                address: address,
+                iban: iban,
+                isStarter: isStarter,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$BusinessProfilesTable, BusinessProfile>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $BusinessProfilesTable,
+                    BusinessProfile
+                  >(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),
       );
 }
 
-typedef $$TaxParamsTableProcessedTableManager =
+typedef $$BusinessProfilesTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $TaxParamsTable,
-      TaxParam,
-      $$TaxParamsTableFilterComposer,
-      $$TaxParamsTableOrderingComposer,
-      $$TaxParamsTableAnnotationComposer,
-      $$TaxParamsTableCreateCompanionBuilder,
-      $$TaxParamsTableUpdateCompanionBuilder,
-      (TaxParam, BaseReferences<_$AppDatabase, $TaxParamsTable, TaxParam>),
-      TaxParam,
+      $BusinessProfilesTable,
+      BusinessProfile,
+      $$BusinessProfilesTableFilterComposer,
+      $$BusinessProfilesTableOrderingComposer,
+      $$BusinessProfilesTableAnnotationComposer,
+      $$BusinessProfilesTableCreateCompanionBuilder,
+      $$BusinessProfilesTableUpdateCompanionBuilder,
+      (
+        BusinessProfile,
+        BaseReferences<_$AppDatabase, $BusinessProfilesTable, BusinessProfile>,
+      ),
+      BusinessProfile,
       PrefetchHooks Function()
     >;
 typedef $$ClientsTableCreateCompanionBuilder =
@@ -9158,11 +8559,11 @@ typedef $$ClientsTableCreateCompanionBuilder =
       Value<String> country,
       Value<String?> vatNumber,
       Value<String?> kvkNumber,
-      Value<String> address,
+      required String address,
       Value<String?> contactPerson,
       Value<String?> email,
       Value<String?> phone,
-      Value<String> wetDbaRiskLevel,
+      required WetDbaRisk wetDbaRisk,
       Value<bool> contractSigned,
       Value<DateTime?> contractExpiry,
       Value<String?> notes,
@@ -9179,7 +8580,7 @@ typedef $$ClientsTableUpdateCompanionBuilder =
       Value<String?> contactPerson,
       Value<String?> email,
       Value<String?> phone,
-      Value<String> wetDbaRiskLevel,
+      Value<WetDbaRisk> wetDbaRisk,
       Value<bool> contractSigned,
       Value<DateTime?> contractExpiry,
       Value<String?> notes,
@@ -9194,7 +8595,7 @@ final class $$ClientsTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.invoices,
-    aliasName: $_aliasNameGenerator(db.clients.id, db.invoices.clientId),
+    aliasName: 'clients__id__invoices__client_id',
   );
 
   $$InvoicesTableProcessedTableManager get invoicesRefs {
@@ -9264,9 +8665,10 @@ class $$ClientsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get wetDbaRiskLevel => $composableBuilder(
-    column: $table.wetDbaRiskLevel,
-    builder: (column) => ColumnFilters(column),
+  ColumnWithTypeConverterFilters<WetDbaRisk, WetDbaRisk, String>
+  get wetDbaRisk => $composableBuilder(
+    column: $table.wetDbaRisk,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnFilters<bool> get contractSigned => $composableBuilder(
@@ -9369,8 +8771,8 @@ class $$ClientsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get wetDbaRiskLevel => $composableBuilder(
-    column: $table.wetDbaRiskLevel,
+  ColumnOrderings<String> get wetDbaRisk => $composableBuilder(
+    column: $table.wetDbaRisk,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -9433,10 +8835,11 @@ class $$ClientsTableAnnotationComposer
   GeneratedColumn<String> get phone =>
       $composableBuilder(column: $table.phone, builder: (column) => column);
 
-  GeneratedColumn<String> get wetDbaRiskLevel => $composableBuilder(
-    column: $table.wetDbaRiskLevel,
-    builder: (column) => column,
-  );
+  GeneratedColumnWithTypeConverter<WetDbaRisk, String> get wetDbaRisk =>
+      $composableBuilder(
+        column: $table.wetDbaRisk,
+        builder: (column) => column,
+      );
 
   GeneratedColumn<bool> get contractSigned => $composableBuilder(
     column: $table.contractSigned,
@@ -9517,7 +8920,7 @@ class $$ClientsTableTableManager
                 Value<String?> contactPerson = const Value.absent(),
                 Value<String?> email = const Value.absent(),
                 Value<String?> phone = const Value.absent(),
-                Value<String> wetDbaRiskLevel = const Value.absent(),
+                Value<WetDbaRisk> wetDbaRisk = const Value.absent(),
                 Value<bool> contractSigned = const Value.absent(),
                 Value<DateTime?> contractExpiry = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
@@ -9532,7 +8935,7 @@ class $$ClientsTableTableManager
                 contactPerson: contactPerson,
                 email: email,
                 phone: phone,
-                wetDbaRiskLevel: wetDbaRiskLevel,
+                wetDbaRisk: wetDbaRisk,
                 contractSigned: contractSigned,
                 contractExpiry: contractExpiry,
                 notes: notes,
@@ -9545,11 +8948,11 @@ class $$ClientsTableTableManager
                 Value<String> country = const Value.absent(),
                 Value<String?> vatNumber = const Value.absent(),
                 Value<String?> kvkNumber = const Value.absent(),
-                Value<String> address = const Value.absent(),
+                required String address,
                 Value<String?> contactPerson = const Value.absent(),
                 Value<String?> email = const Value.absent(),
                 Value<String?> phone = const Value.absent(),
-                Value<String> wetDbaRiskLevel = const Value.absent(),
+                required WetDbaRisk wetDbaRisk,
                 Value<bool> contractSigned = const Value.absent(),
                 Value<DateTime?> contractExpiry = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
@@ -9564,7 +8967,7 @@ class $$ClientsTableTableManager
                 contactPerson: contactPerson,
                 email: email,
                 phone: phone,
-                wetDbaRiskLevel: wetDbaRiskLevel,
+                wetDbaRisk: wetDbaRisk,
                 contractSigned: contractSigned,
                 contractExpiry: contractExpiry,
                 notes: notes,
@@ -9573,7 +8976,7 @@ class $$ClientsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$ClientsTable, Client>(table),
                   $$ClientsTableReferences(db, table, e),
                 ),
               )
@@ -9586,14 +8989,19 @@ class $$ClientsTableTableManager
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (invoicesRefs)
-                    await $_getPrefetchedData<Client, $ClientsTable, Invoice>(
+                    await $_getPrefetchedDataByColumns<
+                      Client,
+                      $ClientsTable,
+                      Invoice,
+                      $InvoicesTable
+                    >(
                       currentTable: table,
                       referencedTable: $$ClientsTableReferences
                           ._invoicesRefsTable(db),
                       managerFromTypedResult: (p0) =>
                           $$ClientsTableReferences(db, table, p0).invoicesRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.clientId == item.id),
+                      currentColumn: 'id',
+                      referencedColumn: 'client_id',
                       typedResults: items,
                     ),
                 ];
@@ -9622,65 +9030,72 @@ typedef $$InvoicesTableCreateCompanionBuilder =
     InvoicesCompanion Function({
       Value<int> id,
       required String invoiceNumber,
+      required InvoiceType invoiceType,
+      Value<int?> correctedInvoiceId,
       required DateTime invoiceDate,
       Value<DateTime?> supplyDate,
       required int clientId,
-      Value<String> invoiceType,
+      required VatTreatment vatTreatment,
       required String sellerName,
       required String sellerVatNumber,
       required String sellerKvkNumber,
       required String sellerAddress,
-      Value<String?> sellerIban,
-      Value<int> paymentTermDays,
-      required DateTime dueDate,
-      Value<String> status,
+      required String sellerIban,
+      required int paymentTermDays,
+      required InvoiceStatus status,
       Value<DateTime?> paidDate,
-      Value<DateTime?> refundDate,
       Value<String?> notes,
-      Value<bool> isReverseCharge,
-      Value<bool> isIcp,
-      Value<String?> reverseChargeNote,
-      Value<int> totalExclVat,
-      Value<int> totalVat,
-      Value<int> totalInclVat,
-      required int fiscalYear,
-      required String quarter,
+      required int totalExclVat,
+      required int totalVat,
+      required int totalInclVat,
     });
 typedef $$InvoicesTableUpdateCompanionBuilder =
     InvoicesCompanion Function({
       Value<int> id,
       Value<String> invoiceNumber,
+      Value<InvoiceType> invoiceType,
+      Value<int?> correctedInvoiceId,
       Value<DateTime> invoiceDate,
       Value<DateTime?> supplyDate,
       Value<int> clientId,
-      Value<String> invoiceType,
+      Value<VatTreatment> vatTreatment,
       Value<String> sellerName,
       Value<String> sellerVatNumber,
       Value<String> sellerKvkNumber,
       Value<String> sellerAddress,
-      Value<String?> sellerIban,
+      Value<String> sellerIban,
       Value<int> paymentTermDays,
-      Value<DateTime> dueDate,
-      Value<String> status,
+      Value<InvoiceStatus> status,
       Value<DateTime?> paidDate,
-      Value<DateTime?> refundDate,
       Value<String?> notes,
-      Value<bool> isReverseCharge,
-      Value<bool> isIcp,
-      Value<String?> reverseChargeNote,
       Value<int> totalExclVat,
       Value<int> totalVat,
       Value<int> totalInclVat,
-      Value<int> fiscalYear,
-      Value<String> quarter,
     });
 
 final class $$InvoicesTableReferences
     extends BaseReferences<_$AppDatabase, $InvoicesTable, Invoice> {
   $$InvoicesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $ClientsTable _clientIdTable(_$AppDatabase db) => db.clients
-      .createAlias($_aliasNameGenerator(db.invoices.clientId, db.clients.id));
+  static $InvoicesTable _correctedInvoiceIdTable(_$AppDatabase db) =>
+      db.invoices.createAlias('invoices__corrected_invoice_id__invoices__id');
+
+  $$InvoicesTableProcessedTableManager? get correctedInvoiceId {
+    final $_column = $_itemColumn<int>('corrected_invoice_id');
+    if ($_column == null) return null;
+    final manager = $$InvoicesTableTableManager(
+      $_db,
+      $_db.invoices,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_correctedInvoiceIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ClientsTable _clientIdTable(_$AppDatabase db) =>
+      db.clients.createAlias('invoices__client_id__clients__id');
 
   $$ClientsTableProcessedTableManager get clientId {
     final $_column = $_itemColumn<int>('client_id')!;
@@ -9699,7 +9114,7 @@ final class $$InvoicesTableReferences
   static MultiTypedResultKey<$InvoiceLinesTable, List<InvoiceLine>>
   _invoiceLinesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.invoiceLines,
-    aliasName: $_aliasNameGenerator(db.invoices.id, db.invoiceLines.invoiceId),
+    aliasName: 'invoices__id__invoice_lines__invoice_id',
   );
 
   $$InvoiceLinesTableProcessedTableManager get invoiceLinesRefs {
@@ -9734,6 +9149,12 @@ class $$InvoicesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnWithTypeConverterFilters<InvoiceType, InvoiceType, String>
+  get invoiceType => $composableBuilder(
+    column: $table.invoiceType,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
   ColumnFilters<DateTime> get invoiceDate => $composableBuilder(
     column: $table.invoiceDate,
     builder: (column) => ColumnFilters(column),
@@ -9744,9 +9165,10 @@ class $$InvoicesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get invoiceType => $composableBuilder(
-    column: $table.invoiceType,
-    builder: (column) => ColumnFilters(column),
+  ColumnWithTypeConverterFilters<VatTreatment, VatTreatment, String>
+  get vatTreatment => $composableBuilder(
+    column: $table.vatTreatment,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnFilters<String> get sellerName => $composableBuilder(
@@ -9779,14 +9201,10 @@ class $$InvoicesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<DateTime> get dueDate => $composableBuilder(
-    column: $table.dueDate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get status => $composableBuilder(
+  ColumnWithTypeConverterFilters<InvoiceStatus, InvoiceStatus, String>
+  get status => $composableBuilder(
     column: $table.status,
-    builder: (column) => ColumnFilters(column),
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnFilters<DateTime> get paidDate => $composableBuilder(
@@ -9794,28 +9212,8 @@ class $$InvoicesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<DateTime> get refundDate => $composableBuilder(
-    column: $table.refundDate,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<String> get notes => $composableBuilder(
     column: $table.notes,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get isReverseCharge => $composableBuilder(
-    column: $table.isReverseCharge,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get isIcp => $composableBuilder(
-    column: $table.isIcp,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get reverseChargeNote => $composableBuilder(
-    column: $table.reverseChargeNote,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -9834,15 +9232,28 @@ class $$InvoicesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get quarter => $composableBuilder(
-    column: $table.quarter,
-    builder: (column) => ColumnFilters(column),
-  );
+  $$InvoicesTableFilterComposer get correctedInvoiceId {
+    final $$InvoicesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.correctedInvoiceId,
+      referencedTable: $db.invoices,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$InvoicesTableFilterComposer(
+            $db: $db,
+            $table: $db.invoices,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   $$ClientsTableFilterComposer get clientId {
     final $$ClientsTableFilterComposer composer = $composerBuilder(
@@ -9912,6 +9323,11 @@ class $$InvoicesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get invoiceType => $composableBuilder(
+    column: $table.invoiceType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get invoiceDate => $composableBuilder(
     column: $table.invoiceDate,
     builder: (column) => ColumnOrderings(column),
@@ -9922,8 +9338,8 @@ class $$InvoicesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get invoiceType => $composableBuilder(
-    column: $table.invoiceType,
+  ColumnOrderings<String> get vatTreatment => $composableBuilder(
+    column: $table.vatTreatment,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -9957,11 +9373,6 @@ class $$InvoicesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<DateTime> get dueDate => $composableBuilder(
-    column: $table.dueDate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get status => $composableBuilder(
     column: $table.status,
     builder: (column) => ColumnOrderings(column),
@@ -9972,28 +9383,8 @@ class $$InvoicesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<DateTime> get refundDate => $composableBuilder(
-    column: $table.refundDate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get notes => $composableBuilder(
     column: $table.notes,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get isReverseCharge => $composableBuilder(
-    column: $table.isReverseCharge,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get isIcp => $composableBuilder(
-    column: $table.isIcp,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get reverseChargeNote => $composableBuilder(
-    column: $table.reverseChargeNote,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -10012,15 +9403,28 @@ class $$InvoicesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get quarter => $composableBuilder(
-    column: $table.quarter,
-    builder: (column) => ColumnOrderings(column),
-  );
+  $$InvoicesTableOrderingComposer get correctedInvoiceId {
+    final $$InvoicesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.correctedInvoiceId,
+      referencedTable: $db.invoices,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$InvoicesTableOrderingComposer(
+            $db: $db,
+            $table: $db.invoices,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   $$ClientsTableOrderingComposer get clientId {
     final $$ClientsTableOrderingComposer composer = $composerBuilder(
@@ -10063,6 +9467,12 @@ class $$InvoicesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumnWithTypeConverter<InvoiceType, String> get invoiceType =>
+      $composableBuilder(
+        column: $table.invoiceType,
+        builder: (column) => column,
+      );
+
   GeneratedColumn<DateTime> get invoiceDate => $composableBuilder(
     column: $table.invoiceDate,
     builder: (column) => column,
@@ -10073,10 +9483,11 @@ class $$InvoicesTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get invoiceType => $composableBuilder(
-    column: $table.invoiceType,
-    builder: (column) => column,
-  );
+  GeneratedColumnWithTypeConverter<VatTreatment, String> get vatTreatment =>
+      $composableBuilder(
+        column: $table.vatTreatment,
+        builder: (column) => column,
+      );
 
   GeneratedColumn<String> get sellerName => $composableBuilder(
     column: $table.sellerName,
@@ -10108,35 +9519,14 @@ class $$InvoicesTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<DateTime> get dueDate =>
-      $composableBuilder(column: $table.dueDate, builder: (column) => column);
-
-  GeneratedColumn<String> get status =>
+  GeneratedColumnWithTypeConverter<InvoiceStatus, String> get status =>
       $composableBuilder(column: $table.status, builder: (column) => column);
 
   GeneratedColumn<DateTime> get paidDate =>
       $composableBuilder(column: $table.paidDate, builder: (column) => column);
 
-  GeneratedColumn<DateTime> get refundDate => $composableBuilder(
-    column: $table.refundDate,
-    builder: (column) => column,
-  );
-
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
-
-  GeneratedColumn<bool> get isReverseCharge => $composableBuilder(
-    column: $table.isReverseCharge,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<bool> get isIcp =>
-      $composableBuilder(column: $table.isIcp, builder: (column) => column);
-
-  GeneratedColumn<String> get reverseChargeNote => $composableBuilder(
-    column: $table.reverseChargeNote,
-    builder: (column) => column,
-  );
 
   GeneratedColumn<int> get totalExclVat => $composableBuilder(
     column: $table.totalExclVat,
@@ -10151,13 +9541,28 @@ class $$InvoicesTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get quarter =>
-      $composableBuilder(column: $table.quarter, builder: (column) => column);
+  $$InvoicesTableAnnotationComposer get correctedInvoiceId {
+    final $$InvoicesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.correctedInvoiceId,
+      referencedTable: $db.invoices,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$InvoicesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.invoices,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   $$ClientsTableAnnotationComposer get clientId {
     final $$ClientsTableAnnotationComposer composer = $composerBuilder(
@@ -10221,7 +9626,11 @@ class $$InvoicesTableTableManager
           $$InvoicesTableUpdateCompanionBuilder,
           (Invoice, $$InvoicesTableReferences),
           Invoice,
-          PrefetchHooks Function({bool clientId, bool invoiceLinesRefs})
+          PrefetchHooks Function({
+            bool correctedInvoiceId,
+            bool clientId,
+            bool invoiceLinesRefs,
+          })
         > {
   $$InvoicesTableTableManager(_$AppDatabase db, $InvoicesTable table)
     : super(
@@ -10238,120 +9647,104 @@ class $$InvoicesTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> invoiceNumber = const Value.absent(),
+                Value<InvoiceType> invoiceType = const Value.absent(),
+                Value<int?> correctedInvoiceId = const Value.absent(),
                 Value<DateTime> invoiceDate = const Value.absent(),
                 Value<DateTime?> supplyDate = const Value.absent(),
                 Value<int> clientId = const Value.absent(),
-                Value<String> invoiceType = const Value.absent(),
+                Value<VatTreatment> vatTreatment = const Value.absent(),
                 Value<String> sellerName = const Value.absent(),
                 Value<String> sellerVatNumber = const Value.absent(),
                 Value<String> sellerKvkNumber = const Value.absent(),
                 Value<String> sellerAddress = const Value.absent(),
-                Value<String?> sellerIban = const Value.absent(),
+                Value<String> sellerIban = const Value.absent(),
                 Value<int> paymentTermDays = const Value.absent(),
-                Value<DateTime> dueDate = const Value.absent(),
-                Value<String> status = const Value.absent(),
+                Value<InvoiceStatus> status = const Value.absent(),
                 Value<DateTime?> paidDate = const Value.absent(),
-                Value<DateTime?> refundDate = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
-                Value<bool> isReverseCharge = const Value.absent(),
-                Value<bool> isIcp = const Value.absent(),
-                Value<String?> reverseChargeNote = const Value.absent(),
                 Value<int> totalExclVat = const Value.absent(),
                 Value<int> totalVat = const Value.absent(),
                 Value<int> totalInclVat = const Value.absent(),
-                Value<int> fiscalYear = const Value.absent(),
-                Value<String> quarter = const Value.absent(),
               }) => InvoicesCompanion(
                 id: id,
                 invoiceNumber: invoiceNumber,
+                invoiceType: invoiceType,
+                correctedInvoiceId: correctedInvoiceId,
                 invoiceDate: invoiceDate,
                 supplyDate: supplyDate,
                 clientId: clientId,
-                invoiceType: invoiceType,
+                vatTreatment: vatTreatment,
                 sellerName: sellerName,
                 sellerVatNumber: sellerVatNumber,
                 sellerKvkNumber: sellerKvkNumber,
                 sellerAddress: sellerAddress,
                 sellerIban: sellerIban,
                 paymentTermDays: paymentTermDays,
-                dueDate: dueDate,
                 status: status,
                 paidDate: paidDate,
-                refundDate: refundDate,
                 notes: notes,
-                isReverseCharge: isReverseCharge,
-                isIcp: isIcp,
-                reverseChargeNote: reverseChargeNote,
                 totalExclVat: totalExclVat,
                 totalVat: totalVat,
                 totalInclVat: totalInclVat,
-                fiscalYear: fiscalYear,
-                quarter: quarter,
               ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 required String invoiceNumber,
+                required InvoiceType invoiceType,
+                Value<int?> correctedInvoiceId = const Value.absent(),
                 required DateTime invoiceDate,
                 Value<DateTime?> supplyDate = const Value.absent(),
                 required int clientId,
-                Value<String> invoiceType = const Value.absent(),
+                required VatTreatment vatTreatment,
                 required String sellerName,
                 required String sellerVatNumber,
                 required String sellerKvkNumber,
                 required String sellerAddress,
-                Value<String?> sellerIban = const Value.absent(),
-                Value<int> paymentTermDays = const Value.absent(),
-                required DateTime dueDate,
-                Value<String> status = const Value.absent(),
+                required String sellerIban,
+                required int paymentTermDays,
+                required InvoiceStatus status,
                 Value<DateTime?> paidDate = const Value.absent(),
-                Value<DateTime?> refundDate = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
-                Value<bool> isReverseCharge = const Value.absent(),
-                Value<bool> isIcp = const Value.absent(),
-                Value<String?> reverseChargeNote = const Value.absent(),
-                Value<int> totalExclVat = const Value.absent(),
-                Value<int> totalVat = const Value.absent(),
-                Value<int> totalInclVat = const Value.absent(),
-                required int fiscalYear,
-                required String quarter,
+                required int totalExclVat,
+                required int totalVat,
+                required int totalInclVat,
               }) => InvoicesCompanion.insert(
                 id: id,
                 invoiceNumber: invoiceNumber,
+                invoiceType: invoiceType,
+                correctedInvoiceId: correctedInvoiceId,
                 invoiceDate: invoiceDate,
                 supplyDate: supplyDate,
                 clientId: clientId,
-                invoiceType: invoiceType,
+                vatTreatment: vatTreatment,
                 sellerName: sellerName,
                 sellerVatNumber: sellerVatNumber,
                 sellerKvkNumber: sellerKvkNumber,
                 sellerAddress: sellerAddress,
                 sellerIban: sellerIban,
                 paymentTermDays: paymentTermDays,
-                dueDate: dueDate,
                 status: status,
                 paidDate: paidDate,
-                refundDate: refundDate,
                 notes: notes,
-                isReverseCharge: isReverseCharge,
-                isIcp: isIcp,
-                reverseChargeNote: reverseChargeNote,
                 totalExclVat: totalExclVat,
                 totalVat: totalVat,
                 totalInclVat: totalInclVat,
-                fiscalYear: fiscalYear,
-                quarter: quarter,
               ),
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$InvoicesTable, Invoice>(table),
                   $$InvoicesTableReferences(db, table, e),
                 ),
               )
               .toList(),
           prefetchHooksCallback:
-              ({clientId = false, invoiceLinesRefs = false}) {
+              ({
+                correctedInvoiceId = false,
+                clientId = false,
+                invoiceLinesRefs = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
@@ -10373,6 +9766,19 @@ class $$InvoicesTableTableManager
                           dynamic
                         >
                       >(state) {
+                        if (correctedInvoiceId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.correctedInvoiceId,
+                                    referencedTable: $$InvoicesTableReferences
+                                        ._correctedInvoiceIdTable(db),
+                                    referencedColumn: $$InvoicesTableReferences
+                                        ._correctedInvoiceIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
                         if (clientId) {
                           state =
                               state.withJoin(
@@ -10392,10 +9798,11 @@ class $$InvoicesTableTableManager
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (invoiceLinesRefs)
-                        await $_getPrefetchedData<
+                        await $_getPrefetchedDataByColumns<
                           Invoice,
                           $InvoicesTable,
-                          InvoiceLine
+                          InvoiceLine,
+                          $InvoiceLinesTable
                         >(
                           currentTable: table,
                           referencedTable: $$InvoicesTableReferences
@@ -10406,10 +9813,8 @@ class $$InvoicesTableTableManager
                                 table,
                                 p0,
                               ).invoiceLinesRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.invoiceId == item.id,
-                              ),
+                          currentColumn: 'id',
+                          referencedColumn: 'invoice_id',
                           typedResults: items,
                         ),
                     ];
@@ -10432,30 +9837,34 @@ typedef $$InvoicesTableProcessedTableManager =
       $$InvoicesTableUpdateCompanionBuilder,
       (Invoice, $$InvoicesTableReferences),
       Invoice,
-      PrefetchHooks Function({bool clientId, bool invoiceLinesRefs})
+      PrefetchHooks Function({
+        bool correctedInvoiceId,
+        bool clientId,
+        bool invoiceLinesRefs,
+      })
     >;
 typedef $$InvoiceLinesTableCreateCompanionBuilder =
     InvoiceLinesCompanion Function({
       Value<int> id,
       required int invoiceId,
       required String description,
-      Value<String> quantityUnit,
-      Value<double> quantity,
+      required double quantity,
+      Value<String?> unit,
       required int unitPriceExclVat,
-      Value<String> vatRate,
-      Value<int> vatAmount,
-      Value<int> lineTotalExclVat,
-      Value<int> sortOrder,
+      required VatRate vatRate,
+      required int vatAmount,
+      required int lineTotalExclVat,
+      required int sortOrder,
     });
 typedef $$InvoiceLinesTableUpdateCompanionBuilder =
     InvoiceLinesCompanion Function({
       Value<int> id,
       Value<int> invoiceId,
       Value<String> description,
-      Value<String> quantityUnit,
       Value<double> quantity,
+      Value<String?> unit,
       Value<int> unitPriceExclVat,
-      Value<String> vatRate,
+      Value<VatRate> vatRate,
       Value<int> vatAmount,
       Value<int> lineTotalExclVat,
       Value<int> sortOrder,
@@ -10466,9 +9875,7 @@ final class $$InvoiceLinesTableReferences
   $$InvoiceLinesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $InvoicesTable _invoiceIdTable(_$AppDatabase db) =>
-      db.invoices.createAlias(
-        $_aliasNameGenerator(db.invoiceLines.invoiceId, db.invoices.id),
-      );
+      db.invoices.createAlias('invoice_lines__invoice_id__invoices__id');
 
   $$InvoicesTableProcessedTableManager get invoiceId {
     final $_column = $_itemColumn<int>('invoice_id')!;
@@ -10504,13 +9911,13 @@ class $$InvoiceLinesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get quantityUnit => $composableBuilder(
-    column: $table.quantityUnit,
+  ColumnFilters<double> get quantity => $composableBuilder(
+    column: $table.quantity,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<double> get quantity => $composableBuilder(
-    column: $table.quantity,
+  ColumnFilters<String> get unit => $composableBuilder(
+    column: $table.unit,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -10519,10 +9926,11 @@ class $$InvoiceLinesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get vatRate => $composableBuilder(
-    column: $table.vatRate,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnWithTypeConverterFilters<VatRate, VatRate, String> get vatRate =>
+      $composableBuilder(
+        column: $table.vatRate,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 
   ColumnFilters<int> get vatAmount => $composableBuilder(
     column: $table.vatAmount,
@@ -10582,13 +9990,13 @@ class $$InvoiceLinesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get quantityUnit => $composableBuilder(
-    column: $table.quantityUnit,
+  ColumnOrderings<double> get quantity => $composableBuilder(
+    column: $table.quantity,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get quantity => $composableBuilder(
-    column: $table.quantity,
+  ColumnOrderings<String> get unit => $composableBuilder(
+    column: $table.unit,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -10658,20 +10066,18 @@ class $$InvoiceLinesTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get quantityUnit => $composableBuilder(
-    column: $table.quantityUnit,
-    builder: (column) => column,
-  );
-
   GeneratedColumn<double> get quantity =>
       $composableBuilder(column: $table.quantity, builder: (column) => column);
+
+  GeneratedColumn<String> get unit =>
+      $composableBuilder(column: $table.unit, builder: (column) => column);
 
   GeneratedColumn<int> get unitPriceExclVat => $composableBuilder(
     column: $table.unitPriceExclVat,
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get vatRate =>
+  GeneratedColumnWithTypeConverter<VatRate, String> get vatRate =>
       $composableBuilder(column: $table.vatRate, builder: (column) => column);
 
   GeneratedColumn<int> get vatAmount =>
@@ -10740,10 +10146,10 @@ class $$InvoiceLinesTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<int> invoiceId = const Value.absent(),
                 Value<String> description = const Value.absent(),
-                Value<String> quantityUnit = const Value.absent(),
                 Value<double> quantity = const Value.absent(),
+                Value<String?> unit = const Value.absent(),
                 Value<int> unitPriceExclVat = const Value.absent(),
-                Value<String> vatRate = const Value.absent(),
+                Value<VatRate> vatRate = const Value.absent(),
                 Value<int> vatAmount = const Value.absent(),
                 Value<int> lineTotalExclVat = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
@@ -10751,8 +10157,8 @@ class $$InvoiceLinesTableTableManager
                 id: id,
                 invoiceId: invoiceId,
                 description: description,
-                quantityUnit: quantityUnit,
                 quantity: quantity,
+                unit: unit,
                 unitPriceExclVat: unitPriceExclVat,
                 vatRate: vatRate,
                 vatAmount: vatAmount,
@@ -10764,19 +10170,19 @@ class $$InvoiceLinesTableTableManager
                 Value<int> id = const Value.absent(),
                 required int invoiceId,
                 required String description,
-                Value<String> quantityUnit = const Value.absent(),
-                Value<double> quantity = const Value.absent(),
+                required double quantity,
+                Value<String?> unit = const Value.absent(),
                 required int unitPriceExclVat,
-                Value<String> vatRate = const Value.absent(),
-                Value<int> vatAmount = const Value.absent(),
-                Value<int> lineTotalExclVat = const Value.absent(),
-                Value<int> sortOrder = const Value.absent(),
+                required VatRate vatRate,
+                required int vatAmount,
+                required int lineTotalExclVat,
+                required int sortOrder,
               }) => InvoiceLinesCompanion.insert(
                 id: id,
                 invoiceId: invoiceId,
                 description: description,
-                quantityUnit: quantityUnit,
                 quantity: quantity,
+                unit: unit,
                 unitPriceExclVat: unitPriceExclVat,
                 vatRate: vatRate,
                 vatAmount: vatAmount,
@@ -10786,7 +10192,7 @@ class $$InvoiceLinesTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$InvoiceLinesTable, InvoiceLine>(table),
                   $$InvoiceLinesTableReferences(db, table, e),
                 ),
               )
@@ -10850,28 +10256,801 @@ typedef $$InvoiceLinesTableProcessedTableManager =
       InvoiceLine,
       PrefetchHooks Function({bool invoiceId})
     >;
+typedef $$FixedAssetsTableCreateCompanionBuilder =
+    FixedAssetsCompanion Function({
+      Value<int> id,
+      Value<AssetKind> kind,
+      required String assetName,
+      required int costExclVat,
+      required int residualValue,
+      required DateTime purchaseDate,
+      required double businessUsePct,
+      required int usefulLifeYears,
+      Value<bool> kiaEligible,
+      Value<bool> eiaEligible,
+      Value<MiaCategory?> miaCategory,
+      Value<int?> investmentDeductionReceived,
+      Value<int> reinvestmentReserveApplied,
+      Value<bool> reserveGain,
+      Value<int?> catalogueValue,
+      Value<DateTime?> firstRegistration,
+      Value<ZeroEmission> zeroEmission,
+      Value<int?> marketValue,
+      Value<bool> keepsTripLog,
+      Value<int> vatDeductedOnPurchase,
+      Value<String?> notes,
+      Value<DateTime?> disposalDate,
+      Value<int?> disposalProceeds,
+    });
+typedef $$FixedAssetsTableUpdateCompanionBuilder =
+    FixedAssetsCompanion Function({
+      Value<int> id,
+      Value<AssetKind> kind,
+      Value<String> assetName,
+      Value<int> costExclVat,
+      Value<int> residualValue,
+      Value<DateTime> purchaseDate,
+      Value<double> businessUsePct,
+      Value<int> usefulLifeYears,
+      Value<bool> kiaEligible,
+      Value<bool> eiaEligible,
+      Value<MiaCategory?> miaCategory,
+      Value<int?> investmentDeductionReceived,
+      Value<int> reinvestmentReserveApplied,
+      Value<bool> reserveGain,
+      Value<int?> catalogueValue,
+      Value<DateTime?> firstRegistration,
+      Value<ZeroEmission> zeroEmission,
+      Value<int?> marketValue,
+      Value<bool> keepsTripLog,
+      Value<int> vatDeductedOnPurchase,
+      Value<String?> notes,
+      Value<DateTime?> disposalDate,
+      Value<int?> disposalProceeds,
+    });
+
+final class $$FixedAssetsTableReferences
+    extends BaseReferences<_$AppDatabase, $FixedAssetsTable, FixedAsset> {
+  $$FixedAssetsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$ExpensesTable, List<Expense>> _expensesRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.expenses,
+    aliasName: 'fixed_assets__id__expenses__car_asset_id',
+  );
+
+  $$ExpensesTableProcessedTableManager get expensesRefs {
+    final manager = $$ExpensesTableTableManager(
+      $_db,
+      $_db.expenses,
+    ).filter((f) => f.carAssetId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_expensesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$MileageTripsTable, List<MileageTrip>>
+  _mileageTripsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.mileageTrips,
+    aliasName: 'fixed_assets__id__mileage_trips__car_asset_id',
+  );
+
+  $$MileageTripsTableProcessedTableManager get mileageTripsRefs {
+    final manager = $$MileageTripsTableTableManager(
+      $_db,
+      $_db.mileageTrips,
+    ).filter((f) => f.carAssetId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_mileageTripsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$FixedAssetsTableFilterComposer
+    extends Composer<_$AppDatabase, $FixedAssetsTable> {
+  $$FixedAssetsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<AssetKind, AssetKind, String> get kind =>
+      $composableBuilder(
+        column: $table.kind,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnFilters<String> get assetName => $composableBuilder(
+    column: $table.assetName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get costExclVat => $composableBuilder(
+    column: $table.costExclVat,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get residualValue => $composableBuilder(
+    column: $table.residualValue,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get purchaseDate => $composableBuilder(
+    column: $table.purchaseDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get businessUsePct => $composableBuilder(
+    column: $table.businessUsePct,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get usefulLifeYears => $composableBuilder(
+    column: $table.usefulLifeYears,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get kiaEligible => $composableBuilder(
+    column: $table.kiaEligible,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get eiaEligible => $composableBuilder(
+    column: $table.eiaEligible,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<MiaCategory?, MiaCategory, String>
+  get miaCategory => $composableBuilder(
+    column: $table.miaCategory,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<int> get investmentDeductionReceived => $composableBuilder(
+    column: $table.investmentDeductionReceived,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get reinvestmentReserveApplied => $composableBuilder(
+    column: $table.reinvestmentReserveApplied,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get reserveGain => $composableBuilder(
+    column: $table.reserveGain,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get catalogueValue => $composableBuilder(
+    column: $table.catalogueValue,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get firstRegistration => $composableBuilder(
+    column: $table.firstRegistration,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<ZeroEmission, ZeroEmission, String>
+  get zeroEmission => $composableBuilder(
+    column: $table.zeroEmission,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<int> get marketValue => $composableBuilder(
+    column: $table.marketValue,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get keepsTripLog => $composableBuilder(
+    column: $table.keepsTripLog,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get vatDeductedOnPurchase => $composableBuilder(
+    column: $table.vatDeductedOnPurchase,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get disposalDate => $composableBuilder(
+    column: $table.disposalDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get disposalProceeds => $composableBuilder(
+    column: $table.disposalProceeds,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> expensesRefs(
+    Expression<bool> Function($$ExpensesTableFilterComposer f) f,
+  ) {
+    final $$ExpensesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.expenses,
+      getReferencedColumn: (t) => t.carAssetId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExpensesTableFilterComposer(
+            $db: $db,
+            $table: $db.expenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> mileageTripsRefs(
+    Expression<bool> Function($$MileageTripsTableFilterComposer f) f,
+  ) {
+    final $$MileageTripsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mileageTrips,
+      getReferencedColumn: (t) => t.carAssetId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MileageTripsTableFilterComposer(
+            $db: $db,
+            $table: $db.mileageTrips,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$FixedAssetsTableOrderingComposer
+    extends Composer<_$AppDatabase, $FixedAssetsTable> {
+  $$FixedAssetsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get assetName => $composableBuilder(
+    column: $table.assetName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get costExclVat => $composableBuilder(
+    column: $table.costExclVat,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get residualValue => $composableBuilder(
+    column: $table.residualValue,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get purchaseDate => $composableBuilder(
+    column: $table.purchaseDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get businessUsePct => $composableBuilder(
+    column: $table.businessUsePct,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get usefulLifeYears => $composableBuilder(
+    column: $table.usefulLifeYears,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get kiaEligible => $composableBuilder(
+    column: $table.kiaEligible,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get eiaEligible => $composableBuilder(
+    column: $table.eiaEligible,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get miaCategory => $composableBuilder(
+    column: $table.miaCategory,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get investmentDeductionReceived => $composableBuilder(
+    column: $table.investmentDeductionReceived,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get reinvestmentReserveApplied => $composableBuilder(
+    column: $table.reinvestmentReserveApplied,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get reserveGain => $composableBuilder(
+    column: $table.reserveGain,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get catalogueValue => $composableBuilder(
+    column: $table.catalogueValue,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get firstRegistration => $composableBuilder(
+    column: $table.firstRegistration,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get zeroEmission => $composableBuilder(
+    column: $table.zeroEmission,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get marketValue => $composableBuilder(
+    column: $table.marketValue,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get keepsTripLog => $composableBuilder(
+    column: $table.keepsTripLog,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get vatDeductedOnPurchase => $composableBuilder(
+    column: $table.vatDeductedOnPurchase,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get disposalDate => $composableBuilder(
+    column: $table.disposalDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get disposalProceeds => $composableBuilder(
+    column: $table.disposalProceeds,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$FixedAssetsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FixedAssetsTable> {
+  $$FixedAssetsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<AssetKind, String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<String> get assetName =>
+      $composableBuilder(column: $table.assetName, builder: (column) => column);
+
+  GeneratedColumn<int> get costExclVat => $composableBuilder(
+    column: $table.costExclVat,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get residualValue => $composableBuilder(
+    column: $table.residualValue,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get purchaseDate => $composableBuilder(
+    column: $table.purchaseDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get businessUsePct => $composableBuilder(
+    column: $table.businessUsePct,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get usefulLifeYears => $composableBuilder(
+    column: $table.usefulLifeYears,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get kiaEligible => $composableBuilder(
+    column: $table.kiaEligible,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get eiaEligible => $composableBuilder(
+    column: $table.eiaEligible,
+    builder: (column) => column,
+  );
+
+  GeneratedColumnWithTypeConverter<MiaCategory?, String> get miaCategory =>
+      $composableBuilder(
+        column: $table.miaCategory,
+        builder: (column) => column,
+      );
+
+  GeneratedColumn<int> get investmentDeductionReceived => $composableBuilder(
+    column: $table.investmentDeductionReceived,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get reinvestmentReserveApplied => $composableBuilder(
+    column: $table.reinvestmentReserveApplied,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get reserveGain => $composableBuilder(
+    column: $table.reserveGain,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get catalogueValue => $composableBuilder(
+    column: $table.catalogueValue,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get firstRegistration => $composableBuilder(
+    column: $table.firstRegistration,
+    builder: (column) => column,
+  );
+
+  GeneratedColumnWithTypeConverter<ZeroEmission, String> get zeroEmission =>
+      $composableBuilder(
+        column: $table.zeroEmission,
+        builder: (column) => column,
+      );
+
+  GeneratedColumn<int> get marketValue => $composableBuilder(
+    column: $table.marketValue,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get keepsTripLog => $composableBuilder(
+    column: $table.keepsTripLog,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get vatDeductedOnPurchase => $composableBuilder(
+    column: $table.vatDeductedOnPurchase,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get disposalDate => $composableBuilder(
+    column: $table.disposalDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get disposalProceeds => $composableBuilder(
+    column: $table.disposalProceeds,
+    builder: (column) => column,
+  );
+
+  Expression<T> expensesRefs<T extends Object>(
+    Expression<T> Function($$ExpensesTableAnnotationComposer a) f,
+  ) {
+    final $$ExpensesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.expenses,
+      getReferencedColumn: (t) => t.carAssetId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExpensesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.expenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> mileageTripsRefs<T extends Object>(
+    Expression<T> Function($$MileageTripsTableAnnotationComposer a) f,
+  ) {
+    final $$MileageTripsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mileageTrips,
+      getReferencedColumn: (t) => t.carAssetId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MileageTripsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.mileageTrips,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$FixedAssetsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $FixedAssetsTable,
+          FixedAsset,
+          $$FixedAssetsTableFilterComposer,
+          $$FixedAssetsTableOrderingComposer,
+          $$FixedAssetsTableAnnotationComposer,
+          $$FixedAssetsTableCreateCompanionBuilder,
+          $$FixedAssetsTableUpdateCompanionBuilder,
+          (FixedAsset, $$FixedAssetsTableReferences),
+          FixedAsset,
+          PrefetchHooks Function({bool expensesRefs, bool mileageTripsRefs})
+        > {
+  $$FixedAssetsTableTableManager(_$AppDatabase db, $FixedAssetsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FixedAssetsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FixedAssetsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$FixedAssetsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<AssetKind> kind = const Value.absent(),
+                Value<String> assetName = const Value.absent(),
+                Value<int> costExclVat = const Value.absent(),
+                Value<int> residualValue = const Value.absent(),
+                Value<DateTime> purchaseDate = const Value.absent(),
+                Value<double> businessUsePct = const Value.absent(),
+                Value<int> usefulLifeYears = const Value.absent(),
+                Value<bool> kiaEligible = const Value.absent(),
+                Value<bool> eiaEligible = const Value.absent(),
+                Value<MiaCategory?> miaCategory = const Value.absent(),
+                Value<int?> investmentDeductionReceived = const Value.absent(),
+                Value<int> reinvestmentReserveApplied = const Value.absent(),
+                Value<bool> reserveGain = const Value.absent(),
+                Value<int?> catalogueValue = const Value.absent(),
+                Value<DateTime?> firstRegistration = const Value.absent(),
+                Value<ZeroEmission> zeroEmission = const Value.absent(),
+                Value<int?> marketValue = const Value.absent(),
+                Value<bool> keepsTripLog = const Value.absent(),
+                Value<int> vatDeductedOnPurchase = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<DateTime?> disposalDate = const Value.absent(),
+                Value<int?> disposalProceeds = const Value.absent(),
+              }) => FixedAssetsCompanion(
+                id: id,
+                kind: kind,
+                assetName: assetName,
+                costExclVat: costExclVat,
+                residualValue: residualValue,
+                purchaseDate: purchaseDate,
+                businessUsePct: businessUsePct,
+                usefulLifeYears: usefulLifeYears,
+                kiaEligible: kiaEligible,
+                eiaEligible: eiaEligible,
+                miaCategory: miaCategory,
+                investmentDeductionReceived: investmentDeductionReceived,
+                reinvestmentReserveApplied: reinvestmentReserveApplied,
+                reserveGain: reserveGain,
+                catalogueValue: catalogueValue,
+                firstRegistration: firstRegistration,
+                zeroEmission: zeroEmission,
+                marketValue: marketValue,
+                keepsTripLog: keepsTripLog,
+                vatDeductedOnPurchase: vatDeductedOnPurchase,
+                notes: notes,
+                disposalDate: disposalDate,
+                disposalProceeds: disposalProceeds,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<AssetKind> kind = const Value.absent(),
+                required String assetName,
+                required int costExclVat,
+                required int residualValue,
+                required DateTime purchaseDate,
+                required double businessUsePct,
+                required int usefulLifeYears,
+                Value<bool> kiaEligible = const Value.absent(),
+                Value<bool> eiaEligible = const Value.absent(),
+                Value<MiaCategory?> miaCategory = const Value.absent(),
+                Value<int?> investmentDeductionReceived = const Value.absent(),
+                Value<int> reinvestmentReserveApplied = const Value.absent(),
+                Value<bool> reserveGain = const Value.absent(),
+                Value<int?> catalogueValue = const Value.absent(),
+                Value<DateTime?> firstRegistration = const Value.absent(),
+                Value<ZeroEmission> zeroEmission = const Value.absent(),
+                Value<int?> marketValue = const Value.absent(),
+                Value<bool> keepsTripLog = const Value.absent(),
+                Value<int> vatDeductedOnPurchase = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<DateTime?> disposalDate = const Value.absent(),
+                Value<int?> disposalProceeds = const Value.absent(),
+              }) => FixedAssetsCompanion.insert(
+                id: id,
+                kind: kind,
+                assetName: assetName,
+                costExclVat: costExclVat,
+                residualValue: residualValue,
+                purchaseDate: purchaseDate,
+                businessUsePct: businessUsePct,
+                usefulLifeYears: usefulLifeYears,
+                kiaEligible: kiaEligible,
+                eiaEligible: eiaEligible,
+                miaCategory: miaCategory,
+                investmentDeductionReceived: investmentDeductionReceived,
+                reinvestmentReserveApplied: reinvestmentReserveApplied,
+                reserveGain: reserveGain,
+                catalogueValue: catalogueValue,
+                firstRegistration: firstRegistration,
+                zeroEmission: zeroEmission,
+                marketValue: marketValue,
+                keepsTripLog: keepsTripLog,
+                vatDeductedOnPurchase: vatDeductedOnPurchase,
+                notes: notes,
+                disposalDate: disposalDate,
+                disposalProceeds: disposalProceeds,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$FixedAssetsTable, FixedAsset>(table),
+                  $$FixedAssetsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({expensesRefs = false, mileageTripsRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (expensesRefs) db.expenses,
+                    if (mileageTripsRefs) db.mileageTrips,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (expensesRefs)
+                        await $_getPrefetchedDataByColumns<
+                          FixedAsset,
+                          $FixedAssetsTable,
+                          Expense,
+                          $ExpensesTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$FixedAssetsTableReferences
+                              ._expensesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$FixedAssetsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).expensesRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'car_asset_id',
+                          typedResults: items,
+                        ),
+                      if (mileageTripsRefs)
+                        await $_getPrefetchedDataByColumns<
+                          FixedAsset,
+                          $FixedAssetsTable,
+                          MileageTrip,
+                          $MileageTripsTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$FixedAssetsTableReferences
+                              ._mileageTripsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$FixedAssetsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).mileageTripsRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'car_asset_id',
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$FixedAssetsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $FixedAssetsTable,
+      FixedAsset,
+      $$FixedAssetsTableFilterComposer,
+      $$FixedAssetsTableOrderingComposer,
+      $$FixedAssetsTableAnnotationComposer,
+      $$FixedAssetsTableCreateCompanionBuilder,
+      $$FixedAssetsTableUpdateCompanionBuilder,
+      (FixedAsset, $$FixedAssetsTableReferences),
+      FixedAsset,
+      PrefetchHooks Function({bool expensesRefs, bool mileageTripsRefs})
+    >;
 typedef $$ExpensesTableCreateCompanionBuilder =
     ExpensesCompanion Function({
       Value<int> id,
       required DateTime date,
       required String supplier,
       required String description,
-      required String category,
+      required ExpenseCategory category,
       Value<bool> receiptAttached,
       required int amountExclVat,
-      Value<String> vatRate,
-      Value<int> vatAmount,
-      Value<int> totalInclVat,
-      Value<double> businessUsePct,
-      Value<int> deductibleAmount,
-      Value<bool> vatReclaimable,
-      Value<int> vatToReclaim,
-      Value<bool> isMixedCost,
+      required VatRate vatRate,
+      Value<PurchaseVat> purchaseVat,
+      required int vatAmount,
+      required int totalInclVat,
+      required double businessUsePct,
+      required int deductibleAmount,
+      required bool vatReclaimable,
+      required int vatToReclaim,
       Value<String?> notes,
       Value<String?> paidFrom,
       Value<String?> paymentReference,
-      required int fiscalYear,
-      required String quarter,
+      Value<int?> carAssetId,
     });
 typedef $$ExpensesTableUpdateCompanionBuilder =
     ExpensesCompanion Function({
@@ -10879,23 +11058,44 @@ typedef $$ExpensesTableUpdateCompanionBuilder =
       Value<DateTime> date,
       Value<String> supplier,
       Value<String> description,
-      Value<String> category,
+      Value<ExpenseCategory> category,
       Value<bool> receiptAttached,
       Value<int> amountExclVat,
-      Value<String> vatRate,
+      Value<VatRate> vatRate,
+      Value<PurchaseVat> purchaseVat,
       Value<int> vatAmount,
       Value<int> totalInclVat,
       Value<double> businessUsePct,
       Value<int> deductibleAmount,
       Value<bool> vatReclaimable,
       Value<int> vatToReclaim,
-      Value<bool> isMixedCost,
       Value<String?> notes,
       Value<String?> paidFrom,
       Value<String?> paymentReference,
-      Value<int> fiscalYear,
-      Value<String> quarter,
+      Value<int?> carAssetId,
     });
+
+final class $$ExpensesTableReferences
+    extends BaseReferences<_$AppDatabase, $ExpensesTable, Expense> {
+  $$ExpensesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $FixedAssetsTable _carAssetIdTable(_$AppDatabase db) =>
+      db.fixedAssets.createAlias('expenses__car_asset_id__fixed_assets__id');
+
+  $$FixedAssetsTableProcessedTableManager? get carAssetId {
+    final $_column = $_itemColumn<int>('car_asset_id');
+    if ($_column == null) return null;
+    final manager = $$FixedAssetsTableTableManager(
+      $_db,
+      $_db.fixedAssets,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_carAssetIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
 
 class $$ExpensesTableFilterComposer
     extends Composer<_$AppDatabase, $ExpensesTable> {
@@ -10926,9 +11126,10 @@ class $$ExpensesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get category => $composableBuilder(
+  ColumnWithTypeConverterFilters<ExpenseCategory, ExpenseCategory, String>
+  get category => $composableBuilder(
     column: $table.category,
-    builder: (column) => ColumnFilters(column),
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnFilters<bool> get receiptAttached => $composableBuilder(
@@ -10941,9 +11142,16 @@ class $$ExpensesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get vatRate => $composableBuilder(
-    column: $table.vatRate,
-    builder: (column) => ColumnFilters(column),
+  ColumnWithTypeConverterFilters<VatRate, VatRate, String> get vatRate =>
+      $composableBuilder(
+        column: $table.vatRate,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnWithTypeConverterFilters<PurchaseVat, PurchaseVat, String>
+  get purchaseVat => $composableBuilder(
+    column: $table.purchaseVat,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnFilters<int> get vatAmount => $composableBuilder(
@@ -10976,11 +11184,6 @@ class $$ExpensesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<bool> get isMixedCost => $composableBuilder(
-    column: $table.isMixedCost,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<String> get notes => $composableBuilder(
     column: $table.notes,
     builder: (column) => ColumnFilters(column),
@@ -10996,15 +11199,28 @@ class $$ExpensesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get quarter => $composableBuilder(
-    column: $table.quarter,
-    builder: (column) => ColumnFilters(column),
-  );
+  $$FixedAssetsTableFilterComposer get carAssetId {
+    final $$FixedAssetsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.carAssetId,
+      referencedTable: $db.fixedAssets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FixedAssetsTableFilterComposer(
+            $db: $db,
+            $table: $db.fixedAssets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$ExpensesTableOrderingComposer
@@ -11056,6 +11272,11 @@ class $$ExpensesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get purchaseVat => $composableBuilder(
+    column: $table.purchaseVat,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get vatAmount => $composableBuilder(
     column: $table.vatAmount,
     builder: (column) => ColumnOrderings(column),
@@ -11086,11 +11307,6 @@ class $$ExpensesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<bool> get isMixedCost => $composableBuilder(
-    column: $table.isMixedCost,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get notes => $composableBuilder(
     column: $table.notes,
     builder: (column) => ColumnOrderings(column),
@@ -11106,15 +11322,28 @@ class $$ExpensesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get quarter => $composableBuilder(
-    column: $table.quarter,
-    builder: (column) => ColumnOrderings(column),
-  );
+  $$FixedAssetsTableOrderingComposer get carAssetId {
+    final $$FixedAssetsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.carAssetId,
+      referencedTable: $db.fixedAssets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FixedAssetsTableOrderingComposer(
+            $db: $db,
+            $table: $db.fixedAssets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$ExpensesTableAnnotationComposer
@@ -11140,7 +11369,7 @@ class $$ExpensesTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get category =>
+  GeneratedColumnWithTypeConverter<ExpenseCategory, String> get category =>
       $composableBuilder(column: $table.category, builder: (column) => column);
 
   GeneratedColumn<bool> get receiptAttached => $composableBuilder(
@@ -11153,8 +11382,14 @@ class $$ExpensesTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get vatRate =>
+  GeneratedColumnWithTypeConverter<VatRate, String> get vatRate =>
       $composableBuilder(column: $table.vatRate, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<PurchaseVat, String> get purchaseVat =>
+      $composableBuilder(
+        column: $table.purchaseVat,
+        builder: (column) => column,
+      );
 
   GeneratedColumn<int> get vatAmount =>
       $composableBuilder(column: $table.vatAmount, builder: (column) => column);
@@ -11184,11 +11419,6 @@ class $$ExpensesTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<bool> get isMixedCost => $composableBuilder(
-    column: $table.isMixedCost,
-    builder: (column) => column,
-  );
-
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
 
@@ -11200,13 +11430,28 @@ class $$ExpensesTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get quarter =>
-      $composableBuilder(column: $table.quarter, builder: (column) => column);
+  $$FixedAssetsTableAnnotationComposer get carAssetId {
+    final $$FixedAssetsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.carAssetId,
+      referencedTable: $db.fixedAssets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FixedAssetsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.fixedAssets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$ExpensesTableTableManager
@@ -11220,9 +11465,9 @@ class $$ExpensesTableTableManager
           $$ExpensesTableAnnotationComposer,
           $$ExpensesTableCreateCompanionBuilder,
           $$ExpensesTableUpdateCompanionBuilder,
-          (Expense, BaseReferences<_$AppDatabase, $ExpensesTable, Expense>),
+          (Expense, $$ExpensesTableReferences),
           Expense,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool carAssetId})
         > {
   $$ExpensesTableTableManager(_$AppDatabase db, $ExpensesTable table)
     : super(
@@ -11241,22 +11486,21 @@ class $$ExpensesTableTableManager
                 Value<DateTime> date = const Value.absent(),
                 Value<String> supplier = const Value.absent(),
                 Value<String> description = const Value.absent(),
-                Value<String> category = const Value.absent(),
+                Value<ExpenseCategory> category = const Value.absent(),
                 Value<bool> receiptAttached = const Value.absent(),
                 Value<int> amountExclVat = const Value.absent(),
-                Value<String> vatRate = const Value.absent(),
+                Value<VatRate> vatRate = const Value.absent(),
+                Value<PurchaseVat> purchaseVat = const Value.absent(),
                 Value<int> vatAmount = const Value.absent(),
                 Value<int> totalInclVat = const Value.absent(),
                 Value<double> businessUsePct = const Value.absent(),
                 Value<int> deductibleAmount = const Value.absent(),
                 Value<bool> vatReclaimable = const Value.absent(),
                 Value<int> vatToReclaim = const Value.absent(),
-                Value<bool> isMixedCost = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<String?> paidFrom = const Value.absent(),
                 Value<String?> paymentReference = const Value.absent(),
-                Value<int> fiscalYear = const Value.absent(),
-                Value<String> quarter = const Value.absent(),
+                Value<int?> carAssetId = const Value.absent(),
               }) => ExpensesCompanion(
                 id: id,
                 date: date,
@@ -11266,18 +11510,17 @@ class $$ExpensesTableTableManager
                 receiptAttached: receiptAttached,
                 amountExclVat: amountExclVat,
                 vatRate: vatRate,
+                purchaseVat: purchaseVat,
                 vatAmount: vatAmount,
                 totalInclVat: totalInclVat,
                 businessUsePct: businessUsePct,
                 deductibleAmount: deductibleAmount,
                 vatReclaimable: vatReclaimable,
                 vatToReclaim: vatToReclaim,
-                isMixedCost: isMixedCost,
                 notes: notes,
                 paidFrom: paidFrom,
                 paymentReference: paymentReference,
-                fiscalYear: fiscalYear,
-                quarter: quarter,
+                carAssetId: carAssetId,
               ),
           createCompanionCallback:
               ({
@@ -11285,22 +11528,21 @@ class $$ExpensesTableTableManager
                 required DateTime date,
                 required String supplier,
                 required String description,
-                required String category,
+                required ExpenseCategory category,
                 Value<bool> receiptAttached = const Value.absent(),
                 required int amountExclVat,
-                Value<String> vatRate = const Value.absent(),
-                Value<int> vatAmount = const Value.absent(),
-                Value<int> totalInclVat = const Value.absent(),
-                Value<double> businessUsePct = const Value.absent(),
-                Value<int> deductibleAmount = const Value.absent(),
-                Value<bool> vatReclaimable = const Value.absent(),
-                Value<int> vatToReclaim = const Value.absent(),
-                Value<bool> isMixedCost = const Value.absent(),
+                required VatRate vatRate,
+                Value<PurchaseVat> purchaseVat = const Value.absent(),
+                required int vatAmount,
+                required int totalInclVat,
+                required double businessUsePct,
+                required int deductibleAmount,
+                required bool vatReclaimable,
+                required int vatToReclaim,
                 Value<String?> notes = const Value.absent(),
                 Value<String?> paidFrom = const Value.absent(),
                 Value<String?> paymentReference = const Value.absent(),
-                required int fiscalYear,
-                required String quarter,
+                Value<int?> carAssetId = const Value.absent(),
               }) => ExpensesCompanion.insert(
                 id: id,
                 date: date,
@@ -11310,23 +11552,67 @@ class $$ExpensesTableTableManager
                 receiptAttached: receiptAttached,
                 amountExclVat: amountExclVat,
                 vatRate: vatRate,
+                purchaseVat: purchaseVat,
                 vatAmount: vatAmount,
                 totalInclVat: totalInclVat,
                 businessUsePct: businessUsePct,
                 deductibleAmount: deductibleAmount,
                 vatReclaimable: vatReclaimable,
                 vatToReclaim: vatToReclaim,
-                isMixedCost: isMixedCost,
                 notes: notes,
                 paidFrom: paidFrom,
                 paymentReference: paymentReference,
-                fiscalYear: fiscalYear,
-                quarter: quarter,
+                carAssetId: carAssetId,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$ExpensesTable, Expense>(table),
+                  $$ExpensesTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({carAssetId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (carAssetId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.carAssetId,
+                                referencedTable: $$ExpensesTableReferences
+                                    ._carAssetIdTable(db),
+                                referencedColumn: $$ExpensesTableReferences
+                                    ._carAssetIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
         ),
       );
 }
@@ -11341,37 +11627,29 @@ typedef $$ExpensesTableProcessedTableManager =
       $$ExpensesTableAnnotationComposer,
       $$ExpensesTableCreateCompanionBuilder,
       $$ExpensesTableUpdateCompanionBuilder,
-      (Expense, BaseReferences<_$AppDatabase, $ExpensesTable, Expense>),
+      (Expense, $$ExpensesTableReferences),
       Expense,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool carAssetId})
     >;
 typedef $$HourEntriesTableCreateCompanionBuilder =
     HourEntriesCompanion Function({
       Value<int> id,
       required DateTime date,
       required String description,
-      required String workType,
+      required WorkType workType,
       required double hours,
-      Value<bool> billable,
       Value<String?> clientProject,
-      Value<bool> isWbso,
       Value<String?> notes,
-      required int fiscalYear,
-      required int weekNumber,
     });
 typedef $$HourEntriesTableUpdateCompanionBuilder =
     HourEntriesCompanion Function({
       Value<int> id,
       Value<DateTime> date,
       Value<String> description,
-      Value<String> workType,
+      Value<WorkType> workType,
       Value<double> hours,
-      Value<bool> billable,
       Value<String?> clientProject,
-      Value<bool> isWbso,
       Value<String?> notes,
-      Value<int> fiscalYear,
-      Value<int> weekNumber,
     });
 
 class $$HourEntriesTableFilterComposer
@@ -11398,18 +11676,14 @@ class $$HourEntriesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get workType => $composableBuilder(
-    column: $table.workType,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnWithTypeConverterFilters<WorkType, WorkType, String> get workType =>
+      $composableBuilder(
+        column: $table.workType,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 
   ColumnFilters<double> get hours => $composableBuilder(
     column: $table.hours,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get billable => $composableBuilder(
-    column: $table.billable,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -11418,23 +11692,8 @@ class $$HourEntriesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<bool> get isWbso => $composableBuilder(
-    column: $table.isWbso,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<String> get notes => $composableBuilder(
     column: $table.notes,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get weekNumber => $composableBuilder(
-    column: $table.weekNumber,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -11473,33 +11732,13 @@ class $$HourEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<bool> get billable => $composableBuilder(
-    column: $table.billable,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get clientProject => $composableBuilder(
     column: $table.clientProject,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<bool> get isWbso => $composableBuilder(
-    column: $table.isWbso,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get notes => $composableBuilder(
     column: $table.notes,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get weekNumber => $composableBuilder(
-    column: $table.weekNumber,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -11524,35 +11763,19 @@ class $$HourEntriesTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get workType =>
+  GeneratedColumnWithTypeConverter<WorkType, String> get workType =>
       $composableBuilder(column: $table.workType, builder: (column) => column);
 
   GeneratedColumn<double> get hours =>
       $composableBuilder(column: $table.hours, builder: (column) => column);
-
-  GeneratedColumn<bool> get billable =>
-      $composableBuilder(column: $table.billable, builder: (column) => column);
 
   GeneratedColumn<String> get clientProject => $composableBuilder(
     column: $table.clientProject,
     builder: (column) => column,
   );
 
-  GeneratedColumn<bool> get isWbso =>
-      $composableBuilder(column: $table.isWbso, builder: (column) => column);
-
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
-
-  GeneratedColumn<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get weekNumber => $composableBuilder(
-    column: $table.weekNumber,
-    builder: (column) => column,
-  );
 }
 
 class $$HourEntriesTableTableManager
@@ -11589,55 +11812,48 @@ class $$HourEntriesTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<DateTime> date = const Value.absent(),
                 Value<String> description = const Value.absent(),
-                Value<String> workType = const Value.absent(),
+                Value<WorkType> workType = const Value.absent(),
                 Value<double> hours = const Value.absent(),
-                Value<bool> billable = const Value.absent(),
                 Value<String?> clientProject = const Value.absent(),
-                Value<bool> isWbso = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
-                Value<int> fiscalYear = const Value.absent(),
-                Value<int> weekNumber = const Value.absent(),
               }) => HourEntriesCompanion(
                 id: id,
                 date: date,
                 description: description,
                 workType: workType,
                 hours: hours,
-                billable: billable,
                 clientProject: clientProject,
-                isWbso: isWbso,
                 notes: notes,
-                fiscalYear: fiscalYear,
-                weekNumber: weekNumber,
               ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 required DateTime date,
                 required String description,
-                required String workType,
+                required WorkType workType,
                 required double hours,
-                Value<bool> billable = const Value.absent(),
                 Value<String?> clientProject = const Value.absent(),
-                Value<bool> isWbso = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
-                required int fiscalYear,
-                required int weekNumber,
               }) => HourEntriesCompanion.insert(
                 id: id,
                 date: date,
                 description: description,
                 workType: workType,
                 hours: hours,
-                billable: billable,
                 clientProject: clientProject,
-                isWbso: isWbso,
                 notes: notes,
-                fiscalYear: fiscalYear,
-                weekNumber: weekNumber,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$HourEntriesTable, HourEntry>(table),
+                  BaseReferences<_$AppDatabase, $HourEntriesTable, HourEntry>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),
@@ -11662,36 +11878,56 @@ typedef $$MileageTripsTableCreateCompanionBuilder =
     MileageTripsCompanion Function({
       Value<int> id,
       required DateTime date,
+      Value<int?> carAssetId,
       required String vehicleMakeModel,
       required String vehicleLicensePlate,
       required String departureAddress,
       required String arrivalAddress,
       required int odometerStart,
       required int odometerEnd,
-      required int distanceKm,
-      Value<String> tripType,
+      required TripType tripType,
       required String purpose,
       Value<bool> routeDeviation,
       Value<String?> notes,
-      required int fiscalYear,
     });
 typedef $$MileageTripsTableUpdateCompanionBuilder =
     MileageTripsCompanion Function({
       Value<int> id,
       Value<DateTime> date,
+      Value<int?> carAssetId,
       Value<String> vehicleMakeModel,
       Value<String> vehicleLicensePlate,
       Value<String> departureAddress,
       Value<String> arrivalAddress,
       Value<int> odometerStart,
       Value<int> odometerEnd,
-      Value<int> distanceKm,
-      Value<String> tripType,
+      Value<TripType> tripType,
       Value<String> purpose,
       Value<bool> routeDeviation,
       Value<String?> notes,
-      Value<int> fiscalYear,
     });
+
+final class $$MileageTripsTableReferences
+    extends BaseReferences<_$AppDatabase, $MileageTripsTable, MileageTrip> {
+  $$MileageTripsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $FixedAssetsTable _carAssetIdTable(_$AppDatabase db) => db.fixedAssets
+      .createAlias('mileage_trips__car_asset_id__fixed_assets__id');
+
+  $$FixedAssetsTableProcessedTableManager? get carAssetId {
+    final $_column = $_itemColumn<int>('car_asset_id');
+    if ($_column == null) return null;
+    final manager = $$FixedAssetsTableTableManager(
+      $_db,
+      $_db.fixedAssets,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_carAssetIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
 
 class $$MileageTripsTableFilterComposer
     extends Composer<_$AppDatabase, $MileageTripsTable> {
@@ -11742,15 +11978,11 @@ class $$MileageTripsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get distanceKm => $composableBuilder(
-    column: $table.distanceKm,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get tripType => $composableBuilder(
-    column: $table.tripType,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnWithTypeConverterFilters<TripType, TripType, String> get tripType =>
+      $composableBuilder(
+        column: $table.tripType,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 
   ColumnFilters<String> get purpose => $composableBuilder(
     column: $table.purpose,
@@ -11767,10 +11999,28 @@ class $$MileageTripsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
-    builder: (column) => ColumnFilters(column),
-  );
+  $$FixedAssetsTableFilterComposer get carAssetId {
+    final $$FixedAssetsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.carAssetId,
+      referencedTable: $db.fixedAssets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FixedAssetsTableFilterComposer(
+            $db: $db,
+            $table: $db.fixedAssets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$MileageTripsTableOrderingComposer
@@ -11822,11 +12072,6 @@ class $$MileageTripsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get distanceKm => $composableBuilder(
-    column: $table.distanceKm,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get tripType => $composableBuilder(
     column: $table.tripType,
     builder: (column) => ColumnOrderings(column),
@@ -11847,10 +12092,28 @@ class $$MileageTripsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
-    builder: (column) => ColumnOrderings(column),
-  );
+  $$FixedAssetsTableOrderingComposer get carAssetId {
+    final $$FixedAssetsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.carAssetId,
+      referencedTable: $db.fixedAssets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FixedAssetsTableOrderingComposer(
+            $db: $db,
+            $table: $db.fixedAssets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$MileageTripsTableAnnotationComposer
@@ -11898,12 +12161,7 @@ class $$MileageTripsTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<int> get distanceKm => $composableBuilder(
-    column: $table.distanceKm,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get tripType =>
+  GeneratedColumnWithTypeConverter<TripType, String> get tripType =>
       $composableBuilder(column: $table.tripType, builder: (column) => column);
 
   GeneratedColumn<String> get purpose =>
@@ -11917,10 +12175,28 @@ class $$MileageTripsTableAnnotationComposer
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
 
-  GeneratedColumn<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
-    builder: (column) => column,
-  );
+  $$FixedAssetsTableAnnotationComposer get carAssetId {
+    final $$FixedAssetsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.carAssetId,
+      referencedTable: $db.fixedAssets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FixedAssetsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.fixedAssets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$MileageTripsTableTableManager
@@ -11934,12 +12210,9 @@ class $$MileageTripsTableTableManager
           $$MileageTripsTableAnnotationComposer,
           $$MileageTripsTableCreateCompanionBuilder,
           $$MileageTripsTableUpdateCompanionBuilder,
-          (
-            MileageTrip,
-            BaseReferences<_$AppDatabase, $MileageTripsTable, MileageTrip>,
-          ),
+          (MileageTrip, $$MileageTripsTableReferences),
           MileageTrip,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool carAssetId})
         > {
   $$MileageTripsTableTableManager(_$AppDatabase db, $MileageTripsTable table)
     : super(
@@ -11956,70 +12229,111 @@ class $$MileageTripsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<DateTime> date = const Value.absent(),
+                Value<int?> carAssetId = const Value.absent(),
                 Value<String> vehicleMakeModel = const Value.absent(),
                 Value<String> vehicleLicensePlate = const Value.absent(),
                 Value<String> departureAddress = const Value.absent(),
                 Value<String> arrivalAddress = const Value.absent(),
                 Value<int> odometerStart = const Value.absent(),
                 Value<int> odometerEnd = const Value.absent(),
-                Value<int> distanceKm = const Value.absent(),
-                Value<String> tripType = const Value.absent(),
+                Value<TripType> tripType = const Value.absent(),
                 Value<String> purpose = const Value.absent(),
                 Value<bool> routeDeviation = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
-                Value<int> fiscalYear = const Value.absent(),
               }) => MileageTripsCompanion(
                 id: id,
                 date: date,
+                carAssetId: carAssetId,
                 vehicleMakeModel: vehicleMakeModel,
                 vehicleLicensePlate: vehicleLicensePlate,
                 departureAddress: departureAddress,
                 arrivalAddress: arrivalAddress,
                 odometerStart: odometerStart,
                 odometerEnd: odometerEnd,
-                distanceKm: distanceKm,
                 tripType: tripType,
                 purpose: purpose,
                 routeDeviation: routeDeviation,
                 notes: notes,
-                fiscalYear: fiscalYear,
               ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 required DateTime date,
+                Value<int?> carAssetId = const Value.absent(),
                 required String vehicleMakeModel,
                 required String vehicleLicensePlate,
                 required String departureAddress,
                 required String arrivalAddress,
                 required int odometerStart,
                 required int odometerEnd,
-                required int distanceKm,
-                Value<String> tripType = const Value.absent(),
+                required TripType tripType,
                 required String purpose,
                 Value<bool> routeDeviation = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
-                required int fiscalYear,
               }) => MileageTripsCompanion.insert(
                 id: id,
                 date: date,
+                carAssetId: carAssetId,
                 vehicleMakeModel: vehicleMakeModel,
                 vehicleLicensePlate: vehicleLicensePlate,
                 departureAddress: departureAddress,
                 arrivalAddress: arrivalAddress,
                 odometerStart: odometerStart,
                 odometerEnd: odometerEnd,
-                distanceKm: distanceKm,
                 tripType: tripType,
                 purpose: purpose,
                 routeDeviation: routeDeviation,
                 notes: notes,
-                fiscalYear: fiscalYear,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$MileageTripsTable, MileageTrip>(table),
+                  $$MileageTripsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({carAssetId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (carAssetId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.carAssetId,
+                                referencedTable: $$MileageTripsTableReferences
+                                    ._carAssetIdTable(db),
+                                referencedColumn: $$MileageTripsTableReferences
+                                    ._carAssetIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
         ),
       );
 }
@@ -12034,375 +12348,29 @@ typedef $$MileageTripsTableProcessedTableManager =
       $$MileageTripsTableAnnotationComposer,
       $$MileageTripsTableCreateCompanionBuilder,
       $$MileageTripsTableUpdateCompanionBuilder,
-      (
-        MileageTrip,
-        BaseReferences<_$AppDatabase, $MileageTripsTable, MileageTrip>,
-      ),
+      (MileageTrip, $$MileageTripsTableReferences),
       MileageTrip,
-      PrefetchHooks Function()
-    >;
-typedef $$FixedAssetsTableCreateCompanionBuilder =
-    FixedAssetsCompanion Function({
-      Value<int> id,
-      required int fiscalYear,
-      required String assetName,
-      required int costExclVat,
-      required DateTime purchaseDate,
-      Value<double> businessUsePct,
-      required int usefulLifeYears,
-      Value<bool> kiaEligible,
-      Value<bool> eiaOrMia,
-      Value<String?> notes,
-      Value<DateTime?> disposalDate,
-      Value<int?> disposalProceeds,
-    });
-typedef $$FixedAssetsTableUpdateCompanionBuilder =
-    FixedAssetsCompanion Function({
-      Value<int> id,
-      Value<int> fiscalYear,
-      Value<String> assetName,
-      Value<int> costExclVat,
-      Value<DateTime> purchaseDate,
-      Value<double> businessUsePct,
-      Value<int> usefulLifeYears,
-      Value<bool> kiaEligible,
-      Value<bool> eiaOrMia,
-      Value<String?> notes,
-      Value<DateTime?> disposalDate,
-      Value<int?> disposalProceeds,
-    });
-
-class $$FixedAssetsTableFilterComposer
-    extends Composer<_$AppDatabase, $FixedAssetsTable> {
-  $$FixedAssetsTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get assetName => $composableBuilder(
-    column: $table.assetName,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get costExclVat => $composableBuilder(
-    column: $table.costExclVat,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get purchaseDate => $composableBuilder(
-    column: $table.purchaseDate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<double> get businessUsePct => $composableBuilder(
-    column: $table.businessUsePct,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get usefulLifeYears => $composableBuilder(
-    column: $table.usefulLifeYears,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get kiaEligible => $composableBuilder(
-    column: $table.kiaEligible,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get eiaOrMia => $composableBuilder(
-    column: $table.eiaOrMia,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get notes => $composableBuilder(
-    column: $table.notes,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get disposalDate => $composableBuilder(
-    column: $table.disposalDate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get disposalProceeds => $composableBuilder(
-    column: $table.disposalProceeds,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $$FixedAssetsTableOrderingComposer
-    extends Composer<_$AppDatabase, $FixedAssetsTable> {
-  $$FixedAssetsTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get assetName => $composableBuilder(
-    column: $table.assetName,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get costExclVat => $composableBuilder(
-    column: $table.costExclVat,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get purchaseDate => $composableBuilder(
-    column: $table.purchaseDate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<double> get businessUsePct => $composableBuilder(
-    column: $table.businessUsePct,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get usefulLifeYears => $composableBuilder(
-    column: $table.usefulLifeYears,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get kiaEligible => $composableBuilder(
-    column: $table.kiaEligible,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get eiaOrMia => $composableBuilder(
-    column: $table.eiaOrMia,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get notes => $composableBuilder(
-    column: $table.notes,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get disposalDate => $composableBuilder(
-    column: $table.disposalDate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get disposalProceeds => $composableBuilder(
-    column: $table.disposalProceeds,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$FixedAssetsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $FixedAssetsTable> {
-  $$FixedAssetsTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get assetName =>
-      $composableBuilder(column: $table.assetName, builder: (column) => column);
-
-  GeneratedColumn<int> get costExclVat => $composableBuilder(
-    column: $table.costExclVat,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<DateTime> get purchaseDate => $composableBuilder(
-    column: $table.purchaseDate,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<double> get businessUsePct => $composableBuilder(
-    column: $table.businessUsePct,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get usefulLifeYears => $composableBuilder(
-    column: $table.usefulLifeYears,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<bool> get kiaEligible => $composableBuilder(
-    column: $table.kiaEligible,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<bool> get eiaOrMia =>
-      $composableBuilder(column: $table.eiaOrMia, builder: (column) => column);
-
-  GeneratedColumn<String> get notes =>
-      $composableBuilder(column: $table.notes, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get disposalDate => $composableBuilder(
-    column: $table.disposalDate,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get disposalProceeds => $composableBuilder(
-    column: $table.disposalProceeds,
-    builder: (column) => column,
-  );
-}
-
-class $$FixedAssetsTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $FixedAssetsTable,
-          FixedAsset,
-          $$FixedAssetsTableFilterComposer,
-          $$FixedAssetsTableOrderingComposer,
-          $$FixedAssetsTableAnnotationComposer,
-          $$FixedAssetsTableCreateCompanionBuilder,
-          $$FixedAssetsTableUpdateCompanionBuilder,
-          (
-            FixedAsset,
-            BaseReferences<_$AppDatabase, $FixedAssetsTable, FixedAsset>,
-          ),
-          FixedAsset,
-          PrefetchHooks Function()
-        > {
-  $$FixedAssetsTableTableManager(_$AppDatabase db, $FixedAssetsTable table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$FixedAssetsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$FixedAssetsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$FixedAssetsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                Value<int> fiscalYear = const Value.absent(),
-                Value<String> assetName = const Value.absent(),
-                Value<int> costExclVat = const Value.absent(),
-                Value<DateTime> purchaseDate = const Value.absent(),
-                Value<double> businessUsePct = const Value.absent(),
-                Value<int> usefulLifeYears = const Value.absent(),
-                Value<bool> kiaEligible = const Value.absent(),
-                Value<bool> eiaOrMia = const Value.absent(),
-                Value<String?> notes = const Value.absent(),
-                Value<DateTime?> disposalDate = const Value.absent(),
-                Value<int?> disposalProceeds = const Value.absent(),
-              }) => FixedAssetsCompanion(
-                id: id,
-                fiscalYear: fiscalYear,
-                assetName: assetName,
-                costExclVat: costExclVat,
-                purchaseDate: purchaseDate,
-                businessUsePct: businessUsePct,
-                usefulLifeYears: usefulLifeYears,
-                kiaEligible: kiaEligible,
-                eiaOrMia: eiaOrMia,
-                notes: notes,
-                disposalDate: disposalDate,
-                disposalProceeds: disposalProceeds,
-              ),
-          createCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                required int fiscalYear,
-                required String assetName,
-                required int costExclVat,
-                required DateTime purchaseDate,
-                Value<double> businessUsePct = const Value.absent(),
-                required int usefulLifeYears,
-                Value<bool> kiaEligible = const Value.absent(),
-                Value<bool> eiaOrMia = const Value.absent(),
-                Value<String?> notes = const Value.absent(),
-                Value<DateTime?> disposalDate = const Value.absent(),
-                Value<int?> disposalProceeds = const Value.absent(),
-              }) => FixedAssetsCompanion.insert(
-                id: id,
-                fiscalYear: fiscalYear,
-                assetName: assetName,
-                costExclVat: costExclVat,
-                purchaseDate: purchaseDate,
-                businessUsePct: businessUsePct,
-                usefulLifeYears: usefulLifeYears,
-                kiaEligible: kiaEligible,
-                eiaOrMia: eiaOrMia,
-                notes: notes,
-                disposalDate: disposalDate,
-                disposalProceeds: disposalProceeds,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $$FixedAssetsTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $FixedAssetsTable,
-      FixedAsset,
-      $$FixedAssetsTableFilterComposer,
-      $$FixedAssetsTableOrderingComposer,
-      $$FixedAssetsTableAnnotationComposer,
-      $$FixedAssetsTableCreateCompanionBuilder,
-      $$FixedAssetsTableUpdateCompanionBuilder,
-      (
-        FixedAsset,
-        BaseReferences<_$AppDatabase, $FixedAssetsTable, FixedAsset>,
-      ),
-      FixedAsset,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool carAssetId})
     >;
 typedef $$PensionEntriesTableCreateCompanionBuilder =
     PensionEntriesCompanion Function({
-      Value<int> fiscalYear,
-      Value<double> factorA,
-      Value<int> unusedPriorYearsSpace,
+      Value<int> year,
+      Value<int> priorYearIncome,
+      Value<int> factorA,
+      Value<int> reserveringsruimte,
       Value<int> plannedContribution,
       Value<bool> aovInsured,
       Value<int> monthlyAovPremium,
-      Value<String?> notes,
     });
 typedef $$PensionEntriesTableUpdateCompanionBuilder =
     PensionEntriesCompanion Function({
-      Value<int> fiscalYear,
-      Value<double> factorA,
-      Value<int> unusedPriorYearsSpace,
+      Value<int> year,
+      Value<int> priorYearIncome,
+      Value<int> factorA,
+      Value<int> reserveringsruimte,
       Value<int> plannedContribution,
       Value<bool> aovInsured,
       Value<int> monthlyAovPremium,
-      Value<String?> notes,
     });
 
 class $$PensionEntriesTableFilterComposer
@@ -12414,18 +12382,23 @@ class $$PensionEntriesTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
+  ColumnFilters<int> get year => $composableBuilder(
+    column: $table.year,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<double> get factorA => $composableBuilder(
+  ColumnFilters<int> get priorYearIncome => $composableBuilder(
+    column: $table.priorYearIncome,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get factorA => $composableBuilder(
     column: $table.factorA,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get unusedPriorYearsSpace => $composableBuilder(
-    column: $table.unusedPriorYearsSpace,
+  ColumnFilters<int> get reserveringsruimte => $composableBuilder(
+    column: $table.reserveringsruimte,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -12443,11 +12416,6 @@ class $$PensionEntriesTableFilterComposer
     column: $table.monthlyAovPremium,
     builder: (column) => ColumnFilters(column),
   );
-
-  ColumnFilters<String> get notes => $composableBuilder(
-    column: $table.notes,
-    builder: (column) => ColumnFilters(column),
-  );
 }
 
 class $$PensionEntriesTableOrderingComposer
@@ -12459,18 +12427,23 @@ class $$PensionEntriesTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
+  ColumnOrderings<int> get year => $composableBuilder(
+    column: $table.year,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get factorA => $composableBuilder(
+  ColumnOrderings<int> get priorYearIncome => $composableBuilder(
+    column: $table.priorYearIncome,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get factorA => $composableBuilder(
     column: $table.factorA,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get unusedPriorYearsSpace => $composableBuilder(
-    column: $table.unusedPriorYearsSpace,
+  ColumnOrderings<int> get reserveringsruimte => $composableBuilder(
+    column: $table.reserveringsruimte,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -12488,11 +12461,6 @@ class $$PensionEntriesTableOrderingComposer
     column: $table.monthlyAovPremium,
     builder: (column) => ColumnOrderings(column),
   );
-
-  ColumnOrderings<String> get notes => $composableBuilder(
-    column: $table.notes,
-    builder: (column) => ColumnOrderings(column),
-  );
 }
 
 class $$PensionEntriesTableAnnotationComposer
@@ -12504,16 +12472,19 @@ class $$PensionEntriesTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get fiscalYear => $composableBuilder(
-    column: $table.fiscalYear,
+  GeneratedColumn<int> get year =>
+      $composableBuilder(column: $table.year, builder: (column) => column);
+
+  GeneratedColumn<int> get priorYearIncome => $composableBuilder(
+    column: $table.priorYearIncome,
     builder: (column) => column,
   );
 
-  GeneratedColumn<double> get factorA =>
+  GeneratedColumn<int> get factorA =>
       $composableBuilder(column: $table.factorA, builder: (column) => column);
 
-  GeneratedColumn<int> get unusedPriorYearsSpace => $composableBuilder(
-    column: $table.unusedPriorYearsSpace,
+  GeneratedColumn<int> get reserveringsruimte => $composableBuilder(
+    column: $table.reserveringsruimte,
     builder: (column) => column,
   );
 
@@ -12531,9 +12502,6 @@ class $$PensionEntriesTableAnnotationComposer
     column: $table.monthlyAovPremium,
     builder: (column) => column,
   );
-
-  GeneratedColumn<String> get notes =>
-      $composableBuilder(column: $table.notes, builder: (column) => column);
 }
 
 class $$PensionEntriesTableTableManager
@@ -12569,42 +12537,51 @@ class $$PensionEntriesTableTableManager
               $$PensionEntriesTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> fiscalYear = const Value.absent(),
-                Value<double> factorA = const Value.absent(),
-                Value<int> unusedPriorYearsSpace = const Value.absent(),
+                Value<int> year = const Value.absent(),
+                Value<int> priorYearIncome = const Value.absent(),
+                Value<int> factorA = const Value.absent(),
+                Value<int> reserveringsruimte = const Value.absent(),
                 Value<int> plannedContribution = const Value.absent(),
                 Value<bool> aovInsured = const Value.absent(),
                 Value<int> monthlyAovPremium = const Value.absent(),
-                Value<String?> notes = const Value.absent(),
               }) => PensionEntriesCompanion(
-                fiscalYear: fiscalYear,
+                year: year,
+                priorYearIncome: priorYearIncome,
                 factorA: factorA,
-                unusedPriorYearsSpace: unusedPriorYearsSpace,
+                reserveringsruimte: reserveringsruimte,
                 plannedContribution: plannedContribution,
                 aovInsured: aovInsured,
                 monthlyAovPremium: monthlyAovPremium,
-                notes: notes,
               ),
           createCompanionCallback:
               ({
-                Value<int> fiscalYear = const Value.absent(),
-                Value<double> factorA = const Value.absent(),
-                Value<int> unusedPriorYearsSpace = const Value.absent(),
+                Value<int> year = const Value.absent(),
+                Value<int> priorYearIncome = const Value.absent(),
+                Value<int> factorA = const Value.absent(),
+                Value<int> reserveringsruimte = const Value.absent(),
                 Value<int> plannedContribution = const Value.absent(),
                 Value<bool> aovInsured = const Value.absent(),
                 Value<int> monthlyAovPremium = const Value.absent(),
-                Value<String?> notes = const Value.absent(),
               }) => PensionEntriesCompanion.insert(
-                fiscalYear: fiscalYear,
+                year: year,
+                priorYearIncome: priorYearIncome,
                 factorA: factorA,
-                unusedPriorYearsSpace: unusedPriorYearsSpace,
+                reserveringsruimte: reserveringsruimte,
                 plannedContribution: plannedContribution,
                 aovInsured: aovInsured,
                 monthlyAovPremium: monthlyAovPremium,
-                notes: notes,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$PensionEntriesTable, PensionEntry>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $PensionEntriesTable,
+                    PensionEntry
+                  >(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),
@@ -12628,26 +12605,531 @@ typedef $$PensionEntriesTableProcessedTableManager =
       PensionEntry,
       PrefetchHooks Function()
     >;
+typedef $$VatReturnsTableCreateCompanionBuilder =
+    VatReturnsCompanion Function({
+      required int year,
+      required int quarter,
+      Value<bool> filed,
+      Value<bool> paid,
+      Value<int> rowid,
+    });
+typedef $$VatReturnsTableUpdateCompanionBuilder =
+    VatReturnsCompanion Function({
+      Value<int> year,
+      Value<int> quarter,
+      Value<bool> filed,
+      Value<bool> paid,
+      Value<int> rowid,
+    });
+
+class $$VatReturnsTableFilterComposer
+    extends Composer<_$AppDatabase, $VatReturnsTable> {
+  $$VatReturnsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get quarter => $composableBuilder(
+    column: $table.quarter,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get filed => $composableBuilder(
+    column: $table.filed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get paid => $composableBuilder(
+    column: $table.paid,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$VatReturnsTableOrderingComposer
+    extends Composer<_$AppDatabase, $VatReturnsTable> {
+  $$VatReturnsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get quarter => $composableBuilder(
+    column: $table.quarter,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get filed => $composableBuilder(
+    column: $table.filed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get paid => $composableBuilder(
+    column: $table.paid,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$VatReturnsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $VatReturnsTable> {
+  $$VatReturnsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get year =>
+      $composableBuilder(column: $table.year, builder: (column) => column);
+
+  GeneratedColumn<int> get quarter =>
+      $composableBuilder(column: $table.quarter, builder: (column) => column);
+
+  GeneratedColumn<bool> get filed =>
+      $composableBuilder(column: $table.filed, builder: (column) => column);
+
+  GeneratedColumn<bool> get paid =>
+      $composableBuilder(column: $table.paid, builder: (column) => column);
+}
+
+class $$VatReturnsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $VatReturnsTable,
+          VatReturn,
+          $$VatReturnsTableFilterComposer,
+          $$VatReturnsTableOrderingComposer,
+          $$VatReturnsTableAnnotationComposer,
+          $$VatReturnsTableCreateCompanionBuilder,
+          $$VatReturnsTableUpdateCompanionBuilder,
+          (
+            VatReturn,
+            BaseReferences<_$AppDatabase, $VatReturnsTable, VatReturn>,
+          ),
+          VatReturn,
+          PrefetchHooks Function()
+        > {
+  $$VatReturnsTableTableManager(_$AppDatabase db, $VatReturnsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$VatReturnsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$VatReturnsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$VatReturnsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> year = const Value.absent(),
+                Value<int> quarter = const Value.absent(),
+                Value<bool> filed = const Value.absent(),
+                Value<bool> paid = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => VatReturnsCompanion(
+                year: year,
+                quarter: quarter,
+                filed: filed,
+                paid: paid,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required int year,
+                required int quarter,
+                Value<bool> filed = const Value.absent(),
+                Value<bool> paid = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => VatReturnsCompanion.insert(
+                year: year,
+                quarter: quarter,
+                filed: filed,
+                paid: paid,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$VatReturnsTable, VatReturn>(table),
+                  BaseReferences<_$AppDatabase, $VatReturnsTable, VatReturn>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$VatReturnsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $VatReturnsTable,
+      VatReturn,
+      $$VatReturnsTableFilterComposer,
+      $$VatReturnsTableOrderingComposer,
+      $$VatReturnsTableAnnotationComposer,
+      $$VatReturnsTableCreateCompanionBuilder,
+      $$VatReturnsTableUpdateCompanionBuilder,
+      (VatReturn, BaseReferences<_$AppDatabase, $VatReturnsTable, VatReturn>),
+      VatReturn,
+      PrefetchHooks Function()
+    >;
+typedef $$TaxYearInputsTableCreateCompanionBuilder =
+    TaxYearInputsCompanion Function({
+      Value<int> year,
+      Value<int> partnerHours,
+      Value<bool> hasSoVerklaring,
+      Value<bool> soStarter,
+      Value<bool> businessCeased,
+      Value<int> stakingsaftrekUsedBefore,
+      Value<bool> disabilityBenefit,
+      Value<int> disabilityStartersUsed,
+      Value<int> unrealisedZelfstandigenaftrek,
+      Value<int> lossCarryForward,
+    });
+typedef $$TaxYearInputsTableUpdateCompanionBuilder =
+    TaxYearInputsCompanion Function({
+      Value<int> year,
+      Value<int> partnerHours,
+      Value<bool> hasSoVerklaring,
+      Value<bool> soStarter,
+      Value<bool> businessCeased,
+      Value<int> stakingsaftrekUsedBefore,
+      Value<bool> disabilityBenefit,
+      Value<int> disabilityStartersUsed,
+      Value<int> unrealisedZelfstandigenaftrek,
+      Value<int> lossCarryForward,
+    });
+
+class $$TaxYearInputsTableFilterComposer
+    extends Composer<_$AppDatabase, $TaxYearInputsTable> {
+  $$TaxYearInputsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get partnerHours => $composableBuilder(
+    column: $table.partnerHours,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get hasSoVerklaring => $composableBuilder(
+    column: $table.hasSoVerklaring,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get soStarter => $composableBuilder(
+    column: $table.soStarter,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get businessCeased => $composableBuilder(
+    column: $table.businessCeased,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get stakingsaftrekUsedBefore => $composableBuilder(
+    column: $table.stakingsaftrekUsedBefore,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get disabilityBenefit => $composableBuilder(
+    column: $table.disabilityBenefit,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get disabilityStartersUsed => $composableBuilder(
+    column: $table.disabilityStartersUsed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get unrealisedZelfstandigenaftrek => $composableBuilder(
+    column: $table.unrealisedZelfstandigenaftrek,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lossCarryForward => $composableBuilder(
+    column: $table.lossCarryForward,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$TaxYearInputsTableOrderingComposer
+    extends Composer<_$AppDatabase, $TaxYearInputsTable> {
+  $$TaxYearInputsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get partnerHours => $composableBuilder(
+    column: $table.partnerHours,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get hasSoVerklaring => $composableBuilder(
+    column: $table.hasSoVerklaring,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get soStarter => $composableBuilder(
+    column: $table.soStarter,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get businessCeased => $composableBuilder(
+    column: $table.businessCeased,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get stakingsaftrekUsedBefore => $composableBuilder(
+    column: $table.stakingsaftrekUsedBefore,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get disabilityBenefit => $composableBuilder(
+    column: $table.disabilityBenefit,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get disabilityStartersUsed => $composableBuilder(
+    column: $table.disabilityStartersUsed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get unrealisedZelfstandigenaftrek => $composableBuilder(
+    column: $table.unrealisedZelfstandigenaftrek,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lossCarryForward => $composableBuilder(
+    column: $table.lossCarryForward,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$TaxYearInputsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TaxYearInputsTable> {
+  $$TaxYearInputsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get year =>
+      $composableBuilder(column: $table.year, builder: (column) => column);
+
+  GeneratedColumn<int> get partnerHours => $composableBuilder(
+    column: $table.partnerHours,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get hasSoVerklaring => $composableBuilder(
+    column: $table.hasSoVerklaring,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get soStarter =>
+      $composableBuilder(column: $table.soStarter, builder: (column) => column);
+
+  GeneratedColumn<bool> get businessCeased => $composableBuilder(
+    column: $table.businessCeased,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get stakingsaftrekUsedBefore => $composableBuilder(
+    column: $table.stakingsaftrekUsedBefore,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get disabilityBenefit => $composableBuilder(
+    column: $table.disabilityBenefit,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get disabilityStartersUsed => $composableBuilder(
+    column: $table.disabilityStartersUsed,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get unrealisedZelfstandigenaftrek => $composableBuilder(
+    column: $table.unrealisedZelfstandigenaftrek,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get lossCarryForward => $composableBuilder(
+    column: $table.lossCarryForward,
+    builder: (column) => column,
+  );
+}
+
+class $$TaxYearInputsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TaxYearInputsTable,
+          TaxYearInput,
+          $$TaxYearInputsTableFilterComposer,
+          $$TaxYearInputsTableOrderingComposer,
+          $$TaxYearInputsTableAnnotationComposer,
+          $$TaxYearInputsTableCreateCompanionBuilder,
+          $$TaxYearInputsTableUpdateCompanionBuilder,
+          (
+            TaxYearInput,
+            BaseReferences<_$AppDatabase, $TaxYearInputsTable, TaxYearInput>,
+          ),
+          TaxYearInput,
+          PrefetchHooks Function()
+        > {
+  $$TaxYearInputsTableTableManager(_$AppDatabase db, $TaxYearInputsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TaxYearInputsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TaxYearInputsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TaxYearInputsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> year = const Value.absent(),
+                Value<int> partnerHours = const Value.absent(),
+                Value<bool> hasSoVerklaring = const Value.absent(),
+                Value<bool> soStarter = const Value.absent(),
+                Value<bool> businessCeased = const Value.absent(),
+                Value<int> stakingsaftrekUsedBefore = const Value.absent(),
+                Value<bool> disabilityBenefit = const Value.absent(),
+                Value<int> disabilityStartersUsed = const Value.absent(),
+                Value<int> unrealisedZelfstandigenaftrek = const Value.absent(),
+                Value<int> lossCarryForward = const Value.absent(),
+              }) => TaxYearInputsCompanion(
+                year: year,
+                partnerHours: partnerHours,
+                hasSoVerklaring: hasSoVerklaring,
+                soStarter: soStarter,
+                businessCeased: businessCeased,
+                stakingsaftrekUsedBefore: stakingsaftrekUsedBefore,
+                disabilityBenefit: disabilityBenefit,
+                disabilityStartersUsed: disabilityStartersUsed,
+                unrealisedZelfstandigenaftrek: unrealisedZelfstandigenaftrek,
+                lossCarryForward: lossCarryForward,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> year = const Value.absent(),
+                Value<int> partnerHours = const Value.absent(),
+                Value<bool> hasSoVerklaring = const Value.absent(),
+                Value<bool> soStarter = const Value.absent(),
+                Value<bool> businessCeased = const Value.absent(),
+                Value<int> stakingsaftrekUsedBefore = const Value.absent(),
+                Value<bool> disabilityBenefit = const Value.absent(),
+                Value<int> disabilityStartersUsed = const Value.absent(),
+                Value<int> unrealisedZelfstandigenaftrek = const Value.absent(),
+                Value<int> lossCarryForward = const Value.absent(),
+              }) => TaxYearInputsCompanion.insert(
+                year: year,
+                partnerHours: partnerHours,
+                hasSoVerklaring: hasSoVerklaring,
+                soStarter: soStarter,
+                businessCeased: businessCeased,
+                stakingsaftrekUsedBefore: stakingsaftrekUsedBefore,
+                disabilityBenefit: disabilityBenefit,
+                disabilityStartersUsed: disabilityStartersUsed,
+                unrealisedZelfstandigenaftrek: unrealisedZelfstandigenaftrek,
+                lossCarryForward: lossCarryForward,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$TaxYearInputsTable, TaxYearInput>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $TaxYearInputsTable,
+                    TaxYearInput
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$TaxYearInputsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $TaxYearInputsTable,
+      TaxYearInput,
+      $$TaxYearInputsTableFilterComposer,
+      $$TaxYearInputsTableOrderingComposer,
+      $$TaxYearInputsTableAnnotationComposer,
+      $$TaxYearInputsTableCreateCompanionBuilder,
+      $$TaxYearInputsTableUpdateCompanionBuilder,
+      (
+        TaxYearInput,
+        BaseReferences<_$AppDatabase, $TaxYearInputsTable, TaxYearInput>,
+      ),
+      TaxYearInput,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
-  $$TaxParamsTableTableManager get taxParams =>
-      $$TaxParamsTableTableManager(_db, _db.taxParams);
+  $$BusinessProfilesTableTableManager get businessProfiles =>
+      $$BusinessProfilesTableTableManager(_db, _db.businessProfiles);
   $$ClientsTableTableManager get clients =>
       $$ClientsTableTableManager(_db, _db.clients);
   $$InvoicesTableTableManager get invoices =>
       $$InvoicesTableTableManager(_db, _db.invoices);
   $$InvoiceLinesTableTableManager get invoiceLines =>
       $$InvoiceLinesTableTableManager(_db, _db.invoiceLines);
+  $$FixedAssetsTableTableManager get fixedAssets =>
+      $$FixedAssetsTableTableManager(_db, _db.fixedAssets);
   $$ExpensesTableTableManager get expenses =>
       $$ExpensesTableTableManager(_db, _db.expenses);
   $$HourEntriesTableTableManager get hourEntries =>
       $$HourEntriesTableTableManager(_db, _db.hourEntries);
   $$MileageTripsTableTableManager get mileageTrips =>
       $$MileageTripsTableTableManager(_db, _db.mileageTrips);
-  $$FixedAssetsTableTableManager get fixedAssets =>
-      $$FixedAssetsTableTableManager(_db, _db.fixedAssets);
   $$PensionEntriesTableTableManager get pensionEntries =>
       $$PensionEntriesTableTableManager(_db, _db.pensionEntries);
+  $$VatReturnsTableTableManager get vatReturns =>
+      $$VatReturnsTableTableManager(_db, _db.vatReturns);
+  $$TaxYearInputsTableTableManager get taxYearInputs =>
+      $$TaxYearInputsTableTableManager(_db, _db.taxYearInputs);
 }

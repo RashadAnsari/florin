@@ -60,31 +60,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get actionConfirm => 'Confirm';
 
   @override
-  String get actionAdd => 'Add';
-
-  @override
-  String get actionNew => 'New';
-
-  @override
-  String get labelRequired => 'Required';
-
-  @override
   String get labelDate => 'Date';
 
   @override
   String get labelNotes => 'Notes';
-
-  @override
-  String get labelDescription => 'Description';
-
-  @override
-  String get labelAmount => 'Amount';
-
-  @override
-  String get labelAddress => 'Address';
-
-  @override
-  String get labelName => 'Name';
 
   @override
   String get labelCategory => 'Category';
@@ -115,7 +94,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get dashboardNetProfitAfterTax => 'Net profit after tax';
+  String get dashboardNetProfitAfterTax => 'Estimated net profit after tax';
 
   @override
   String get dashboardOutstandingInvoices => 'Outstanding invoices';
@@ -127,11 +106,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboardUrencriterium => 'Urencriterium';
-
-  @override
-  String dashboardHoursProgress(String total, String target) {
-    return '$total / $target hrs';
-  }
 
   @override
   String get dashboardBtwDeadlines => 'BTW-deadlines';
@@ -165,9 +139,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoicesNone => 'No invoices';
 
   @override
-  String get invoicesSelectOrNew => 'Select an invoice or create a new one';
-
-  @override
   String get invoicesNewHeader => 'New invoice';
 
   @override
@@ -189,34 +160,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoiceStatusOverdue => 'Overdue';
 
   @override
-  String get invoiceStatusCancelled => 'Cancelled';
-
-  @override
-  String get invoiceStatusRefunded => 'Refunded';
-
-  @override
   String get invoiceTypeInvoice => 'Invoice';
 
   @override
   String get invoiceTypeCreditNote => 'Credit note';
 
   @override
-  String get invoiceFieldType => 'Type';
+  String get invoiceFieldClient => 'Client';
 
   @override
-  String get invoiceFieldClient => 'Client *';
+  String get invoiceFieldNumber => 'Invoice number';
 
   @override
-  String get invoiceFieldNumber => 'Invoice number *';
-
-  @override
-  String get invoiceFieldInvoiceDate => 'Invoice date *';
+  String get invoiceFieldInvoiceDate => 'Invoice date';
 
   @override
   String get invoiceFieldSupplyDate => 'Supply date';
 
   @override
-  String get invoiceFieldPaymentTerm => 'Term (days) *';
+  String get invoiceFieldPaymentTerm => 'Term (days)';
 
   @override
   String get invoiceValidatePaymentTerm =>
@@ -226,58 +188,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoiceFieldDueDate => 'Due date';
 
   @override
-  String get invoiceFieldIcp => 'ICP (intracommunautair)';
-
-  @override
-  String get invoiceTooltipIcp =>
-      'Intra-Community transactions (ICP): sales of goods or services to VAT-registered clients in EU countries outside the Netherlands. These must be reported separately in the ICP declaration alongside your VAT return.';
-
-  @override
-  String get invoiceWarnIcpNoVat =>
-      'The selected client has no VAT number. The ICP declaration requires a valid EU VAT number for the client.';
-
-  @override
-  String get invoiceFieldBtwVerlegd => 'BTW verlegd';
-
-  @override
-  String get invoiceTooltipBtwVerlegd =>
-      'Reverse charge VAT: the VAT obligation is shifted from you to the recipient. Used when supplying goods or services to VAT-registered businesses, often in cross-border EU transactions. The invoice shows 0% VAT with the note \'BTW verlegd\'.';
-
-  @override
   String get invoiceFieldLines => 'Lines';
 
   @override
   String get invoiceFieldAddLine => 'Add line';
 
   @override
-  String get invoiceFieldDescription => 'Description *';
+  String get invoiceFieldDescription => 'Description';
 
   @override
-  String get invoiceHintDescription =>
-      'e.g. Consulting services, web design...';
-
-  @override
-  String get invoiceFieldQuantity => 'Qty *';
+  String get invoiceFieldQuantity => 'Qty';
 
   @override
   String get invoiceFieldUnit => 'Unit';
 
   @override
-  String get invoiceFieldPrice => 'Price (excl.) *';
+  String get invoiceFieldPrice => 'Price (excl.)';
 
   @override
   String get invoiceFieldVat => 'VAT';
-
-  @override
-  String get invoiceFieldVatAmount => 'VAT amount';
-
-  @override
-  String get invoiceFieldLineTotal => 'Total excl.';
-
-  @override
-  String invoiceVatLine(String rate) {
-    return 'VAT $rate';
-  }
 
   @override
   String get invoiceValidateLineDescription => 'Enter a line description';
@@ -305,16 +234,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoiceActionMarkPaid => 'Paid';
 
   @override
-  String get invoiceActionCancel => 'Cancel';
-
-  @override
-  String get invoiceActionMarkRefunded => 'Refunded';
-
-  @override
   String get invoiceActionExportPdf => 'Export PDF';
-
-  @override
-  String get invoiceActionDelete => 'Delete';
 
   @override
   String get invoiceDeleteTitle => 'Delete invoice';
@@ -325,20 +245,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get invoiceCreated => 'Invoice created';
-
-  @override
-  String get invoiceSaved => 'Invoice saved';
-
-  @override
-  String get invoiceDeleted => 'Invoice deleted';
-
-  @override
   String get invoiceValidateClient => 'Select a client for this invoice';
 
   @override
   String get invoiceValidateNumber =>
-      'Enter a unique invoice number, e.g. F-2024-001';
+      'Enter a unique invoice number, e.g. F-2026-001';
 
   @override
   String get invoiceUnitHint => 'hrs';
@@ -353,16 +264,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clientsNone => 'No clients';
 
   @override
-  String get clientsSelectOrNew => 'Select a client or create a new one';
-
-  @override
   String get clientsNewHeader => 'New client';
-
-  @override
-  String get clientsShowInactive => 'Show inactive';
-
-  @override
-  String get clientsHideInactive => 'Hide inactive';
 
   @override
   String get clientsFilterAll => 'All';
@@ -377,7 +279,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clientsInactive => 'Inactive';
 
   @override
-  String get clientsFieldName => 'Name *';
+  String get clientsFieldName => 'Name';
 
   @override
   String get clientsValidateName => 'Enter the client\'s name';
@@ -394,7 +296,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clientsValidateVat =>
-      'Enter a valid EU VAT number (e.g. NL854224798B01)';
+      'Enter a valid EU VAT number, e.g. NL123456789B01 or DE123456789';
 
   @override
   String get clientsFieldKvk => 'KVK number';
@@ -403,7 +305,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clientsValidateKvk => 'KVK number must be exactly 8 digits';
 
   @override
-  String get clientsFieldAddress => 'Address *';
+  String get clientsFieldAddress => 'Address';
 
   @override
   String get clientsValidateAddress => 'Enter the client\'s street address';
@@ -453,16 +355,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clientsHighRiskWarning =>
-      'High Wet DBA risk: ensure a valid assignment agreement is in place.';
-
-  @override
-  String get clientsViesEmptyVat => 'Please enter a VAT number first';
-
-  @override
-  String get clientsCreated => 'Client created';
-
-  @override
-  String get clientsSaved => 'Client saved';
+      'High Wet DBA risk: the Belastingdienst may treat this work as employment. Review the working relationship with an adviser.';
 
   @override
   String get clientsDeleteTitle => 'Delete client';
@@ -486,13 +379,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expensesNone => 'No expenses';
 
   @override
-  String get expensesSelectOrNew => 'Select an expense or add a new one';
-
-  @override
   String get expensesNewHeader => 'New expense';
 
   @override
-  String get expensesFieldSupplier => 'Supplier *';
+  String get expensesFieldSupplier => 'Supplier';
 
   @override
   String get expensesHintSupplier => 'e.g. Albert Heijn, Amazon, KPN';
@@ -501,20 +391,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expensesValidateSupplier => 'Enter the supplier name';
 
   @override
-  String get expensesFieldCategory => 'Category *';
+  String get expensesFieldCategory => 'Category';
 
   @override
   String get expensesValidateCategory => 'Select a category for this expense';
 
   @override
-  String get expensesFieldDescription => 'Description *';
+  String get expensesFieldDescription => 'Description';
 
   @override
   String get expensesValidateDescription =>
       'Enter a description for this expense';
 
   @override
-  String get expensesFieldAmountExcl => 'Amount (excl. VAT) *';
+  String get expensesFieldAmountExcl => 'Amount (excl. VAT)';
 
   @override
   String get expensesValidateAmount => 'Enter the amount excluding VAT';
@@ -538,7 +428,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expensesFieldPaymentRef => 'Payment reference';
 
   @override
-  String get expensesHintPaymentRef => 'e.g. INV-2024-0042, SEPA ref 123456';
+  String get expensesHintPaymentRef => 'e.g. INV-2026-0042, SEPA ref 123456';
 
   @override
   String get expensesBusinessUse => 'Business use';
@@ -558,25 +448,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expensesVatBack => 'VAT back';
 
   @override
-  String expensesVatBackAmount(String amount) {
-    return 'VAT back: $amount';
-  }
-
-  @override
-  String get expensesMixedCosts => 'Mixed costs';
-
-  @override
   String get expensesReceiptAttached => 'Receipt attached';
-
-  @override
-  String get expensesBuaWarning =>
-      'BUA: meals & entertainment above €227. VAT deduction may be restricted (Besluit Uitsluiting Aftrek).';
-
-  @override
-  String get expensesCreated => 'Expense created';
-
-  @override
-  String get expensesSaved => 'Expense saved';
 
   @override
   String get expensesDeleteTitle => 'Delete expense';
@@ -625,9 +497,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hoursNone => 'No hours registered';
 
   @override
-  String get hoursSelectOrNew => 'Select an entry or click +';
-
-  @override
   String hoursBillable(String hours) {
     return 'Billable: $hours hrs';
   }
@@ -649,16 +518,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get hoursFieldDate => 'Date *';
+  String get hoursFieldDate => 'Date';
 
   @override
-  String get hoursFieldHours => 'Hours *';
+  String get hoursFieldHours => 'Hours';
 
   @override
-  String get hoursFieldDescription => 'Description *';
+  String get hoursFieldDescription => 'Description';
 
   @override
-  String get hoursFieldWorkType => 'Work type *';
+  String get hoursFieldWorkType => 'Work type';
 
   @override
   String get hoursFieldClientProject => 'Client / project';
@@ -670,9 +539,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hoursNewEntry => 'New entry';
 
   @override
-  String get hoursEditEntry => 'Edit entry';
-
-  @override
   String get hoursDeleteTitle => 'Delete hour entry';
 
   @override
@@ -681,13 +547,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get hoursValidateHours => 'Enter a number of hours greater than 0';
+  String get hoursValidateHours =>
+      'Enter the hours worked: more than 0 and at most 24';
 
   @override
   String get hoursValidateDescription => 'Describe the work done';
-
-  @override
-  String get hoursValidateWorkType => 'Select a work type';
 
   @override
   String get workTypeBillable => 'Billable';
@@ -711,9 +575,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mileageNone => 'No trips registered';
 
   @override
-  String get mileageSelectOrNew => 'Select a trip or click +';
-
-  @override
   String get mileageBusiness => 'Business';
 
   @override
@@ -724,29 +585,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String mileageAllowance(String rate) {
-    return 'Allowance (€$rate/km)';
+    return 'Allowance ($rate / km)';
   }
 
   @override
-  String get mileageFieldDate => 'Date *';
+  String get mileageFieldDate => 'Date';
 
   @override
-  String get mileageFieldMakeModel => 'Make / model *';
+  String get mileageFieldMakeModel => 'Make / model';
 
   @override
-  String get mileageFieldPlate => 'Licence plate *';
+  String get mileageFieldPlate => 'Licence plate';
 
   @override
-  String get mileageFieldFrom => 'Departure address *';
+  String get mileageFieldFrom => 'Departure address';
 
   @override
-  String get mileageFieldTo => 'Arrival address *';
+  String get mileageFieldTo => 'Arrival address';
 
   @override
-  String get mileageFieldOdoStart => 'Odometer start *';
+  String get mileageFieldOdoStart => 'Odometer start';
 
   @override
-  String get mileageFieldOdoEnd => 'Odometer end *';
+  String get mileageFieldOdoEnd => 'Odometer end';
 
   @override
   String get mileageFieldOdoError =>
@@ -771,35 +632,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mileageValidateOdoEnd => 'Enter the ending odometer reading';
 
   @override
-  String get mileageValidateTripType => 'Select the type of trip';
-
-  @override
   String get mileageValidatePurpose => 'Describe the purpose of this trip';
 
   @override
   String get mileageFieldDistance => 'Distance';
 
   @override
-  String get mileageFieldTripType => 'Trip type *';
+  String get mileageFieldTripType => 'Trip type';
 
   @override
-  String get mileageFieldPurpose => 'Purpose *';
+  String get mileageFieldPurpose => 'Purpose';
 
   @override
   String get mileageFieldRouteDeviation => 'Detour / non-direct route';
-
-  @override
-  String get mileageTooltipRouteDeviation =>
-      'Check this if you took a longer or indirect route than strictly necessary. The tax authority may ask you to explain why the route deviated from the shortest path.';
 
   @override
   String get mileageFieldNotes => 'Notes';
 
   @override
   String get mileageNewTrip => 'New trip';
-
-  @override
-  String get mileageEditTrip => 'Edit trip';
 
   @override
   String get mileageDeleteTitle => 'Delete trip';
@@ -825,9 +676,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assetsNone => 'No assets registered';
 
   @override
-  String get assetsSelectOrNew => 'Select an asset or click +';
-
-  @override
   String get assetsKiaInvestments => 'KIA investments';
 
   @override
@@ -837,27 +685,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assetsDepreciationThisYear => 'Depreciation this year';
 
   @override
-  String get assetsFieldName => 'Asset name *';
+  String get assetsFieldName => 'Asset name';
 
   @override
-  String get assetsFieldCost => 'Cost excl. VAT *';
+  String get assetsFieldCost => 'Cost excl. VAT';
 
   @override
-  String get assetsFieldPurchaseDate => 'Purchase date *';
+  String get assetsFieldPurchaseDate => 'Purchase date';
 
   @override
-  String assetsFieldBusinessUse(int pct) {
-    return 'Business use: $pct% *';
-  }
-
-  @override
-  String get assetsFieldUsefulLife => 'Useful life *';
+  String get assetsFieldUsefulLife => 'Useful life';
 
   @override
   String get assetsFieldUsefulLifeUnit => 'yrs';
 
   @override
-  String get assetsFieldUsefulLifeMin => 'Minimum 1 year';
+  String assetsFieldUsefulLifeMin(int years) {
+    return 'Enter at least $years years: depreciation is limited to 20% of the cost a year';
+  }
 
   @override
   String get assetsValidateName => 'Enter the asset name';
@@ -869,18 +714,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assetsFieldKia => 'KIA eligible';
 
   @override
-  String get assetsTooltipKia =>
-      'Kleinschaligheidsinvesteringsaftrek (KIA): an additional deduction from your taxable profit for small business investments. You qualify if your total investments in a calendar year fall within the statutory thresholds set by the Dutch tax authority.';
-
-  @override
   String get assetsKiaBadge => 'KIA';
-
-  @override
-  String get assetsFieldEiaMia => 'EIA / MIA';
-
-  @override
-  String get assetsTooltipEiaMia =>
-      'Energie-investeringsaftrek (EIA) and Milieu-investeringsaftrek (MIA): additional tax deductions for investments in energy-efficient or environmentally-friendly business assets listed on the official Energy List or Environmental List published by RVO.';
 
   @override
   String get assetsFieldNotes => 'Notes';
@@ -909,9 +743,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assetsNewAsset => 'New asset';
 
   @override
-  String get assetsEditAsset => 'Edit asset';
-
-  @override
   String assetsYears(int n) {
     return '$n yrs';
   }
@@ -920,24 +751,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pensionTitle => 'Pension';
 
   @override
-  String pensionLoadError(String error) {
-    return 'Could not load pension data: $error';
-  }
-
-  @override
   String get pensionJaarruimte => 'Annual allowance calculation';
-
-  @override
-  String get pensionTaxableProfit => 'Taxable profit';
 
   @override
   String get pensionAowFranchise => 'AOW franchise';
 
   @override
   String get pensionPensioengrondslag => 'Pension base';
-
-  @override
-  String get pensionJaarruimte30 => 'Annual allowance (30%)';
 
   @override
   String pensionJaarruimteMax(String max) {
@@ -960,21 +780,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pensionFactorA => 'Factor A';
 
   @override
-  String get pensionFactorAHelper => 'Pension accrual with employer / BV';
-
-  @override
-  String get pensionReserveringsruimteLabel =>
-      'Unused annual allowance from prior years';
+  String get pensionReserveringsruimteLabel => 'Reserveringsruimte';
 
   @override
   String get pensionPlannedSection => 'Planned contribution';
 
   @override
   String get pensionLijfrente => 'Annuity premium / AOV premium';
-
-  @override
-  String get pensionLijfrenteHelper =>
-      'Included as deduction in tax calculation';
 
   @override
   String get pensionAovSection => 'AOV disability insurance';
@@ -1003,11 +815,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vatReturnIcpSection => 'ICP report';
 
   @override
-  String vatReturnIcpDeadline(String date) {
-    return 'Deadline same as VAT return: $date.';
-  }
-
-  @override
   String get vatReturnStatusSection => 'Processing status';
 
   @override
@@ -1017,25 +824,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vatReturnPaid => 'VAT paid';
 
   @override
-  String vatReturnYtdRevenue(String amount) {
-    return 'YTD revenue: $amount';
-  }
-
-  @override
-  String vatReturnLoadError(String error) {
-    return 'Could not load VAT return data: $error';
-  }
-
-  @override
   String get vatReturnDue => 'VAT due';
 
   @override
   String get vatReturnRefund => 'VAT refund';
-
-  @override
-  String vatReturnKorWarning(String ytd, String max) {
-    return 'KOR threshold reached ($ytd of $max). Charge VAT from next transaction.';
-  }
 
   @override
   String get vatRow1a => '1a  Supplies / services taxed at 21%';
@@ -1044,10 +836,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vatRow1b => '1b  Supplies / services taxed at 9%';
 
   @override
-  String get vatRow1c => '1c  Supplies / services taxed at 0% (export)';
-
-  @override
-  String get vatRow3a => '3a  Supplies to EU businesses (ICP / RC)';
+  String get vatRow3a => '3a  Supplies to countries outside the EU (export)';
 
   @override
   String get vatRow5a => '5a  VAT on revenue';
@@ -1056,12 +845,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vatRow5b => '5b  Input tax (to reclaim)';
 
   @override
-  String get plTaxTitle => 'P&L / Tax';
-
-  @override
-  String plTaxLoadError(String error) {
-    return 'Could not load P&L / tax data: $error';
-  }
+  String get plTaxTitle => 'P&L and estimated tax';
 
   @override
   String get plTaxRevenuSection => 'Revenue';
@@ -1080,7 +864,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String plTaxMileageAllowance(int km, String rate) {
-    return 'Mileage allowance (${km}km × €$rate)';
+    return 'Business kilometres ($km km × $rate)';
   }
 
   @override
@@ -1115,41 +899,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get plTaxLijrente => 'Annuity deduction';
 
   @override
-  String get plTaxTaxableProfit => 'Taxable profit';
+  String get plTaxTaxableProfit => 'Taxable income';
 
   @override
-  String get plTaxBox1Section => 'Income tax box 1';
-
-  @override
-  String plTaxBracket1(String pct) {
-    return 'Bracket 1 ($pct%)';
-  }
-
-  @override
-  String plTaxBracket2(String pct) {
-    return 'Bracket 2 ($pct%)';
-  }
-
-  @override
-  String plTaxBracket3(String pct) {
-    return 'Bracket 3 ($pct%)';
-  }
+  String get plTaxBox1Section => 'Income tax box 1, estimated';
 
   @override
   String get plTaxAlgHeffing => 'General tax credit';
 
   @override
   String get plTaxArbeidskorting => 'Labour tax credit';
-
-  @override
-  String plTaxDeduct(String label) {
-    return 'Less: $label';
-  }
-
-  @override
-  String plTaxMax(String amount) {
-    return '(max $amount)';
-  }
 
   @override
   String get plTaxInkomsten => 'Income tax';
@@ -1160,10 +919,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get plTaxTotalTax => 'Total tax';
+  String get plTaxTotalTax => 'Estimated total tax';
 
   @override
-  String get plTaxNetProfit => 'Net profit after tax';
+  String get plTaxNetProfit => 'Estimated net profit after tax';
 
   @override
   String plTaxEffectiveRate(String rate) {
@@ -1171,24 +930,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get plTaxSettingsSection => 'Settings';
-
-  @override
-  String get plTaxClaimZelfs => 'Claim self-employed deduction';
-
-  @override
-  String get plTaxClaimStarters => 'Claim starter deduction';
-
-  @override
-  String plTaxUrenBanner(String hours, String suffix) {
-    return 'Urencriterium: $hours / 1,225 hrs logged$suffix.';
+  String plTaxUrenBanner(String hours, String target, String suffix) {
+    return 'Urencriterium: $hours of $target hours logged$suffix.';
   }
 
   @override
-  String get plTaxUrenBannerSuffixDone => ', self-employed deduction lapses';
+  String get plTaxUrenBannerSuffixDone => ', so no zelfstandigenaftrek';
 
   @override
-  String get plTaxUrenBannerSuffixPending => ', not yet reached';
+  String get plTaxUrenBannerSuffixPending =>
+      '. The estimate assumes you reach it this year';
 
   @override
   String get settingsLanguageSection => 'Language';
@@ -1253,12 +1004,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Invalid IBAN format (e.g. NL91ABNA0417164300).';
 
   @override
-  String get actionOk => 'OK';
-
-  @override
-  String get settingsSaved => 'Business details saved';
-
-  @override
   String get settingsDatabaseSection => 'Database';
 
   @override
@@ -1267,15 +1012,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get settingsDatabaseNotSet => 'Not set';
-
-  @override
-  String get settingsMoveDatabase => 'Move database…';
-
-  @override
-  String settingsDatabaseMoved(String path) {
-    return 'Database file moved to: $path';
-  }
+  String get settingsMoveDatabase => 'Copy database to another folder';
 
   @override
   String get settingsExportSection => 'Export';
@@ -1300,16 +1037,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String settingsTaxSection(int year) {
-    return 'Tax parameters $year';
+    return 'Tax rules $year';
   }
-
-  @override
-  String settingsTaxNoParams(int year) {
-    return 'No parameters found for $year. Restart the app after creating a database.';
-  }
-
-  @override
-  String get settingsTaxRates => 'Rates & brackets';
 
   @override
   String get settingsTaxZelfs => 'Self-employed deduction';
@@ -1321,81 +1050,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTaxMkb => 'MKB-winstvrijstelling (%)';
 
   @override
-  String get settingsTaxMileage => 'Mileage rate (€/km)';
-
-  @override
-  String get settingsTaxBrackets => 'Income tax brackets';
-
-  @override
-  String get settingsTaxB1Rate => 'Bracket 1 rate (%)';
-
-  @override
-  String get settingsTaxB1Thresh => 'Bracket 1 threshold';
-
-  @override
-  String get settingsTaxB2Rate => 'Bracket 2 rate (%)';
-
-  @override
-  String get settingsTaxB2Thresh => 'Bracket 2 threshold';
-
-  @override
-  String get settingsTaxB3Rate => 'Bracket 3 rate (%)';
-
-  @override
-  String get settingsTaxKortingen => 'Discounts & ZVW';
-
-  @override
-  String get settingsTaxAlgHeff => 'General tax credit max';
-
-  @override
-  String get settingsTaxArbeids => 'Labour credit max';
+  String get settingsTaxMileage => 'Mileage allowance per km';
 
   @override
   String get settingsTaxZvwRate => 'ZVW rate (%)';
 
   @override
-  String get settingsTaxZvwMax => 'ZVW max';
-
-  @override
-  String get settingsTaxUrencriterium => 'Hours criterion';
-
-  @override
-  String get settingsTaxKia => 'KIA deduction';
-
-  @override
-  String get settingsTaxKiaLowerThresh => 'Lower threshold';
-
-  @override
-  String get settingsTaxKiaUpperThresh => 'Upper threshold';
-
-  @override
-  String get settingsTaxKiaFlatThresh => 'Flat threshold';
-
-  @override
-  String get settingsTaxKiaRate => 'KIA rate (%)';
-
-  @override
-  String get settingsTaxKiaFlatAmount => 'Flat amount';
-
-  @override
-  String get settingsTaxKiaDecreaseRate => 'Decrease rate (%)';
-
-  @override
-  String get settingsTaxKor => 'KOR threshold';
-
-  @override
-  String get settingsTaxKorThresh => 'KOR threshold';
-
-  @override
-  String get settingsTaxSaveParams => 'Save parameters';
-
-  @override
-  String settingsTaxParamsSaved(int year) {
-    return 'Tax parameters saved for $year';
-  }
-
-  @override
-  String get settingsTaxValidateField => 'Enter a valid number.';
+  String get settingsTaxUrencriterium => 'Urencriterium (hours)';
 
   @override
   String get firstLaunchWelcome => 'Welcome to Florin';
@@ -1408,7 +1069,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get firstLaunchDbDescription =>
-      'Default: Application Support. Choose another folder for iCloud / Google Drive sync.';
+      'Default: the app data folder. Choose another folder to keep it in a synced folder. If that folder already holds a Florin database, Florin opens it.';
 
   @override
   String get firstLaunchDbDefault => 'Application Support (default)';
@@ -1417,11 +1078,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get firstLaunchChooseFolder => 'Choose folder';
 
   @override
-  String get firstLaunchBusinessSection => 'Business identity';
-
-  @override
   String get firstLaunchStartersSubtitle =>
-      'First 3 years of business: €2,123 additional deduction';
+      'For business owners who were not a business owner in one or more of the 5 previous years, and used the zelfstandigenaftrek at most twice in that period';
 
   @override
   String get firstLaunchGetStarted => 'Get started';
@@ -1430,15 +1088,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String firstLaunchSaveError(String error) {
     return 'Could not finish setup: $error';
   }
-
-  @override
-  String get confirmDeleteTitle => 'Delete';
-
-  @override
-  String get confirmDeleteCancel => 'Cancel';
-
-  @override
-  String get confirmDeleteConfirm => 'Delete';
 
   @override
   String get deadlineBadgeFiled => 'Filed';
@@ -1452,9 +1101,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get vatRateSelectorLabel => 'VAT rate';
-
-  @override
   String get vatRate21 => '21%';
 
   @override
@@ -1462,9 +1108,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get vatRate0 => '0%';
-
-  @override
-  String get vatRateEuReverseCharge => '0% EU reverse charge';
 
   @override
   String get vatRateExempt => 'Exempt';
@@ -1486,4 +1129,974 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get amountNegativeError => 'Amount cannot be negative';
+
+  @override
+  String get vatTreatmentStandard => 'Dutch VAT';
+
+  @override
+  String get vatTreatmentReverseChargeNl =>
+      'VAT reverse-charged to a Dutch business';
+
+  @override
+  String get vatTreatmentExportOutsideEu =>
+      'Export of goods outside the EU (0%)';
+
+  @override
+  String get invoiceFieldVatTreatment => 'VAT treatment';
+
+  @override
+  String get invoiceValidateClientVat =>
+      'This client has no VAT number. Add it to the client: this invoice must show it.';
+
+  @override
+  String get invoiceIssueTitle => 'Send invoice';
+
+  @override
+  String get invoiceIssueMessage =>
+      'After sending, the invoice can no longer be changed or deleted. Corrections are made with a credit note.';
+
+  @override
+  String get invoiceActionCreditNote => 'Credit note';
+
+  @override
+  String get invoiceNewCreditNoteHeader => 'New credit note';
+
+  @override
+  String invoiceCorrects(String number) {
+    return 'This credit note corrects invoice $number.';
+  }
+
+  @override
+  String get invoiceVatTotal => 'VAT';
+
+  @override
+  String get invoiceRemoveLine => 'Remove line';
+
+  @override
+  String get expensesFoodNotice =>
+      'Food, drinks and representation are 80% deductible for income tax (Wet IB 2001 art. 3.15). VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed (Wet OB 1968 art. 15).';
+
+  @override
+  String plTaxFoodLimited(String category, String amount) {
+    return '$category ($amount)';
+  }
+
+  @override
+  String get plTaxBelastbareWinst => 'Taxable profit';
+
+  @override
+  String plTaxBracket(int n, String pct) {
+    return 'Bracket $n ($pct%)';
+  }
+
+  @override
+  String get plTaxEstimateNotice =>
+      'This is an estimate for a business owner under the AOW age with no other income. Income from employment, a partner, box 2 or box 3 is not included.';
+
+  @override
+  String settingsMoved(String path) {
+    return 'Database copied to $path and now in use. The old file was kept.';
+  }
+
+  @override
+  String get settingsTaxVerified =>
+      'Florin uses these figures, checked against the Belastingdienst and the law. They cannot be edited.';
+
+  @override
+  String settingsTaxUpTo(String amount) {
+    return 'up to $amount';
+  }
+
+  @override
+  String pensionPriorYearIncome(int year) {
+    return 'Income from work in $year';
+  }
+
+  @override
+  String get pensionDeductible => 'Deductible this year';
+
+  @override
+  String get vatRow1e =>
+      '1e  Supplies / services taxed at 0% or not taxed with you';
+
+  @override
+  String get vatRow3b => '3b  Supplies to or services in EU countries';
+
+  @override
+  String get vatTreatmentEuServices =>
+      'Services to an EU business (VAT reverse-charged)';
+
+  @override
+  String get vatTreatmentEuGoods =>
+      'Goods to an EU business (intra-Community supply, 0%)';
+
+  @override
+  String get vatReturnIcpNote =>
+      'Report these supplies in the ICP report. Goods to EU businesses above € 50.000 in a quarter must be reported per month.';
+
+  @override
+  String get assetsFieldResidualValue => 'Residual value';
+
+  @override
+  String get assetsValidateResidualValue =>
+      'Enter the residual value, or 0 if the asset will have no value left';
+
+  @override
+  String get assetsValidateResidualAboveCost =>
+      'The residual value cannot be higher than the cost';
+
+  @override
+  String get plTaxDisposalResult => 'Result on sold assets';
+
+  @override
+  String get plTaxAov => 'Disability insurance premiums';
+
+  @override
+  String get pensionAovHelper =>
+      'Premiums for disability insurance are deducted in full in the tax estimate.';
+
+  @override
+  String get assetsFieldCostHelp =>
+      'The purchase price without VAT. Depreciation and the investment deductions are based on this amount.';
+
+  @override
+  String get assetsFieldDisposalDateHelp =>
+      'The date you sold the asset or took it out of the business. Depreciation stops on this date.';
+
+  @override
+  String get assetsFieldDisposalProceedsHelp =>
+      'What you received for the asset, without VAT. The difference with the book value is a gain or loss.';
+
+  @override
+  String get assetsFieldKiaHelp =>
+      'Kleinschaligheidsinvesteringsaftrek: an extra deduction for business assets. Assets under € 450 do not count, and passenger cars and some other assets are excluded.';
+
+  @override
+  String get assetsFieldNameHelp =>
+      'A name you recognise the asset by, such as \"MacBook Pro 2026\".';
+
+  @override
+  String get assetsFieldNotesHelp =>
+      'Anything you want to remember about this asset. Not used in calculations.';
+
+  @override
+  String get assetsFieldPurchaseDateHelp =>
+      'The date you bought the asset. Depreciation starts on this date and the investment deductions apply to this year.';
+
+  @override
+  String get assetsFieldResidualValueHelp =>
+      'What the asset will still be worth at the end of its useful life. Depreciation stops at this value.';
+
+  @override
+  String get assetsFieldUsefulLifeHelp =>
+      'How many years you expect to use the asset. At least 5, because depreciation is limited to 20% of the cost a year.';
+
+  @override
+  String get clientsContractExpiryHelp =>
+      'When the agreement with this client ends.';
+
+  @override
+  String get clientsContractSignedHelp =>
+      'Tick when you and the client have signed a written agreement.';
+
+  @override
+  String get clientsFieldActiveHelp =>
+      'Inactive clients stay in your records but are not offered on new invoices.';
+
+  @override
+  String get clientsFieldAddressHelp =>
+      'The client\'s full business address. It is printed on every invoice.';
+
+  @override
+  String get clientsFieldContactHelp =>
+      'The person you deal with at this client.';
+
+  @override
+  String get clientsFieldCountryHelp =>
+      'The two-letter country code, such as NL or DE. It decides whether an EU reverse-charge invoice is possible.';
+
+  @override
+  String get clientsFieldEmailHelp => 'The address you send invoices to.';
+
+  @override
+  String get clientsFieldKvkHelp =>
+      'The client\'s 8-digit Chamber of Commerce number, if they have one.';
+
+  @override
+  String get clientsFieldNameHelp =>
+      'The client\'s legal or registered trade name, as it should appear on invoices.';
+
+  @override
+  String get clientsFieldNotesHelp =>
+      'Anything you want to remember about this client. Not printed on invoices.';
+
+  @override
+  String get clientsFieldPhoneHelp => 'A phone number for this client.';
+
+  @override
+  String get clientsFieldVatHelp =>
+      'The client\'s VAT identification number. Required on invoices where the VAT is reverse-charged or that go to an EU business.';
+
+  @override
+  String get clientsRiskLevelHelp =>
+      'Your own assessment of whether the work could be seen as employment under the Wet DBA. Used only to remind you.';
+
+  @override
+  String get expensesFieldAmountExclHelp =>
+      'The amount on the receipt without VAT.';
+
+  @override
+  String get expensesFieldCategoryHelp =>
+      'What kind of cost this is. Food, drinks and representation are only partly deductible.';
+
+  @override
+  String get expensesFieldDescriptionHelp =>
+      'What you bought, so you and the Belastingdienst can see the business purpose.';
+
+  @override
+  String get expensesFieldPaidFromHelp =>
+      'The account or card you paid with, to match the expense with your bank statement.';
+
+  @override
+  String get expensesFieldPaymentRefHelp =>
+      'The reference of the payment or invoice, to find it back later.';
+
+  @override
+  String get expensesFieldSupplierHelp =>
+      'The business you bought from, as on the receipt.';
+
+  @override
+  String get expensesFieldVatRateHelp =>
+      'The VAT rate on the receipt: 21%, 9%, 0% or exempt.';
+
+  @override
+  String get expensesReceiptAttachedHelp =>
+      'Tick when you have kept the receipt or invoice. You need it to reclaim VAT and to prove the cost.';
+
+  @override
+  String get expensesReclaimVatHelp =>
+      'Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, or for private use.';
+
+  @override
+  String get hoursFieldClientProjectHelp =>
+      'The client or project the hours were for.';
+
+  @override
+  String get hoursFieldDateHelp => 'The day you worked.';
+
+  @override
+  String get hoursFieldDescriptionHelp =>
+      'What you did. All hours spent on the business count towards the urencriterium, not only billable ones.';
+
+  @override
+  String get hoursFieldHoursHelp =>
+      'How many hours you worked that day, such as 7,5.';
+
+  @override
+  String get hoursFieldNotesHelp =>
+      'Anything you want to remember about these hours.';
+
+  @override
+  String get hoursFieldWorkTypeHelp =>
+      'The kind of work. WBSO hours count towards the 500 hours needed for the S&O-aftrek.';
+
+  @override
+  String get invoiceFieldClientHelp =>
+      'Who the invoice is for. Their name and address are printed on it.';
+
+  @override
+  String get invoiceFieldDescriptionHelp =>
+      'What you delivered: the nature of the goods or services, as the law requires on an invoice.';
+
+  @override
+  String get invoiceFieldDueDateHelp =>
+      'The last day for payment: the invoice date plus the payment term.';
+
+  @override
+  String get invoiceFieldInvoiceDateHelp =>
+      'The date the invoice is issued. It decides the year and quarter the revenue and VAT belong to.';
+
+  @override
+  String get invoiceFieldNumberHelp =>
+      'A unique number in an unbroken sequence, as the law requires. Florin suggests the next one.';
+
+  @override
+  String get invoiceFieldPaymentTermHelp =>
+      'How many days the client has to pay.';
+
+  @override
+  String get invoiceFieldPriceHelp => 'The price per unit without VAT.';
+
+  @override
+  String get invoiceFieldQuantityHelp =>
+      'How many units, such as hours or pieces.';
+
+  @override
+  String get invoiceFieldRemarksHelp =>
+      'Extra text printed at the bottom of the invoice.';
+
+  @override
+  String get invoiceFieldSupplyDateHelp =>
+      'When you delivered, if that differs from the invoice date. The law requires it on the invoice in that case.';
+
+  @override
+  String get invoiceFieldUnitHelp =>
+      'The unit of the quantity, such as hours or pieces.';
+
+  @override
+  String get invoiceFieldVatHelp => 'The VAT rate for this line.';
+
+  @override
+  String get invoiceFieldVatTreatmentHelp =>
+      'How VAT applies. Dutch VAT for most clients. Reverse charge when the customer pays the VAT. EU goods and services to businesses also go on the ICP report.';
+
+  @override
+  String get labelCategoryHelp => 'Show only expenses of one category.';
+
+  @override
+  String get labelDateHelp =>
+      'The date on the receipt. It decides the year and quarter of the expense.';
+
+  @override
+  String get labelNotesHelp =>
+      'Anything you want to remember. Not used in calculations.';
+
+  @override
+  String get mileageFieldDateHelp => 'The day of the trip.';
+
+  @override
+  String get mileageFieldDistanceHelp =>
+      'Calculated from the odometer readings.';
+
+  @override
+  String get mileageFieldFromHelp => 'Where the trip started.';
+
+  @override
+  String get mileageFieldMakeModelHelp =>
+      'The make and model of the vehicle, for your trip log.';
+
+  @override
+  String get mileageFieldNotesHelp =>
+      'Anything you want to remember about this trip.';
+
+  @override
+  String get mileageFieldOdoEndHelp =>
+      'The odometer reading at the end of the trip.';
+
+  @override
+  String get mileageFieldOdoStartHelp =>
+      'The odometer reading at the start of the trip.';
+
+  @override
+  String get mileageFieldPlateHelp => 'The licence plate, for your trip log.';
+
+  @override
+  String get mileageFieldPurposeHelp =>
+      'Why you made the trip, such as the client or meeting.';
+
+  @override
+  String get mileageFieldRouteDeviationHelp =>
+      'Tick when you took a longer or different route than the shortest one, and note why.';
+
+  @override
+  String get mileageFieldToHelp => 'Where the trip ended.';
+
+  @override
+  String get mileageFieldTripTypeHelp =>
+      'Business and commuting trips in a private vehicle are deductible per km for income tax. Private trips are not.';
+
+  @override
+  String get pensionAovInsuredHelp =>
+      'Tick when you have a private disability insurance (AOV). Its premiums are deductible.';
+
+  @override
+  String get pensionFactorAHelp =>
+      'The pension you built up with an employer last year, from the factor A on your UPO. Leave 0 if you had none.';
+
+  @override
+  String get pensionLijfrenteHelp =>
+      'What you pay or plan to pay into a lijfrente this year. Deducted up to the room you have.';
+
+  @override
+  String get pensionMonthlyPremiumHelp =>
+      'The monthly premium of your disability insurance.';
+
+  @override
+  String get pensionPriorYearIncomeHelp =>
+      'Your profit from business and wages last year, from that year\'s tax return. The jaarruimte is based on it.';
+
+  @override
+  String get pensionReserveringsruimteLabelHelp =>
+      'Unused jaarruimte from earlier years that you may still use. The Belastingdienst\'s Hulpmiddel Lijfrentepremie calculates it.';
+
+  @override
+  String get settingsBusinessAddressHelp =>
+      'Your full business address. It is printed on every invoice.';
+
+  @override
+  String get settingsBusinessNameHelp =>
+      'Your business name as registered with the KvK. It is printed on every invoice.';
+
+  @override
+  String get settingsIbanHelp =>
+      'The bank account clients pay to. It is printed in the payment instructions.';
+
+  @override
+  String get settingsKvkNumberHelp =>
+      'Your 8-digit KvK number. It is printed on every invoice.';
+
+  @override
+  String get settingsStartersaftrekHelp =>
+      'You get the startersaftrek if you were not a business owner in at least one of the 5 previous years and used the zelfstandigenaftrek at most twice in that period.';
+
+  @override
+  String get settingsVatNumberHelp =>
+      'Your VAT identification number (btw-id), NL followed by 9 digits, B and 2 digits. It is printed on every invoice.';
+
+  @override
+  String get vatReturnFiledHelp =>
+      'Tick once you have filed this quarter\'s return in Mijn Belastingdienst Zakelijk.';
+
+  @override
+  String get vatReturnPaidHelp =>
+      'Tick once you have paid the VAT due for this quarter.';
+
+  @override
+  String get assetKindGeneral => 'Business asset';
+
+  @override
+  String get assetKindCar => 'Car owned by the business';
+
+  @override
+  String get assetsFieldKind => 'Type';
+
+  @override
+  String get assetsFieldKindHelp =>
+      'Choose car for a passenger car or van that belongs to the business. Private use of it is added to your profit and to your VAT return.';
+
+  @override
+  String get assetsCarSection => 'Car';
+
+  @override
+  String get assetsCarSectionHelp =>
+      'These details decide the addition for private use (bijtelling) and the VAT on private use.';
+
+  @override
+  String get assetsFieldCatalogueValue => 'Catalogue value';
+
+  @override
+  String get assetsFieldCatalogueValueHelp =>
+      'The original list price including VAT and BPM, as on the registration certificate or the RDW website.';
+
+  @override
+  String get assetsValidateCatalogueValue =>
+      'Enter the catalogue value, including VAT and BPM';
+
+  @override
+  String get assetsFieldFirstRegistration => 'First registration';
+
+  @override
+  String get assetsFieldFirstRegistrationHelp =>
+      'The date the car was first registered, on the registration certificate. It decides which bijtelling percentage applies.';
+
+  @override
+  String get assetsValidateFirstRegistration =>
+      'Enter the date of first registration from the registration certificate';
+
+  @override
+  String get assetsFieldZeroEmission => 'Zero emission';
+
+  @override
+  String get assetsFieldZeroEmissionHelp =>
+      'Electric, hydrogen and solar cars with 0 g/km CO2 get a lower bijtelling.';
+
+  @override
+  String get zeroEmissionNone => 'No';
+
+  @override
+  String get zeroEmissionBattery => 'Battery electric';
+
+  @override
+  String get zeroEmissionHydrogenOrSolar => 'Hydrogen or integrated solar';
+
+  @override
+  String get assetsFieldVatOnPurchase => 'VAT deducted on purchase';
+
+  @override
+  String get assetsFieldVatOnPurchaseHelp =>
+      'The VAT on the purchase that you deducted in your VAT return. Leave 0 if you deducted none, for example for a car bought from a private seller.';
+
+  @override
+  String get assetsFieldMarketValue => 'Market value';
+
+  @override
+  String get assetsFieldMarketValueHelp =>
+      'What the car is worth now. Only used once the car is more than 15 years old.';
+
+  @override
+  String get assetsFieldTripLog => 'I keep a complete trip log for this car';
+
+  @override
+  String get assetsFieldTripLogHelp =>
+      'With a complete trip log of all trips in this car, there is no bijtelling at 500 private km a year or less, and VAT on private use is based on the actual kilometres.';
+
+  @override
+  String get assetsInvestmentSection => 'Investment deductions';
+
+  @override
+  String get assetsInvestmentSectionHelp =>
+      'Extra deductions in the year of purchase. If you sell the asset within 5 years, part of them is added back.';
+
+  @override
+  String get assetsFieldEia => 'Energy investment (EIA), reported to RVO';
+
+  @override
+  String get assetsFieldEiaHelp =>
+      'An asset on the RVO Energy List, reported to RVO within 3 months. At least € 2.500 per asset. Cannot be combined with MIA.';
+
+  @override
+  String get assetsFieldMia => 'Environmental investment (MIA)';
+
+  @override
+  String get assetsFieldMiaHelp =>
+      'The category on the RVO Environmental List, reported to RVO within 3 months. At least € 2.500 per asset.';
+
+  @override
+  String get assetsMiaNone => 'None';
+
+  @override
+  String get miaCategoryOne => 'Category I';
+
+  @override
+  String get miaCategoryTwo => 'Category II';
+
+  @override
+  String get miaCategoryThree => 'Category III';
+
+  @override
+  String get assetsFieldDeductionReceived => 'Investment deduction received';
+
+  @override
+  String get assetsFieldDeductionReceivedHelp =>
+      'The KIA, EIA and MIA you received for this asset in its purchase year, from that year\'s tax return. Needed to add part back if you sell it within 5 years.';
+
+  @override
+  String get assetsValidateDeductionReceived =>
+      'Enter the investment deduction you received for this asset, or 0';
+
+  @override
+  String get assetsFieldReserveApplied => 'Herinvesteringsreserve booked off';
+
+  @override
+  String get assetsFieldReserveAppliedHelp =>
+      'Part of the herinvesteringsreserve booked off on this purchase. It lowers the cost to depreciate.';
+
+  @override
+  String assetsReserveAvailable(String amount) {
+    return 'Available: $amount';
+  }
+
+  @override
+  String get assetsValidateReserveAboveAvailable =>
+      'This is more than the herinvesteringsreserve available';
+
+  @override
+  String get assetsValidateReserveAboveCost =>
+      'This is more than the cost minus the residual value';
+
+  @override
+  String get assetsFieldReserveGain =>
+      'Put the gain in the herinvesteringsreserve';
+
+  @override
+  String get assetsFieldReserveGainHelp =>
+      'Only when you intend to buy a replacement. The gain is then not taxed now but booked off on the next purchase; unused after 3 years, it is added to your profit.';
+
+  @override
+  String get dashboardDeductibleCostsHelp =>
+      'Costs deductible for income tax, including depreciation and the mileage allowance. Estimated.';
+
+  @override
+  String get dashboardEstimatedTaxHelp =>
+      'Estimated income tax and Zvw contribution on your profit so far. Not a tax assessment.';
+
+  @override
+  String get dashboardNetProfitAfterTaxHelp =>
+      'Profit minus the estimated tax. An estimate, not a final figure.';
+
+  @override
+  String get expensesFieldCar => 'Business car';
+
+  @override
+  String get expensesFieldCarHelp =>
+      'Link costs such as fuel and insurance to a business car. They cap the bijtelling and decide the VAT on private use.';
+
+  @override
+  String get expensesNoCar => 'Not for a business car';
+
+  @override
+  String get mileageFieldVehicle => 'Vehicle';
+
+  @override
+  String get mileageFieldVehicleHelp =>
+      'A private vehicle earns the per-km deduction. Trips in a business car do not; they count for its trip log instead.';
+
+  @override
+  String get mileagePrivateVehicle => 'Private vehicle';
+
+  @override
+  String get inputPartnerHours => 'Partner\'s hours in the business';
+
+  @override
+  String get inputPartnerHoursHelp =>
+      'Hours your fiscal partner worked in your business this year without pay, or for less than € 5.000. From 525 hours you get the meewerkaftrek.';
+
+  @override
+  String get inputUnrealisedZelfs => 'Unused zelfstandigenaftrek';
+
+  @override
+  String get inputUnrealisedZelfsHelp =>
+      'Zelfstandigenaftrek from the previous 9 years that did not fit your profit, as stated by the Belastingdienst. Used up to this year\'s profit.';
+
+  @override
+  String get inputLossCarryForward => 'Losses from earlier years';
+
+  @override
+  String get inputLossCarryForwardHelp =>
+      'Box 1 losses from earlier years still to offset, as stated by the Belastingdienst. Offset against this year\'s income.';
+
+  @override
+  String get inputSoVerklaring => 'I have an S&O-verklaring for this year';
+
+  @override
+  String get inputSoVerklaringHelp =>
+      'An S&O-verklaring from RVO for research and development. With at least 500 WBSO hours you get the S&O-aftrek.';
+
+  @override
+  String get inputSoStarter => 'Starter increase for the S&O-aftrek';
+
+  @override
+  String get inputSoStarterHelp =>
+      'You were not a business owner in one or more of the 5 previous years and received an S&O-verklaring for at most 2 years in that period.';
+
+  @override
+  String get inputBusinessCeased => 'I stopped the whole business this year';
+
+  @override
+  String get inputBusinessCeasedHelp =>
+      'Gains on selling or taking over the business assets are stakingswinst. You get the stakingsaftrek on them, and any herinvesteringsreserve is added to your profit.';
+
+  @override
+  String get inputStakingsUsedBefore => 'Stakingsaftrek used before';
+
+  @override
+  String get inputStakingsUsedBeforeHelp =>
+      'Stakingsaftrek you received in earlier years. It lowers the maximum of € 3.630.';
+
+  @override
+  String get inputDisabilityBenefit => 'I receive a disability benefit';
+
+  @override
+  String get inputDisabilityBenefitHelp =>
+      'A benefit such as WIA, WAO, WAZ or Wajong. As a starter with at least 800 but under 1.225 hours you may get the startersaftrek bij arbeidsongeschiktheid.';
+
+  @override
+  String get inputDisabilityUsed => 'Years used in the previous 5';
+
+  @override
+  String get inputDisabilityUsedHelp =>
+      'How many of the previous 5 years you received the startersaftrek bij arbeidsongeschiktheid: 0, 1, 2 or 3.';
+
+  @override
+  String inputWholeNumber(int max) {
+    return 'Enter a whole number from 0 to $max';
+  }
+
+  @override
+  String get pensionAowFranchiseHelp =>
+      'The part of your income for which you already build up AOW. Jaarruimte is only calculated on income above it.';
+
+  @override
+  String get pensionPensioengrondslagHelp =>
+      'Last year\'s income minus the AOW-franchise, up to the legal maximum.';
+
+  @override
+  String get pensionJaarruimteHelp =>
+      '30% of the premiegrondslag minus a multiple of factor A, up to the yearly maximum. What you may deduct for a lijfrente this year.';
+
+  @override
+  String get pensionEstimatedTaxSavingHelp =>
+      'Estimated: the box 1 tax you save by deducting the premium, before heffingskortingen.';
+
+  @override
+  String get plTaxAlgHeffingHelp =>
+      'A tax credit everyone gets. It decreases as income rises above a threshold.';
+
+  @override
+  String get plTaxArbeidskortingHelp =>
+      'A tax credit for working people, based on profit before ondernemersaftrek and mkb-winstvrijstelling.';
+
+  @override
+  String get plTaxAovHelp =>
+      'Premiums for private disability insurance are fully deductible from box 1 income.';
+
+  @override
+  String get plTaxBelastbareWinstHelp =>
+      'Profit after ondernemersaftrek and mkb-winstvrijstelling. The Zvw contribution is based on it.';
+
+  @override
+  String get plTaxBox1SectionHelp =>
+      'Estimated income tax including national insurance premiums, in brackets, minus the heffingskortingen.';
+
+  @override
+  String get plTaxCarPrivateUse => 'Private use of business car';
+
+  @override
+  String get plTaxCarPrivateUseHelp =>
+      'The bijtelling: a percentage of the catalogue value added to profit for private use, at most the car costs. None with a trip log of 500 private km a year or less.';
+
+  @override
+  String get plTaxDeductionsSectionHelp =>
+      'Deductions for business owners. Most require the urencriterium of 1.225 hours.';
+
+  @override
+  String get plTaxDepreciationHelp =>
+      'The part of your assets\' cost written off this year, spread by day over their useful life.';
+
+  @override
+  String get plTaxDesinvestering => 'Desinvesteringsbijtelling';
+
+  @override
+  String get plTaxDesinvesteringHelp =>
+      'Part of an investment deduction added back because an asset was sold within 5 years of the start of its purchase year.';
+
+  @override
+  String get plTaxDisabilityStarters =>
+      'Startersaftrek bij arbeidsongeschiktheid';
+
+  @override
+  String get plTaxDisabilityStartersHelp =>
+      'For starters with a disability benefit who work at least 800 hours but do not meet the urencriterium. At most the profit.';
+
+  @override
+  String get plTaxDisposalResultHelp =>
+      'Sale price minus book value of assets sold this year. A gain adds to profit, a loss lowers it.';
+
+  @override
+  String get plTaxEia => 'Energie-investeringsaftrek (EIA)';
+
+  @override
+  String get plTaxEiaHelp =>
+      'An extra deduction for investments on the RVO Energy List.';
+
+  @override
+  String plTaxFoodLimitedHelp(String pct, String drempel) {
+    return 'Food, drinks and representation are deductible for $pct%, or above the first $drempel. Florin uses whichever gives the larger deduction.';
+  }
+
+  @override
+  String plTaxInputsSection(int year) {
+    return 'Your situation in $year';
+  }
+
+  @override
+  String get plTaxInputsSectionHelp =>
+      'Facts the bookkeeping cannot show. They change the estimate above.';
+
+  @override
+  String get plTaxInvestmentSection => 'Investment deductions';
+
+  @override
+  String get plTaxInvestmentSectionHelp =>
+      'Extra deductions for assets bought this year.';
+
+  @override
+  String get plTaxKiaHelp =>
+      'Kleinschaligheidsinvesteringsaftrek: a percentage or fixed amount based on your total qualifying investments this year.';
+
+  @override
+  String get plTaxLijrenteHelp =>
+      'Premiums for a lijfrente, deducted up to your jaarruimte and reserveringsruimte.';
+
+  @override
+  String get plTaxLossOffset => 'Losses from earlier years';
+
+  @override
+  String get plTaxLossOffsetHelp =>
+      'Box 1 losses from earlier years, offset against this year\'s income.';
+
+  @override
+  String get plTaxMeewerk => 'Meewerkaftrek';
+
+  @override
+  String get plTaxMeewerkHelp =>
+      'A percentage of profit when your fiscal partner works at least 525 hours in the business without pay.';
+
+  @override
+  String get plTaxMia => 'Milieu-investeringsaftrek (MIA)';
+
+  @override
+  String get plTaxMiaHelp =>
+      'An extra deduction for investments on the RVO Environmental List.';
+
+  @override
+  String get plTaxMileageAllowanceHelp =>
+      'Business and commuting kilometres in a private vehicle, at the Belastingdienst rate per km.';
+
+  @override
+  String get plTaxMkbHelp =>
+      'A percentage of profit after ondernemersaftrek that is exempt from tax. No urencriterium needed.';
+
+  @override
+  String get plTaxProfit => 'Profit';
+
+  @override
+  String get plTaxProfitHelp =>
+      'Profit from business before ondernemersaftrek. The arbeidskorting is based on it.';
+
+  @override
+  String get plTaxReserveReleased => 'Herinvesteringsreserve released';
+
+  @override
+  String get plTaxReserveReleasedHelp =>
+      'Reserve not used within 3 years, or left when the business stops, is added to profit.';
+
+  @override
+  String get plTaxSo => 'S&O-aftrek';
+
+  @override
+  String get plTaxSoHelp =>
+      'For research and development with an S&O-verklaring and at least 500 hours.';
+
+  @override
+  String get plTaxStakings => 'Stakingsaftrek';
+
+  @override
+  String get plTaxStakingsHelp =>
+      'A deduction on the gain when the whole business stops, up to € 3.630 over your lifetime.';
+
+  @override
+  String get plTaxStartersaftrekHelp =>
+      'An extra deduction on top of the zelfstandigenaftrek for business owners who recently started.';
+
+  @override
+  String get plTaxTaxableProfitHelp =>
+      'The income in box 1 the tax is calculated on.';
+
+  @override
+  String get plTaxUnrealisedZelfs =>
+      'Unused zelfstandigenaftrek from earlier years';
+
+  @override
+  String get plTaxUnrealisedZelfsHelp =>
+      'Zelfstandigenaftrek from earlier years that did not fit the profit then, used up to this year\'s profit.';
+
+  @override
+  String get plTaxZelfstandigenaftrekHelp =>
+      'A fixed deduction for business owners who meet the urencriterium. At most the profit, unless you are a starter.';
+
+  @override
+  String get plTaxZvwHelp =>
+      'The income-related contribution to the health care insurance act, on belastbare winst up to a maximum.';
+
+  @override
+  String get vatReturnIcpSectionHelp =>
+      'Supplies to businesses in other EU countries, reported separately in the ICP report.';
+
+  @override
+  String get vatRow1aHelp => 'Revenue taxed at 21% and the VAT on it.';
+
+  @override
+  String get vatRow1bHelp => 'Revenue taxed at 9% and the VAT on it.';
+
+  @override
+  String get vatRow1d => '1d  Private use';
+
+  @override
+  String get vatRow1dHelp =>
+      'VAT on private use of business cars: 2,7% or 1,5% of the catalogue value, or the actual private share with a trip log. In the last return of the year only.';
+
+  @override
+  String get vatRow1eHelp =>
+      'Revenue at 0% or where the VAT is reverse-charged to a Dutch business.';
+
+  @override
+  String get vatRow3aHelp => 'Exports of goods to countries outside the EU.';
+
+  @override
+  String get vatRow3bHelp =>
+      'Goods and services to businesses in other EU countries.';
+
+  @override
+  String get vatRow5aHelp => 'The VAT you owe on your revenue and private use.';
+
+  @override
+  String get vatRow5bHelp => 'The VAT on business costs you may deduct.';
+
+  @override
+  String get clientsSearchHelp => 'Search clients by name.';
+
+  @override
+  String get invoicesSearchHelp => 'Search by invoice number or client name.';
+
+  @override
+  String get expensesFieldPurchaseVat => 'BTW on this purchase';
+
+  @override
+  String get expensesFieldPurchaseVatHelp =>
+      'Dutch BTW when the supplier charged it. Shifted when the invoice says the BTW is reverse-charged to you, or the supplier is abroad: you then report and deduct the BTW yourself.';
+
+  @override
+  String get purchaseVatDomestic => 'Charged by the supplier';
+
+  @override
+  String get purchaseVatReverseChargeNl =>
+      'Shifted to me by a Dutch supplier (2a)';
+
+  @override
+  String get purchaseVatFromEu => 'From a supplier in another EU country (4b)';
+
+  @override
+  String get purchaseVatFromOutsideEu =>
+      'Service from a supplier outside the EU (4a)';
+
+  @override
+  String get vatReturnShiftedSection => 'BTW shifted to you';
+
+  @override
+  String get vatReturnShiftedSectionHelp =>
+      'Purchases where you report the BTW yourself. You deduct the same BTW in 5b, so on balance you usually pay nothing.';
+
+  @override
+  String get vatRow2a => '2a  Domestic reverse charge';
+
+  @override
+  String get vatRow2aHelp =>
+      'Purchases from Dutch suppliers who shifted the BTW to you.';
+
+  @override
+  String get vatRow4a => '4a  From countries outside the EU';
+
+  @override
+  String get vatRow4aHelp => 'Services from suppliers outside the EU.';
+
+  @override
+  String get vatRow4b => '4b  From EU countries';
+
+  @override
+  String get vatRow4bHelp =>
+      'Goods and services from suppliers in other EU countries.';
+
+  @override
+  String vatBaseAndVat(String base, String vat) {
+    return '$base, BTW $vat';
+  }
+
+  @override
+  String get expensesBusinessUseHelp =>
+      'The share used for the business. Only that share of the cost and BTW is deductible.';
+
+  @override
+  String get settingsLanguageSectionHelp =>
+      'The language of the app. Invoices and CSV exports are always in Dutch.';
 }

@@ -1,56 +1,27 @@
 import 'dart:io';
-import 'package:file_picker/file_picker.dart';
+
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../constants/prefs_keys.dart';
 
-class DbLocationService {
-  static const _dbFileName = 'florin.db';
+import '../db/database.dart';
 
-  final SharedPreferences _prefs;
+/// Where the database file lives.
+abstract final class DbLocationService {
+  static const fileName = 'florin.db';
 
-  DbLocationService(this._prefs);
+  static Future<String> defaultPath() async =>
+      p.join((await getApplicationSupportDirectory()).path, fileName);
 
-  String? get currentPath => _prefs.getString(PrefsKeys.dbPath);
+  static String pathIn(String directory) => p.join(directory, fileName);
 
-  bool get hasPath => currentPath != null;
-
-  /// Returns (and persists) the default path inside the app support directory.
-  /// Always accessible on macOS sandbox — no file-picker permission needed.
-  Future<String> defaultPath() async {
-    final dir = await getApplicationSupportDirectory();
-    return p.join(dir.path, _dbFileName);
-  }
-
-  /// Ensures a path is stored. If none, sets the app-support default.
-  Future<String> ensurePath() async {
-    if (currentPath != null) return currentPath!;
-    final path = await defaultPath();
-    await _prefs.setString(PrefsKeys.dbPath, path);
-    return path;
-  }
-
-  Future<String?> pickAndSetLocation({required String dialogTitle}) async {
-    final dir = await FilePicker.platform.getDirectoryPath(
-      dialogTitle: dialogTitle,
-    );
-    if (dir == null) return null;
-    final path = p.join(dir, _dbFileName);
-    await _prefs.setString(PrefsKeys.dbPath, path);
-    return path;
-  }
-
-  Future<String?> moveDatabase(String newDir) async {
-    final oldPath = currentPath;
-    if (oldPath == null) return null;
-    final newPath = p.join(newDir, _dbFileName);
-    final oldFile = File(oldPath);
-    if (await oldFile.exists()) {
-      await oldFile.copy(newPath);
-      await oldFile.delete();
+  /// Copies the open database to [directory] and returns the new path.
+  /// Refuses to overwrite an existing database there.
+  static Future<String> copyTo(AppDatabase db, String directory) async {
+    final target = pathIn(directory);
+    if (File(target).existsSync()) {
+      throw FileSystemException('A database already exists here', target);
     }
-    await _prefs.setString(PrefsKeys.dbPath, newPath);
-    return newPath;
+    await db.customStatement('VACUUM INTO ?', [target]);
+    return target;
   }
 }

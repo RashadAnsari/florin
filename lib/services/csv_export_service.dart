@@ -1,13 +1,84 @@
 import 'dart:io';
+
 import 'package:csv/csv.dart';
-import 'package:drift/drift.dart' hide DataClass;
+import 'package:drift/drift.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:path/path.dart' as p;
+
 import '../db/database.dart';
 import '../theme/app_theme.dart';
+import 'domain.dart';
 
+/// Exports one year of bookkeeping as CSV files for an accountant. Headers
+/// and values are Dutch whatever the app language.
 class CsvExportService {
   final AppDatabase db;
+
   CsvExportService(this.db);
+
+  static String _yesNo(bool b) => b ? 'Ja' : 'Nee';
+  static String _date(DateTime? d) => d == null ? '' : AppFormat.date(d);
+  static double _euro(int cents) => cents / 100;
+
+  static String _type(InvoiceType t) => switch (t) {
+    InvoiceType.invoice => 'Factuur',
+    InvoiceType.creditNote => 'Creditnota',
+  };
+
+  static String _status(InvoiceStatus s) => switch (s) {
+    InvoiceStatus.draft => 'Concept',
+    InvoiceStatus.sent => 'Verzonden',
+    InvoiceStatus.paid => 'Betaald',
+  };
+
+  static String _treatment(VatTreatment t) => switch (t) {
+    VatTreatment.standard => 'Nederlandse btw',
+    VatTreatment.reverseChargeNl => 'Btw verlegd (binnenland)',
+    VatTreatment.euServices => 'Diensten EU, btw verlegd',
+    VatTreatment.euGoods => 'Intracommunautaire levering',
+    VatTreatment.exportOutsideEu => 'Uitvoer buiten de EU',
+  };
+
+  static String _rate(VatRate r) => switch (r) {
+    VatRate.high => '21%',
+    VatRate.low => '9%',
+    VatRate.zero => '0%',
+    VatRate.exempt => 'Vrijgesteld',
+  };
+
+  static String _category(ExpenseCategory c) => switch (c) {
+    ExpenseCategory.office => 'Kantoor en benodigdheden',
+    ExpenseCategory.travel => 'Reizen en verblijf',
+    ExpenseCategory.foodAndRepresentation => 'Voedsel, drank en representatie',
+    ExpenseCategory.software => 'Software en abonnementen',
+    ExpenseCategory.hardware => 'Hardware en apparatuur',
+    ExpenseCategory.marketing => 'Marketing en reclame',
+    ExpenseCategory.professionalServices => 'Professionele diensten',
+    ExpenseCategory.phoneAndInternet => 'Telefoon en internet',
+    ExpenseCategory.insurance => 'Verzekeringen',
+    ExpenseCategory.training => 'Opleiding',
+    ExpenseCategory.other => 'Overig',
+  };
+
+  static String _work(WorkType w) => switch (w) {
+    WorkType.billable => 'Declarabel',
+    WorkType.nonBillable => 'Niet declarabel',
+    WorkType.administrative => 'Administratie',
+    WorkType.wbso => 'WBSO',
+    WorkType.other => 'Overig',
+  };
+
+  static String _trip(TripType t) => switch (t) {
+    TripType.business => 'Zakelijk',
+    TripType.commute => 'Woon-werk',
+    TripType.private => 'Privé',
+  };
+
+  static String _risk(WetDbaRisk r) => switch (r) {
+    WetDbaRisk.low => 'Laag',
+    WetDbaRisk.medium => 'Middel',
+    WetDbaRisk.high => 'Hoog',
+  };
 
   Future<String?> exportYear(int year, {required String dialogTitle}) async {
     final dir = await FilePicker.platform.getDirectoryPath(
@@ -17,190 +88,175 @@ class CsvExportService {
 
     final invoices =
         await (db.select(db.invoices)
-              ..where((i) => i.fiscalYear.equals(year))
-              ..orderBy([(i) => OrderingTerm.asc(i.invoiceDate)]))
+              ..where(
+                (i) =>
+                    i.invoiceDate.inYear(year) &
+                    i.status.equalsValue(InvoiceStatus.draft).not(),
+              )
+              ..orderBy([(i) => OrderingTerm.asc(i.invoiceNumber)]))
             .get();
+    final numbers = {for (final i in invoices) i.id: i.invoiceNumber};
+    final lines =
+        (await (db.select(
+          db.invoiceLines,
+        )..orderBy([(l) => OrderingTerm.asc(l.sortOrder)])).get()).where(
+          (l) => numbers.containsKey(l.invoiceId),
+        );
     final expenses =
         await (db.select(db.expenses)
-              ..where((e) => e.fiscalYear.equals(year))
+              ..where((e) => e.date.inYear(year))
               ..orderBy([(e) => OrderingTerm.asc(e.date)]))
             .get();
     final hours =
         await (db.select(db.hourEntries)
-              ..where((h) => h.fiscalYear.equals(year))
+              ..where((h) => h.date.inYear(year))
               ..orderBy([(h) => OrderingTerm.asc(h.date)]))
             .get();
-    final mileage =
+    final trips =
         await (db.select(db.mileageTrips)
-              ..where((m) => m.fiscalYear.equals(year))
+              ..where((m) => m.date.inYear(year))
               ..orderBy([(m) => OrderingTerm.asc(m.date)]))
             .get();
-    final assets =
-        await (db.select(db.fixedAssets)
-              ..where((a) => a.fiscalYear.equals(year))
-              ..orderBy([(a) => OrderingTerm.asc(a.purchaseDate)]))
-            .get();
-    final lines =
-        await (db.select(db.invoiceLines).join([
-                innerJoin(
-                  db.invoices,
-                  db.invoices.id.equalsExp(db.invoiceLines.invoiceId),
-                ),
-              ])
-              ..where(
-                db.invoices.fiscalYear.equals(year) &
-                    db.invoices.status.isNotValue('Draft'),
-              )
-              ..orderBy([
-                OrderingTerm.asc(db.invoices.invoiceNumber),
-                OrderingTerm.asc(db.invoiceLines.sortOrder),
-              ]))
-            .get();
+    final assets = await (db.select(
+      db.fixedAssets,
+    )..orderBy([(a) => OrderingTerm.asc(a.purchaseDate)])).get();
     final clients = await db.select(db.clients).get();
     final clientNames = {for (final c in clients) c.id: c.name};
-    final invoiceNumbers = {for (final i in invoices) i.id: i.invoiceNumber};
 
-    await _writeCsv('$dir/florin_${year}_facturen.csv', [
+    Future<void> write(String name, List<List<Object>> rows) => File(
+      p.join(dir, 'florin_${year}_$name.csv'),
+    ).writeAsString(const ListToCsvConverter().convert(rows));
+
+    await write('facturen', [
       [
         'Nummer',
-        'Datum',
-        'Vervaldatum',
         'Type',
+        'Corrigeert factuur',
+        'Datum',
+        'Leveringsdatum',
+        'Vervaldatum',
         'Status',
         'Betaaldatum',
         'Klant',
-        'ICP',
-        'BTW verlegd',
-        'Excl. BTW',
-        'BTW',
-        'Incl. BTW',
+        'Btw-behandeling',
+        'Excl. btw',
+        'Btw',
+        'Incl. btw',
         'Kwartaal',
       ],
-      ...invoices
-          .where((i) => i.status != 'Draft')
-          .map(
-            (i) => [
-              i.invoiceNumber,
-              AppFormat.date(i.invoiceDate),
-              AppFormat.date(i.dueDate),
-              i.invoiceType,
-              i.status,
-              i.paidDate != null ? AppFormat.date(i.paidDate!) : '',
-              clientNames[i.clientId] ?? '',
-              i.isIcp ? 'Ja' : 'Nee',
-              i.isReverseCharge ? 'Ja' : 'Nee',
-              i.totalExclVat / 100,
-              i.totalVat / 100,
-              i.totalInclVat / 100,
-              i.quarter,
-            ],
-          ),
+      for (final i in invoices)
+        [
+          i.invoiceNumber,
+          _type(i.invoiceType),
+          numbers[i.correctedInvoiceId] ?? '',
+          _date(i.invoiceDate),
+          _date(i.supplyDate),
+          _date(i.dueDate),
+          _status(i.status),
+          _date(i.paidDate),
+          clientNames[i.clientId] ?? '',
+          _treatment(i.vatTreatment),
+          _euro(i.totalExclVat),
+          _euro(i.totalVat),
+          _euro(i.totalInclVat),
+          'Q${quarterOf(i.invoiceDate)}',
+        ],
     ]);
 
-    await _writeCsv('$dir/florin_${year}_factuurregels.csv', [
+    await write('factuurregels', [
       [
         'Factuurnummer',
         'Omschrijving',
         'Aantal',
         'Eenheid',
-        'Prijs excl. BTW',
-        'BTW tarief',
-        'BTW bedrag',
-        'Totaal excl. BTW',
+        'Prijs excl. btw',
+        'Btw-tarief',
+        'Btw',
+        'Totaal excl. btw',
       ],
-      ...lines.map((row) {
-        final line = row.readTable(db.invoiceLines);
-        final inv = row.readTable(db.invoices);
-        return [
-          invoiceNumbers[line.invoiceId] ?? inv.invoiceNumber,
-          line.description,
-          line.quantity,
-          line.quantityUnit,
-          line.unitPriceExclVat / 100,
-          line.vatRate,
-          line.vatAmount / 100,
-          line.lineTotalExclVat / 100,
-        ];
-      }),
+      for (final l in lines)
+        [
+          numbers[l.invoiceId]!,
+          l.description,
+          l.quantity,
+          l.unit ?? '',
+          _euro(l.unitPriceExclVat),
+          _rate(l.vatRate),
+          _euro(l.vatAmount),
+          _euro(l.lineTotalExclVat),
+        ],
     ]);
 
-    await _writeCsv('$dir/florin_${year}_uitgaven.csv', [
+    await write('uitgaven', [
       [
         'Datum',
         'Leverancier',
         'Omschrijving',
         'Categorie',
-        'BTW tarief',
-        'Excl. BTW',
-        'BTW',
+        'Btw-tarief',
+        'Btw-behandeling',
+        'Excl. btw',
+        'Btw',
         'Totaal',
         'Zakelijk gebruik %',
-        'Aftrekbaar',
-        'BTW te vorderen',
+        'Zakelijk deel',
+        'Btw te vorderen',
         'Bon aanwezig',
         'Kwartaal',
       ],
-      ...expenses.map(
-        (e) => [
-          AppFormat.date(e.date),
+      for (final e in expenses)
+        [
+          _date(e.date),
           e.supplier,
           e.description,
-          e.category,
-          e.vatRate,
-          e.amountExclVat / 100,
-          e.vatAmount / 100,
-          e.totalInclVat / 100,
+          _category(e.category),
+          _rate(e.vatRate),
+          switch (e.purchaseVat) {
+            PurchaseVat.domestic => 'Nederlandse btw',
+            PurchaseVat.reverseChargeNl => 'Btw verlegd binnenland',
+            PurchaseVat.fromEu => 'Verlegd uit EU-land',
+            PurchaseVat.fromOutsideEu => 'Verlegd uit land buiten de EU',
+          },
+          _euro(e.amountExclVat),
+          _euro(e.vatAmount),
+          _euro(e.totalInclVat),
           (e.businessUsePct * 100).round(),
-          e.deductibleAmount / 100,
-          e.vatToReclaim / 100,
-          e.receiptAttached ? 'Ja' : 'Nee',
-          e.quarter,
+          _euro(e.deductibleAmount),
+          _euro(e.vatToReclaim),
+          _yesNo(e.receiptAttached),
+          'Q${quarterOf(e.date)}',
         ],
-      ),
     ]);
 
-    await _writeCsv('$dir/florin_${year}_uren.csv', [
-      [
-        'Datum',
-        'Omschrijving',
-        'Type',
-        'Uren',
-        'Facturabel',
-        'Klant/Project',
-        'WBSO',
-        'Week',
-      ],
-      ...hours.map(
-        (h) => [
-          AppFormat.date(h.date),
+    await write('uren', [
+      ['Datum', 'Omschrijving', 'Soort', 'Uren', 'Klant / project'],
+      for (final h in hours)
+        [
+          _date(h.date),
           h.description,
-          h.workType,
+          _work(h.workType),
           h.hours,
-          h.billable ? 'Ja' : 'Nee',
           h.clientProject ?? '',
-          h.isWbso ? 'Ja' : 'Nee',
-          h.weekNumber,
         ],
-      ),
     ]);
 
-    await _writeCsv('$dir/florin_${year}_kilometers.csv', [
+    await write('kilometers', [
       [
         'Datum',
-        'Merk/Model',
+        'Merk / model',
         'Kenteken',
         'Van',
         'Naar',
-        'Km start',
+        'Km begin',
         'Km eind',
         'Afstand',
-        'Type',
+        'Soort',
         'Doel',
         'Routeafwijking',
       ],
-      ...mileage.map(
-        (m) => [
-          AppFormat.date(m.date),
+      for (final m in trips)
+        [
+          _date(m.date),
           m.vehicleMakeModel,
           m.vehicleLicensePlate,
           m.departureAddress,
@@ -208,57 +264,72 @@ class CsvExportService {
           m.odometerStart,
           m.odometerEnd,
           m.distanceKm,
-          m.tripType,
+          _trip(m.tripType),
           m.purpose,
-          m.routeDeviation ? 'Ja' : 'Nee',
+          _yesNo(m.routeDeviation),
         ],
-      ),
     ]);
 
-    await _writeCsv('$dir/florin_${year}_activa.csv', [
+    await write('activa', [
       [
         'Naam',
-        'Kosten excl. BTW',
+        'Soort',
+        'Kosten excl. btw',
+        'Restwaarde',
         'Aankoopdatum',
         'Zakelijk gebruik %',
         'Levensduur (jaar)',
         'KIA',
-        'EIA/MIA',
+        'EIA',
+        'MIA-categorie',
+        'Afgeboekte herinvesteringsreserve',
+        'Cataloguswaarde',
         'Verkoopdatum',
         'Verkoopopbrengst',
+        'Boekwinst naar herinvesteringsreserve',
       ],
-      ...assets.map(
-        (a) => [
+      for (final a in assets)
+        [
           a.assetName,
-          a.costExclVat / 100,
-          AppFormat.date(a.purchaseDate),
+          a.kind == AssetKind.car ? 'Auto van de zaak' : 'Bedrijfsmiddel',
+          _euro(a.costExclVat),
+          _euro(a.residualValue),
+          _date(a.purchaseDate),
           (a.businessUsePct * 100).round(),
           a.usefulLifeYears,
-          a.kiaEligible ? 'Ja' : 'Nee',
-          a.eiaOrMia ? 'Ja' : 'Nee',
-          a.disposalDate != null ? AppFormat.date(a.disposalDate!) : '',
-          a.disposalProceeds != null ? a.disposalProceeds! / 100 : '',
+          _yesNo(a.kiaEligible),
+          _yesNo(a.eiaEligible),
+          switch (a.miaCategory) {
+            null => '',
+            MiaCategory.one => 'I',
+            MiaCategory.two => 'II',
+            MiaCategory.three => 'III',
+          },
+          _euro(a.reinvestmentReserveApplied),
+          a.catalogueValue == null ? '' : _euro(a.catalogueValue!),
+          _date(a.disposalDate),
+          a.disposalProceeds == null ? '' : _euro(a.disposalProceeds!),
+          _yesNo(a.reserveGain),
         ],
-      ),
     ]);
 
-    await _writeCsv('$dir/florin_${year}_klanten.csv', [
+    await write('klanten', [
       [
         'Naam',
         'Land',
-        'BTW nummer',
-        'KVK nummer',
+        'Btw-id',
+        'KvK-nummer',
         'Adres',
         'Contactpersoon',
         'E-mail',
         'Telefoon',
-        'Wet DBA risico',
+        'Wet DBA-risico',
         'Contract getekend',
         'Contract vervaldatum',
         'Actief',
       ],
-      ...clients.map(
-        (c) => [
+      for (final c in clients)
+        [
           c.name,
           c.country,
           c.vatNumber ?? '',
@@ -267,19 +338,13 @@ class CsvExportService {
           c.contactPerson ?? '',
           c.email ?? '',
           c.phone ?? '',
-          c.wetDbaRiskLevel,
-          c.contractSigned ? 'Ja' : 'Nee',
-          c.contractExpiry != null ? AppFormat.date(c.contractExpiry!) : '',
-          c.isActive ? 'Ja' : 'Nee',
+          _risk(c.wetDbaRisk),
+          _yesNo(c.contractSigned),
+          _date(c.contractExpiry),
+          _yesNo(c.isActive),
         ],
-      ),
     ]);
 
     return dir;
-  }
-
-  Future<void> _writeCsv(String path, List<List<dynamic>> rows) async {
-    final content = const ListToCsvConverter().convert(rows);
-    await File(path).writeAsString(content);
   }
 }

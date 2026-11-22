@@ -1,69 +1,46 @@
 import '../db/database.dart';
+import 'tax_rules/tax_year_rules.dart';
 
+/// Lijfrente room for one year (Wet IB 2001 art. 3.127). Amounts in cents.
 class JaarruimteResult {
-  final int pensioengrondslag; // cents (can be negative)
-  final int jaarruimte; // cents (0 if grondslag <= 0)
-  final int jaarruimteCapped; // min(jaarruimte, jaarruimteMax)
-  final int reserveringsruimte; // cents (user-supplied, capped)
-  final int totalBudget; // jaarruimteCapped + reserveringsruimte
-  final int estimatedTaxSaving; // cents
+  final int premiegrondslag;
+  final int jaarruimte;
+  final int reserveringsruimte;
 
   const JaarruimteResult({
-    required this.pensioengrondslag,
+    required this.premiegrondslag,
     required this.jaarruimte,
-    required this.jaarruimteCapped,
     required this.reserveringsruimte,
-    required this.totalBudget,
-    required this.estimatedTaxSaving,
   });
+
+  int get totalRoom => jaarruimte + reserveringsruimte;
 }
 
-class PensionService {
-  const PensionService();
-
-  JaarruimteResult calculate({
-    required TaxParam params,
-    required int taxableProfit, // cents
-    required double factorA, // euros
-    required int unusedPriorYears, // cents
-    required double marginalRate, // e.g. 0.3575
-  }) {
-    final grondslag = taxableProfit - params.aowFranchise;
-
-    if (grondslag <= 0) {
-      return JaarruimteResult(
-        pensioengrondslag: grondslag,
-        jaarruimte: 0,
-        jaarruimteCapped: 0,
-        reserveringsruimte: 0,
-        totalBudget: 0,
-        estimatedTaxSaving: 0,
-      );
-    }
-
-    // jaarruimte = 30% × grondslag − 6.27 × factorA
-    // factorA is in euros; convert to cents for subtraction
-    final jaarruimteRaw =
-        (grondslag * params.jaarruimtePct -
-                params.factorAMultiplier * factorA * 100)
-            .round();
-    final jaarruimte = jaarruimteRaw < 0 ? 0 : jaarruimteRaw;
-    final jaarruimteCapped = jaarruimte.clamp(0, params.jaarruimteMax);
-
-    final reserveringsruimte = unusedPriorYears.clamp(
+abstract final class PensionService {
+  static JaarruimteResult calculate(TaxYearRules rules, PensionEntry? entry) {
+    final income = entry?.priorYearIncome ?? 0;
+    final grondslag = (income - rules.aowFranchise).clamp(
       0,
-      params.reserveringsruimteMax,
+      (rules.jaarruimteMax / rules.jaarruimtePct).round(),
     );
-    final totalBudget = jaarruimteCapped + reserveringsruimte;
-    final saving = (totalBudget * marginalRate).round();
-
+    final raw =
+        (grondslag * rules.jaarruimtePct -
+                rules.factorAMultiplier * (entry?.factorA ?? 0))
+            .round();
     return JaarruimteResult(
-      pensioengrondslag: grondslag,
-      jaarruimte: jaarruimte,
-      jaarruimteCapped: jaarruimteCapped,
-      reserveringsruimte: reserveringsruimte,
-      totalBudget: totalBudget,
-      estimatedTaxSaving: saving,
+      premiegrondslag: grondslag,
+      jaarruimte: raw.clamp(0, rules.jaarruimteMax),
+      reserveringsruimte: (entry?.reserveringsruimte ?? 0).clamp(
+        0,
+        rules.reserveringsruimteMax,
+      ),
     );
+  }
+
+  /// The planned premium, limited to the available room.
+  static int deductiblePremium(TaxYearRules rules, PensionEntry? entry) {
+    final planned = entry?.plannedContribution ?? 0;
+    final room = calculate(rules, entry).totalRoom;
+    return planned < room ? planned : room;
   }
 }

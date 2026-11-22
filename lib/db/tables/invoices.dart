@@ -1,34 +1,34 @@
 import 'package:drift/drift.dart';
+import '../enums.dart';
 import 'clients.dart';
 
-const kDefaultPaymentTermDays = 14;
-
+@TableIndex(name: 'invoices_invoice_date', columns: {#invoiceDate})
 class Invoices extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get invoiceNumber => text().unique()();
+  TextColumn get invoiceType => textEnum<InvoiceType>()();
+
+  /// The invoice a credit note corrects (Wet OB 1968 art. 35a lid 2 e).
+  IntColumn get correctedInvoiceId => integer().nullable().references(
+    Invoices,
+    #id,
+    onDelete: KeyAction.restrict,
+  )();
   DateTimeColumn get invoiceDate => dateTime()();
   DateTimeColumn get supplyDate => dateTime().nullable()();
-  IntColumn get clientId => integer().references(Clients, #id)();
-  TextColumn get invoiceType => text().withDefault(const Constant('Invoice'))();
+  IntColumn get clientId =>
+      integer().references(Clients, #id, onDelete: KeyAction.restrict)();
+  TextColumn get vatTreatment => textEnum<VatTreatment>()();
   TextColumn get sellerName => text()();
   TextColumn get sellerVatNumber => text()();
   TextColumn get sellerKvkNumber => text()();
   TextColumn get sellerAddress => text()();
-  TextColumn get sellerIban => text().nullable()();
-  IntColumn get paymentTermDays =>
-      integer().withDefault(const Constant(kDefaultPaymentTermDays))();
-  DateTimeColumn get dueDate => dateTime()();
-  TextColumn get status => text().withDefault(const Constant('Draft'))();
+  TextColumn get sellerIban => text()();
+  IntColumn get paymentTermDays => integer()();
+  TextColumn get status => textEnum<InvoiceStatus>()();
   DateTimeColumn get paidDate => dateTime().nullable()();
-  DateTimeColumn get refundDate => dateTime().nullable()();
   TextColumn get notes => text().nullable()();
-  BoolColumn get isReverseCharge =>
-      boolean().withDefault(const Constant(false))();
-  BoolColumn get isIcp => boolean().withDefault(const Constant(false))();
-  TextColumn get reverseChargeNote => text().nullable()();
-  IntColumn get totalExclVat => integer().withDefault(const Constant(0))();
-  IntColumn get totalVat => integer().withDefault(const Constant(0))();
-  IntColumn get totalInclVat => integer().withDefault(const Constant(0))();
-  IntColumn get fiscalYear => integer()();
-  TextColumn get quarter => text()();
+  IntColumn get totalExclVat => integer()();
+  IntColumn get totalVat => integer()();
+  IntColumn get totalInclVat => integer()();
 }

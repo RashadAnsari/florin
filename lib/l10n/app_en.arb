@@ -1,8 +1,6 @@
 {
   "@@locale": "en",
-
   "appTitle": "Florin",
-
   "navDashboard": "Dashboard",
   "navInvoices": "Invoices",
   "navClients": "Clients",
@@ -15,57 +13,68 @@
   "navPension": "Pension",
   "navSettings": "Settings",
   "navYear": "Year:",
-
   "actionSave": "Save",
   "actionDelete": "Delete",
   "actionCancel": "Cancel",
   "actionConfirm": "Confirm",
-  "actionAdd": "Add",
-  "actionNew": "New",
-
-  "labelRequired": "Required",
   "labelDate": "Date",
   "labelNotes": "Notes",
-  "labelDescription": "Description",
-  "labelAmount": "Amount",
-  "labelAddress": "Address",
-  "labelName": "Name",
   "labelCategory": "Category",
   "labelAll": "All",
   "labelSearch": "Search…",
-
   "dashboardTitle": "Dashboard {year}",
-  "@dashboardTitle": { "placeholders": { "year": { "type": "int" } } },
+  "@dashboardTitle": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
   "dashboardNetRevenue": "Net revenue",
   "dashboardDeductibleCosts": "Costs (deductible)",
   "dashboardEstimatedTax": "Estimated tax",
   "dashboardEffectiveRate": "Effective {rate}%",
-  "@dashboardEffectiveRate": { "placeholders": { "rate": { "type": "String" } } },
-  "dashboardNetProfitAfterTax": "Net profit after tax",
-  "dashboardOutstandingInvoices": "Outstanding invoices",
-  "dashboardInvoiceCount": "{count} invoice(s)",
-  "@dashboardInvoiceCount": { "placeholders": { "count": { "type": "int" } } },
-  "dashboardUrencriterium": "Urencriterium",
-  "dashboardHoursProgress": "{total} / {target} hrs",
-  "@dashboardHoursProgress": {
+  "@dashboardEffectiveRate": {
     "placeholders": {
-      "total": { "type": "String" },
-      "target": { "type": "String" }
+      "rate": {
+        "type": "String"
+      }
     }
   },
+  "dashboardNetProfitAfterTax": "Estimated net profit after tax",
+  "dashboardOutstandingInvoices": "Outstanding invoices",
+  "dashboardInvoiceCount": "{count} invoice(s)",
+  "@dashboardInvoiceCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardUrencriterium": "Urencriterium",
   "dashboardBtwDeadlines": "BTW-deadlines",
   "dashboardMonthlyRevenue": "Monthly revenue",
   "deadlineStatusFiled": "filed",
   "deadlineStatusOverdue": "overdue",
   "deadlineDaysLeft": "{days} d",
-  "@deadlineDaysLeft": { "placeholders": { "days": { "type": "int" } } },
+  "@deadlineDaysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "genericLoadError": "Could not load data: {error}",
-  "@genericLoadError": { "placeholders": { "error": { "type": "String" } } },
-
+  "@genericLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "invoicesTitle": "Invoices",
   "invoicesNewTooltip": "New invoice",
   "invoicesNone": "No invoices",
-  "invoicesSelectOrNew": "Select an invoice or create a new one",
   "invoicesNewHeader": "New invoice",
   "invoicesFilterAll": "All",
   "invoicesFilterOverdue": "Overdue",
@@ -73,39 +82,22 @@
   "invoiceStatusSent": "Sent",
   "invoiceStatusPaid": "Paid",
   "invoiceStatusOverdue": "Overdue",
-  "invoiceStatusCancelled": "Cancelled",
-  "invoiceStatusRefunded": "Refunded",
   "invoiceTypeInvoice": "Invoice",
   "invoiceTypeCreditNote": "Credit note",
-  "invoiceFieldType": "Type",
-  "invoiceFieldClient": "Client *",
-  "invoiceFieldNumber": "Invoice number *",
-  "invoiceFieldInvoiceDate": "Invoice date *",
+  "invoiceFieldClient": "Client",
+  "invoiceFieldNumber": "Invoice number",
+  "invoiceFieldInvoiceDate": "Invoice date",
   "invoiceFieldSupplyDate": "Supply date",
-  "invoiceFieldPaymentTerm": "Term (days) *",
+  "invoiceFieldPaymentTerm": "Term (days)",
   "invoiceValidatePaymentTerm": "Enter a whole number of days (e.g. 14 or 30)",
   "invoiceFieldDueDate": "Due date",
-  "invoiceFieldIcp": "ICP (intracommunautair)",
-  "invoiceTooltipIcp": "Intra-Community transactions (ICP): sales of goods or services to VAT-registered clients in EU countries outside the Netherlands. These must be reported separately in the ICP declaration alongside your VAT return.",
-  "invoiceWarnIcpNoVat": "The selected client has no VAT number. The ICP declaration requires a valid EU VAT number for the client.",
-  "invoiceFieldBtwVerlegd": "BTW verlegd",
-  "invoiceTooltipBtwVerlegd": "Reverse charge VAT: the VAT obligation is shifted from you to the recipient. Used when supplying goods or services to VAT-registered businesses, often in cross-border EU transactions. The invoice shows 0% VAT with the note 'BTW verlegd'.",
   "invoiceFieldLines": "Lines",
   "invoiceFieldAddLine": "Add line",
-  "invoiceFieldDescription": "Description *",
-  "invoiceHintDescription": "e.g. Consulting services, web design...",
-  "invoiceFieldQuantity": "Qty *",
+  "invoiceFieldDescription": "Description",
+  "invoiceFieldQuantity": "Qty",
   "invoiceFieldUnit": "Unit",
-  "invoiceFieldPrice": "Price (excl.) *",
+  "invoiceFieldPrice": "Price (excl.)",
   "invoiceFieldVat": "VAT",
-  "invoiceFieldVatAmount": "VAT amount",
-  "invoiceFieldLineTotal": "Total excl.",
-  "invoiceVatLine": "VAT {rate}",
-  "@invoiceVatLine": {
-    "placeholders": {
-      "rate": {"type": "String"}
-    }
-  },
   "invoiceValidateLineDescription": "Enter a line description",
   "invoiceValidateLineQuantity": "Enter a quantity greater than zero",
   "invoiceValidateLinePrice": "Enter a valid unit price",
@@ -114,40 +106,36 @@
   "invoiceFieldRemarks": "Remarks",
   "invoiceActionSend": "Send",
   "invoiceActionMarkPaid": "Paid",
-  "invoiceActionCancel": "Cancel",
-  "invoiceActionMarkRefunded": "Refunded",
   "invoiceActionExportPdf": "Export PDF",
-  "invoiceActionDelete": "Delete",
   "invoiceDeleteTitle": "Delete invoice",
   "invoiceDeleteMessage": "Are you sure you want to delete invoice \"{number}\"?",
-  "@invoiceDeleteMessage": { "placeholders": { "number": { "type": "String" } } },
-  "invoiceCreated": "Invoice created",
-  "invoiceSaved": "Invoice saved",
-  "invoiceDeleted": "Invoice deleted",
+  "@invoiceDeleteMessage": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
   "invoiceValidateClient": "Select a client for this invoice",
-  "invoiceValidateNumber": "Enter a unique invoice number, e.g. F-2024-001",
+  "invoiceValidateNumber": "Enter a unique invoice number, e.g. F-2026-001",
   "invoiceUnitHint": "hrs",
-
   "clientsTitle": "Clients",
   "clientsNewTooltip": "New client",
   "clientsNone": "No clients",
-  "clientsSelectOrNew": "Select a client or create a new one",
   "clientsNewHeader": "New client",
-  "clientsShowInactive": "Show inactive",
-  "clientsHideInactive": "Hide inactive",
   "clientsFilterAll": "All",
   "clientsFilterActive": "Active",
   "clientsFilterInactive": "Inactive",
   "clientsInactive": "Inactive",
-  "clientsFieldName": "Name *",
+  "clientsFieldName": "Name",
   "clientsValidateName": "Enter the client's name",
   "clientsFieldCountry": "Country",
   "clientsValidateCountry": "Use a 2-letter country code (e.g. NL, DE, FR)",
   "clientsFieldVat": "VAT number",
-  "clientsValidateVat": "Enter a valid EU VAT number (e.g. NL854224798B01)",
+  "clientsValidateVat": "Enter a valid EU VAT number, e.g. NL123456789B01 or DE123456789",
   "clientsFieldKvk": "KVK number",
   "clientsValidateKvk": "KVK number must be exactly 8 digits",
-  "clientsFieldAddress": "Address *",
+  "clientsFieldAddress": "Address",
   "clientsValidateAddress": "Enter the client's street address",
   "clientsFieldContact": "Contact person",
   "clientsFieldEmail": "E-mail",
@@ -163,28 +151,29 @@
   "clientsRiskHigh": "High",
   "clientsContractSigned": "Contract signed",
   "clientsContractExpiry": "Contract expiry date",
-  "clientsHighRiskWarning": "High Wet DBA risk: ensure a valid assignment agreement is in place.",
-  "clientsViesEmptyVat": "Please enter a VAT number first",
-  "clientsCreated": "Client created",
-  "clientsSaved": "Client saved",
+  "clientsHighRiskWarning": "High Wet DBA risk: the Belastingdienst may treat this work as employment. Review the working relationship with an adviser.",
   "clientsDeleteTitle": "Delete client",
   "clientsDeleteMessage": "Are you sure you want to delete \"{name}\"?",
-  "@clientsDeleteMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@clientsDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "clientsDeleteBlockedTooltip": "Client has invoices and cannot be deleted",
-
   "expensesTitle": "Expenses",
   "expensesNewTooltip": "New expense",
   "expensesNone": "No expenses",
-  "expensesSelectOrNew": "Select an expense or add a new one",
   "expensesNewHeader": "New expense",
-  "expensesFieldSupplier": "Supplier *",
+  "expensesFieldSupplier": "Supplier",
   "expensesHintSupplier": "e.g. Albert Heijn, Amazon, KPN",
   "expensesValidateSupplier": "Enter the supplier name",
-  "expensesFieldCategory": "Category *",
+  "expensesFieldCategory": "Category",
   "expensesValidateCategory": "Select a category for this expense",
-  "expensesFieldDescription": "Description *",
+  "expensesFieldDescription": "Description",
   "expensesValidateDescription": "Enter a description for this expense",
-  "expensesFieldAmountExcl": "Amount (excl. VAT) *",
+  "expensesFieldAmountExcl": "Amount (excl. VAT)",
   "expensesValidateAmount": "Enter the amount excluding VAT",
   "expensesFieldVatRate": "VAT rate",
   "expensesFieldVat": "VAT",
@@ -192,23 +181,22 @@
   "expensesFieldPaidFrom": "Paid from",
   "expensesHintPaidFrom": "e.g. ING business account, Visa card",
   "expensesFieldPaymentRef": "Payment reference",
-  "expensesHintPaymentRef": "e.g. INV-2024-0042, SEPA ref 123456",
+  "expensesHintPaymentRef": "e.g. INV-2026-0042, SEPA ref 123456",
   "expensesBusinessUse": "Business use",
   "expensesBusinessUsePct": "{pct}% business",
-  "@expensesBusinessUsePct": { "placeholders": { "pct": { "type": "int" } } },
+  "@expensesBusinessUsePct": {
+    "placeholders": {
+      "pct": {
+        "type": "int"
+      }
+    }
+  },
   "expensesDeductible": "Deductible",
   "expensesReclaimVat": "Reclaim VAT",
   "expensesVatBack": "VAT back",
-  "expensesVatBackAmount": "VAT back: {amount}",
-  "@expensesVatBackAmount": { "placeholders": { "amount": { "type": "String" } } },
-  "expensesMixedCosts": "Mixed costs",
   "expensesReceiptAttached": "Receipt attached",
-  "expensesBuaWarning": "BUA: meals & entertainment above €227. VAT deduction may be restricted (Besluit Uitsluiting Aftrek).",
-  "expensesCreated": "Expense created",
-  "expensesSaved": "Expense saved",
   "expensesDeleteTitle": "Delete expense",
   "expensesDeleteMessage": "Are you sure you want to delete this expense?",
-
   "expenseCatOffice": "Office & supplies",
   "expenseCatTravel": "Travel & accommodation",
   "expenseCatMeals": "Meals & entertainment",
@@ -220,59 +208,80 @@
   "expenseCatInsurance": "Insurance",
   "expenseCatTraining": "Training & education",
   "expenseCatOther": "Other",
-
   "hoursTitle": "Hour registration",
   "hoursNone": "No hours registered",
-  "hoursSelectOrNew": "Select an entry or click +",
   "hoursBillable": "Billable: {hours} hrs",
-  "@hoursBillable": { "placeholders": { "hours": { "type": "String" } } },
+  "@hoursBillable": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
   "hoursUnitShort": "hrs",
   "hoursProgress": "{total} / {target} hrs",
   "@hoursProgress": {
     "placeholders": {
-      "total": { "type": "String" },
-      "target": { "type": "String" }
+      "total": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
     }
   },
   "hoursUrencriteriumOk": "Urencriterium OK",
   "hoursUrencriteriumLeft": "{left} hrs to go",
-  "@hoursUrencriteriumLeft": { "placeholders": { "left": { "type": "String" } } },
-  "hoursFieldDate": "Date *",
-  "hoursFieldHours": "Hours *",
-  "hoursFieldDescription": "Description *",
-  "hoursFieldWorkType": "Work type *",
+  "@hoursUrencriteriumLeft": {
+    "placeholders": {
+      "left": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursFieldDate": "Date",
+  "hoursFieldHours": "Hours",
+  "hoursFieldDescription": "Description",
+  "hoursFieldWorkType": "Work type",
   "hoursFieldClientProject": "Client / project",
   "hoursFieldNotes": "Notes",
   "hoursNewEntry": "New entry",
-  "hoursEditEntry": "Edit entry",
   "hoursDeleteTitle": "Delete hour entry",
   "hoursDeleteMessage": "Are you sure you want to delete \"{description}\"?",
-  "@hoursDeleteMessage": { "placeholders": { "description": { "type": "String" } } },
-  "hoursValidateHours": "Enter a number of hours greater than 0",
+  "@hoursDeleteMessage": {
+    "placeholders": {
+      "description": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursValidateHours": "Enter the hours worked: more than 0 and at most 24",
   "hoursValidateDescription": "Describe the work done",
-  "hoursValidateWorkType": "Select a work type",
-
   "workTypeBillable": "Billable",
   "workTypeNonBillable": "Non-billable",
   "workTypeAdministrative": "Administrative",
   "workTypeWbso": "WBSO",
   "workTypeOther": "Other",
-
   "mileageTitle": "Mileage registration",
   "mileageNone": "No trips registered",
-  "mileageSelectOrNew": "Select a trip or click +",
   "mileageBusiness": "Business",
   "mileageTotal": "Total",
   "mileageUnitKm": "km",
-  "mileageAllowance": "Allowance (€{rate}/km)",
-  "@mileageAllowance": { "placeholders": { "rate": { "type": "String" } } },
-  "mileageFieldDate": "Date *",
-  "mileageFieldMakeModel": "Make / model *",
-  "mileageFieldPlate": "Licence plate *",
-  "mileageFieldFrom": "Departure address *",
-  "mileageFieldTo": "Arrival address *",
-  "mileageFieldOdoStart": "Odometer start *",
-  "mileageFieldOdoEnd": "Odometer end *",
+  "mileageAllowance": "Allowance ({rate} / km)",
+  "@mileageAllowance": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "mileageFieldDate": "Date",
+  "mileageFieldMakeModel": "Make / model",
+  "mileageFieldPlate": "Licence plate",
+  "mileageFieldFrom": "Departure address",
+  "mileageFieldTo": "Arrival address",
+  "mileageFieldOdoStart": "Odometer start",
+  "mileageFieldOdoEnd": "Odometer end",
   "mileageFieldOdoError": "End reading must be higher than start reading",
   "mileageValidateMakeModel": "Enter the vehicle make and model",
   "mileageValidatePlate": "Enter the vehicle licence plate",
@@ -280,45 +289,40 @@
   "mileageValidateTo": "Enter the arrival address",
   "mileageValidateOdoStart": "Enter the starting odometer reading",
   "mileageValidateOdoEnd": "Enter the ending odometer reading",
-  "mileageValidateTripType": "Select the type of trip",
   "mileageValidatePurpose": "Describe the purpose of this trip",
   "mileageFieldDistance": "Distance",
-  "mileageFieldTripType": "Trip type *",
-  "mileageFieldPurpose": "Purpose *",
+  "mileageFieldTripType": "Trip type",
+  "mileageFieldPurpose": "Purpose",
   "mileageFieldRouteDeviation": "Detour / non-direct route",
-  "mileageTooltipRouteDeviation": "Check this if you took a longer or indirect route than strictly necessary. The tax authority may ask you to explain why the route deviated from the shortest path.",
   "mileageFieldNotes": "Notes",
   "mileageNewTrip": "New trip",
-  "mileageEditTrip": "Edit trip",
   "mileageDeleteTitle": "Delete trip",
   "mileageDeleteMessage": "Are you sure you want to delete \"{purpose}\"?",
-  "@mileageDeleteMessage": { "placeholders": { "purpose": { "type": "String" } } },
-
+  "@mileageDeleteMessage": {
+    "placeholders": {
+      "purpose": {
+        "type": "String"
+      }
+    }
+  },
   "tripTypeBusiness": "Business",
   "tripTypeCommute": "Commute",
   "tripTypePrivate": "Private",
-
   "assetsTitle": "Fixed assets",
   "assetsNone": "No assets registered",
-  "assetsSelectOrNew": "Select an asset or click +",
   "assetsKiaInvestments": "KIA investments",
   "assetsKiaDeduction": "KIA deduction",
   "assetsDepreciationThisYear": "Depreciation this year",
-  "assetsFieldName": "Asset name *",
-  "assetsFieldCost": "Cost excl. VAT *",
-  "assetsFieldPurchaseDate": "Purchase date *",
-  "assetsFieldBusinessUse": "Business use: {pct}% *",
-  "@assetsFieldBusinessUse": { "placeholders": { "pct": { "type": "int" } } },
-  "assetsFieldUsefulLife": "Useful life *",
+  "assetsFieldName": "Asset name",
+  "assetsFieldCost": "Cost excl. VAT",
+  "assetsFieldPurchaseDate": "Purchase date",
+  "assetsFieldUsefulLife": "Useful life",
   "assetsFieldUsefulLifeUnit": "yrs",
-  "assetsFieldUsefulLifeMin": "Minimum 1 year",
+  "assetsFieldUsefulLifeMin": "Enter at least {years} years: depreciation is limited to 20% of the cost a year",
   "assetsValidateName": "Enter the asset name",
   "assetsValidateCost": "Enter the cost excluding VAT",
   "assetsFieldKia": "KIA eligible",
-  "assetsTooltipKia": "Kleinschaligheidsinvesteringsaftrek (KIA): an additional deduction from your taxable profit for small business investments. You qualify if your total investments in a calendar year fall within the statutory thresholds set by the Dutch tax authority.",
   "assetsKiaBadge": "KIA",
-  "assetsFieldEiaMia": "EIA / MIA",
-  "assetsTooltipEiaMia": "Energie-investeringsaftrek (EIA) and Milieu-investeringsaftrek (MIA): additional tax deductions for investments in energy-efficient or environmentally-friendly business assets listed on the official Energy List or Environmental List published by RVO.",
   "assetsFieldNotes": "Notes",
   "assetsDisposal": "Disposal",
   "assetsFieldDisposalDate": "Disposal date",
@@ -326,80 +330,82 @@
   "assetsClearDisposalDate": "Clear disposal date",
   "assetsDeleteTitle": "Delete asset",
   "assetsDeleteMessage": "Are you sure you want to delete \"{name}\"?",
-  "@assetsDeleteMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@assetsDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "assetsNewAsset": "New asset",
-  "assetsEditAsset": "Edit asset",
   "assetsYears": "{n} yrs",
-  "@assetsYears": { "placeholders": { "n": { "type": "int" } } },
-
+  "@assetsYears": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "pensionTitle": "Pension",
-  "pensionLoadError": "Could not load pension data: {error}",
-  "@pensionLoadError": { "placeholders": { "error": { "type": "String" } } },
   "pensionJaarruimte": "Annual allowance calculation",
-  "pensionTaxableProfit": "Taxable profit",
   "pensionAowFranchise": "AOW franchise",
   "pensionPensioengrondslag": "Pension base",
-  "pensionJaarruimte30": "Annual allowance (30%)",
   "pensionJaarruimteMax": "Annual allowance (max {max})",
-  "@pensionJaarruimteMax": { "placeholders": { "max": { "type": "String" } } },
+  "@pensionJaarruimteMax": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "pensionReserveringsruimte": "Unused annual allowance",
   "pensionTotalBudget": "Total available",
   "pensionEstimatedTaxSaving": "Estimated tax saving",
   "pensionInputSection": "Input",
   "pensionFactorA": "Factor A",
-  "pensionFactorAHelper": "Pension accrual with employer / BV",
-  "pensionReserveringsruimteLabel": "Unused annual allowance from prior years",
+  "pensionReserveringsruimteLabel": "Reserveringsruimte",
   "pensionPlannedSection": "Planned contribution",
   "pensionLijfrente": "Annuity premium / AOV premium",
-  "pensionLijfrenteHelper": "Included as deduction in tax calculation",
   "pensionAovSection": "AOV disability insurance",
   "pensionAovInsured": "AOV insured",
   "pensionMonthlyPremium": "Monthly premium",
   "pensionAnnualPremium": "Annual premium: {amount}",
-  "@pensionAnnualPremium": { "placeholders": { "amount": { "type": "String" } } },
-
+  "@pensionAnnualPremium": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "vatReturnTitle": "VAT return",
   "vatReturnRevenueSection": "Revenue",
   "vatReturnCalculationSection": "VAT calculation",
   "vatReturnIcpSection": "ICP report",
-  "vatReturnIcpDeadline": "Deadline same as VAT return: {date}.",
-  "@vatReturnIcpDeadline": { "placeholders": { "date": { "type": "String" } } },
   "vatReturnStatusSection": "Processing status",
   "vatReturnFiled": "Return filed",
   "vatReturnPaid": "VAT paid",
-  "vatReturnYtdRevenue": "YTD revenue: {amount}",
-  "@vatReturnYtdRevenue": { "placeholders": { "amount": { "type": "String" } } },
-  "vatReturnLoadError": "Could not load VAT return data: {error}",
-  "@vatReturnLoadError": { "placeholders": { "error": { "type": "String" } } },
   "vatReturnDue": "VAT due",
   "vatReturnRefund": "VAT refund",
-  "vatReturnKorWarning": "KOR threshold reached ({ytd} of {max}). Charge VAT from next transaction.",
-  "@vatReturnKorWarning": {
-    "placeholders": {
-      "ytd": { "type": "String" },
-      "max": { "type": "String" }
-    }
-  },
   "vatRow1a": "1a  Supplies / services taxed at 21%",
   "vatRow1b": "1b  Supplies / services taxed at 9%",
-  "vatRow1c": "1c  Supplies / services taxed at 0% (export)",
-  "vatRow3a": "3a  Supplies to EU businesses (ICP / RC)",
+  "vatRow3a": "3a  Supplies to countries outside the EU (export)",
   "vatRow5a": "5a  VAT on revenue",
   "vatRow5b": "5b  Input tax (to reclaim)",
-
-  "plTaxTitle": "P&L / Tax",
-  "plTaxLoadError": "Could not load P&L / tax data: {error}",
-  "@plTaxLoadError": { "placeholders": { "error": { "type": "String" } } },
+  "plTaxTitle": "P&L and estimated tax",
   "plTaxRevenuSection": "Revenue",
   "plTaxGrossRevenue": "Gross revenue (excl. VAT)",
   "plTaxCreditNotes": "Less: credit notes",
   "plTaxNetRevenue": "Net revenue",
   "plTaxCostsSection": "Costs",
-  "plTaxMileageAllowance": "Mileage allowance ({km}km × €{rate})",
+  "plTaxMileageAllowance": "Business kilometres ({km} km × {rate})",
   "@plTaxMileageAllowance": {
     "placeholders": {
-      "km": { "type": "int" },
-      "rate": { "type": "String" }
+      "km": {
+        "type": "int"
+      },
+      "rate": {
+        "type": "String"
+      }
     }
   },
   "plTaxDepreciation": "Depreciation",
@@ -407,50 +413,66 @@
   "plTaxGrossProfit": "Gross profit",
   "plTaxDeductionsSection": "Entrepreneur deductions",
   "plTaxZelfstandigenaftrek": "Self-employed deduction {year}",
-  "@plTaxZelfstandigenaftrek": { "placeholders": { "year": { "type": "int" } } },
-  "plTaxStartersaftrek": "Starter deduction",
-  "plTaxMkb": "SME profit exemption ({pct}%)",
-  "@plTaxMkb": { "placeholders": { "pct": { "type": "String" } } },
-  "plTaxKia": "KIA deduction",
-  "plTaxLijrente": "Annuity deduction",
-  "plTaxTaxableProfit": "Taxable profit",
-  "plTaxBox1Section": "Income tax box 1",
-  "plTaxBracket1": "Bracket 1 ({pct}%)",
-  "@plTaxBracket1": { "placeholders": { "pct": { "type": "String" } } },
-  "plTaxBracket2": "Bracket 2 ({pct}%)",
-  "@plTaxBracket2": { "placeholders": { "pct": { "type": "String" } } },
-  "plTaxBracket3": "Bracket 3 ({pct}%)",
-  "@plTaxBracket3": { "placeholders": { "pct": { "type": "String" } } },
-  "plTaxAlgHeffing": "General tax credit",
-  "plTaxArbeidskorting": "Labour tax credit",
-  "plTaxDeduct": "Less: {label}",
-  "@plTaxDeduct": { "placeholders": { "label": { "type": "String" } } },
-  "plTaxMax": "(max {amount})",
-  "@plTaxMax": { "placeholders": { "amount": { "type": "String" } } },
-  "plTaxInkomsten": "Income tax",
-  "plTaxZvw": "ZVW contribution ({pct}%)",
-  "@plTaxZvw": { "placeholders": { "pct": { "type": "String" } } },
-  "plTaxTotalTax": "Total tax",
-  "plTaxNetProfit": "Net profit after tax",
-  "plTaxEffectiveRate": "Effective rate: {rate}%",
-  "@plTaxEffectiveRate": { "placeholders": { "rate": { "type": "String" } } },
-  "plTaxSettingsSection": "Settings",
-  "plTaxClaimZelfs": "Claim self-employed deduction",
-  "plTaxClaimStarters": "Claim starter deduction",
-  "plTaxUrenBanner": "Urencriterium: {hours} / 1,225 hrs logged{suffix}.",
-  "@plTaxUrenBanner": {
+  "@plTaxZelfstandigenaftrek": {
     "placeholders": {
-      "hours": { "type": "String" },
-      "suffix": { "type": "String" }
+      "year": {
+        "type": "int"
+      }
     }
   },
-  "plTaxUrenBannerSuffixDone": ", self-employed deduction lapses",
-  "plTaxUrenBannerSuffixPending": ", not yet reached",
-
+  "plTaxStartersaftrek": "Starter deduction",
+  "plTaxMkb": "SME profit exemption ({pct}%)",
+  "@plTaxMkb": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "plTaxKia": "KIA deduction",
+  "plTaxLijrente": "Annuity deduction",
+  "plTaxTaxableProfit": "Taxable income",
+  "plTaxBox1Section": "Income tax box 1, estimated",
+  "plTaxAlgHeffing": "General tax credit",
+  "plTaxArbeidskorting": "Labour tax credit",
+  "plTaxInkomsten": "Income tax",
+  "plTaxZvw": "ZVW contribution ({pct}%)",
+  "@plTaxZvw": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "plTaxTotalTax": "Estimated total tax",
+  "plTaxNetProfit": "Estimated net profit after tax",
+  "plTaxEffectiveRate": "Effective rate: {rate}%",
+  "@plTaxEffectiveRate": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "plTaxUrenBanner": "Urencriterium: {hours} of {target} hours logged{suffix}.",
+  "@plTaxUrenBanner": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      },
+      "suffix": {
+        "type": "String"
+      }
+    }
+  },
+  "plTaxUrenBannerSuffixDone": ", so no zelfstandigenaftrek",
+  "plTaxUrenBannerSuffixPending": ". The estimate assumes you reach it this year",
   "settingsLanguageSection": "Language",
   "settingsLanguageNl": "Dutch",
   "settingsLanguageEn": "English",
-
   "settingsTitle": "Settings",
   "settingsBusinessSection": "Business details",
   "settingsBusinessName": "Business name",
@@ -467,89 +489,453 @@
   "settingsValidateAddress": "Enter your business address",
   "settingsValidateIban": "Enter your IBAN, e.g. NL91ABNA0417164300.",
   "settingsValidateIbanFormat": "Invalid IBAN format (e.g. NL91ABNA0417164300).",
-  "actionOk": "OK",
-  "settingsSaved": "Business details saved",
   "settingsDatabaseSection": "Database",
   "settingsDatabaseLocation": "Location: {path}",
-  "@settingsDatabaseLocation": { "placeholders": { "path": { "type": "String" } } },
-  "settingsDatabaseNotSet": "Not set",
-  "settingsMoveDatabase": "Move database…",
-  "settingsDatabaseMoved": "Database file moved to: {path}",
-  "@settingsDatabaseMoved": { "placeholders": { "path": { "type": "String" } } },
+  "@settingsDatabaseLocation": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsMoveDatabase": "Copy database to another folder",
   "settingsExportSection": "Export",
   "settingsExportDescription": "Export all {year} data to CSV files.",
-  "@settingsExportDescription": { "placeholders": { "year": { "type": "int" } } },
+  "@settingsExportDescription": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
   "settingsExportButton": "Export {year} as CSV",
-  "@settingsExportButton": { "placeholders": { "year": { "type": "int" } } },
+  "@settingsExportButton": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
   "settingsExportRunning": "Exporting…",
   "settingsExported": "CSV files exported to: {dir}",
-  "@settingsExported": { "placeholders": { "dir": { "type": "String" } } },
-  "settingsTaxSection": "Tax parameters {year}",
-  "@settingsTaxSection": { "placeholders": { "year": { "type": "int" } } },
-  "settingsTaxNoParams": "No parameters found for {year}. Restart the app after creating a database.",
-  "@settingsTaxNoParams": { "placeholders": { "year": { "type": "int" } } },
-  "settingsTaxRates": "Rates & brackets",
+  "@settingsExported": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsTaxSection": "Tax rules {year}",
+  "@settingsTaxSection": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
   "settingsTaxZelfs": "Self-employed deduction",
   "settingsTaxStarters": "Starter deduction",
   "settingsTaxMkb": "MKB-winstvrijstelling (%)",
-  "settingsTaxMileage": "Mileage rate (€/km)",
-  "settingsTaxBrackets": "Income tax brackets",
-  "settingsTaxB1Rate": "Bracket 1 rate (%)",
-  "settingsTaxB1Thresh": "Bracket 1 threshold",
-  "settingsTaxB2Rate": "Bracket 2 rate (%)",
-  "settingsTaxB2Thresh": "Bracket 2 threshold",
-  "settingsTaxB3Rate": "Bracket 3 rate (%)",
-  "settingsTaxKortingen": "Discounts & ZVW",
-  "settingsTaxAlgHeff": "General tax credit max",
-  "settingsTaxArbeids": "Labour credit max",
+  "settingsTaxMileage": "Mileage allowance per km",
   "settingsTaxZvwRate": "ZVW rate (%)",
-  "settingsTaxZvwMax": "ZVW max",
-  "settingsTaxUrencriterium": "Hours criterion",
-  "settingsTaxKia": "KIA deduction",
-  "settingsTaxKiaLowerThresh": "Lower threshold",
-  "settingsTaxKiaUpperThresh": "Upper threshold",
-  "settingsTaxKiaFlatThresh": "Flat threshold",
-  "settingsTaxKiaRate": "KIA rate (%)",
-  "settingsTaxKiaFlatAmount": "Flat amount",
-  "settingsTaxKiaDecreaseRate": "Decrease rate (%)",
-  "settingsTaxKor": "KOR threshold",
-  "settingsTaxKorThresh": "KOR threshold",
-  "settingsTaxSaveParams": "Save parameters",
-  "settingsTaxParamsSaved": "Tax parameters saved for {year}",
-  "@settingsTaxParamsSaved": { "placeholders": { "year": { "type": "int" } } },
-  "settingsTaxValidateField": "Enter a valid number.",
-
+  "settingsTaxUrencriterium": "Urencriterium (hours)",
   "firstLaunchWelcome": "Welcome to Florin",
   "firstLaunchSubtitle": "Set up your bookkeeping workspace.",
   "firstLaunchDbSection": "Database location",
-  "firstLaunchDbDescription": "Default: Application Support. Choose another folder for iCloud / Google Drive sync.",
+  "firstLaunchDbDescription": "Default: the app data folder. Choose another folder to keep it in a synced folder. If that folder already holds a Florin database, Florin opens it.",
   "firstLaunchDbDefault": "Application Support (default)",
   "firstLaunchChooseFolder": "Choose folder",
-  "firstLaunchBusinessSection": "Business identity",
-  "firstLaunchStartersSubtitle": "First 3 years of business: €2,123 additional deduction",
+  "firstLaunchStartersSubtitle": "For business owners who were not a business owner in one or more of the 5 previous years, and used the zelfstandigenaftrek at most twice in that period",
   "firstLaunchGetStarted": "Get started",
   "firstLaunchSaveError": "Could not finish setup: {error}",
-  "@firstLaunchSaveError": { "placeholders": { "error": { "type": "String" } } },
-
-  "confirmDeleteTitle": "Delete",
-  "confirmDeleteCancel": "Cancel",
-  "confirmDeleteConfirm": "Delete",
-
+  "@firstLaunchSaveError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "deadlineBadgeFiled": "Filed",
   "deadlineBadgeOverdue": "Overdue",
   "deadlineBadgeDays": "{days} days",
-  "@deadlineBadgeDays": { "placeholders": { "days": { "type": "int" } } },
-
-  "vatRateSelectorLabel": "VAT rate",
+  "@deadlineBadgeDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "vatRate21": "21%",
   "vatRate9": "9%",
   "vatRate0": "0%",
-  "vatRateEuReverseCharge": "0% EU reverse charge",
   "vatRateExempt": "Exempt",
   "genericSaveError": "Could not save: {error}",
-  "@genericSaveError": { "placeholders": { "error": { "type": "String" } } },
+  "@genericSaveError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "dbLocationChooseFolderDialog": "Choose folder to store Florin database",
   "csvExportChooseFolderDialog": "Choose export folder",
   "invoiceSaveAsDialog": "Save invoice as",
-  "amountNegativeError": "Amount cannot be negative"
+  "amountNegativeError": "Amount cannot be negative",
+  "vatTreatmentStandard": "Dutch VAT",
+  "vatTreatmentReverseChargeNl": "VAT reverse-charged to a Dutch business",
+  "vatTreatmentExportOutsideEu": "Export of goods outside the EU (0%)",
+  "invoiceFieldVatTreatment": "VAT treatment",
+  "invoiceValidateClientVat": "This client has no VAT number. Add it to the client: this invoice must show it.",
+  "invoiceIssueTitle": "Send invoice",
+  "invoiceIssueMessage": "After sending, the invoice can no longer be changed or deleted. Corrections are made with a credit note.",
+  "invoiceActionCreditNote": "Credit note",
+  "invoiceNewCreditNoteHeader": "New credit note",
+  "invoiceCorrects": "This credit note corrects invoice {number}.",
+  "@invoiceCorrects": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "invoiceVatTotal": "VAT",
+  "invoiceRemoveLine": "Remove line",
+  "expensesFoodNotice": "Food, drinks and representation are 80% deductible for income tax (Wet IB 2001 art. 3.15). VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed (Wet OB 1968 art. 15).",
+  "plTaxFoodLimited": "{category} ({amount})",
+  "@plTaxFoodLimited": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "plTaxBelastbareWinst": "Taxable profit",
+  "plTaxBracket": "Bracket {n} ({pct}%)",
+  "@plTaxBracket": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "plTaxEstimateNotice": "This is an estimate for a business owner under the AOW age with no other income. Income from employment, a partner, box 2 or box 3 is not included.",
+  "@assetsFieldUsefulLifeMin": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsMoved": "Database copied to {path} and now in use. The old file was kept.",
+  "@settingsMoved": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsTaxVerified": "Florin uses these figures, checked against the Belastingdienst and the law. They cannot be edited.",
+  "settingsTaxUpTo": "up to {amount}",
+  "@settingsTaxUpTo": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "pensionPriorYearIncome": "Income from work in {year}",
+  "@pensionPriorYearIncome": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "pensionDeductible": "Deductible this year",
+  "vatRow1e": "1e  Supplies / services taxed at 0% or not taxed with you",
+  "vatRow3b": "3b  Supplies to or services in EU countries",
+  "vatTreatmentEuServices": "Services to an EU business (VAT reverse-charged)",
+  "vatTreatmentEuGoods": "Goods to an EU business (intra-Community supply, 0%)",
+  "vatReturnIcpNote": "Report these supplies in the ICP report. Goods to EU businesses above € 50.000 in a quarter must be reported per month.",
+  "assetsFieldResidualValue": "Residual value",
+  "assetsValidateResidualValue": "Enter the residual value, or 0 if the asset will have no value left",
+  "assetsValidateResidualAboveCost": "The residual value cannot be higher than the cost",
+  "plTaxDisposalResult": "Result on sold assets",
+  "plTaxAov": "Disability insurance premiums",
+  "pensionAovHelper": "Premiums for disability insurance are deducted in full in the tax estimate.",
+  "assetsFieldCostHelp": "The purchase price without VAT. Depreciation and the investment deductions are based on this amount.",
+  "assetsFieldDisposalDateHelp": "The date you sold the asset or took it out of the business. Depreciation stops on this date.",
+  "assetsFieldDisposalProceedsHelp": "What you received for the asset, without VAT. The difference with the book value is a gain or loss.",
+  "assetsFieldKiaHelp": "Kleinschaligheidsinvesteringsaftrek: an extra deduction for business assets. Assets under € 450 do not count, and passenger cars and some other assets are excluded.",
+  "assetsFieldNameHelp": "A name you recognise the asset by, such as \"MacBook Pro 2026\".",
+  "assetsFieldNotesHelp": "Anything you want to remember about this asset. Not used in calculations.",
+  "assetsFieldPurchaseDateHelp": "The date you bought the asset. Depreciation starts on this date and the investment deductions apply to this year.",
+  "assetsFieldResidualValueHelp": "What the asset will still be worth at the end of its useful life. Depreciation stops at this value.",
+  "assetsFieldUsefulLifeHelp": "How many years you expect to use the asset. At least 5, because depreciation is limited to 20% of the cost a year.",
+  "clientsContractExpiryHelp": "When the agreement with this client ends.",
+  "clientsContractSignedHelp": "Tick when you and the client have signed a written agreement.",
+  "clientsFieldActiveHelp": "Inactive clients stay in your records but are not offered on new invoices.",
+  "clientsFieldAddressHelp": "The client's full business address. It is printed on every invoice.",
+  "clientsFieldContactHelp": "The person you deal with at this client.",
+  "clientsFieldCountryHelp": "The two-letter country code, such as NL or DE. It decides whether an EU reverse-charge invoice is possible.",
+  "clientsFieldEmailHelp": "The address you send invoices to.",
+  "clientsFieldKvkHelp": "The client's 8-digit Chamber of Commerce number, if they have one.",
+  "clientsFieldNameHelp": "The client's legal or registered trade name, as it should appear on invoices.",
+  "clientsFieldNotesHelp": "Anything you want to remember about this client. Not printed on invoices.",
+  "clientsFieldPhoneHelp": "A phone number for this client.",
+  "clientsFieldVatHelp": "The client's VAT identification number. Required on invoices where the VAT is reverse-charged or that go to an EU business.",
+  "clientsRiskLevelHelp": "Your own assessment of whether the work could be seen as employment under the Wet DBA. Used only to remind you.",
+  "expensesFieldAmountExclHelp": "The amount on the receipt without VAT.",
+  "expensesFieldCategoryHelp": "What kind of cost this is. Food, drinks and representation are only partly deductible.",
+  "expensesFieldDescriptionHelp": "What you bought, so you and the Belastingdienst can see the business purpose.",
+  "expensesFieldPaidFromHelp": "The account or card you paid with, to match the expense with your bank statement.",
+  "expensesFieldPaymentRefHelp": "The reference of the payment or invoice, to find it back later.",
+  "expensesFieldSupplierHelp": "The business you bought from, as on the receipt.",
+  "expensesFieldVatRateHelp": "The VAT rate on the receipt: 21%, 9%, 0% or exempt.",
+  "expensesReceiptAttachedHelp": "Tick when you have kept the receipt or invoice. You need it to reclaim VAT and to prove the cost.",
+  "expensesReclaimVatHelp": "Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, or for private use.",
+  "hoursFieldClientProjectHelp": "The client or project the hours were for.",
+  "hoursFieldDateHelp": "The day you worked.",
+  "hoursFieldDescriptionHelp": "What you did. All hours spent on the business count towards the urencriterium, not only billable ones.",
+  "hoursFieldHoursHelp": "How many hours you worked that day, such as 7,5.",
+  "hoursFieldNotesHelp": "Anything you want to remember about these hours.",
+  "hoursFieldWorkTypeHelp": "The kind of work. WBSO hours count towards the 500 hours needed for the S&O-aftrek.",
+  "invoiceFieldClientHelp": "Who the invoice is for. Their name and address are printed on it.",
+  "invoiceFieldDescriptionHelp": "What you delivered: the nature of the goods or services, as the law requires on an invoice.",
+  "invoiceFieldDueDateHelp": "The last day for payment: the invoice date plus the payment term.",
+  "invoiceFieldInvoiceDateHelp": "The date the invoice is issued. It decides the year and quarter the revenue and VAT belong to.",
+  "invoiceFieldNumberHelp": "A unique number in an unbroken sequence, as the law requires. Florin suggests the next one.",
+  "invoiceFieldPaymentTermHelp": "How many days the client has to pay.",
+  "invoiceFieldPriceHelp": "The price per unit without VAT.",
+  "invoiceFieldQuantityHelp": "How many units, such as hours or pieces.",
+  "invoiceFieldRemarksHelp": "Extra text printed at the bottom of the invoice.",
+  "invoiceFieldSupplyDateHelp": "When you delivered, if that differs from the invoice date. The law requires it on the invoice in that case.",
+  "invoiceFieldUnitHelp": "The unit of the quantity, such as hours or pieces.",
+  "invoiceFieldVatHelp": "The VAT rate for this line.",
+  "invoiceFieldVatTreatmentHelp": "How VAT applies. Dutch VAT for most clients. Reverse charge when the customer pays the VAT. EU goods and services to businesses also go on the ICP report.",
+  "labelCategoryHelp": "Show only expenses of one category.",
+  "labelDateHelp": "The date on the receipt. It decides the year and quarter of the expense.",
+  "labelNotesHelp": "Anything you want to remember. Not used in calculations.",
+  "mileageFieldDateHelp": "The day of the trip.",
+  "mileageFieldDistanceHelp": "Calculated from the odometer readings.",
+  "mileageFieldFromHelp": "Where the trip started.",
+  "mileageFieldMakeModelHelp": "The make and model of the vehicle, for your trip log.",
+  "mileageFieldNotesHelp": "Anything you want to remember about this trip.",
+  "mileageFieldOdoEndHelp": "The odometer reading at the end of the trip.",
+  "mileageFieldOdoStartHelp": "The odometer reading at the start of the trip.",
+  "mileageFieldPlateHelp": "The licence plate, for your trip log.",
+  "mileageFieldPurposeHelp": "Why you made the trip, such as the client or meeting.",
+  "mileageFieldRouteDeviationHelp": "Tick when you took a longer or different route than the shortest one, and note why.",
+  "mileageFieldToHelp": "Where the trip ended.",
+  "mileageFieldTripTypeHelp": "Business and commuting trips in a private vehicle are deductible per km for income tax. Private trips are not.",
+  "pensionAovInsuredHelp": "Tick when you have a private disability insurance (AOV). Its premiums are deductible.",
+  "pensionFactorAHelp": "The pension you built up with an employer last year, from the factor A on your UPO. Leave 0 if you had none.",
+  "pensionLijfrenteHelp": "What you pay or plan to pay into a lijfrente this year. Deducted up to the room you have.",
+  "pensionMonthlyPremiumHelp": "The monthly premium of your disability insurance.",
+  "pensionPriorYearIncomeHelp": "Your profit from business and wages last year, from that year's tax return. The jaarruimte is based on it.",
+  "pensionReserveringsruimteLabelHelp": "Unused jaarruimte from earlier years that you may still use. The Belastingdienst's Hulpmiddel Lijfrentepremie calculates it.",
+  "settingsBusinessAddressHelp": "Your full business address. It is printed on every invoice.",
+  "settingsBusinessNameHelp": "Your business name as registered with the KvK. It is printed on every invoice.",
+  "settingsIbanHelp": "The bank account clients pay to. It is printed in the payment instructions.",
+  "settingsKvkNumberHelp": "Your 8-digit KvK number. It is printed on every invoice.",
+  "settingsStartersaftrekHelp": "You get the startersaftrek if you were not a business owner in at least one of the 5 previous years and used the zelfstandigenaftrek at most twice in that period.",
+  "settingsVatNumberHelp": "Your VAT identification number (btw-id), NL followed by 9 digits, B and 2 digits. It is printed on every invoice.",
+  "vatReturnFiledHelp": "Tick once you have filed this quarter's return in Mijn Belastingdienst Zakelijk.",
+  "vatReturnPaidHelp": "Tick once you have paid the VAT due for this quarter.",
+  "assetKindGeneral": "Business asset",
+  "assetKindCar": "Car owned by the business",
+  "assetsFieldKind": "Type",
+  "assetsFieldKindHelp": "Choose car for a passenger car or van that belongs to the business. Private use of it is added to your profit and to your VAT return.",
+  "assetsCarSection": "Car",
+  "assetsCarSectionHelp": "These details decide the addition for private use (bijtelling) and the VAT on private use.",
+  "assetsFieldCatalogueValue": "Catalogue value",
+  "assetsFieldCatalogueValueHelp": "The original list price including VAT and BPM, as on the registration certificate or the RDW website.",
+  "assetsValidateCatalogueValue": "Enter the catalogue value, including VAT and BPM",
+  "assetsFieldFirstRegistration": "First registration",
+  "assetsFieldFirstRegistrationHelp": "The date the car was first registered, on the registration certificate. It decides which bijtelling percentage applies.",
+  "assetsValidateFirstRegistration": "Enter the date of first registration from the registration certificate",
+  "assetsFieldZeroEmission": "Zero emission",
+  "assetsFieldZeroEmissionHelp": "Electric, hydrogen and solar cars with 0 g/km CO2 get a lower bijtelling.",
+  "zeroEmissionNone": "No",
+  "zeroEmissionBattery": "Battery electric",
+  "zeroEmissionHydrogenOrSolar": "Hydrogen or integrated solar",
+  "assetsFieldVatOnPurchase": "VAT deducted on purchase",
+  "assetsFieldVatOnPurchaseHelp": "The VAT on the purchase that you deducted in your VAT return. Leave 0 if you deducted none, for example for a car bought from a private seller.",
+  "assetsFieldMarketValue": "Market value",
+  "assetsFieldMarketValueHelp": "What the car is worth now. Only used once the car is more than 15 years old.",
+  "assetsFieldTripLog": "I keep a complete trip log for this car",
+  "assetsFieldTripLogHelp": "With a complete trip log of all trips in this car, there is no bijtelling at 500 private km a year or less, and VAT on private use is based on the actual kilometres.",
+  "assetsInvestmentSection": "Investment deductions",
+  "assetsInvestmentSectionHelp": "Extra deductions in the year of purchase. If you sell the asset within 5 years, part of them is added back.",
+  "assetsFieldEia": "Energy investment (EIA), reported to RVO",
+  "assetsFieldEiaHelp": "An asset on the RVO Energy List, reported to RVO within 3 months. At least € 2.500 per asset. Cannot be combined with MIA.",
+  "assetsFieldMia": "Environmental investment (MIA)",
+  "assetsFieldMiaHelp": "The category on the RVO Environmental List, reported to RVO within 3 months. At least € 2.500 per asset.",
+  "assetsMiaNone": "None",
+  "miaCategoryOne": "Category I",
+  "miaCategoryTwo": "Category II",
+  "miaCategoryThree": "Category III",
+  "assetsFieldDeductionReceived": "Investment deduction received",
+  "assetsFieldDeductionReceivedHelp": "The KIA, EIA and MIA you received for this asset in its purchase year, from that year's tax return. Needed to add part back if you sell it within 5 years.",
+  "assetsValidateDeductionReceived": "Enter the investment deduction you received for this asset, or 0",
+  "assetsFieldReserveApplied": "Herinvesteringsreserve booked off",
+  "assetsFieldReserveAppliedHelp": "Part of the herinvesteringsreserve booked off on this purchase. It lowers the cost to depreciate.",
+  "assetsReserveAvailable": "Available: {amount}",
+  "@assetsReserveAvailable": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "assetsValidateReserveAboveAvailable": "This is more than the herinvesteringsreserve available",
+  "assetsValidateReserveAboveCost": "This is more than the cost minus the residual value",
+  "assetsFieldReserveGain": "Put the gain in the herinvesteringsreserve",
+  "assetsFieldReserveGainHelp": "Only when you intend to buy a replacement. The gain is then not taxed now but booked off on the next purchase; unused after 3 years, it is added to your profit.",
+  "dashboardDeductibleCostsHelp": "Costs deductible for income tax, including depreciation and the mileage allowance. Estimated.",
+  "dashboardEstimatedTaxHelp": "Estimated income tax and Zvw contribution on your profit so far. Not a tax assessment.",
+  "dashboardNetProfitAfterTaxHelp": "Profit minus the estimated tax. An estimate, not a final figure.",
+  "expensesFieldCar": "Business car",
+  "expensesFieldCarHelp": "Link costs such as fuel and insurance to a business car. They cap the bijtelling and decide the VAT on private use.",
+  "expensesNoCar": "Not for a business car",
+  "mileageFieldVehicle": "Vehicle",
+  "mileageFieldVehicleHelp": "A private vehicle earns the per-km deduction. Trips in a business car do not; they count for its trip log instead.",
+  "mileagePrivateVehicle": "Private vehicle",
+  "inputPartnerHours": "Partner's hours in the business",
+  "inputPartnerHoursHelp": "Hours your fiscal partner worked in your business this year without pay, or for less than € 5.000. From 525 hours you get the meewerkaftrek.",
+  "inputUnrealisedZelfs": "Unused zelfstandigenaftrek",
+  "inputUnrealisedZelfsHelp": "Zelfstandigenaftrek from the previous 9 years that did not fit your profit, as stated by the Belastingdienst. Used up to this year's profit.",
+  "inputLossCarryForward": "Losses from earlier years",
+  "inputLossCarryForwardHelp": "Box 1 losses from earlier years still to offset, as stated by the Belastingdienst. Offset against this year's income.",
+  "inputSoVerklaring": "I have an S&O-verklaring for this year",
+  "inputSoVerklaringHelp": "An S&O-verklaring from RVO for research and development. With at least 500 WBSO hours you get the S&O-aftrek.",
+  "inputSoStarter": "Starter increase for the S&O-aftrek",
+  "inputSoStarterHelp": "You were not a business owner in one or more of the 5 previous years and received an S&O-verklaring for at most 2 years in that period.",
+  "inputBusinessCeased": "I stopped the whole business this year",
+  "inputBusinessCeasedHelp": "Gains on selling or taking over the business assets are stakingswinst. You get the stakingsaftrek on them, and any herinvesteringsreserve is added to your profit.",
+  "inputStakingsUsedBefore": "Stakingsaftrek used before",
+  "inputStakingsUsedBeforeHelp": "Stakingsaftrek you received in earlier years. It lowers the maximum of € 3.630.",
+  "inputDisabilityBenefit": "I receive a disability benefit",
+  "inputDisabilityBenefitHelp": "A benefit such as WIA, WAO, WAZ or Wajong. As a starter with at least 800 but under 1.225 hours you may get the startersaftrek bij arbeidsongeschiktheid.",
+  "inputDisabilityUsed": "Years used in the previous 5",
+  "inputDisabilityUsedHelp": "How many of the previous 5 years you received the startersaftrek bij arbeidsongeschiktheid: 0, 1, 2 or 3.",
+  "inputWholeNumber": "Enter a whole number from 0 to {max}",
+  "@inputWholeNumber": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "pensionAowFranchiseHelp": "The part of your income for which you already build up AOW. Jaarruimte is only calculated on income above it.",
+  "pensionPensioengrondslagHelp": "Last year's income minus the AOW-franchise, up to the legal maximum.",
+  "pensionJaarruimteHelp": "30% of the premiegrondslag minus a multiple of factor A, up to the yearly maximum. What you may deduct for a lijfrente this year.",
+  "pensionEstimatedTaxSavingHelp": "Estimated: the box 1 tax you save by deducting the premium, before heffingskortingen.",
+  "plTaxAlgHeffingHelp": "A tax credit everyone gets. It decreases as income rises above a threshold.",
+  "plTaxArbeidskortingHelp": "A tax credit for working people, based on profit before ondernemersaftrek and mkb-winstvrijstelling.",
+  "plTaxAovHelp": "Premiums for private disability insurance are fully deductible from box 1 income.",
+  "plTaxBelastbareWinstHelp": "Profit after ondernemersaftrek and mkb-winstvrijstelling. The Zvw contribution is based on it.",
+  "plTaxBox1SectionHelp": "Estimated income tax including national insurance premiums, in brackets, minus the heffingskortingen.",
+  "plTaxCarPrivateUse": "Private use of business car",
+  "plTaxCarPrivateUseHelp": "The bijtelling: a percentage of the catalogue value added to profit for private use, at most the car costs. None with a trip log of 500 private km a year or less.",
+  "plTaxDeductionsSectionHelp": "Deductions for business owners. Most require the urencriterium of 1.225 hours.",
+  "plTaxDepreciationHelp": "The part of your assets' cost written off this year, spread by day over their useful life.",
+  "plTaxDesinvestering": "Desinvesteringsbijtelling",
+  "plTaxDesinvesteringHelp": "Part of an investment deduction added back because an asset was sold within 5 years of the start of its purchase year.",
+  "plTaxDisabilityStarters": "Startersaftrek bij arbeidsongeschiktheid",
+  "plTaxDisabilityStartersHelp": "For starters with a disability benefit who work at least 800 hours but do not meet the urencriterium. At most the profit.",
+  "plTaxDisposalResultHelp": "Sale price minus book value of assets sold this year. A gain adds to profit, a loss lowers it.",
+  "plTaxEia": "Energie-investeringsaftrek (EIA)",
+  "plTaxEiaHelp": "An extra deduction for investments on the RVO Energy List.",
+  "plTaxFoodLimitedHelp": "Food, drinks and representation are deductible for {pct}%, or above the first {drempel}. Florin uses whichever gives the larger deduction.",
+  "@plTaxFoodLimitedHelp": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      },
+      "drempel": {
+        "type": "String"
+      }
+    }
+  },
+  "plTaxInputsSection": "Your situation in {year}",
+  "@plTaxInputsSection": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "plTaxInputsSectionHelp": "Facts the bookkeeping cannot show. They change the estimate above.",
+  "plTaxInvestmentSection": "Investment deductions",
+  "plTaxInvestmentSectionHelp": "Extra deductions for assets bought this year.",
+  "plTaxKiaHelp": "Kleinschaligheidsinvesteringsaftrek: a percentage or fixed amount based on your total qualifying investments this year.",
+  "plTaxLijrenteHelp": "Premiums for a lijfrente, deducted up to your jaarruimte and reserveringsruimte.",
+  "plTaxLossOffset": "Losses from earlier years",
+  "plTaxLossOffsetHelp": "Box 1 losses from earlier years, offset against this year's income.",
+  "plTaxMeewerk": "Meewerkaftrek",
+  "plTaxMeewerkHelp": "A percentage of profit when your fiscal partner works at least 525 hours in the business without pay.",
+  "plTaxMia": "Milieu-investeringsaftrek (MIA)",
+  "plTaxMiaHelp": "An extra deduction for investments on the RVO Environmental List.",
+  "plTaxMileageAllowanceHelp": "Business and commuting kilometres in a private vehicle, at the Belastingdienst rate per km.",
+  "plTaxMkbHelp": "A percentage of profit after ondernemersaftrek that is exempt from tax. No urencriterium needed.",
+  "plTaxProfit": "Profit",
+  "plTaxProfitHelp": "Profit from business before ondernemersaftrek. The arbeidskorting is based on it.",
+  "plTaxReserveReleased": "Herinvesteringsreserve released",
+  "plTaxReserveReleasedHelp": "Reserve not used within 3 years, or left when the business stops, is added to profit.",
+  "plTaxSo": "S&O-aftrek",
+  "plTaxSoHelp": "For research and development with an S&O-verklaring and at least 500 hours.",
+  "plTaxStakings": "Stakingsaftrek",
+  "plTaxStakingsHelp": "A deduction on the gain when the whole business stops, up to € 3.630 over your lifetime.",
+  "plTaxStartersaftrekHelp": "An extra deduction on top of the zelfstandigenaftrek for business owners who recently started.",
+  "plTaxTaxableProfitHelp": "The income in box 1 the tax is calculated on.",
+  "plTaxUnrealisedZelfs": "Unused zelfstandigenaftrek from earlier years",
+  "plTaxUnrealisedZelfsHelp": "Zelfstandigenaftrek from earlier years that did not fit the profit then, used up to this year's profit.",
+  "plTaxZelfstandigenaftrekHelp": "A fixed deduction for business owners who meet the urencriterium. At most the profit, unless you are a starter.",
+  "plTaxZvwHelp": "The income-related contribution to the health care insurance act, on belastbare winst up to a maximum.",
+  "vatReturnIcpSectionHelp": "Supplies to businesses in other EU countries, reported separately in the ICP report.",
+  "vatRow1aHelp": "Revenue taxed at 21% and the VAT on it.",
+  "vatRow1bHelp": "Revenue taxed at 9% and the VAT on it.",
+  "vatRow1d": "1d  Private use",
+  "vatRow1dHelp": "VAT on private use of business cars: 2,7% or 1,5% of the catalogue value, or the actual private share with a trip log. In the last return of the year only.",
+  "vatRow1eHelp": "Revenue at 0% or where the VAT is reverse-charged to a Dutch business.",
+  "vatRow3aHelp": "Exports of goods to countries outside the EU.",
+  "vatRow3bHelp": "Goods and services to businesses in other EU countries.",
+  "vatRow5aHelp": "The VAT you owe on your revenue and private use.",
+  "vatRow5bHelp": "The VAT on business costs you may deduct.",
+  "clientsSearchHelp": "Search clients by name.",
+  "invoicesSearchHelp": "Search by invoice number or client name.",
+  "expensesFieldPurchaseVat": "BTW on this purchase",
+  "expensesFieldPurchaseVatHelp": "Dutch BTW when the supplier charged it. Shifted when the invoice says the BTW is reverse-charged to you, or the supplier is abroad: you then report and deduct the BTW yourself.",
+  "purchaseVatDomestic": "Charged by the supplier",
+  "purchaseVatReverseChargeNl": "Shifted to me by a Dutch supplier (2a)",
+  "purchaseVatFromEu": "From a supplier in another EU country (4b)",
+  "purchaseVatFromOutsideEu": "Service from a supplier outside the EU (4a)",
+  "vatReturnShiftedSection": "BTW shifted to you",
+  "vatReturnShiftedSectionHelp": "Purchases where you report the BTW yourself. You deduct the same BTW in 5b, so on balance you usually pay nothing.",
+  "vatRow2a": "2a  Domestic reverse charge",
+  "vatRow2aHelp": "Purchases from Dutch suppliers who shifted the BTW to you.",
+  "vatRow4a": "4a  From countries outside the EU",
+  "vatRow4aHelp": "Services from suppliers outside the EU.",
+  "vatRow4b": "4b  From EU countries",
+  "vatRow4bHelp": "Goods and services from suppliers in other EU countries.",
+  "vatBaseAndVat": "{base}, BTW {vat}",
+  "@vatBaseAndVat": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      },
+      "vat": {
+        "type": "String"
+      }
+    }
+  },
+  "expensesBusinessUseHelp": "The share used for the business. Only that share of the cost and BTW is deductible.",
+  "settingsLanguageSectionHelp": "The language of the app. Invoices and CSV exports are always in Dutch."
 }
