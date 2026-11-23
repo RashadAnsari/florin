@@ -117,7 +117,11 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.dashboardSection),
-            Text(l.dashboardUrencriterium, style: theme.textTheme.titleMedium),
+            LabelWithHelp(
+              l.dashboardUrencriterium,
+              help: l.dashboardUrencriteriumHelp,
+              style: theme.textTheme.titleMedium,
+            ),
             const SizedBox(height: AppSpacing.heading),
             UrencriteriumProgress(
               totalHours: hours.fold(0.0, (s, h) => s + h.hours),
@@ -150,7 +154,14 @@ class DashboardScreen extends ConsumerWidget {
                     quarter: q,
                     deadline: VatService.filingDeadline(year, q),
                     filed: filed.contains(q),
-                    korCovered: kor.coversQuarter(year, q),
+                    // Until the figures load, a return is due: the cautious
+                    // answer.
+                    duty:
+                        ref
+                            .watch(vatQuarterProvider((year: year, quarter: q)))
+                            .valueOrNull
+                            ?.duty ??
+                        ReturnDuty.regular,
                     isCurrent:
                         year == DateTime.now().year &&
                         q == quarterOf(DateTime.now()),
@@ -173,16 +184,14 @@ class _DeadlineTile extends StatelessWidget {
   final DateTime deadline;
   final bool filed;
   final bool isCurrent;
-
-  /// The KOR covers the whole quarter, so no regular return is due.
-  final bool korCovered;
+  final ReturnDuty duty;
 
   const _DeadlineTile({
     required this.quarter,
     required this.deadline,
     required this.filed,
     required this.isCurrent,
-    required this.korCovered,
+    required this.duty,
   });
 
   @override
@@ -190,12 +199,14 @@ class _DeadlineTile extends StatelessWidget {
     final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final daysLeft = deadline.difference(DateTime.now()).inDays;
-    final overdue = daysLeft < 0 && !filed && !korCovered;
-    final color = filed || korCovered
+    final noReturn = duty == ReturnDuty.none;
+    final overdue = daysLeft < 0 && !filed && !noReturn;
+    final color = filed || noReturn
         ? context.colors.income
         : overdue
         ? context.colors.danger
-        : daysLeft <= VatService.urgentDeadlineDays
+        : daysLeft <= VatService.urgentDeadlineDays ||
+              duty == ReturnDuty.incidental
         ? context.colors.vat
         : theme.colorScheme.outline;
     final small = theme.textTheme.labelSmall?.copyWith(color: color);
@@ -220,12 +231,14 @@ class _DeadlineTile extends StatelessWidget {
           ),
           Text(AppFormat.date(deadline), style: theme.textTheme.bodySmall),
           Text(
-            korCovered
+            noReturn
                 ? l.deadlineStatusKor
                 : filed
                 ? l.deadlineStatusFiled
                 : overdue
                 ? l.deadlineStatusOverdue
+                : duty == ReturnDuty.incidental
+                ? l.deadlineStatusIncidental
                 : l.deadlineDaysLeft(daysLeft),
             style: small,
           ),

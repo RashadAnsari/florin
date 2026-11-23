@@ -52,6 +52,7 @@ void main() {
       'and the original stays', () async {
     final file = await source('bon.pdf', _pdf);
     final stored = await store.add(file, 2026);
+    await store.commit(stored);
     final copy = File(
       p.join(root.path, 'receipts', '2026', '${stored.id}.pdf'),
     );
@@ -120,7 +121,7 @@ void main() {
     });
     tearDown(() => db.close());
 
-    test('attach, remove to the trash, undo and empty the trash', () async {
+    test('removing keeps the row and the file, and can be undone', () async {
       final owner = ReceiptOwner.expense(expenseId);
       final r = await service.attach(
         owner,
@@ -134,17 +135,54 @@ void main() {
         isNotNull,
       );
 
-      await service.remove(r);
+      final removed = await service.remove(r);
       expect(await service.dao.forOwner(owner), isEmpty);
-      expect(await store.trashed(), hasLength(1));
+      expect(removed.removedFromKind, ReceiptOwnerKind.expense);
+      expect(removed.removedFromName, 'S');
+      expect(p.dirname(store.fileOf(removed).path), store.removedFolder);
+      expect(await store.check(removed), ReceiptHealth.ok);
+      expect(await service.dao.all(), hasLength(1));
 
-      await service.restore(r);
-      expect(await service.dao.forOwner(owner), hasLength(1));
-      expect(await store.check(r), ReceiptHealth.ok);
+      await service.restore(removed);
+      final back = (await service.dao.forOwner(owner)).single;
+      expect(back.removedAt, isNull);
+      expect(await store.check(back), ReceiptHealth.ok);
+    });
 
-      await service.remove(r);
-      await store.emptyTrash();
-      expect(await store.trashed(), isEmpty);
+    test('deleting a record keeps its receipts, listed as removed', () async {
+      final owner = ReceiptOwner.expense(expenseId);
+      await service.attach(owner, await source('a.pdf', _pdf), 2026);
+      await service.removeAllFor(owner);
+      await (db.delete(db.expenses)..where((e) => e.id.equals(expenseId))).go();
+      final kept = (await service.dao.all()).single;
+      expect(kept.expenseId, isNull);
+      expect(kept.removedFromName, 'S');
+      expect(ReceiptService.canPutBack(kept), isFalse);
+      expect(await store.check(kept), ReceiptHealth.ok);
+    });
+
+    test('a receipt in use cannot lose its record', () async {
+      final owner = ReceiptOwner.expense(expenseId);
+      await service.attach(owner, await source('a.pdf', _pdf), 2026);
+      // Deleting the expense without removing its receipts first is refused.
+      expect(
+        () =>
+            (db.delete(db.expenses)..where((e) => e.id.equals(expenseId))).go(),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('a file whose row cannot be saved leaves nothing behind', () async {
+      // An owner that does not exist breaks the foreign key.
+      await expectLater(
+        service.attach(
+          const ReceiptOwner.expense(999),
+          await source('a.pdf', _pdf),
+          2026,
+        ),
+        throwsA(isA<Exception>()),
+      );
+      expect(Directory(p.join(store.folder, '2026')).listSync(), isEmpty);
     });
 
     test('a receipt follows its owner to another year folder', () async {

@@ -66,22 +66,21 @@ class AssetsScreen extends ConsumerWidget {
       itemBuilder: (context, a) {
         final disposed = a.disposalDate != null;
         return ListTile(
-          title: Text(
-            a.assetName,
-            style: disposed
-                ? TextStyle(
-                    decoration: TextDecoration.lineThrough,
-                    color: theme.colorScheme.outline,
-                  )
-                : null,
-          ),
-          subtitle: Text(
+          title: EllipsisText(a.assetName),
+          subtitle: EllipsisText(
             '${AppFormat.cents(a.costExclVat)}  '
             '${l.assetsYears(a.usefulLifeYears)}',
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              if (disposed) ...[
+                ToneBadge(
+                  label: l.assetsSoldBadge,
+                  color: theme.colorScheme.outline,
+                ),
+                const SizedBox(width: AppSpacing.heading),
+              ],
               if (a.kiaEligible && a.purchaseDate.year == year) ...[
                 ToneBadge(
                   label: l.assetsKiaBadge,
@@ -89,9 +88,9 @@ class AssetsScreen extends ConsumerWidget {
                 ),
                 const SizedBox(width: AppSpacing.heading),
               ],
-              Text(
-                AppFormat.cents(AssetService.bookValue(a, year)),
-                style: const TextStyle(fontWeight: FontWeight.w600),
+              Tooltip(
+                message: l.assetsBookValueTooltip(year),
+                child: Text(AppFormat.cents(AssetService.bookValue(a, year))),
               ),
             ],
           ),
@@ -228,6 +227,7 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
       title: l.assetsDeleteTitle,
       message: l.assetsDeleteMessage(widget.asset!.assetName),
       isDestructive: true,
+      confirmLabel: l.actionDelete,
     );
     if (!confirmed || !mounted) return;
     final deleted = await guardSave(context, () async {
@@ -242,7 +242,6 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
     return DetailScaffold(
       title: widget.asset == null ? l.assetsNewAsset : widget.asset!.assetName,
       onBack: () => context.pop(),
@@ -418,6 +417,7 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
             ),
             const SizedBox(height: AppSpacing.field),
             DropdownButtonFormField<MiaCategory?>(
+              style: fieldTextStyle(context),
               initialValue: _miaCategory,
               isExpanded: true,
               decoration: fieldDecoration(
@@ -478,7 +478,7 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
               maxLines: 2,
             ),
             const SizedBox(height: AppSpacing.section),
-            Text(l.assetsDisposal, style: theme.textTheme.titleSmall),
+            SectionLabel(l.assetsDisposal),
             const SizedBox(height: AppSpacing.heading),
             FormRow(
               children: [

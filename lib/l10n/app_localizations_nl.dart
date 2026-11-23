@@ -57,9 +57,6 @@ class AppLocalizationsNl extends AppLocalizations {
   String get actionCancel => 'Annuleren';
 
   @override
-  String get actionConfirm => 'Bevestigen';
-
-  @override
   String get labelDate => 'Datum';
 
   @override
@@ -112,6 +109,10 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get dashboardUrencriterium => 'Urencriterium';
+
+  @override
+  String get dashboardUrencriteriumHelp =>
+      'De uren die je dit jaar voor je onderneming werkte, tegenover het urencriterium. De zelfstandigenaftrek en de meeste andere ondernemersaftrekken vereisen het (Wet IB 2001 art. 3.76). Alle uren voor je onderneming tellen, niet alleen declarabele.';
 
   @override
   String get dashboardBtwDeadlines => 'BTW-deadlines';
@@ -284,6 +285,16 @@ class AppLocalizationsNl extends AppLocalizations {
   String get clientsInactive => 'Inactief';
 
   @override
+  String clientsPaidInYear(int year, String amount) {
+    return 'Betaald in $year: $amount';
+  }
+
+  @override
+  String clientsDbaBadge(String risk) {
+    return 'Wet DBA: $risk';
+  }
+
+  @override
   String get clientsFieldName => 'Naam';
 
   @override
@@ -340,6 +351,10 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get clientsWetDba => 'Wet DBA';
+
+  @override
+  String get clientsWetDbaHelp =>
+      'Hoe je deze arbeidsrelatie beoordeelt onder de Wet DBA (Wet deregulering beoordeling arbeidsrelaties), met het contract dat erbij hoort. Florin bewaart je oordeel en de contractdatum; het beoordeelt de relatie niet.';
 
   @override
   String get clientsRiskLevel => 'Risiconiveau';
@@ -590,6 +605,11 @@ class AppLocalizationsNl extends AppLocalizations {
   String get mileageUnitKm => 'km';
 
   @override
+  String mileageRoute(String from, String to) {
+    return '$from naar $to';
+  }
+
+  @override
   String mileageAllowance(String rate) {
     return 'Aftrek ($rate / km)';
   }
@@ -724,6 +744,14 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get assetsKiaBadge => 'KIA';
+
+  @override
+  String get assetsSoldBadge => 'Verkocht';
+
+  @override
+  String assetsBookValueTooltip(int year) {
+    return 'Boekwaarde eind $year';
+  }
 
   @override
   String get assetsFieldNotes => 'Notities';
@@ -1082,7 +1110,13 @@ class AppLocalizationsNl extends AppLocalizations {
       'Standaard: de map met app-gegevens. Kies een andere map om hem in een gesynchroniseerde map te bewaren. Staat daar al een Florin-database, dan opent Florin die.';
 
   @override
-  String get firstLaunchDbDefault => 'Application Support (standaard)';
+  String firstLaunchDbDefault(String path) {
+    return '$path (standaard)';
+  }
+
+  @override
+  String get firstLaunchDbDefaultFolder =>
+      'De eigen gegevensmap van de app (standaard)';
 
   @override
   String get firstLaunchChooseFolder => 'Map kiezen';
@@ -1181,6 +1215,14 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get invoiceRemoveLine => 'Regel verwijderen';
+
+  @override
+  String get invoiceLockedNotice =>
+      'Deze factuur is uitgereikt en kan niet meer veranderen. Corrigeer hem met een creditnota die ernaar verwijst.';
+
+  @override
+  String get invoiceLockedCreditNotice =>
+      'Deze creditnota is uitgereikt en kan niet meer veranderen.';
 
   @override
   String get expensesFoodNotice =>
@@ -2010,7 +2052,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get vatReturnIcpSectionHelp =>
-      'Leveringen aan ondernemers in andere EU-landen, apart opgegeven in de ICP-opgaaf.';
+      'Leveringen aan ondernemers in andere EU-landen, apart opgegeven in de ICP-opgaaf. Zolang je meedoet aan de KOR doe je geen ICP-opgaaf, dus facturen van die datums staan er niet in.';
 
   @override
   String get vatRow1aHelp => 'Omzet belast met 21% en de btw daarover.';
@@ -2253,7 +2295,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get settingsKorStartHelp =>
-      'De eerste dag waarop de kleineondernemersregeling (KOR) voor je geldt, zoals in de bevestiging van de Belastingdienst. Onder de KOR bereken je geen btw, doe je geen gewone btw-aangifte en vraag je geen btw terug, zolang je omzet in Nederland hoogstens € 20.000 per jaar is. Laat leeg als je niet meedoet.';
+      'De eerste dag waarop de kleineondernemersregeling (KOR) voor je geldt, zoals in de bevestiging van de Belastingdienst. Tot die datum doe je elke aangifte zoals gewoonlijk. Onder de KOR bereken je geen btw, doe je geen gewone btw-aangifte en vraag je geen btw terug, zolang je omzet in Nederland hoogstens € 20.000 per jaar is. Laat leeg als je niet meedoet.';
 
   @override
   String get settingsKorEnd => 'KOR beëindigd op';
@@ -2297,21 +2339,35 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get dashboardKorHelp =>
-      'Je omzet die meetelt voor de kleineondernemersregeling: prestaties belast in Nederland, ook 0% en verlegging binnenland, niet diensten die in het buitenland belast zijn. Boven € 20.000 in een kalenderjaar eindigt de KOR met de levering die de grens overschrijdt, voor de rest van dat jaar en het jaar erna.';
+      'Je omzet die meetelt voor de kleineondernemersregeling: prestaties belast in Nederland, ook 0% en verlegging binnenland, niet diensten die in het buitenland belast zijn. Boven € 20.000 in een kalenderjaar eindigt de KOR met de levering die de grens overschrijdt, voor de rest van dat jaar en het jaar erna. De KOR gaat niet vanzelf: hij geldt pas als je je aanmeldt en de Belastingdienst de ingangsdatum bevestigt. Tot dan doe je elk kwartaal aangifte, hoe laag je omzet ook is.';
 
   @override
   String get deadlineStatusKor => 'geen aangifte (KOR)';
 
   @override
+  String get deadlineStatusIncidental => 'incidentele aangifte';
+
+  @override
   String get deadlineBadgeKor => 'Geen aangifte: KOR';
 
   @override
+  String get deadlineBadgeIncidental => 'Incidentele aangifte nodig';
+
+  @override
   String get vatReturnKorNotice =>
-      'Je doet dit hele kwartaal mee aan de KOR: je berekent geen btw en doet geen gewone aangifte. Is er btw naar je verlegd (2a, 4a of 4b), dan kan die toch verschuldigd zijn via een incidentele aangifte: het hulpmiddel Incidentele btw-aangifte van de Belastingdienst zegt of dat zo is. Florin toont die bedragen hieronder.';
+      'Je doet dit hele kwartaal mee aan de KOR en bent er geen btw over verschuldigd, dus je doet geen aangifte. Stuurt de Belastingdienst je toch een aangifte, dien die dan in.';
 
   @override
   String get vatReturnKorPartNotice =>
       'De KOR geldt voor een deel van dit kwartaal. Facturen die onder de KOR zijn vrijgesteld staan niet in de aangifte en btw op inkopen in dat deel vraag je niet terug. Doe aangifte voor het deel buiten de KOR.';
+
+  @override
+  String get vatReturnKorIncidentalNotice =>
+      'Je doet dit hele kwartaal mee aan de KOR, maar je bent er btw over verschuldigd, zoals btw die naar je is verlegd (2a, 4a of 4b) en die je niet aftrekt. Daarom doe je over dit kwartaal aangifte. De Belastingdienst stuurt die niet vanzelf: vraag hem schriftelijk aan bij je belastingkantoor zodra het kwartaal voorbij is. Florin toont de gewone termijn als datum om aan te houden.';
+
+  @override
+  String get vatReturnNilNotice =>
+      'Niets aan te geven dit kwartaal. Je doet toch op tijd aangifte: een nihilaangifte (0-aangifte). Zonder aangifte stuurt de Belastingdienst een naheffingsaanslag en een boete.';
 
   @override
   String vatReturnKorExceeded(String date, String limit) {
@@ -2371,7 +2427,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get settingsKorSectionHelp =>
-      'Een btw-vrijstelling voor ondernemers met hoogstens € 20.000 omzet in Nederland per jaar. Je meldt je aan en af bij de Belastingdienst; vul hier de datums in zodat Florin hem volgt.';
+      'Een btw-vrijstelling voor ondernemers met hoogstens € 20.000 omzet in Nederland per jaar. Hij gaat niet vanzelf: je meldt je aan en af bij de Belastingdienst, en zonder KOR doe je elk kwartaal aangifte. Vul hier de datums in zodat Florin hem volgt.';
 
   @override
   String get receiptTypeEInvoice => 'E-factuur (UBL)';
@@ -2411,13 +2467,14 @@ class AppLocalizationsNl extends AppLocalizations {
   String get receiptsOpen => 'Openen';
 
   @override
-  String get receiptsRemove => 'Naar de prullenbak';
+  String get receiptsRemove => 'Van deze registratie halen';
 
   @override
   String get receiptsUnstage => 'Niet toevoegen';
 
   @override
-  String get receiptsRemoved => 'Verplaatst naar de prullenbak voor bonnen';
+  String get receiptsRemoved =>
+      'Verwijderd. Florin bewaart het bestand onder Verwijderde bonnen in Instellingen.';
 
   @override
   String get receiptsUndo => 'Ongedaan maken';
@@ -2439,7 +2496,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get receiptsKeepUntilHelp =>
-      'De Belastingdienst vraagt facturen en bonnen 7 jaar te bewaren. Florin telt vanaf het einde van het jaar waar ze bij horen en verwijdert ze nooit zelf.';
+      'De Belastingdienst vraagt facturen en bonnen 7 jaar te bewaren. Florin telt vanaf het einde van het jaar waar ze bij horen en verwijdert ze nooit.';
 
   @override
   String get receiptsKeepWhileInUse => 'Zolang in gebruik, daarna 7 jaar';
@@ -2491,7 +2548,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get settingsReceiptsSectionHelp =>
-      'Florin bewaart de bonnen van uitgaven en bedrijfsmiddelen, en de pdf\'s van verstuurde facturen, in een map met bonnen naast de database. Die verhuist mee met de database en hoort in dezelfde back-up.';
+      'Florin bewaart de bonnen van uitgaven en bedrijfsmiddelen, en de pdf\'s van verstuurde facturen, in een map met bonnen naast de database. Florin verwijdert ze nooit: een verwijderde bon blijft onder Verwijderde bonnen. De map verhuist mee met de database en hoort in dezelfde back-up.';
 
   @override
   String settingsReceiptsLocation(String path) {
@@ -2548,24 +2605,43 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsReceiptChanged => 'gewijzigd sinds het werd toegevoegd';
 
   @override
-  String settingsEmptyTrash(int count) {
-    return 'Prullenbak legen ($count)';
-  }
-
-  @override
-  String get settingsEmptyTrashTitle => 'Prullenbak voor bonnen legen';
-
-  @override
-  String settingsEmptyTrashMessage(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count verwijderde bestanden worden definitief gewist.',
-      one: '1 verwijderd bestand wordt definitief gewist.',
-    );
-    return '$_temp0 Bewaar bonnen 7 jaar: leeg de prullenbak alleen als je zeker weet dat je ze niet meer nodig hebt.';
-  }
-
-  @override
   String get settingsReceiptsOpenFailed => 'De map kon niet worden geopend';
+
+  @override
+  String get receiptOwnerExpense => 'Uitgave';
+
+  @override
+  String get receiptOwnerAsset => 'Bedrijfsmiddel';
+
+  @override
+  String get receiptOwnerInvoice => 'Factuur';
+
+  @override
+  String get removedReceiptsTitle => 'Verwijderde bonnen';
+
+  @override
+  String removedReceiptsNotice(String path) {
+    return 'Bonnen die je van een registratie hebt gehaald, of waarvan de registratie is verwijderd. Florin verwijdert nooit een bon: de bestanden blijven in $path. Zet er een terug zolang de registratie bestaat.';
+  }
+
+  @override
+  String get removedReceiptsNone => 'Geen verwijderde bonnen.';
+
+  @override
+  String removedReceiptsFrom(
+    String kind,
+    String date,
+    String name,
+    String removed,
+  ) {
+    return 'van $kind $date $name, verwijderd $removed';
+  }
+
+  @override
+  String get removedReceiptsPutBack => 'Terugzetten op de registratie';
+
+  @override
+  String settingsRemovedReceipts(int count) {
+    return 'Verwijderde bonnen ($count)';
+  }
 }

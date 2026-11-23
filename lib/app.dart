@@ -22,6 +22,7 @@ import 'screens/mileage/mileage_screen.dart';
 import 'screens/assets/assets_screen.dart';
 import 'screens/pension/pension_screen.dart';
 import 'screens/settings/settings_screen.dart';
+import 'screens/receipts/removed_receipts_page.dart';
 import 'constants/prefs_keys.dart';
 import 'widgets/feedback.dart';
 
@@ -175,6 +176,12 @@ class _FlorinAppState extends ConsumerState<FlorinApp> {
             GoRoute(
               path: '/settings',
               builder: (c, s) => const SettingsScreen(),
+              routes: [
+                GoRoute(
+                  path: 'removed-receipts',
+                  builder: (c, s) => const RemovedReceiptsPage(),
+                ),
+              ],
             ),
           ],
         ),

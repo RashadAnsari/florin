@@ -16,7 +16,6 @@
   "actionSave": "Save",
   "actionDelete": "Delete",
   "actionCancel": "Cancel",
-  "actionConfirm": "Confirm",
   "labelDate": "Date",
   "labelNotes": "Notes",
   "labelCategory": "Category",
@@ -52,6 +51,7 @@
     }
   },
   "dashboardUrencriterium": "Urencriterium",
+  "dashboardUrencriteriumHelp": "The hours you worked for the business this year against the urencriterium. The zelfstandigenaftrek and most other deductions for business owners require it (Wet IB 2001 art. 3.76). All business hours count, not only billable ones.",
   "dashboardBtwDeadlines": "VAT deadlines",
   "dashboardMonthlyRevenue": "Monthly revenue",
   "deadlineStatusFiled": "filed",
@@ -127,6 +127,25 @@
   "clientsFilterActive": "Active",
   "clientsFilterInactive": "Inactive",
   "clientsInactive": "Inactive",
+  "clientsPaidInYear": "Paid in {year}: {amount}",
+  "@clientsPaidInYear": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "clientsDbaBadge": "Wet DBA: {risk}",
+  "@clientsDbaBadge": {
+    "placeholders": {
+      "risk": {
+        "type": "String"
+      }
+    }
+  },
   "clientsFieldName": "Name",
   "clientsValidateName": "Enter the client's name",
   "clientsFieldCountry": "Country",
@@ -145,6 +164,7 @@
   "clientsFieldActive": "Active",
   "clientsFieldNotes": "Notes",
   "clientsWetDba": "Wet DBA",
+  "clientsWetDbaHelp": "How you judge this working relationship under the Wet DBA (Wet deregulering beoordeling arbeidsrelaties), with the contract that goes with it. Florin keeps your judgement and the contract date; it does not assess the relationship.",
   "clientsRiskLevel": "Risk level",
   "clientsRiskLow": "Low",
   "clientsRiskMedium": "Medium",
@@ -266,6 +286,17 @@
   "mileageBusiness": "Business",
   "mileageTotal": "Total",
   "mileageUnitKm": "km",
+  "mileageRoute": "{from} to {to}",
+  "@mileageRoute": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
   "mileageAllowance": "Allowance ({rate} / km)",
   "@mileageAllowance": {
     "placeholders": {
@@ -322,6 +353,15 @@
   "assetsValidateCost": "Enter the cost excluding VAT, above zero: depreciation is calculated from it.",
   "assetsFieldKia": "KIA eligible",
   "assetsKiaBadge": "KIA",
+  "assetsSoldBadge": "Sold",
+  "assetsBookValueTooltip": "Book value at the end of {year}",
+  "@assetsBookValueTooltip": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
   "assetsFieldNotes": "Notes",
   "assetsDisposal": "Disposal",
   "assetsFieldDisposalDate": "Disposal date",
@@ -542,7 +582,15 @@
   "firstLaunchSubtitle": "Set up your bookkeeping workspace.",
   "firstLaunchDbSection": "Database location",
   "firstLaunchDbDescription": "Default: the app data folder. Choose another folder to keep it in a synced folder. If that folder already holds a Florin database, Florin opens it.",
-  "firstLaunchDbDefault": "Application Support (default)",
+  "firstLaunchDbDefault": "{path} (default)",
+  "@firstLaunchDbDefault": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "firstLaunchDbDefaultFolder": "The app's own data folder (default)",
   "firstLaunchChooseFolder": "Choose folder",
   "firstLaunchStartersSubtitle": "For business owners who were not a business owner in one or more of the 5 previous years, and used the zelfstandigenaftrek at most twice in that period",
   "firstLaunchGetStarted": "Get started",
@@ -599,6 +647,8 @@
   },
   "invoiceVatTotal": "VAT",
   "invoiceRemoveLine": "Remove line",
+  "invoiceLockedNotice": "This invoice is issued, so it cannot be changed. To correct it, make a credit note that refers to it.",
+  "invoiceLockedCreditNotice": "This credit note is issued, so it cannot be changed.",
   "expensesFoodNotice": "Food, drinks and representation are 80% deductible for income tax (Wet IB 2001 art. 3.15). VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed (Wet OB 1968 art. 15).",
   "plTaxFoodLimited": "{category} ({amount})",
   "@plTaxFoodLimited": {
@@ -897,7 +947,7 @@
   "plTaxUnrealisedZelfsHelp": "Zelfstandigenaftrek from earlier years that did not fit the profit then, used up to this year's profit.",
   "plTaxZelfstandigenaftrekHelp": "A fixed deduction for business owners who meet the urencriterium. At most the profit, unless you are a starter.",
   "plTaxZvwHelp": "The income-related contribution to the health care insurance act, on belastbare winst up to a maximum.",
-  "vatReturnIcpSectionHelp": "Supplies to businesses in other EU countries, reported separately in the ICP report.",
+  "vatReturnIcpSectionHelp": "Supplies to businesses in other EU countries, reported separately in the ICP report. While you take part in the KOR you file no ICP report, so invoices from those dates are not listed.",
   "vatRow1aHelp": "Revenue taxed at 21% and the VAT on it.",
   "vatRow1bHelp": "Revenue taxed at 9% and the VAT on it.",
   "vatRow1d": "1d  Private use",
@@ -1020,7 +1070,7 @@
   "expensesValidateKorReclaim": "You take part in the KOR on this date, so you cannot reclaim VAT on purchases. Untick Reclaim VAT: the VAT then counts as part of the cost.",
   "expensesKorNotice": "You take part in the KOR on this date. VAT on purchases is not reclaimed; it counts as part of the cost for income tax.",
   "settingsKorStart": "KOR applies from",
-  "settingsKorStartHelp": "The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst's confirmation. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most € 20.000 a year. Leave empty when you do not take part.",
+  "settingsKorStartHelp": "The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst's confirmation. Until that date you file every return as usual. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most € 20.000 a year. Leave empty when you do not take part.",
   "settingsKorEnd": "KOR ended on",
   "settingsKorEndHelp": "The first day the KOR no longer applies after you deregistered yourself. Leave empty otherwise: when your turnover passes the limit, Florin ends the KOR from that invoice on.",
   "settingsValidateKorStart": "The KOR starts on the first day of a return period, so enter a 1st of the month, as in the Belastingdienst's confirmation.",
@@ -1031,7 +1081,7 @@
   "korExceededBadge": "Limit passed on {date}",
   "korLeftBadge": "{left} below the limit",
   "dashboardKor": "KOR turnover",
-  "dashboardKorHelp": "Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above € 20.000 in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next.",
+  "dashboardKorHelp": "Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above € 20.000 in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next. The KOR is not automatic: it applies only after you register and the Belastingdienst confirms the start date. Until then you file a return every quarter, however low your turnover.",
   "@korProgress": {
     "placeholders": {
       "turnover": {
@@ -1057,9 +1107,13 @@
     }
   },
   "deadlineStatusKor": "no return (KOR)",
+  "deadlineStatusIncidental": "incidental return",
   "deadlineBadgeKor": "No return: KOR",
-  "vatReturnKorNotice": "You take part in the KOR for this whole quarter: you charge no VAT and file no regular return. When VAT was shifted to you (2a, 4a or 4b), you may still owe it in an incidental return: the Belastingdienst's Incidentele btw-aangifte tool says whether you do. Florin shows those amounts below.",
+  "deadlineBadgeIncidental": "Incidental return due",
+  "vatReturnKorNotice": "You take part in the KOR for this whole quarter and owe no VAT in it, so no return is due. If the Belastingdienst sends you one anyway, file it.",
   "vatReturnKorPartNotice": "The KOR applies for part of this quarter. Invoices exempt under the KOR are not in the return and VAT on purchases in that part is not reclaimed. File a return for the part outside the KOR.",
+  "vatReturnKorIncidentalNotice": "You take part in the KOR for this whole quarter, but you owe VAT in it, such as VAT shifted to you (2a, 4a or 4b), which you cannot deduct. So you file a return for this quarter. The Belastingdienst does not send it: ask your belastingkantoor for it in writing once the quarter is over. Florin shows the usual deadline as the date to aim for.",
+  "vatReturnNilNotice": "Nothing to report this quarter. You still file a return by the deadline: a nil return (0-aangifte). Without it the Belastingdienst sends an additional assessment and a fine.",
   "vatReturnKorExceeded": "Your turnover for the KOR passed {limit} on {date}. The KOR ended with that supply: from then on you charge VAT and file returns. Deregister in Mijn Belastingdienst Zakelijk; you cannot take part again this year or next year.",
   "@vatReturnKorExceeded": {
     "placeholders": {
@@ -1101,7 +1155,7 @@
   "invoiceTotal": "Total",
   "settingsTaxKor": "KOR turnover limit",
   "settingsKorSection": "Kleineondernemersregeling (KOR)",
-  "settingsKorSectionHelp": "A BTW exemption for businesses with at most € 20.000 turnover in the Netherlands a year. You join and leave it with the Belastingdienst; enter its dates here so Florin follows it.",
+  "settingsKorSectionHelp": "A VAT exemption for businesses with at most € 20.000 turnover in the Netherlands a year. It is not automatic: you register for it and deregister with the Belastingdienst, and without it you file a return every quarter. Enter its dates here so Florin follows it.",
   "receiptTypeEInvoice": "E-invoice (UBL)",
   "receiptsTitle": "Receipts",
   "receiptsHelp": "The receipt or invoice for this expense, as a PDF, photo or scan. Florin copies it into the receipts folder next to your database and leaves your file as it is. The Belastingdienst asks you to keep receipts and invoices for 7 years in the form you received them; a scan or photo must show the whole document, front and back.",
@@ -1113,15 +1167,15 @@
   "receiptsAdd": "Add files",
   "receiptsPickDialog": "Choose receipts",
   "receiptsOpen": "Open",
-  "receiptsRemove": "Move to the trash",
+  "receiptsRemove": "Remove from this record",
   "receiptsUnstage": "Do not add",
-  "receiptsRemoved": "Moved to the receipts trash",
+  "receiptsRemoved": "Removed. Florin keeps the file under Removed receipts in Settings.",
   "receiptsUndo": "Undo",
   "receiptsStaged": "Stored when you save",
   "receiptsAdded": "added {date}",
   "receiptsMissing": "The file is missing from the receipts folder. Restore it from a backup.",
   "receiptsKeepUntil": "Keep until",
-  "receiptsKeepUntilHelp": "The Belastingdienst asks you to keep invoices and receipts for 7 years. Florin counts them from the end of the year they belong to and never deletes them itself.",
+  "receiptsKeepUntilHelp": "The Belastingdienst asks you to keep invoices and receipts for 7 years. Florin counts them from the end of the year they belong to and never deletes them.",
   "receiptsKeepWhileInUse": "While in use, then 7 years",
   "receiptsRejectedEmpty": "{name} is empty. Choose the file again.",
   "receiptsRejectedTooLarge": "{name} is larger than {max}. Save the scan at a lower resolution, keeping every page readable, and add it again.",
@@ -1179,7 +1233,7 @@
   "expensesPaperOnly": "Paper original kept",
   "receiptsNotStored": "No PDF is stored for this invoice. Florin stores it the first time you export it.",
   "settingsReceiptsSection": "Receipts",
-  "settingsReceiptsSectionHelp": "Florin keeps the receipt files of expenses and assets, and the PDFs of issued invoices, in a receipts folder next to the database. It moves with the database and belongs in the same backup.",
+  "settingsReceiptsSectionHelp": "Florin keeps the receipt files of expenses and assets, and the PDFs of issued invoices, in a receipts folder next to the database. It never deletes them: a removed receipt stays under Removed receipts. The folder moves with the database and belongs in the same backup.",
   "settingsReceiptsLocation": "Folder: {path}",
   "settingsReceiptsCount": "{count, plural, =1{1 file} other{{count} files}}, {size}",
   "settingsReceiptsShowFolder": "Show folder",
@@ -1189,9 +1243,6 @@
   "settingsReceiptsProblems": "{count, plural, =1{1 file needs attention. Restore it from a backup:} other{{count} files need attention. Restore them from a backup:}}",
   "settingsReceiptMissing": "missing",
   "settingsReceiptChanged": "changed since it was added",
-  "settingsEmptyTrash": "Empty trash ({count})",
-  "settingsEmptyTrashTitle": "Empty the receipts trash",
-  "settingsEmptyTrashMessage": "{count, plural, =1{1 removed file is deleted for good.} other{{count} removed files are deleted for good.}} Keep receipts for 7 years: only empty the trash when you are sure none of them is still needed.",
   "settingsReceiptsOpenFailed": "The folder could not be opened",
   "@settingsReceiptsLocation": {
     "placeholders": {
@@ -1224,14 +1275,39 @@
       }
     }
   },
-  "@settingsEmptyTrash": {
+  "receiptOwnerExpense": "Expense",
+  "receiptOwnerAsset": "Asset",
+  "receiptOwnerInvoice": "Invoice",
+  "removedReceiptsTitle": "Removed receipts",
+  "removedReceiptsNotice": "Receipts you removed from a record, or whose record was deleted. Florin never deletes a receipt: the files stay in {path}. Put one back while its record exists.",
+  "removedReceiptsNone": "No removed receipts.",
+  "removedReceiptsFrom": "from {kind} {date} {name}, removed {removed}",
+  "removedReceiptsPutBack": "Put back on its record",
+  "settingsRemovedReceipts": "Removed receipts ({count})",
+  "@removedReceiptsNotice": {
     "placeholders": {
-      "count": {
-        "type": "int"
+      "path": {
+        "type": "String"
       }
     }
   },
-  "@settingsEmptyTrashMessage": {
+  "@removedReceiptsFrom": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      },
+      "removed": {
+        "type": "String"
+      }
+    }
+  },
+  "@settingsRemovedReceipts": {
     "placeholders": {
       "count": {
         "type": "int"

@@ -63,6 +63,8 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
     final kor = ref.watch(korStatusProvider).valueOrNull ?? KorStatus.none;
     final korCovered = kor.coversQuarter(year, _quarter);
     final korExceeded = kor.exceededOn[year];
+    // Until the figures load, a return is due: the cautious answer.
+    final duty = result.valueOrNull?.duty ?? ReturnDuty.regular;
 
     return Scaffold(
       appBar: AppBar(title: Text(l.vatReturnTitle)),
@@ -82,15 +84,24 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                 DeadlineBadge(
                   deadline: deadline,
                   filed: status?.filed ?? false,
-                  korCovered: korCovered,
+                  duty: duty,
                 ),
               ],
             ),
-            if (kor.touchesQuarter(year, _quarter)) ...[
+            if (korCovered && duty == ReturnDuty.incidental) ...[
+              const SizedBox(height: AppSpacing.group),
+              NoticeBanner(
+                l.vatReturnKorIncidentalNotice,
+                tone: NoticeTone.warning,
+              ),
+            ] else if (kor.touchesQuarter(year, _quarter)) ...[
               const SizedBox(height: AppSpacing.group),
               NoticeBanner(
                 korCovered ? l.vatReturnKorNotice : l.vatReturnKorPartNotice,
               ),
+            ] else if (result.valueOrNull?.isEmpty ?? false) ...[
+              const SizedBox(height: AppSpacing.group),
+              NoticeBanner(l.vatReturnNilNotice),
             ],
             if (korExceeded != null && quarterOf(korExceeded) == _quarter) ...[
               const SizedBox(height: AppSpacing.group),

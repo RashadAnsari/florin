@@ -57,9 +57,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get actionCancel => 'Cancel';
 
   @override
-  String get actionConfirm => 'Confirm';
-
-  @override
   String get labelDate => 'Date';
 
   @override
@@ -112,6 +109,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboardUrencriterium => 'Urencriterium';
+
+  @override
+  String get dashboardUrencriteriumHelp =>
+      'The hours you worked for the business this year against the urencriterium. The zelfstandigenaftrek and most other deductions for business owners require it (Wet IB 2001 art. 3.76). All business hours count, not only billable ones.';
 
   @override
   String get dashboardBtwDeadlines => 'VAT deadlines';
@@ -285,6 +286,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clientsInactive => 'Inactive';
 
   @override
+  String clientsPaidInYear(int year, String amount) {
+    return 'Paid in $year: $amount';
+  }
+
+  @override
+  String clientsDbaBadge(String risk) {
+    return 'Wet DBA: $risk';
+  }
+
+  @override
   String get clientsFieldName => 'Name';
 
   @override
@@ -340,6 +351,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clientsWetDba => 'Wet DBA';
+
+  @override
+  String get clientsWetDbaHelp =>
+      'How you judge this working relationship under the Wet DBA (Wet deregulering beoordeling arbeidsrelaties), with the contract that goes with it. Florin keeps your judgement and the contract date; it does not assess the relationship.';
 
   @override
   String get clientsRiskLevel => 'Risk level';
@@ -588,6 +603,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mileageUnitKm => 'km';
 
   @override
+  String mileageRoute(String from, String to) {
+    return '$from to $to';
+  }
+
+  @override
   String mileageAllowance(String rate) {
     return 'Allowance ($rate / km)';
   }
@@ -720,6 +740,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assetsKiaBadge => 'KIA';
+
+  @override
+  String get assetsSoldBadge => 'Sold';
+
+  @override
+  String assetsBookValueTooltip(int year) {
+    return 'Book value at the end of $year';
+  }
 
   @override
   String get assetsFieldNotes => 'Notes';
@@ -1078,7 +1106,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Default: the app data folder. Choose another folder to keep it in a synced folder. If that folder already holds a Florin database, Florin opens it.';
 
   @override
-  String get firstLaunchDbDefault => 'Application Support (default)';
+  String firstLaunchDbDefault(String path) {
+    return '$path (default)';
+  }
+
+  @override
+  String get firstLaunchDbDefaultFolder =>
+      'The app\'s own data folder (default)';
 
   @override
   String get firstLaunchChooseFolder => 'Choose folder';
@@ -1178,6 +1212,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invoiceRemoveLine => 'Remove line';
+
+  @override
+  String get invoiceLockedNotice =>
+      'This invoice is issued, so it cannot be changed. To correct it, make a credit note that refers to it.';
+
+  @override
+  String get invoiceLockedCreditNotice =>
+      'This credit note is issued, so it cannot be changed.';
 
   @override
   String get expensesFoodNotice =>
@@ -2004,7 +2046,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get vatReturnIcpSectionHelp =>
-      'Supplies to businesses in other EU countries, reported separately in the ICP report.';
+      'Supplies to businesses in other EU countries, reported separately in the ICP report. While you take part in the KOR you file no ICP report, so invoices from those dates are not listed.';
 
   @override
   String get vatRow1aHelp => 'Revenue taxed at 21% and the VAT on it.';
@@ -2243,7 +2285,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsKorStartHelp =>
-      'The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst\'s confirmation. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most € 20.000 a year. Leave empty when you do not take part.';
+      'The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst\'s confirmation. Until that date you file every return as usual. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most € 20.000 a year. Leave empty when you do not take part.';
 
   @override
   String get settingsKorEnd => 'KOR ended on';
@@ -2287,21 +2329,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboardKorHelp =>
-      'Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above € 20.000 in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next.';
+      'Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above € 20.000 in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next. The KOR is not automatic: it applies only after you register and the Belastingdienst confirms the start date. Until then you file a return every quarter, however low your turnover.';
 
   @override
   String get deadlineStatusKor => 'no return (KOR)';
 
   @override
+  String get deadlineStatusIncidental => 'incidental return';
+
+  @override
   String get deadlineBadgeKor => 'No return: KOR';
 
   @override
+  String get deadlineBadgeIncidental => 'Incidental return due';
+
+  @override
   String get vatReturnKorNotice =>
-      'You take part in the KOR for this whole quarter: you charge no VAT and file no regular return. When VAT was shifted to you (2a, 4a or 4b), you may still owe it in an incidental return: the Belastingdienst\'s Incidentele btw-aangifte tool says whether you do. Florin shows those amounts below.';
+      'You take part in the KOR for this whole quarter and owe no VAT in it, so no return is due. If the Belastingdienst sends you one anyway, file it.';
 
   @override
   String get vatReturnKorPartNotice =>
       'The KOR applies for part of this quarter. Invoices exempt under the KOR are not in the return and VAT on purchases in that part is not reclaimed. File a return for the part outside the KOR.';
+
+  @override
+  String get vatReturnKorIncidentalNotice =>
+      'You take part in the KOR for this whole quarter, but you owe VAT in it, such as VAT shifted to you (2a, 4a or 4b), which you cannot deduct. So you file a return for this quarter. The Belastingdienst does not send it: ask your belastingkantoor for it in writing once the quarter is over. Florin shows the usual deadline as the date to aim for.';
+
+  @override
+  String get vatReturnNilNotice =>
+      'Nothing to report this quarter. You still file a return by the deadline: a nil return (0-aangifte). Without it the Belastingdienst sends an additional assessment and a fine.';
 
   @override
   String vatReturnKorExceeded(String date, String limit) {
@@ -2360,7 +2416,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsKorSectionHelp =>
-      'A BTW exemption for businesses with at most € 20.000 turnover in the Netherlands a year. You join and leave it with the Belastingdienst; enter its dates here so Florin follows it.';
+      'A VAT exemption for businesses with at most € 20.000 turnover in the Netherlands a year. It is not automatic: you register for it and deregister with the Belastingdienst, and without it you file a return every quarter. Enter its dates here so Florin follows it.';
 
   @override
   String get receiptTypeEInvoice => 'E-invoice (UBL)';
@@ -2400,13 +2456,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get receiptsOpen => 'Open';
 
   @override
-  String get receiptsRemove => 'Move to the trash';
+  String get receiptsRemove => 'Remove from this record';
 
   @override
   String get receiptsUnstage => 'Do not add';
 
   @override
-  String get receiptsRemoved => 'Moved to the receipts trash';
+  String get receiptsRemoved =>
+      'Removed. Florin keeps the file under Removed receipts in Settings.';
 
   @override
   String get receiptsUndo => 'Undo';
@@ -2428,7 +2485,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get receiptsKeepUntilHelp =>
-      'The Belastingdienst asks you to keep invoices and receipts for 7 years. Florin counts them from the end of the year they belong to and never deletes them itself.';
+      'The Belastingdienst asks you to keep invoices and receipts for 7 years. Florin counts them from the end of the year they belong to and never deletes them.';
 
   @override
   String get receiptsKeepWhileInUse => 'While in use, then 7 years';
@@ -2480,7 +2537,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsReceiptsSectionHelp =>
-      'Florin keeps the receipt files of expenses and assets, and the PDFs of issued invoices, in a receipts folder next to the database. It moves with the database and belongs in the same backup.';
+      'Florin keeps the receipt files of expenses and assets, and the PDFs of issued invoices, in a receipts folder next to the database. It never deletes them: a removed receipt stays under Removed receipts. The folder moves with the database and belongs in the same backup.';
 
   @override
   String settingsReceiptsLocation(String path) {
@@ -2537,24 +2594,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsReceiptChanged => 'changed since it was added';
 
   @override
-  String settingsEmptyTrash(int count) {
-    return 'Empty trash ($count)';
-  }
-
-  @override
-  String get settingsEmptyTrashTitle => 'Empty the receipts trash';
-
-  @override
-  String settingsEmptyTrashMessage(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count removed files are deleted for good.',
-      one: '1 removed file is deleted for good.',
-    );
-    return '$_temp0 Keep receipts for 7 years: only empty the trash when you are sure none of them is still needed.';
-  }
-
-  @override
   String get settingsReceiptsOpenFailed => 'The folder could not be opened';
+
+  @override
+  String get receiptOwnerExpense => 'Expense';
+
+  @override
+  String get receiptOwnerAsset => 'Asset';
+
+  @override
+  String get receiptOwnerInvoice => 'Invoice';
+
+  @override
+  String get removedReceiptsTitle => 'Removed receipts';
+
+  @override
+  String removedReceiptsNotice(String path) {
+    return 'Receipts you removed from a record, or whose record was deleted. Florin never deletes a receipt: the files stay in $path. Put one back while its record exists.';
+  }
+
+  @override
+  String get removedReceiptsNone => 'No removed receipts.';
+
+  @override
+  String removedReceiptsFrom(
+    String kind,
+    String date,
+    String name,
+    String removed,
+  ) {
+    return 'from $kind $date $name, removed $removed';
+  }
+
+  @override
+  String get removedReceiptsPutBack => 'Put back on its record';
+
+  @override
+  String settingsRemovedReceipts(int count) {
+    return 'Removed receipts ($count)';
+  }
 }

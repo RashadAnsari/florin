@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:florin/l10n/app_localizations.dart';
-import 'help.dart';
+import 'value_row.dart';
 
 /// Business use share from 0 to 100% in steps of 5%.
 class BusinessUseSlider extends StatelessWidget {
@@ -23,10 +23,9 @@ class BusinessUseSlider extends StatelessWidget {
       children: [
         Row(
           children: [
-            LabelWithHelp(
+            SectionLabel(
               l.expensesBusinessUse,
               help: l.expensesBusinessUseHelp,
-              style: theme.textTheme.titleSmall,
             ),
             const Spacer(),
             Text(

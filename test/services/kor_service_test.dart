@@ -168,11 +168,78 @@ void main() {
       invoices: [_invoice(1, DateTime(2026, 2, 1), 50000)],
       lines: const [],
       expenses: const [],
+      year: 2026,
       quarter: 1,
     );
     expect(r.revenueKorExempt, 50000);
     expect(r.revenue1a + r.revenue1e + r.revenue3a + r.revenue3b, 0);
     expect(r.outputVat5a, 0);
     expect(VatTreatment.kor.fitsCountry('US'), isTrue);
+  });
+
+  group('which return a quarter needs (Wet OB 1968 art. 14 lid 1; '
+      'Belastingdienst, Moet ik altijd btw-aangifte doen?)', () {
+    final fromEu = Expense(
+      id: 1,
+      date: DateTime(2026, 2, 3),
+      supplier: 's',
+      description: 'd',
+      category: ExpenseCategory.software,
+      paperOriginalKept: false,
+      amountExclVat: 5500,
+      vatRate: VatRate.high,
+      purchaseVat: PurchaseVat.fromEu,
+      vatAmount: 1155,
+      totalInclVat: 5500,
+      businessUsePct: 1,
+      deductibleAmount: 5500,
+      vatReclaimable: true,
+      vatToReclaim: 1155,
+    );
+    final kor = KorService.status(_profile(start: DateTime(2026, 1, 1)), []);
+
+    VatQuarterResult quarter({
+      List<Expense> expenses = const [],
+      List<Invoice> invoices = const [],
+      KorStatus status = KorStatus.none,
+    }) => VatService.calculateQuarter(
+      invoices: invoices,
+      lines: const [],
+      expenses: KorService.applyToExpenses(expenses, status),
+      year: 2026,
+      quarter: 1,
+      kor: status,
+    );
+
+    test('outside the KOR every quarter needs a return, also an empty one', () {
+      final r = quarter();
+      expect(r.duty, ReturnDuty.regular);
+      expect(r.isEmpty, isTrue);
+    });
+
+    test('a KOR quarter without BTW owed needs none', () {
+      expect(quarter(status: kor).duty, ReturnDuty.none);
+    });
+
+    test('BTW shifted to a KOR participant is owed, not deducted, and needs '
+        'an incidental return', () {
+      final r = quarter(expenses: [fromEu], status: kor);
+      expect(r.duty, ReturnDuty.incidental);
+      expect(r.vat4b, 1155);
+      expect(r.inputVat5b, 0);
+      expect(r.netVat, 1155);
+    });
+
+    test('services to EU businesses while the KOR applies are not on the '
+        'ICP list (art. 37a lid 1)', () {
+      final services = _invoice(
+        2,
+        DateTime(2026, 2, 1),
+        30000,
+        treatment: VatTreatment.euServices,
+      );
+      expect(quarter(invoices: [services], status: kor).icpInvoices, isEmpty);
+      expect(quarter(invoices: [services]).icpInvoices, [services]);
+    });
   });
 }

@@ -8487,7 +8487,7 @@ class $ReceiptsTable extends Receipts with TableInfo<$ReceiptsTable, Receipt> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES expenses (id) ON DELETE RESTRICT',
+      'REFERENCES expenses (id) ON DELETE SET NULL',
     ),
   );
   static const VerificationMeta _assetIdMeta = const VerificationMeta(
@@ -8501,7 +8501,7 @@ class $ReceiptsTable extends Receipts with TableInfo<$ReceiptsTable, Receipt> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES fixed_assets (id) ON DELETE RESTRICT',
+      'REFERENCES fixed_assets (id) ON DELETE SET NULL',
     ),
   );
   static const VerificationMeta _invoiceIdMeta = const VerificationMeta(
@@ -8515,7 +8515,7 @@ class $ReceiptsTable extends Receipts with TableInfo<$ReceiptsTable, Receipt> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES invoices (id) ON DELETE RESTRICT',
+      'REFERENCES invoices (id) ON DELETE SET NULL',
     ),
   );
   static const VerificationMeta _yearMeta = const VerificationMeta('year');
@@ -8578,6 +8578,49 @@ class $ReceiptsTable extends Receipts with TableInfo<$ReceiptsTable, Receipt> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _removedAtMeta = const VerificationMeta(
+    'removedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> removedAt = GeneratedColumn<DateTime>(
+    'removed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<ReceiptOwnerKind?, String>
+  removedFromKind = GeneratedColumn<String>(
+    'removed_from_kind',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  ).withConverter<ReceiptOwnerKind?>($ReceiptsTable.$converterremovedFromKindn);
+  static const VerificationMeta _removedFromDateMeta = const VerificationMeta(
+    'removedFromDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> removedFromDate =
+      GeneratedColumn<DateTime>(
+        'removed_from_date',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _removedFromNameMeta = const VerificationMeta(
+    'removedFromName',
+  );
+  @override
+  late final GeneratedColumn<String> removedFromName = GeneratedColumn<String>(
+    'removed_from_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -8590,6 +8633,10 @@ class $ReceiptsTable extends Receipts with TableInfo<$ReceiptsTable, Receipt> {
     sizeBytes,
     sha256,
     addedAt,
+    removedAt,
+    removedFromKind,
+    removedFromDate,
+    removedFromName,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -8669,6 +8716,30 @@ class $ReceiptsTable extends Receipts with TableInfo<$ReceiptsTable, Receipt> {
     } else if (isInserting) {
       context.missing(_addedAtMeta);
     }
+    if (data.containsKey('removed_at')) {
+      context.handle(
+        _removedAtMeta,
+        removedAt.isAcceptableOrUnknown(data['removed_at']!, _removedAtMeta),
+      );
+    }
+    if (data.containsKey('removed_from_date')) {
+      context.handle(
+        _removedFromDateMeta,
+        removedFromDate.isAcceptableOrUnknown(
+          data['removed_from_date']!,
+          _removedFromDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('removed_from_name')) {
+      context.handle(
+        _removedFromNameMeta,
+        removedFromName.isAcceptableOrUnknown(
+          data['removed_from_name']!,
+          _removedFromNameMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -8720,6 +8791,24 @@ class $ReceiptsTable extends Receipts with TableInfo<$ReceiptsTable, Receipt> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}added_at'],
       )!,
+      removedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}removed_at'],
+      ),
+      removedFromKind: $ReceiptsTable.$converterremovedFromKindn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}removed_from_kind'],
+        ),
+      ),
+      removedFromDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}removed_from_date'],
+      ),
+      removedFromName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}removed_from_name'],
+      ),
     );
   }
 
@@ -8730,6 +8819,14 @@ class $ReceiptsTable extends Receipts with TableInfo<$ReceiptsTable, Receipt> {
 
   static JsonTypeConverter2<ReceiptType, String, String> $convertertype =
       const EnumNameConverter<ReceiptType>(ReceiptType.values);
+  static JsonTypeConverter2<ReceiptOwnerKind, String, String>
+  $converterremovedFromKind = const EnumNameConverter<ReceiptOwnerKind>(
+    ReceiptOwnerKind.values,
+  );
+  static JsonTypeConverter2<ReceiptOwnerKind?, String?, String?>
+  $converterremovedFromKindn = JsonTypeConverter2.asNullable(
+    $converterremovedFromKind,
+  );
 }
 
 class Receipt extends DataClass implements Insertable<Receipt> {
@@ -8750,6 +8847,14 @@ class Receipt extends DataClass implements Insertable<Receipt> {
   /// SHA-256 of the stored file, to find duplicates and changed files.
   final String sha256;
   final DateTime addedAt;
+
+  /// When the user removed it from its record, or null while in use.
+  final DateTime? removedAt;
+
+  /// What it belonged to when removed, kept for when that record is gone.
+  final ReceiptOwnerKind? removedFromKind;
+  final DateTime? removedFromDate;
+  final String? removedFromName;
   const Receipt({
     required this.id,
     this.expenseId,
@@ -8761,6 +8866,10 @@ class Receipt extends DataClass implements Insertable<Receipt> {
     required this.sizeBytes,
     required this.sha256,
     required this.addedAt,
+    this.removedAt,
+    this.removedFromKind,
+    this.removedFromDate,
+    this.removedFromName,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -8783,6 +8892,20 @@ class Receipt extends DataClass implements Insertable<Receipt> {
     map['size_bytes'] = Variable<int>(sizeBytes);
     map['sha256'] = Variable<String>(sha256);
     map['added_at'] = Variable<DateTime>(addedAt);
+    if (!nullToAbsent || removedAt != null) {
+      map['removed_at'] = Variable<DateTime>(removedAt);
+    }
+    if (!nullToAbsent || removedFromKind != null) {
+      map['removed_from_kind'] = Variable<String>(
+        $ReceiptsTable.$converterremovedFromKindn.toSql(removedFromKind),
+      );
+    }
+    if (!nullToAbsent || removedFromDate != null) {
+      map['removed_from_date'] = Variable<DateTime>(removedFromDate);
+    }
+    if (!nullToAbsent || removedFromName != null) {
+      map['removed_from_name'] = Variable<String>(removedFromName);
+    }
     return map;
   }
 
@@ -8804,6 +8927,18 @@ class Receipt extends DataClass implements Insertable<Receipt> {
       sizeBytes: Value(sizeBytes),
       sha256: Value(sha256),
       addedAt: Value(addedAt),
+      removedAt: removedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(removedAt),
+      removedFromKind: removedFromKind == null && nullToAbsent
+          ? const Value.absent()
+          : Value(removedFromKind),
+      removedFromDate: removedFromDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(removedFromDate),
+      removedFromName: removedFromName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(removedFromName),
     );
   }
 
@@ -8825,6 +8960,12 @@ class Receipt extends DataClass implements Insertable<Receipt> {
       sizeBytes: serializer.fromJson<int>(json['sizeBytes']),
       sha256: serializer.fromJson<String>(json['sha256']),
       addedAt: serializer.fromJson<DateTime>(json['addedAt']),
+      removedAt: serializer.fromJson<DateTime?>(json['removedAt']),
+      removedFromKind: $ReceiptsTable.$converterremovedFromKindn.fromJson(
+        serializer.fromJson<String?>(json['removedFromKind']),
+      ),
+      removedFromDate: serializer.fromJson<DateTime?>(json['removedFromDate']),
+      removedFromName: serializer.fromJson<String?>(json['removedFromName']),
     );
   }
   @override
@@ -8843,6 +8984,12 @@ class Receipt extends DataClass implements Insertable<Receipt> {
       'sizeBytes': serializer.toJson<int>(sizeBytes),
       'sha256': serializer.toJson<String>(sha256),
       'addedAt': serializer.toJson<DateTime>(addedAt),
+      'removedAt': serializer.toJson<DateTime?>(removedAt),
+      'removedFromKind': serializer.toJson<String?>(
+        $ReceiptsTable.$converterremovedFromKindn.toJson(removedFromKind),
+      ),
+      'removedFromDate': serializer.toJson<DateTime?>(removedFromDate),
+      'removedFromName': serializer.toJson<String?>(removedFromName),
     };
   }
 
@@ -8857,6 +9004,10 @@ class Receipt extends DataClass implements Insertable<Receipt> {
     int? sizeBytes,
     String? sha256,
     DateTime? addedAt,
+    Value<DateTime?> removedAt = const Value.absent(),
+    Value<ReceiptOwnerKind?> removedFromKind = const Value.absent(),
+    Value<DateTime?> removedFromDate = const Value.absent(),
+    Value<String?> removedFromName = const Value.absent(),
   }) => Receipt(
     id: id ?? this.id,
     expenseId: expenseId.present ? expenseId.value : this.expenseId,
@@ -8868,6 +9019,16 @@ class Receipt extends DataClass implements Insertable<Receipt> {
     sizeBytes: sizeBytes ?? this.sizeBytes,
     sha256: sha256 ?? this.sha256,
     addedAt: addedAt ?? this.addedAt,
+    removedAt: removedAt.present ? removedAt.value : this.removedAt,
+    removedFromKind: removedFromKind.present
+        ? removedFromKind.value
+        : this.removedFromKind,
+    removedFromDate: removedFromDate.present
+        ? removedFromDate.value
+        : this.removedFromDate,
+    removedFromName: removedFromName.present
+        ? removedFromName.value
+        : this.removedFromName,
   );
   Receipt copyWithCompanion(ReceiptsCompanion data) {
     return Receipt(
@@ -8883,6 +9044,16 @@ class Receipt extends DataClass implements Insertable<Receipt> {
       sizeBytes: data.sizeBytes.present ? data.sizeBytes.value : this.sizeBytes,
       sha256: data.sha256.present ? data.sha256.value : this.sha256,
       addedAt: data.addedAt.present ? data.addedAt.value : this.addedAt,
+      removedAt: data.removedAt.present ? data.removedAt.value : this.removedAt,
+      removedFromKind: data.removedFromKind.present
+          ? data.removedFromKind.value
+          : this.removedFromKind,
+      removedFromDate: data.removedFromDate.present
+          ? data.removedFromDate.value
+          : this.removedFromDate,
+      removedFromName: data.removedFromName.present
+          ? data.removedFromName.value
+          : this.removedFromName,
     );
   }
 
@@ -8898,7 +9069,11 @@ class Receipt extends DataClass implements Insertable<Receipt> {
           ..write('originalName: $originalName, ')
           ..write('sizeBytes: $sizeBytes, ')
           ..write('sha256: $sha256, ')
-          ..write('addedAt: $addedAt')
+          ..write('addedAt: $addedAt, ')
+          ..write('removedAt: $removedAt, ')
+          ..write('removedFromKind: $removedFromKind, ')
+          ..write('removedFromDate: $removedFromDate, ')
+          ..write('removedFromName: $removedFromName')
           ..write(')'))
         .toString();
   }
@@ -8915,6 +9090,10 @@ class Receipt extends DataClass implements Insertable<Receipt> {
     sizeBytes,
     sha256,
     addedAt,
+    removedAt,
+    removedFromKind,
+    removedFromDate,
+    removedFromName,
   );
   @override
   bool operator ==(Object other) =>
@@ -8929,7 +9108,11 @@ class Receipt extends DataClass implements Insertable<Receipt> {
           other.originalName == this.originalName &&
           other.sizeBytes == this.sizeBytes &&
           other.sha256 == this.sha256 &&
-          other.addedAt == this.addedAt);
+          other.addedAt == this.addedAt &&
+          other.removedAt == this.removedAt &&
+          other.removedFromKind == this.removedFromKind &&
+          other.removedFromDate == this.removedFromDate &&
+          other.removedFromName == this.removedFromName);
 }
 
 class ReceiptsCompanion extends UpdateCompanion<Receipt> {
@@ -8943,6 +9126,10 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
   final Value<int> sizeBytes;
   final Value<String> sha256;
   final Value<DateTime> addedAt;
+  final Value<DateTime?> removedAt;
+  final Value<ReceiptOwnerKind?> removedFromKind;
+  final Value<DateTime?> removedFromDate;
+  final Value<String?> removedFromName;
   final Value<int> rowid;
   const ReceiptsCompanion({
     this.id = const Value.absent(),
@@ -8955,6 +9142,10 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
     this.sizeBytes = const Value.absent(),
     this.sha256 = const Value.absent(),
     this.addedAt = const Value.absent(),
+    this.removedAt = const Value.absent(),
+    this.removedFromKind = const Value.absent(),
+    this.removedFromDate = const Value.absent(),
+    this.removedFromName = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ReceiptsCompanion.insert({
@@ -8968,6 +9159,10 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
     required int sizeBytes,
     required String sha256,
     required DateTime addedAt,
+    this.removedAt = const Value.absent(),
+    this.removedFromKind = const Value.absent(),
+    this.removedFromDate = const Value.absent(),
+    this.removedFromName = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        year = Value(year),
@@ -8987,6 +9182,10 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
     Expression<int>? sizeBytes,
     Expression<String>? sha256,
     Expression<DateTime>? addedAt,
+    Expression<DateTime>? removedAt,
+    Expression<String>? removedFromKind,
+    Expression<DateTime>? removedFromDate,
+    Expression<String>? removedFromName,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -9000,6 +9199,10 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
       if (sizeBytes != null) 'size_bytes': sizeBytes,
       if (sha256 != null) 'sha256': sha256,
       if (addedAt != null) 'added_at': addedAt,
+      if (removedAt != null) 'removed_at': removedAt,
+      if (removedFromKind != null) 'removed_from_kind': removedFromKind,
+      if (removedFromDate != null) 'removed_from_date': removedFromDate,
+      if (removedFromName != null) 'removed_from_name': removedFromName,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -9015,6 +9218,10 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
     Value<int>? sizeBytes,
     Value<String>? sha256,
     Value<DateTime>? addedAt,
+    Value<DateTime?>? removedAt,
+    Value<ReceiptOwnerKind?>? removedFromKind,
+    Value<DateTime?>? removedFromDate,
+    Value<String?>? removedFromName,
     Value<int>? rowid,
   }) {
     return ReceiptsCompanion(
@@ -9028,6 +9235,10 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
       sizeBytes: sizeBytes ?? this.sizeBytes,
       sha256: sha256 ?? this.sha256,
       addedAt: addedAt ?? this.addedAt,
+      removedAt: removedAt ?? this.removedAt,
+      removedFromKind: removedFromKind ?? this.removedFromKind,
+      removedFromDate: removedFromDate ?? this.removedFromDate,
+      removedFromName: removedFromName ?? this.removedFromName,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -9067,6 +9278,20 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
     if (addedAt.present) {
       map['added_at'] = Variable<DateTime>(addedAt.value);
     }
+    if (removedAt.present) {
+      map['removed_at'] = Variable<DateTime>(removedAt.value);
+    }
+    if (removedFromKind.present) {
+      map['removed_from_kind'] = Variable<String>(
+        $ReceiptsTable.$converterremovedFromKindn.toSql(removedFromKind.value),
+      );
+    }
+    if (removedFromDate.present) {
+      map['removed_from_date'] = Variable<DateTime>(removedFromDate.value);
+    }
+    if (removedFromName.present) {
+      map['removed_from_name'] = Variable<String>(removedFromName.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -9086,6 +9311,10 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
           ..write('sizeBytes: $sizeBytes, ')
           ..write('sha256: $sha256, ')
           ..write('addedAt: $addedAt, ')
+          ..write('removedAt: $removedAt, ')
+          ..write('removedFromKind: $removedFromKind, ')
+          ..write('removedFromDate: $removedFromDate, ')
+          ..write('removedFromName: $removedFromName, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -9155,6 +9384,27 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('invoice_lines', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'expenses',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('receipts', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'fixed_assets',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('receipts', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'invoices',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('receipts', kind: UpdateKind.update)],
     ),
   ]);
 }
@@ -14333,6 +14583,10 @@ typedef $$ReceiptsTableCreateCompanionBuilder =
       required int sizeBytes,
       required String sha256,
       required DateTime addedAt,
+      Value<DateTime?> removedAt,
+      Value<ReceiptOwnerKind?> removedFromKind,
+      Value<DateTime?> removedFromDate,
+      Value<String?> removedFromName,
       Value<int> rowid,
     });
 typedef $$ReceiptsTableUpdateCompanionBuilder =
@@ -14347,6 +14601,10 @@ typedef $$ReceiptsTableUpdateCompanionBuilder =
       Value<int> sizeBytes,
       Value<String> sha256,
       Value<DateTime> addedAt,
+      Value<DateTime?> removedAt,
+      Value<ReceiptOwnerKind?> removedFromKind,
+      Value<DateTime?> removedFromDate,
+      Value<String?> removedFromName,
       Value<int> rowid,
     });
 
@@ -14448,6 +14706,27 @@ class $$ReceiptsTableFilterComposer
 
   ColumnFilters<DateTime> get addedAt => $composableBuilder(
     column: $table.addedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get removedAt => $composableBuilder(
+    column: $table.removedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<ReceiptOwnerKind?, ReceiptOwnerKind, String>
+  get removedFromKind => $composableBuilder(
+    column: $table.removedFromKind,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<DateTime> get removedFromDate => $composableBuilder(
+    column: $table.removedFromDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get removedFromName => $composableBuilder(
+    column: $table.removedFromName,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -14565,6 +14844,26 @@ class $$ReceiptsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get removedAt => $composableBuilder(
+    column: $table.removedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get removedFromKind => $composableBuilder(
+    column: $table.removedFromKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get removedFromDate => $composableBuilder(
+    column: $table.removedFromDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get removedFromName => $composableBuilder(
+    column: $table.removedFromName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$ExpensesTableOrderingComposer get expenseId {
     final $$ExpensesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -14666,6 +14965,25 @@ class $$ReceiptsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get addedAt =>
       $composableBuilder(column: $table.addedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get removedAt =>
+      $composableBuilder(column: $table.removedAt, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<ReceiptOwnerKind?, String>
+  get removedFromKind => $composableBuilder(
+    column: $table.removedFromKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get removedFromDate => $composableBuilder(
+    column: $table.removedFromDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get removedFromName => $composableBuilder(
+    column: $table.removedFromName,
+    builder: (column) => column,
+  );
 
   $$ExpensesTableAnnotationComposer get expenseId {
     final $$ExpensesTableAnnotationComposer composer = $composerBuilder(
@@ -14775,6 +15093,10 @@ class $$ReceiptsTableTableManager
                 Value<int> sizeBytes = const Value.absent(),
                 Value<String> sha256 = const Value.absent(),
                 Value<DateTime> addedAt = const Value.absent(),
+                Value<DateTime?> removedAt = const Value.absent(),
+                Value<ReceiptOwnerKind?> removedFromKind = const Value.absent(),
+                Value<DateTime?> removedFromDate = const Value.absent(),
+                Value<String?> removedFromName = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ReceiptsCompanion(
                 id: id,
@@ -14787,6 +15109,10 @@ class $$ReceiptsTableTableManager
                 sizeBytes: sizeBytes,
                 sha256: sha256,
                 addedAt: addedAt,
+                removedAt: removedAt,
+                removedFromKind: removedFromKind,
+                removedFromDate: removedFromDate,
+                removedFromName: removedFromName,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -14801,6 +15127,10 @@ class $$ReceiptsTableTableManager
                 required int sizeBytes,
                 required String sha256,
                 required DateTime addedAt,
+                Value<DateTime?> removedAt = const Value.absent(),
+                Value<ReceiptOwnerKind?> removedFromKind = const Value.absent(),
+                Value<DateTime?> removedFromDate = const Value.absent(),
+                Value<String?> removedFromName = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ReceiptsCompanion.insert(
                 id: id,
@@ -14813,6 +15143,10 @@ class $$ReceiptsTableTableManager
                 sizeBytes: sizeBytes,
                 sha256: sha256,
                 addedAt: addedAt,
+                removedAt: removedAt,
+                removedFromKind: removedFromKind,
+                removedFromDate: removedFromDate,
+                removedFromName: removedFromName,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

@@ -33,10 +33,12 @@ class DetailScaffold extends StatelessWidget {
       body: Column(
         children: [
           Padding(
+            // The back button's own padding brings its icon to the
+            // screen's left edge.
             padding: const EdgeInsets.fromLTRB(
-              AppSpacing.group,
+              AppSpacing.field,
               AppSpacing.tight,
-              AppSpacing.heading,
+              AppSpacing.group,
               AppSpacing.tight,
             ),
             child: Row(

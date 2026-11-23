@@ -195,15 +195,19 @@ class _ReceiptsSectionState extends ConsumerState<ReceiptsSection> {
     final l = AppLocalizations.of(context)!;
     final service = ref.read(receiptServiceProvider);
     final messenger = ScaffoldMessenger.of(context);
-    final removed = await guardSave(context, () => service.remove(r));
-    if (!removed) return;
+    Receipt? removed;
+    final ok = await guardSave(context, () async {
+      removed = await service.remove(r);
+    });
+    if (!ok) return;
     messenger.showSnackBar(
       SnackBar(
         content: Text(l.receiptsRemoved),
         action: SnackBarAction(
           label: l.receiptsUndo,
           // A failed undo is reported like any other failed action.
-          onPressed: () => service.restore(r).catchError(showUnhandledError),
+          onPressed: () =>
+              service.restore(removed!).catchError(showUnhandledError),
         ),
       ),
     );
@@ -238,9 +242,10 @@ class _ReceiptsSectionState extends ConsumerState<ReceiptsSection> {
             style: theme.textTheme.bodySmall,
           ),
         for (final r in receipts)
-          _ReceiptRow(
+          ReceiptTile(
             receipt: r,
             file: service.store.fileOf(r),
+            details: l.receiptsAdded(AppFormat.date(r.addedAt)),
             onOpen: _open,
             onRemove: widget.editable ? () => _remove(r) : null,
           ),
@@ -300,17 +305,35 @@ class _ReceiptsSectionState extends ConsumerState<ReceiptsSection> {
   }
 }
 
-class _ReceiptRow extends StatelessWidget {
+/// The icon for a kind of receipt file. Files show by name and kind, not by
+/// a picture of their content: Open shows them in the system viewer.
+IconData receiptIcon(ReceiptType? type) => switch (type) {
+  ReceiptType.pdf => Icons.picture_as_pdf_outlined,
+  ReceiptType.xml => Icons.description_outlined,
+  null => Icons.insert_drive_file_outlined,
+  _ => Icons.image_outlined,
+};
+
+/// One stored receipt: its kind, name, size and [details], with Open and,
+/// when given, the actions in [trailing] or a remove button.
+class ReceiptTile extends StatelessWidget {
   final Receipt receipt;
   final File file;
+  final String details;
   final void Function(File) onOpen;
   final VoidCallback? onRemove;
 
-  const _ReceiptRow({
+  /// Extra actions after Open, such as putting a removed receipt back.
+  final List<Widget> trailing;
+
+  const ReceiptTile({
+    super.key,
     required this.receipt,
     required this.file,
+    required this.details,
     required this.onOpen,
-    required this.onRemove,
+    this.onRemove,
+    this.trailing = const [],
   });
 
   @override
@@ -318,21 +341,24 @@ class _ReceiptRow extends StatelessWidget {
     final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final missing = !file.existsSync();
-    final details = [
+    final summary = [
       receipt.type.label(l),
       AppFormat.fileSize(receipt.sizeBytes),
-      l.receiptsAdded(AppFormat.date(receipt.addedAt)),
+      details,
     ].join('  ');
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: _Thumbnail(type: receipt.type, file: missing ? null : file),
+      leading: Icon(
+        receiptIcon(receipt.type),
+        color: theme.colorScheme.onSurfaceVariant,
+      ),
       title: EllipsisText(receipt.originalName),
       subtitle: missing
           ? Text(
               l.receiptsMissing,
               style: TextStyle(color: theme.colorScheme.error),
             )
-          : EllipsisText(details, style: theme.textTheme.bodySmall),
+          : EllipsisText(summary),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -341,11 +367,11 @@ class _ReceiptRow extends StatelessWidget {
             tooltip: l.receiptsOpen,
             onPressed: missing ? null : () => onOpen(file),
           ),
+          ...trailing,
           if (onRemove != null)
             IconButton(
-              icon: const Icon(Icons.delete_outline, size: 18),
+              icon: const Icon(Icons.remove_circle_outline, size: 18),
               tooltip: l.receiptsRemove,
-              color: theme.colorScheme.error,
               onPressed: onRemove,
             ),
         ],
@@ -366,51 +392,16 @@ class _StagedRow extends StatelessWidget {
     final theme = Theme.of(context);
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: const _Thumbnail(type: null, file: null),
+      leading: Icon(
+        receiptIcon(null),
+        color: theme.colorScheme.onSurfaceVariant,
+      ),
       title: EllipsisText(file.uri.pathSegments.last),
-      subtitle: Text(l.receiptsStaged, style: theme.textTheme.bodySmall),
+      subtitle: Text(l.receiptsStaged),
       trailing: IconButton(
         icon: const Icon(Icons.close, size: 18),
         tooltip: l.receiptsUnstage,
         onPressed: onRemove,
-      ),
-    );
-  }
-}
-
-/// A small preview for images Flutter can draw, an icon for the rest.
-class _Thumbnail extends StatelessWidget {
-  final ReceiptType? type;
-  final File? file;
-
-  const _Thumbnail({required this.type, required this.file});
-
-  static const _size = 40.0;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.onSurfaceVariant;
-    final icon = Icon(switch (type) {
-      ReceiptType.pdf => Icons.picture_as_pdf_outlined,
-      ReceiptType.xml => Icons.description_outlined,
-      null => Icons.insert_drive_file_outlined,
-      _ => Icons.image_outlined,
-    }, color: color);
-    final f = file;
-    if (f == null || !(type?.isImage ?? false)) {
-      return SizedBox.square(dimension: _size, child: icon);
-    }
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(4),
-      child: Image.file(
-        f,
-        width: _size,
-        height: _size,
-        fit: BoxFit.cover,
-        cacheWidth: 80,
-        // HEIC and some TIFFs cannot be drawn on every platform.
-        errorBuilder: (_, _, _) =>
-            SizedBox.square(dimension: _size, child: icon),
       ),
     );
   }

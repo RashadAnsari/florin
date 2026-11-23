@@ -135,7 +135,7 @@ class PlTaxScreen extends ConsumerWidget {
                   ),
                 const SizedBox(height: AppSpacing.field),
                 ValueRow.cents(l.plTaxGrossProfit, r.grossProfit, bold: true),
-                const Divider(),
+                const SizedBox(height: AppSpacing.field),
                 SectionLabel(
                   l.plTaxInvestmentSection,
                   help: l.plTaxInvestmentSectionHelp,
@@ -151,7 +151,7 @@ class PlTaxScreen extends ConsumerWidget {
                   bold: true,
                   help: l.plTaxProfitHelp,
                 ),
-                const Divider(),
+                const SizedBox(height: AppSpacing.field),
                 SectionLabel(
                   l.plTaxDeductionsSection,
                   help: l.plTaxDeductionsSectionHelp,
@@ -229,7 +229,7 @@ class PlTaxScreen extends ConsumerWidget {
                   bold: true,
                   help: l.plTaxTaxableProfitHelp,
                 ),
-                const Divider(),
+                const SizedBox(height: AppSpacing.field),
                 SectionLabel(l.plTaxBox1Section, help: l.plTaxBox1SectionHelp),
                 for (var i = 0; i < r.bracketTax.length; i++)
                   if (i == 0 || r.bracketTax[i] > 0)

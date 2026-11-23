@@ -13,8 +13,8 @@ export 'receipt_store.dart'
     show ReceiptHealth, ReceiptRejected, ReceiptRejection, ReceiptStore;
 
 /// Receipt files and their rows, kept in step: a file is only stored with
-/// its row, and a removed receipt goes to the trash until the user empties
-/// it.
+/// its row, and nothing is ever deleted. A removed receipt keeps its row and
+/// its file, in the removed folder.
 class ReceiptService {
   /// The Belastingdienst's bewaarplicht for invoices and receipts
   /// (`docs/legal.md`, Receipts).
@@ -71,31 +71,62 @@ class ReceiptService {
       addedAt: Value(DateTime.now()),
     );
     try {
-      await dao.insertReceipt(row);
+      // The row and the file's final name land together or not at all.
+      await dao.transaction(() async {
+        await dao.insertReceipt(row);
+        await store.commit(stored);
+      });
     } catch (_) {
-      // Without its row the file is unreachable, so it goes too.
-      await store.deleteStored(stored, year);
+      await store.discard(stored);
       rethrow;
     }
     return (await dao.forOwner(owner)).firstWhere((r) => r.id == stored.id);
   }
 
-  /// Moves [r]'s file to the trash and deletes its row. Returns it, so the
-  /// caller can offer to undo.
+  /// Takes [r] off its record. Nothing is deleted: the row stays, marked
+  /// removed with what it belonged to, and the file moves to the removed
+  /// folder. Returns the removed receipt, so the caller can offer to undo.
   Future<Receipt> remove(Receipt r) async {
-    await store.moveToTrash(r);
-    await dao.remove(r);
-    return r;
+    final (kind, date, name) = await dao.describeOwner(r);
+    final removed = r.copyWith(
+      removedAt: Value(DateTime.now()),
+      removedFromKind: Value(kind),
+      removedFromDate: Value(date),
+      removedFromName: Value(name),
+    );
+    await dao.transaction(() async {
+      await dao.save(removed);
+      await store.moveToRemoved(r);
+    });
+    return removed;
   }
 
-  /// Undoes [remove].
+  /// Whether [r] can go back to its record, which still exists.
+  static bool canPutBack(Receipt r) =>
+      r.expenseId != null || r.assetId != null || r.invoiceId != null;
+
+  /// Puts a removed receipt back on its record, as an undo or later from the
+  /// list of removed receipts.
   Future<void> restore(Receipt r) async {
-    await store.restoreFromTrash(r);
-    await dao.save(r);
+    if (!canPutBack(r)) return;
+    await dao.transaction(() async {
+      // A companion that keeps the nulls, so the removal is cleared.
+      await dao.save(
+        r
+            .copyWith(
+              removedAt: const Value(null),
+              removedFromKind: const Value(null),
+              removedFromDate: const Value(null),
+              removedFromName: const Value(null),
+            )
+            .toCompanion(false),
+      );
+      await store.moveBack(r);
+    });
   }
 
-  /// Moves every receipt of [owner] to the trash, before the owner itself is
-  /// deleted.
+  /// Removes every receipt of [owner] before the owner itself is deleted.
+  /// The receipts stay, listed as removed, with what they belonged to.
   Future<void> removeAllFor(ReceiptOwner owner) async {
     for (final r in await dao.forOwner(owner)) {
       await remove(r);
@@ -112,7 +143,7 @@ class ReceiptService {
     }
   }
 
-  /// Every receipt whose file is missing or changed.
+  /// Every receipt whose file is missing or changed, removed ones included.
   Future<List<(Receipt, ReceiptHealth)>> problems() async {
     final found = <(Receipt, ReceiptHealth)>[];
     for (final r in await dao.all()) {

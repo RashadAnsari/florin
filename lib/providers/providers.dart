@@ -97,9 +97,14 @@ final receiptsProvider = StreamProvider.family<List<Receipt>, ReceiptOwner>(
   (ref, owner) => ref.watch(receiptServiceProvider).dao.watchFor(owner),
 );
 
-/// Every receipt, for the lists that mark which records have files.
+/// Every receipt in use, for the lists that mark which records have files.
 final allReceiptsProvider = StreamProvider(
-  (ref) => ref.watch(receiptServiceProvider).dao.watchAll(),
+  (ref) => ref.watch(receiptServiceProvider).dao.watchInUse(),
+);
+
+/// The receipts the user removed from their records; Florin keeps them.
+final removedReceiptsProvider = StreamProvider(
+  (ref) => ref.watch(receiptServiceProvider).dao.watchRemoved(),
 );
 
 /// The selected year, always one with verified tax rules.
@@ -295,12 +300,14 @@ final vatQuarterProvider =
       final expenses = ref.watch(effectiveExpensesProvider(key.year));
       final trips = ref.watch(mileageTripsProvider(key.year));
       final assets = ref.watch(allAssetsProvider);
+      final kor = ref.watch(korStatusProvider);
       final pending = waitForAll<VatQuarterResult>([
         invoices,
         lines,
         expenses,
         trips,
         assets,
+        kor,
       ]);
       if (pending != null) return pending;
       return AsyncData(
@@ -308,7 +315,9 @@ final vatQuarterProvider =
           invoices: invoices.requireValue,
           lines: lines.requireValue,
           expenses: expenses.requireValue,
+          year: key.year,
           quarter: key.quarter,
+          kor: kor.requireValue,
           // Private use of business cars goes in the last return of the year.
           privateUseVat: key.quarter == 4
               ? CarService.btwPrivateUse(

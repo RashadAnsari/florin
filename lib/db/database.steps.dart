@@ -298,7 +298,9 @@ final class Schema2 extends i0.VersionedSchema {
       isStrict: false,
       tableConstraints: [
         'PRIMARY KEY(id)',
-        'CHECK((expense_id IS NOT NULL)+(asset_id IS NOT NULL)+(invoice_id IS NOT NULL)= 1)',
+        'CHECK((expense_id IS NOT NULL)+(asset_id IS NOT NULL)+(invoice_id IS NOT NULL)<= 1)',
+        'CHECK(removed_at IS NOT NULL OR(expense_id IS NOT NULL)+(asset_id IS NOT NULL)+(invoice_id IS NOT NULL)= 1)',
+        'CHECK(removed_at IS NULL OR(removed_from_kind IS NOT NULL AND removed_from_date IS NOT NULL AND removed_from_name IS NOT NULL))',
       ],
       columns: [
         _column_114,
@@ -311,6 +313,10 @@ final class Schema2 extends i0.VersionedSchema {
         _column_120,
         _column_121,
         _column_122,
+        _column_123,
+        _column_124,
+        _column_125,
+        _column_126,
       ],
       attachedDatabase: database,
     ),
@@ -1643,6 +1649,14 @@ class Shape11 extends i0.VersionedTable {
       columnsByName['sha256']! as i1.GeneratedColumn<String>;
   i1.GeneratedColumn<int> get addedAt =>
       columnsByName['added_at']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get removedAt =>
+      columnsByName['removed_at']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get removedFromKind =>
+      columnsByName['removed_from_kind']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get removedFromDate =>
+      columnsByName['removed_from_date']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get removedFromName =>
+      columnsByName['removed_from_name']! as i1.GeneratedColumn<String>;
 }
 
 i1.GeneratedColumn<String> _column_114(String aliasedName) =>
@@ -1659,7 +1673,7 @@ i1.GeneratedColumn<int> _column_115(String aliasedName) =>
       aliasedName,
       true,
       type: i1.DriftSqlType.int,
-      $customConstraints: 'NULL REFERENCES expenses(id)ON DELETE RESTRICT',
+      $customConstraints: 'NULL REFERENCES expenses(id)ON DELETE SET NULL',
     );
 i1.GeneratedColumn<int> _column_116(String aliasedName) =>
     i1.GeneratedColumn<int>(
@@ -1667,7 +1681,7 @@ i1.GeneratedColumn<int> _column_116(String aliasedName) =>
       aliasedName,
       true,
       type: i1.DriftSqlType.int,
-      $customConstraints: 'NULL REFERENCES fixed_assets(id)ON DELETE RESTRICT',
+      $customConstraints: 'NULL REFERENCES fixed_assets(id)ON DELETE SET NULL',
     );
 i1.GeneratedColumn<int> _column_117(String aliasedName) =>
     i1.GeneratedColumn<int>(
@@ -1675,7 +1689,7 @@ i1.GeneratedColumn<int> _column_117(String aliasedName) =>
       aliasedName,
       true,
       type: i1.DriftSqlType.int,
-      $customConstraints: 'NULL REFERENCES invoices(id)ON DELETE RESTRICT',
+      $customConstraints: 'NULL REFERENCES invoices(id)ON DELETE SET NULL',
     );
 i1.GeneratedColumn<String> _column_118(String aliasedName) =>
     i1.GeneratedColumn<String>(
@@ -1716,6 +1730,38 @@ i1.GeneratedColumn<int> _column_122(String aliasedName) =>
       false,
       type: i1.DriftSqlType.int,
       $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<int> _column_123(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'removed_at',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<String> _column_124(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'removed_from_kind',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<int> _column_125(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'removed_from_date',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<String> _column_126(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'removed_from_name',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
     );
 i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,

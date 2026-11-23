@@ -15,20 +15,23 @@ Widget carPicker({
   required ValueChanged<int?> onChanged,
 }) {
   final cars = assets.where((a) => a.kind == AssetKind.car).toList();
-  return DropdownButtonFormField<int?>(
-    initialValue: cars.any((c) => c.id == value) ? value : null,
-    isExpanded: true,
-    decoration: fieldDecoration(label: label, help: help),
-    items: [
-      DropdownMenuItem(value: null, child: Text(noneLabel)),
-      for (final c in cars)
-        DropdownMenuItem(
-          value: c.id,
-          child: EllipsisText(
-            '${c.assetName} (${AppFormat.date(c.purchaseDate)})',
+  return Builder(
+    builder: (context) => DropdownButtonFormField<int?>(
+      style: fieldTextStyle(context),
+      initialValue: cars.any((c) => c.id == value) ? value : null,
+      isExpanded: true,
+      decoration: fieldDecoration(label: label, help: help),
+      items: [
+        DropdownMenuItem(value: null, child: Text(noneLabel)),
+        for (final c in cars)
+          DropdownMenuItem(
+            value: c.id,
+            child: EllipsisText(
+              '${c.assetName} (${AppFormat.date(c.purchaseDate)})',
+            ),
           ),
-        ),
-    ],
-    onChanged: onChanged,
+      ],
+      onChanged: onChanged,
+    ),
   );
 }

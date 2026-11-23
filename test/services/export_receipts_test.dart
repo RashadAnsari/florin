@@ -32,6 +32,7 @@ void main() {
         invoices: const [],
         lines: const [],
         expenses: const [],
+        year: 2026,
         quarter: 1,
       );
       final dir = await CsvExportService(db).writeYear(
@@ -56,8 +57,15 @@ void main() {
       }
       expect(
         rows.skip(1).map((r) => (r[0] as String).split('/').first).toSet(),
-        {'bonnen', 'facturen'},
+        {'bonnen', 'facturen', 'verwijderd'},
       );
+      // A removed receipt is exported too, with the date it was removed.
+      final removed = rows
+          .skip(1)
+          .where((r) => (r[0] as String).startsWith('verwijderd/'));
+      expect(removed, hasLength(1));
+      expect(removed.single[4], 'verkeerde-bon.pdf');
+      expect(removed.single[10], isNotEmpty);
       final expensesCsv = await File(
         p.join(dir, 'florin_2026_uitgaven.csv'),
       ).readAsString();

@@ -153,9 +153,11 @@ Where Florin implements it: `KorService` and `KorStatus` in
 - No BTW on purchases is reclaimed on KOR dates: the expense form blocks it,
   and the calculations treat that BTW as cost even for expenses saved before
   the KOR dates were entered.
-- BTW shifted to the user (2a, 4a, 4b) is still shown as owed in KOR
-  quarters, with a note that an incidental return may be due. The pages read
-  do not say exactly when; Florin shows the amount rather than leave it out.
+- BTW shifted to the user (2a, 4a, 4b) is owed in KOR quarters and not
+  deducted; a KOR quarter with BTW owed needs an incidental return. See
+  Filing a return.
+- Supplies on KOR dates are left off the ICP list (art. 37a lid 1, under
+  ICP-opgaaf).
 - The EU-KOR (art. 25c and further) and the eligibility test on the previous
   year's turnover before the first year Florin holds are not modelled; the
   user's start date stands for the Belastingdienst's confirmation.
@@ -184,10 +186,12 @@ Where Florin implements it: `ReceiptStore` and `ReceiptService`.
 - The keep-until date is the end of the seventh year after the record's
   year, the cautious reading of when the term starts. An asset's purchase
   invoice stays current while the asset is in use, so it shows "while in
-  use, then 7 years" until the asset is sold. Florin never deletes a file
-  itself: a removed file goes to `receipts/.trash/` until the user empties
-  it. Property records (10 years) and OSS records (10 years) are not kept in
-  Florin.
+  use, then 7 years" until the asset is sold. Florin never deletes a
+  receipt: one removed from its record, or whose record is deleted, keeps
+  its row with what it belonged to and its file moves to
+  `receipts/removed/`, listed under Removed receipts in Settings and in
+  every export. Property records (10 years) and OSS records (10 years) are
+  not kept in Florin.
 - When an invoice is issued, Florin stores its PDF at that moment and hands
   out that file on every later export, so the invoice stays in the form it
   was sent. A self-billed invoice keeps the customer's document instead.
@@ -198,8 +202,14 @@ Where Florin implements it: `ReceiptStore` and `ReceiptService`.
 
 [Belastingdienst, Tijdvak opgaaf ICP](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/zakendoen_met_het_buitenland/goederen_en_diensten_naar_andere_eu_landen/opgaaf_icp/tijdvak_opgaaf_icp/tijdvak_opgaaf_icp)
 
+> 1 De ondernemer, uitgezonderd die bedoeld in artikel 7, zesde lid, of artikel 25a, eerste lid, is verplicht uiterlijk de laatste dag van de maand volgend op een kalendermaand bij de inspecteur op de daartoe opengestelde wijze een formulier langs elektronische weg in te dienen met een lijst voor dat tijdvak waarop zijn vermeld de afnemers: […] c. voor wie hij diensten heeft verricht die met toepassing van artikel 6, eerste lid, niet belastbaar zijn in Nederland en waarover de belasting ingevolge artikel 196 van BTW-richtlijn 2006 in de lidstaat van de afnemer wordt geheven van de afnemer, tenzij het verrichten van die dienst in die lidstaat is vrijgesteld; […] 4 In afwijking in zoverre van het eerste lid geldt naar keus van de ondernemer als tijdvak een kalenderkwartaal indien de ondernemer de onder het eerste lid onderdeel c genoemde diensten verricht.
+
+[Wet op de omzetbelasting 1968, artikel 37a](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-23 from the official XML of the version in force on 1 January 2026
+
 Florin lists the EU supplies per quarter. It states no ICP deadline: the
 Belastingdienst pages read for this review do not give one for Dutch filers.
+Supplies dated while the KOR applies are left off the list: lid 1 exempts the
+ondernemer of artikel 25a, eerste lid. They stay in rubriek 3b.
 
 ## BTW rates
 
@@ -277,6 +287,50 @@ certificate.
 
 Where Florin implements it: `VatService.filingDeadline`, the last day of the
 month after the quarter.
+
+## Filing a return
+
+> 1 De in een tijdvak verschuldigd geworden belasting moet op aangifte worden voldaan.
+
+[Wet op de omzetbelasting 1968, artikel 14](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-23
+
+> Ja, als ondernemer voor de btw moet u altijd btw-aangifte doen, ook als u in de periode van de aangifte geen btw in rekening hebt gebracht of aan u geen btw is berekend. Dit heet een 0-aangifte of nihilaangifte. Doet u de btw-aangifte niet of niet op tijd? Dan ontvangt u van ons een naheffingsaanslag en een boete. […] Over vrijgestelde omzet doet u normaal gesproken geen btw-aangifte. Hiervan is sprake als u uitsluitend vrijgestelde goederen of diensten levert. Of als u deelneemt aan de kleineondernemersregeling (KOR). Maar ook dan kan het voorkomen dat u toch een keer btw-aangifte moet doen. […] Hebt u al een btw-aangifte gekregen, dien hem dan altijd in.
+
+[Belastingdienst, Moet ik altijd btw-aangifte doen?](https://www.belastingdienst.nl/wps/wcm/connect/nl/btw/content/moet-ik-altijd-btw-aangifte-doen), read 2026-11-23
+
+> U blijft btw-aangifte doen tot u de definitieve ingangsdatum van de KOR van ons hebt gekregen.
+
+[Belastingdienst, Aanmelden voor de KOR](https://www.belastingdienst.nl/wps/wcm/connect/nl/btw/content/aanmelden-kor), read 2026-11-23
+
+> Is uw omzet vrijgesteld van btw? Dan hoeft u meestal geen aangifte te doen. Neemt u diensten af waarbij de btw naar u wordt verlegd? Dan moet u wél btw-aangifte doen. Hierin geeft u de btw aan die aan u is verlegd. U hebt dan geen recht om deze btw af te trekken.
+
+[Belastingdienst, Btw-aangifte als u diensten afneemt van leveranciers uit landen buiten de EU](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/zakendoen_met_het_buitenland/zakendoen_buiten_de_eu/aangifte_doen_als_u_zakendoet_buiten_de_eu/aangifte_doen_als_u_diensten_afneemt_van_leveranciers_uit_niet_eu_landen), read 2026-11-23
+
+> Voert een ondernemer uit een ander EU-land werkzaamheden voor u uit? Of hebt u goederen uit andere EU-landen laten afleveren in Nederland? Dan ontvangt u in de meeste gevallen een factuur met 0% btw of met 'btw verlegd'. U moet de verschuldigde btw zelf berekenen en opgeven in uw btw-aangifte. […] Als u btw moet betalen over intracommunautaire verwervingen en diensten, moet u in het juiste tijdvak aangifte doen.
+
+[Belastingdienst, Aangifte doen van goederen en diensten uit een ander EU-land](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/zakendoen_met_het_buitenland/goederen_en_diensten_afnemen_uit_andere_eu_landen/aangifte_doen/aangifte-doen-van-goederen-en-diensten-uit-andere-eu-landen), read 2026-11-23
+
+> Het kan dan toch zijn dat u incidenteel btw-aangifte moet doen. U bent dan zelf verantwoordelijk voor het aanvragen van de aangifte. […] Blijkt dat u inderdaad incidenteel btw-aangifte moet doen? Vraag de aangifte dan zelf schriftelijk aan bij uw belastingkantoor. Dat kan na afloop van het kwartaal waarin de goederen zijn geleverd of de dienst is verricht waarvoor u btw-aangifte moet doen.
+
+[Belastingdienst, Incidenteel btw-aangifte doen](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/btw_aangifte_doen_en_betalen/btw-aangifte-waar-moet-u-aan-denken/incidentele-btw-aangifte), read 2026-11-23
+
+Where Florin implements it: `ReturnDuty` and `VatQuarterResult.duty` in
+`lib/services/vat_service.dart`, shown by `DeadlineBadge`, the dashboard's
+BTW deadlines and the notices on the BTW return screen.
+
+- Without the KOR every quarter needs a return, however low the turnover,
+  and an empty quarter needs a nil return; the BTW return screen says so.
+  Low turnover alone never removes a return.
+- A quarter the KOR covers in full needs no return when no BTW is owed in it.
+- A quarter the KOR covers in full with BTW owed in it, such as BTW shifted
+  to the user in 2a, 4a or 4b or BTW on a car's private use, needs an
+  incidental return. The user asks for it in writing after the quarter. The
+  pages name no deadline for it; Florin shows the regular deadline, the
+  cautious answer. Domestic reverse charge (2a) is not named on the pages
+  read; Florin treats it like 4a and 4b, as art. 14 lid 1 makes any BTW owed
+  payable on a return.
+- A quarter the KOR covers in part needs a regular return.
+- Until the figures have loaded, a quarter shows a return as due.
 
 ## BTW on food and drinks
 

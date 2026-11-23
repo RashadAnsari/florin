@@ -235,6 +235,12 @@ class CsvExportService {
     return dir.create(recursive: true);
   }
 
+  static String _ownerKind(ReceiptOwnerKind k) => switch (k) {
+    ReceiptOwnerKind.expense => 'Uitgave',
+    ReceiptOwnerKind.asset => 'Bedrijfsmiddel',
+    ReceiptOwnerKind.invoice => 'Factuur',
+  };
+
   static String _receiptType(ReceiptType t) => switch (t) {
     ReceiptType.pdf => 'PDF',
     ReceiptType.jpeg => 'JPEG',
@@ -262,9 +268,17 @@ class CsvExportService {
     required DateTime date,
     required String label,
   }) {
-    final folder = r.invoiceId != null ? 'facturen' : 'bonnen';
+    // A removed receipt is exported too, apart from those in use.
+    final invoice = r.removedAt == null
+        ? r.invoiceId != null
+        : r.removedFromKind == ReceiptOwnerKind.invoice;
+    final folder = r.removedAt != null
+        ? 'verwijderd'
+        : invoice
+        ? 'facturen'
+        : 'bonnen';
     final day = DateFormat('yyyy-MM-dd').format(date);
-    final stem = r.invoiceId != null ? _safe(label) : '${day}_${_safe(label)}';
+    final stem = invoice ? _safe(label) : '${day}_${_safe(label)}';
     return '$folder/${stem}_${r.id.substring(0, 8)}.${r.type.extension}';
   }
 
@@ -355,12 +369,25 @@ class CsvExportService {
       final e = expensesById[r.expenseId];
       final a = assetsInUse[r.assetId];
       final i = invoicesById[r.invoiceId];
-      final (kind, date, label) = e != null
-          ? ('Uitgave', e.date, e.supplier)
+      // A removed receipt belongs to the year of the record it came from.
+      final (kind, date, label) = r.removedAt != null
+          ? r.removedFromDate!.year == year
+                ? (
+                    _ownerKind(r.removedFromKind!),
+                    r.removedFromDate!,
+                    r.removedFromName!,
+                  )
+                : ('', DateTime(0), '')
+          : e != null
+          ? (_ownerKind(ReceiptOwnerKind.expense), e.date, e.supplier)
           : a != null
-          ? ('Bedrijfsmiddel', a.purchaseDate, a.assetName)
+          ? (_ownerKind(ReceiptOwnerKind.asset), a.purchaseDate, a.assetName)
           : i != null
-          ? ('Factuur', i.invoiceDate, i.invoiceNumber)
+          ? (
+              _ownerKind(ReceiptOwnerKind.invoice),
+              i.invoiceDate,
+              i.invoiceNumber,
+            )
           : ('', DateTime(0), '');
       if (kind.isEmpty) continue;
       exported.add((
@@ -373,7 +400,7 @@ class CsvExportService {
     }
     final filesOfExpense = <int, List<String>>{};
     for (final (r, path, _, _, _) in exported) {
-      if (r.expenseId != null) {
+      if (r.expenseId != null && r.removedAt == null) {
         filesOfExpense.putIfAbsent(r.expenseId!, () => []).add(path);
       }
     }
@@ -637,6 +664,7 @@ class CsvExportService {
         'Toegevoegd',
         'SHA-256',
         'Aanwezig',
+        'Verwijderd op',
       ],
       for (final (r, path, kind, date, label) in exported)
         [
@@ -650,6 +678,7 @@ class CsvExportService {
           _date(r.addedAt),
           r.sha256,
           _yesNo(present[r.id]!),
+          r.removedAt == null ? '' : _date(r.removedAt),
         ],
     ]);
 
