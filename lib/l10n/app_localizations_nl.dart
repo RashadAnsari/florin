@@ -288,7 +288,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get clientsValidateCountry =>
-      'Gebruik een landcode van 2 letters (bijv. NL, DE, FR)';
+      'Gebruik een landcode van 2 letters (bijv. NL, DE, FR): die bepaalt welke btw-behandelingen een factuur aan deze klant kan hebben.';
 
   @override
   String get clientsFieldVat => 'BTW-nummer';
@@ -408,7 +408,8 @@ class AppLocalizationsNl extends AppLocalizations {
   String get expensesFieldAmountExcl => 'Bedrag (excl. BTW)';
 
   @override
-  String get expensesValidateAmount => 'Voer het bedrag exclusief BTW in';
+  String get expensesValidateAmount =>
+      'Vul het bedrag exclusief btw in, boven nul: dit zijn de kosten die Florin van je winst aftrekt.';
 
   @override
   String get expensesFieldVatRate => 'BTW-tarief';
@@ -712,7 +713,8 @@ class AppLocalizationsNl extends AppLocalizations {
   String get assetsValidateName => 'Voer de naam van het activum in';
 
   @override
-  String get assetsValidateCost => 'Voer de aanschafwaarde exclusief BTW in';
+  String get assetsValidateCost =>
+      'Vul de aanschafprijs exclusief btw in, boven nul: de afschrijving wordt ervan berekend.';
 
   @override
   String get assetsFieldKia => 'KIA-aanspraak';
@@ -1131,7 +1133,8 @@ class AppLocalizationsNl extends AppLocalizations {
   String get invoiceSaveAsDialog => 'Factuur opslaan als';
 
   @override
-  String get amountNegativeError => 'Bedrag mag niet negatief zijn';
+  String get amountNegativeError =>
+      'Vul nul of meer in. Een correctie is een eigen registratie, zoals een creditnota.';
 
   @override
   String get vatTreatmentStandard => 'Nederlandse btw';
@@ -1317,7 +1320,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get clientsFieldCountryHelp =>
-      'De landcode van twee letters, zoals NL of DE. Bepaalt of een factuur met btw verlegd naar een EU-ondernemer mogelijk is.';
+      'De landcode van twee letters, zoals NL of DE. Bepaalt welke btw-behandelingen een factuur aan deze klant kan hebben.';
 
   @override
   String get clientsFieldEmailHelp =>
@@ -1451,7 +1454,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get invoiceFieldVatTreatmentHelp =>
-      'Hoe de btw werkt. Nederlandse btw voor de meeste klanten. Btw verlegd als de klant de btw betaalt. EU-goederen en -diensten aan ondernemers komen ook op de ICP-opgaaf.';
+      'Hoe de btw werkt. Nederlandse btw voor de meeste Nederlandse klanten, of Vrijgesteld, kleineondernemersregeling zolang je aan de KOR meedoet. Btw verlegd als de klant de btw betaalt. EU-goederen en -diensten aan ondernemers komen ook op de ICP-opgaaf. Diensten aan een ondernemer buiten de EU zijn daar belast en blijven buiten de Nederlandse aangifte.';
 
   @override
   String get labelCategoryHelp => 'Toon alleen uitgaven van één categorie.';
@@ -1593,7 +1596,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get assetsValidateCatalogueValue =>
-      'Voer de cataloguswaarde in, inclusief btw en bpm';
+      'Vul de cataloguswaarde inclusief btw en bpm in, boven nul: de bijtelling privégebruik is een percentage ervan.';
 
   @override
   String get assetsFieldFirstRegistration => 'Eerste toelating';
@@ -2027,7 +2030,8 @@ class AppLocalizationsNl extends AppLocalizations {
       'Omzet tegen 0% of waarbij de btw is verlegd naar een Nederlandse ondernemer.';
 
   @override
-  String get vatRow3aHelp => 'Uitvoer van goederen naar landen buiten de EU.';
+  String get vatRow3aHelp =>
+      'Uitvoer van goederen naar landen buiten de EU. Diensten aan ondernemers buiten de EU geef je niet aan.';
 
   @override
   String get vatRow3bHelp =>
@@ -2107,4 +2111,262 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get settingsLanguageSectionHelp =>
       'De taal van de app. Facturen en CSV-exports zijn altijd in het Nederlands.';
+
+  @override
+  String get vatTreatmentServicesOutsideEu =>
+      'Diensten aan ondernemer buiten de EU (niet in de btw-aangifte)';
+
+  @override
+  String get invoiceValidateTreatmentCountry =>
+      'Deze btw-behandeling past niet bij het land van de klant. Btw verlegd binnenland is voor Nederlandse klanten, de EU-behandelingen voor andere EU-landen en de behandelingen buiten de EU voor landen daarbuiten.';
+
+  @override
+  String get invoiceSelfBilled => 'Uitgereikt door afnemer (self-billing)';
+
+  @override
+  String get invoiceSelfBilledHelp =>
+      'Vink aan als de klant, zoals een wederverkoper, de factuur maakt voor wat hij je verschuldigd is. De wet staat dit toe als jullie dat vooraf hebben afgesproken en je elke factuur aanvaardt. Florin legt hem vast met het nummer van de klant en maakt geen pdf: het document van de klant is de factuur.';
+
+  @override
+  String get invoiceFieldNumberSelfBilledHelp =>
+      'Het nummer op de factuur die de klant aan jou heeft uitgereikt.';
+
+  @override
+  String get invoiceActionRecord => 'Vastleggen';
+
+  @override
+  String get invoiceRecordTitle => 'Factuur vastleggen';
+
+  @override
+  String get invoiceRecordMessage =>
+      'Na vastleggen kan de factuur niet meer worden gewijzigd of verwijderd. Een correctie is een creditnota die deze factuur noemt.';
+
+  @override
+  String get invoiceStatusSelfBilled => 'Uitgereikt door afnemer';
+
+  @override
+  String invoiceMerchantOfRecordNotice(String name) {
+    return '$name is een merchant of record: verkoopt jouw product aan eindklanten en betaalt jou. Factureer voor wat je voor die verkopen tegoed hebt. Eén factuur mag meerdere verkopen over ten hoogste één kalendermaand bevatten. Florin legt bedragen vast in euro\'s: bij een uitbetaling in een andere valuta vul je de bedragen in euro\'s in en bewaar je het overzicht van de wederverkoper.';
+  }
+
+  @override
+  String get invoicePaidDateTitle => 'Datum betaald';
+
+  @override
+  String get clientsMerchantOfRecord => 'Merchant of record (wederverkoper)';
+
+  @override
+  String get clientsMerchantOfRecordHelp =>
+      'Vink aan voor een platform dat jouw product op eigen naam aan eindklanten verkoopt en jou betaalt, zoals een merchant of record of een app store. Het platform is de verkoper tegenover de eindklanten, dus je factureert alleen aan het platform. Het onderdeel Wet DBA gaat over arbeidsrelaties en is verborgen bij een wederverkoper.';
+
+  @override
+  String get clientsBadgeMerchantOfRecord => 'Merchant of record';
+
+  @override
+  String get vatRowOutsideReturn =>
+      'Diensten aan ondernemers buiten de EU (niet in de aangifte)';
+
+  @override
+  String get vatRowOutsideReturnHelp =>
+      'Omzet uit diensten aan ondernemers buiten de EU. Volgens de Belastingdienst geef je die niet aan in de Nederlandse aangifte als de dienst buiten de EU is belast. Getoond zodat je ziet waar die omzet is gebleven.';
+
+  @override
+  String get vatShortReverseCharge => 'Verlegd';
+
+  @override
+  String get vatShortNotTaxedNl => 'Niet in NL belast';
+
+  @override
+  String get invoiceValidateNumberSelfBilled =>
+      'Vul het nummer in van de factuur die de klant heeft uitgereikt, zodat hij naar die factuur te herleiden is.';
+
+  @override
+  String get amountInvalidError =>
+      'Vul een bedrag in euro\'s in, zoals 1.234,50, met een komma voor de centen en ten hoogste twee decimalen.';
+
+  @override
+  String get amountRequiredError =>
+      'Vul een bedrag boven nul in: een registratie zonder bedrag telt niet mee in je cijfers.';
+
+  @override
+  String clientsValidateVatCountry(String prefix) {
+    return 'Een btw-id van een klant in dit land begint met $prefix. Controleer het nummer of het land: de ICP-opgaaf vermeldt ze samen.';
+  }
+
+  @override
+  String hoursValidateDayTotal(String logged, String left) {
+    return 'Op deze dag staan al $logged uur. Een dag heeft 24 uur, dus vul hoogstens $left in.';
+  }
+
+  @override
+  String get assetsValidateDisposalBeforePurchase =>
+      'De verkoopdatum ligt voor de aanschafdatum. Pas er een aan: een bedrijfsmiddel wordt verkocht nadat het is gekocht.';
+
+  @override
+  String invoiceValidateCreditDate(String date) {
+    return 'Een creditnota is gedateerd op of na de factuur die hij corrigeert, en die is van $date.';
+  }
+
+  @override
+  String invoiceValidateCreditAboveInvoice(String number, String amount) {
+    return 'Deze creditnota is meer dan er op factuur $number nog te corrigeren is: hoogstens $amount exclusief btw. Een creditnota kan alleen terugdraaien wat is gefactureerd.';
+  }
+
+  @override
+  String get vatTreatmentKor =>
+      'Vrijgesteld, kleineondernemersregeling (geen btw op de factuur)';
+
+  @override
+  String get vatShortKor => 'KOR-vrijgesteld';
+
+  @override
+  String get vatRowKorExempt =>
+      'Vrijgesteld onder de KOR (niet in de aangifte)';
+
+  @override
+  String get vatRowKorExemptHelp =>
+      'Omzet die vrijgesteld is onder de kleineondernemersregeling. Je hebt er geen btw over berekend en je geeft hem niet aan.';
+
+  @override
+  String get invoiceValidateKorNotActive =>
+      'De KOR geldt niet op deze datum: je doet niet mee, of je omzet is boven de grens gekomen. Kies de behandeling die past, meestal Nederlandse btw.';
+
+  @override
+  String get invoiceValidateKorTreatment =>
+      'Je doet op deze datum mee aan de KOR: je berekent geen btw en de factuur mag die niet vermelden. Kies Vrijgesteld, kleineondernemersregeling.';
+
+  @override
+  String invoiceValidateKorExceeded(String limit) {
+    return 'Met deze factuur komt je omzet voor de KOR boven $limit. De KOR eindigt met deze levering, dus die is belast met btw: kies Nederlandse btw en meld je af voor de KOR in Mijn Belastingdienst Zakelijk.';
+  }
+
+  @override
+  String get expensesValidateKorReclaim =>
+      'Je doet op deze datum mee aan de KOR, dus je kunt geen btw op inkopen terugvragen. Vink BTW terugvragen uit: de btw telt dan mee als kosten.';
+
+  @override
+  String get expensesKorNotice =>
+      'Je doet op deze datum mee aan de KOR. Btw op inkopen vraag je niet terug; die telt mee als kosten voor de inkomstenbelasting.';
+
+  @override
+  String get settingsKorStart => 'KOR geldt vanaf';
+
+  @override
+  String get settingsKorStartHelp =>
+      'De eerste dag waarop de kleineondernemersregeling (KOR) voor je geldt, zoals in de bevestiging van de Belastingdienst. Onder de KOR bereken je geen btw, doe je geen gewone btw-aangifte en vraag je geen btw terug, zolang je omzet in Nederland hoogstens € 20.000 per jaar is. Laat leeg als je niet meedoet.';
+
+  @override
+  String get settingsKorEnd => 'KOR beëindigd op';
+
+  @override
+  String get settingsKorEndHelp =>
+      'De eerste dag waarop de KOR niet meer geldt nadat je je zelf hebt afgemeld. Laat anders leeg: als je omzet boven de grens komt, beëindigt Florin de KOR vanaf die factuur.';
+
+  @override
+  String get settingsValidateKorStart =>
+      'De KOR begint op de eerste dag van een aangiftetijdvak, dus vul de 1e van een maand in, zoals in de bevestiging van de Belastingdienst.';
+
+  @override
+  String get settingsValidateKorEndDay =>
+      'Een afmelding gaat in op de eerste dag van een aangiftetijdvak, dus vul de 1e van een maand in.';
+
+  @override
+  String get settingsValidateKorEndBeforeStart =>
+      'Het einde van de KOR ligt na het begin. Controleer beide datums.';
+
+  @override
+  String get settingsValidateKorEndNoStart =>
+      'Vul eerst in wanneer de KOR begon: een einddatum hoort bij een KOR waaraan je meedeed.';
+
+  @override
+  String get settingsKorClear => 'Ik doe niet mee aan de KOR';
+
+  @override
+  String korProgress(String turnover, String limit) {
+    return '$turnover van $limit';
+  }
+
+  @override
+  String korExceededBadge(String date) {
+    return 'Grens overschreden op $date';
+  }
+
+  @override
+  String korLeftBadge(String left) {
+    return '$left onder de grens';
+  }
+
+  @override
+  String get dashboardKor => 'Omzet voor de KOR';
+
+  @override
+  String get dashboardKorHelp =>
+      'Je omzet die meetelt voor de kleineondernemersregeling: prestaties belast in Nederland, ook 0% en verlegging binnenland, niet diensten die in het buitenland belast zijn. Boven € 20.000 in een kalenderjaar eindigt de KOR met de levering die de grens overschrijdt, voor de rest van dat jaar en het jaar erna.';
+
+  @override
+  String get deadlineStatusKor => 'geen aangifte (KOR)';
+
+  @override
+  String get deadlineBadgeKor => 'Geen aangifte: KOR';
+
+  @override
+  String get vatReturnKorNotice =>
+      'Je doet dit hele kwartaal mee aan de KOR: je berekent geen btw en doet geen gewone aangifte. Is er btw naar je verlegd (2a, 4a of 4b), dan kan die toch verschuldigd zijn via een incidentele aangifte: het hulpmiddel Incidentele btw-aangifte van de Belastingdienst zegt of dat zo is. Florin toont die bedragen hieronder.';
+
+  @override
+  String get vatReturnKorPartNotice =>
+      'De KOR geldt voor een deel van dit kwartaal. Facturen die onder de KOR zijn vrijgesteld staan niet in de aangifte en btw op inkopen in dat deel vraag je niet terug. Doe aangifte voor het deel buiten de KOR.';
+
+  @override
+  String vatReturnKorExceeded(String date, String limit) {
+    return 'Je omzet voor de KOR kwam op $date boven $limit. De KOR eindigde met die levering: vanaf dan bereken je btw en doe je aangifte. Meld je af in Mijn Belastingdienst Zakelijk; je kunt dit jaar en volgend jaar niet opnieuw meedoen.';
+  }
+
+  @override
+  String get errorDuplicate =>
+      'Een andere registratie gebruikt deze waarde al, zoals hetzelfde factuurnummer. Gebruik een waarde die nog niet bestaat.';
+
+  @override
+  String get errorInUse =>
+      'Andere registraties verwijzen naar deze, zoals facturen van een klant. Verwijder of wijzig die eerst, of zet deze op inactief.';
+
+  @override
+  String get errorBusy =>
+      'De database wordt door een ander programma gebruikt. Sluit dat programma, of wacht even, en probeer het opnieuw.';
+
+  @override
+  String get errorReadOnly =>
+      'Het databasebestand kan niet worden beschreven. Controleer of de map niet alleen-lezen is en of je er rechten op hebt.';
+
+  @override
+  String get errorCorrupt =>
+      'Het databasebestand is beschadigd en kan niet worden gelezen. Zet het terug uit een back-up, zoals de geschiedenis van iCloud Drive, OneDrive of Dropbox.';
+
+  @override
+  String get errorDiskFull =>
+      'De schijf is vol. Maak ruimte vrij en probeer het opnieuw.';
+
+  @override
+  String get errorCannotOpen =>
+      'Het databasebestand kan niet worden geopend. Controleer of de map nog bestaat, of kies de locatie opnieuw in Instellingen.';
+
+  @override
+  String errorFile(String path, String reason) {
+    return 'Kon $path niet gebruiken: $reason';
+  }
+
+  @override
+  String genericUnhandledError(String error) {
+    return 'Er ging iets mis: $error';
+  }
+
+  @override
+  String get invoiceNoProfile =>
+      'Vul eerst je bedrijfsgegevens in bij Instellingen: elke factuur toont ze.';
+
+  @override
+  String get invoiceTotal => 'Totaal';
+
+  @override
+  String get settingsTaxKor => 'Omzetgrens KOR';
 }

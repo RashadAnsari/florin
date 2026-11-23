@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import '../../widgets/feedback.dart';
 import '../../widgets/help.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:florin/l10n/app_localizations.dart';
@@ -40,8 +41,11 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
     );
     if (dir == null) return;
     final existing = DbLocationService.pathIn(dir);
-    if (File(existing).existsSync()) {
-      await ref.read(dbPathNotifierProvider).setPath(existing);
+    if (File(existing).existsSync() && mounted) {
+      await guardSave(
+        context,
+        () => ref.read(dbPathNotifierProvider).setPath(existing),
+      );
       return;
     }
     setState(() => _directory = dir);
@@ -67,8 +71,9 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
     } catch (e) {
       if (mounted) {
         setState(
-          () =>
-              _error = AppLocalizations.of(context)!.firstLaunchSaveError('$e'),
+          () => _error = AppLocalizations.of(context)!.firstLaunchSaveError(
+            describeError(e, AppLocalizations.of(context)!),
+          ),
         );
       }
     } finally {

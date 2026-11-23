@@ -97,6 +97,10 @@ class TaxYearRules {
   final double btwPrivateCarRate;
   final double btwPrivateCarReducedRate;
   final int mileageCentsPerKm;
+
+  /// Most turnover in the Netherlands in a calendar year for the
+  /// kleineondernemersregeling (Wet OB 1968 art. 25a lid 1).
+  final int korThreshold;
   final double gemengdeKostenPct;
   final double jaarruimtePct;
   final int aowFranchise;
@@ -135,6 +139,7 @@ class TaxYearRules {
     required this.btwPrivateCarRate,
     required this.btwPrivateCarReducedRate,
     required this.mileageCentsPerKm,
+    required this.korThreshold,
     required this.gemengdeKostenPct,
     required this.jaarruimtePct,
     required this.aowFranchise,

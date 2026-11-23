@@ -15,6 +15,7 @@ Invoice _invoice(
   invoiceDate: DateTime(2026, 2, 1),
   clientId: 1,
   vatTreatment: treatment,
+  selfBilled: false,
   sellerName: 'S',
   sellerVatNumber: 'NL000000000B00',
   sellerKvkNumber: '00000000',
@@ -100,6 +101,7 @@ void main() {
       wetDbaRisk: WetDbaRisk.low,
       contractSigned: false,
       isActive: true,
+      isMerchantOfRecord: false,
     );
     final rows = CsvExportService.icpRows(
       _quarter(

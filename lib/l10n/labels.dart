@@ -57,6 +57,19 @@ extension VatTreatmentLabel on VatTreatment {
     VatTreatment.euServices => l.vatTreatmentEuServices,
     VatTreatment.euGoods => l.vatTreatmentEuGoods,
     VatTreatment.exportOutsideEu => l.vatTreatmentExportOutsideEu,
+    VatTreatment.servicesOutsideEu => l.vatTreatmentServicesOutsideEu,
+    VatTreatment.kor => l.vatTreatmentKor,
+  };
+
+  /// What an invoice line shows in its VAT column when the whole invoice
+  /// has this treatment.
+  String lineLabel(AppLocalizations l) => switch (this) {
+    VatTreatment.standard => l.vatTreatmentStandard,
+    VatTreatment.reverseChargeNl ||
+    VatTreatment.euServices => l.vatShortReverseCharge,
+    VatTreatment.euGoods || VatTreatment.exportOutsideEu => l.vatRate0,
+    VatTreatment.servicesOutsideEu => l.vatShortNotTaxedNl,
+    VatTreatment.kor => l.vatShortKor,
   };
 }
 

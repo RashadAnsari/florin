@@ -34,8 +34,9 @@ Two skills hold the procedures:
 1. **Only years with verified rules exist in the app.** The year selector
    lists `supportedYears` and `DateField` only accepts dates in them, so no
    record lands in a year the user cannot see. Never copy figures from
-   another year to make a year available. Asset purchase dates and client
-   contract dates are the exceptions and pass their own range.
+   another year to make a year available. Asset purchase dates, client
+   contract dates and the KOR start and end dates are the exceptions and
+   pass their own range.
 2. **Issued invoices are immutable.** Only drafts are edited or deleted. A
    correction is a credit note that references the invoice it corrects.
 3. **Invoice PDFs and CSV exports stay in Dutch**, whatever the app language.
@@ -68,8 +69,8 @@ lib/
   l10n/                  ARB files, generated localizations, enum labels
   providers/             Riverpod providers, including the tax and BTW estimates
   screens/<feature>/     One folder per feature: list screen and detail page
-  services/              Business logic: tax, assets, cars, BTW, pension, PDF,
-                         CSV, domain
+  services/              Business logic: tax, assets, cars, BTW, KOR, pension,
+                         PDF, CSV, domain, and the format checks and parsers
     tax_rules/           TaxYearRules, one sourced file per tax year, and the
                          car reductions by registration year
   theme/                 Colours, spacing scale, formatting
@@ -136,6 +137,23 @@ exists, use it; if it almost fits, extend it with a parameter. Logic used in
 two places is extracted at the second use; logic used once stays private to
 its file.
 
+**No second copy.** A rule, formula, mapping, pattern or parser exists once.
+Before you call a change done, search for what you wrote (a regex, a
+`tryParse`, a `switch` over an enum, a formula) and remove any copy you
+find, older ones included. These are shared:
+
+| Need | Use |
+| --- | --- |
+| Format checks: BTW numbers, KvK, IBAN, email, phone, country | `isValid*` in `lib/services/formats.dart` |
+| Parsing typed numbers and optional text | `parseWholeNumber`, `parseDecimal`, `optionalText`, `normalizeId` in `formats.dart`; `AppFormat.parseCents` for money |
+| Credit notes in totals | `Invoice.sign`, `signedExclVat`, `signedInclVat` in `lib/services/domain.dart` |
+| An expense's cost and BTW back | `ExpenseMath` in `domain.dart` |
+| Dutch text for the PDF and CSV | getters such as `VatRate.dutchLabel` in `domain.dart`; enum labels in the CSV mapping |
+| Whether a treatment fits a country | `VatTreatment.fitsCountry`, `euCountries` |
+| KOR status, turnover and its effect on expenses | `KorService`, `KorStatus`, `korStatusProvider`, `effectiveExpensesProvider` |
+| Combining several provider streams | `waitForAll` in `lib/providers/providers.dart` |
+| Showing money, dates and rates | `AppFormat.cents`, `date`, `number`, `percent`, `hours` in `lib/theme/app_theme.dart` |
+
 The component library in `lib/widgets/`:
 
 | Need | Use |
@@ -151,7 +169,10 @@ The component library in `lib/widgets/`:
 | Fields side by side | `FormRow` |
 | Date input | `DateField` |
 | Enum dropdown | `EnumDropdown` |
-| Money input | `AmountField` |
+| Money input, with `positive` for amounts above zero | `AmountField` |
+| Inline validators | `Validate` in `validators.dart` |
+| An error that belongs to the form, not one field | `FormErrorText` |
+| A figure against a target | `TargetProgress`, `UrencriteriumProgress`, `KorProgress` |
 | Business use percentage | `BusinessUseSlider` |
 | Label and value, amounts in cents | `ValueRow`, `ValueRow.cents`, `SectionLabel` |
 | Warning or legal note | `NoticeBanner` |
@@ -160,6 +181,7 @@ The component library in `lib/widgets/`:
 | Chips and search | `ChoiceChips`, `QuarterChips`, `SearchField` |
 | Primary and delete actions | `PrimaryButton`, `DeleteIconButton` |
 | Save or delete with error reporting | `guardSave` |
+| An error in words the user can act on | `describeError`, `showSaveError` |
 | Confirmation | `showConfirmationDialog` |
 | Business profile fields | `BusinessProfileForm` |
 | Hours against the urencriterium | `UrencriteriumProgress` |
@@ -241,6 +263,42 @@ elements and primary actions.
 - Every validation message says what to enter and why, with its own ARB key.
 - Optional fields with a format accept empty input before checking format.
 - Audit the matching column before adding a validator.
+- **Every input is validated.** Each text, number, amount, date and choice
+  that is saved has a validator that matches its column and the rule behind
+  it: required text is not blank, numbers parse and stay in range, amounts
+  that cannot be zero use `AmountField(positive: true)`, dates fall in the
+  range the record allows. Optional free text, such as notes and payment
+  references, accepts anything and needs none.
+- **Validators come from the shared code.** Use `Validate` and the checks in
+  `formats.dart`; never write a regex, `tryParse` or blank check in a screen.
+  A new format goes into `formats.dart` with a test in
+  `test/services/formats_test.dart`.
+- **Rules across fields are validated too**: an end after its start, a credit
+  note within what is left of its invoice, hours per day at most 24, a
+  treatment that fits the client's country. Put the check on the field the
+  user changes to fix it, or in a `FormErrorText` when no single field owns
+  it.
+- Fields that save as you type (Pension, P&L inputs) show their error at
+  once and save only valid values; `AmountField` does both.
+
+## Error handling
+
+- Every save, delete, file action and database read started by the user runs
+  inside `guardSave`, or catches its error and shows it. Nothing awaits the
+  database outside one of them.
+- Messages come from `describeError`, which turns database constraint and file
+  errors into what to do. Add a case there for a new kind of failure; never
+  show a raw exception or stack trace.
+- Loads show their error where the data would be: `AsyncBody` for provider
+  data, a `NoticeBanner` for a page that loads by hand. A spinner never runs
+  forever.
+- Never swallow an error (`catch (_) {}`, `.then` without `onError`). When an
+  error must not stop the screen, take the cautious fallback, such as keeping
+  delete blocked, and say why in a comment.
+- Errors no screen caught reach `showUnhandledError` through `main.dart`; do
+  not rely on that for expected failures.
+- A button whose action needs data that is still loading is disabled until
+  the data is there.
 
 ## Language and copy
 
@@ -278,6 +336,8 @@ side.
 | A table | `schemaVersion`, `make migration`, the migration step and its test, and `tool/create_demo_database.dart` so `make demo` still runs |
 | An enum in `lib/db/enums.dart` | `lib/l10n/labels.dart`, the Dutch mapping in `csv_export_service.dart`, and a migration if a stored value changed |
 | A shared widget's behaviour | Every screen that uses it, and the table above |
+| An input field | Its validator and message keys in both ARB files, per Forms and validation |
+| A rule, formula or mapping | The shared place in the No second copy table, and every copy removed |
 | A colour or surface | `test/theme/contrast_test.dart` |
 | A bundled font or asset | Its licence in `assets/` and the `LicenseRegistry` entry in `main.dart` |
 | A directory or owning file | The Layout section above |

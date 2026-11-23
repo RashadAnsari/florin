@@ -6,7 +6,9 @@ import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../services/domain.dart';
+import '../../services/kor_service.dart';
 import '../../services/vat_service.dart';
+import '../../widgets/notice_banner.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/async_body.dart';
@@ -58,6 +60,9 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
         ?.where((v) => v.quarter == _quarter)
         .firstOrNull;
     final deadline = VatService.filingDeadline(year, _quarter);
+    final kor = ref.watch(korStatusProvider).valueOrNull ?? KorStatus.none;
+    final korCovered = kor.coversQuarter(year, _quarter);
+    final korExceeded = kor.exceededOn[year];
 
     return Scaffold(
       appBar: AppBar(title: Text(l.vatReturnTitle)),
@@ -77,9 +82,28 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                 DeadlineBadge(
                   deadline: deadline,
                   filed: status?.filed ?? false,
+                  korCovered: korCovered,
                 ),
               ],
             ),
+            if (kor.touchesQuarter(year, _quarter)) ...[
+              const SizedBox(height: AppSpacing.group),
+              NoticeBanner(
+                korCovered ? l.vatReturnKorNotice : l.vatReturnKorPartNotice,
+              ),
+            ],
+            if (korExceeded != null && quarterOf(korExceeded) == _quarter) ...[
+              const SizedBox(height: AppSpacing.group),
+              NoticeBanner(
+                l.vatReturnKorExceeded(
+                  AppFormat.date(korExceeded),
+                  AppFormat.cents(
+                    ref.watch(taxRulesProvider(year)).korThreshold,
+                  ),
+                ),
+                tone: NoticeTone.warning,
+              ),
+            ],
             const SizedBox(height: AppSpacing.section),
             AsyncBody(
               value: result,
@@ -118,6 +142,18 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                     help: l.vatRow3bHelp,
                     value: AppFormat.cents(r.revenue3b),
                   ),
+                  if (r.revenueKorExempt != 0)
+                    ValueRow(
+                      label: l.vatRowKorExempt,
+                      help: l.vatRowKorExemptHelp,
+                      value: AppFormat.cents(r.revenueKorExempt),
+                    ),
+                  if (r.revenueOutsideReturn != 0)
+                    ValueRow(
+                      label: l.vatRowOutsideReturn,
+                      help: l.vatRowOutsideReturnHelp,
+                      value: AppFormat.cents(r.revenueOutsideReturn),
+                    ),
                   if (r.base2a != 0 || r.base4a != 0 || r.base4b != 0) ...[
                     const SizedBox(height: AppSpacing.group),
                     SectionLabel(
@@ -180,12 +216,7 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                     Text(l.vatReturnIcpNote, style: theme.textTheme.bodySmall),
                     const SizedBox(height: AppSpacing.heading),
                     for (final inv in r.icpInvoices)
-                      ValueRow.cents(
-                        inv.invoiceNumber,
-                        inv.invoiceType == InvoiceType.creditNote
-                            ? -inv.totalExclVat
-                            : inv.totalExclVat,
-                      ),
+                      ValueRow.cents(inv.invoiceNumber, inv.signedExclVat),
                   ],
                 ],
               ),

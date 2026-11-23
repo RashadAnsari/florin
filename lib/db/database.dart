@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 
+import 'database.steps.dart';
 import 'enums.dart';
 import 'tables/business_profile.dart';
 import 'tables/clients.dart';
@@ -46,11 +47,37 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump with every schema change and run `make migration`; see AGENTS.md.
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
+    onUpgrade: (m, from, to) async {
+      await customStatement('PRAGMA foreign_keys = OFF');
+      await transaction(
+        () => stepByStep(
+          from1To2: (m, schema) async {
+            await m.addColumn(
+              schema.clients,
+              schema.clients.isMerchantOfRecord,
+            );
+            await m.addColumn(schema.invoices, schema.invoices.selfBilled);
+            await m.addColumn(
+              schema.businessProfiles,
+              schema.businessProfiles.korStart,
+            );
+            await m.addColumn(
+              schema.businessProfiles,
+              schema.businessProfiles.korEnd,
+            );
+          },
+        )(m, from, to),
+      );
+      final broken = await customSelect('PRAGMA foreign_key_check').get();
+      if (broken.isNotEmpty) {
+        throw StateError('Foreign key check failed after migrating to $to');
+      }
+    },
     beforeOpen: (details) => customStatement('PRAGMA foreign_keys = ON'),
   );
 }

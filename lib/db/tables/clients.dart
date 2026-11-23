@@ -17,4 +17,9 @@ class Clients extends Table {
   DateTimeColumn get contractExpiry => dateTime().nullable()();
   TextColumn get notes => text().nullable()();
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
+
+  /// A reseller that sells the user's product to end customers in its own
+  /// name and pays the user, such as a merchant of record or an app store.
+  BoolColumn get isMerchantOfRecord =>
+      boolean().withDefault(const Constant(false))();
 }

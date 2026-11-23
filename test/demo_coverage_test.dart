@@ -70,6 +70,10 @@ void main() {
     expect(trips.map((t) => t.tripType).toSet(), TripType.values.toSet());
     expect(clients.map((c) => c.wetDbaRisk).toSet(), WetDbaRisk.values.toSet());
     expect(clients.any((c) => !c.isActive), isTrue);
+    expect(clients.any((c) => c.isMerchantOfRecord), isTrue);
+    expect(invoices.any((i) => i.selfBilled), isTrue);
+    final profile = await db.select(db.businessProfiles).getSingle();
+    expect(profile.korStart, isNotNull);
     expect(assets.any((a) => a.reserveGain), isTrue);
     expect(assets.any((a) => a.reinvestmentReserveApplied > 0), isTrue);
     expect(assets.any((a) => a.investmentDeductionReceived != null), isTrue);

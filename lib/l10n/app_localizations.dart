@@ -287,7 +287,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardBtwDeadlines.
   ///
   /// In en, this message translates to:
-  /// **'BTW-deadlines'**
+  /// **'VAT deadlines'**
   String get dashboardBtwDeadlines;
 
   /// No description provided for @dashboardMonthlyRevenue.
@@ -629,7 +629,7 @@ abstract class AppLocalizations {
   /// No description provided for @clientsValidateCountry.
   ///
   /// In en, this message translates to:
-  /// **'Use a 2-letter country code (e.g. NL, DE, FR)'**
+  /// **'Use a 2-letter country code (e.g. NL, DE, FR): it decides which VAT treatments an invoice to this client can use.'**
   String get clientsValidateCountry;
 
   /// No description provided for @clientsFieldVat.
@@ -851,7 +851,7 @@ abstract class AppLocalizations {
   /// No description provided for @expensesValidateAmount.
   ///
   /// In en, this message translates to:
-  /// **'Enter the amount excluding VAT'**
+  /// **'Enter the amount excluding VAT, above zero: it is the cost Florin deducts from your profit.'**
   String get expensesValidateAmount;
 
   /// No description provided for @expensesFieldVatRate.
@@ -1415,7 +1415,7 @@ abstract class AppLocalizations {
   /// No description provided for @assetsValidateCost.
   ///
   /// In en, this message translates to:
-  /// **'Enter the cost excluding VAT'**
+  /// **'Enter the cost excluding VAT, above zero: depreciation is calculated from it.'**
   String get assetsValidateCost;
 
   /// No description provided for @assetsFieldKia.
@@ -1739,13 +1739,13 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxZelfstandigenaftrek.
   ///
   /// In en, this message translates to:
-  /// **'Self-employed deduction {year}'**
+  /// **'Zelfstandigenaftrek {year}'**
   String plTaxZelfstandigenaftrek(int year);
 
   /// No description provided for @plTaxStartersaftrek.
   ///
   /// In en, this message translates to:
-  /// **'Starter deduction'**
+  /// **'Startersaftrek'**
   String get plTaxStartersaftrek;
 
   /// No description provided for @plTaxMkb.
@@ -1913,7 +1913,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsValidateVat.
   ///
   /// In en, this message translates to:
-  /// **'Enter your BTW number, e.g. NL123456789B01.'**
+  /// **'Enter your VAT number, e.g. NL123456789B01.'**
   String get settingsValidateVat;
 
   /// No description provided for @settingsValidateVatFormat.
@@ -1979,7 +1979,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsExportDescription.
   ///
   /// In en, this message translates to:
-  /// **'Export all {year} data to CSV files, with the BTW return of each quarter by rubriek in whole euros, the ICP list of each quarter and the estimated income tax of the year.'**
+  /// **'Export all {year} data to CSV files, with the VAT return of each quarter by rubriek in whole euros, the ICP list of each quarter and the estimated income tax of the year.'**
   String settingsExportDescription(int year);
 
   /// No description provided for @settingsExportButton.
@@ -2009,13 +2009,13 @@ abstract class AppLocalizations {
   /// No description provided for @settingsTaxZelfs.
   ///
   /// In en, this message translates to:
-  /// **'Self-employed deduction'**
+  /// **'Zelfstandigenaftrek'**
   String get settingsTaxZelfs;
 
   /// No description provided for @settingsTaxStarters.
   ///
   /// In en, this message translates to:
-  /// **'Starter deduction'**
+  /// **'Startersaftrek'**
   String get settingsTaxStarters;
 
   /// No description provided for @settingsTaxMkb.
@@ -2165,7 +2165,7 @@ abstract class AppLocalizations {
   /// No description provided for @amountNegativeError.
   ///
   /// In en, this message translates to:
-  /// **'Amount cannot be negative'**
+  /// **'Enter zero or more. A correction is its own record, such as a credit note.'**
   String get amountNegativeError;
 
   /// No description provided for @vatTreatmentStandard.
@@ -2453,7 +2453,7 @@ abstract class AppLocalizations {
   /// No description provided for @clientsFieldCountryHelp.
   ///
   /// In en, this message translates to:
-  /// **'The two-letter country code, such as NL or DE. It decides whether an EU reverse-charge invoice is possible.'**
+  /// **'The two-letter country code, such as NL or DE. It decides which VAT treatments an invoice to this client can use.'**
   String get clientsFieldCountryHelp;
 
   /// No description provided for @clientsFieldEmailHelp.
@@ -2663,7 +2663,7 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceFieldVatTreatmentHelp.
   ///
   /// In en, this message translates to:
-  /// **'How VAT applies. Dutch VAT for most clients. Reverse charge when the customer pays the VAT. EU goods and services to businesses also go on the ICP report.'**
+  /// **'How VAT applies. Dutch VAT for most Dutch clients, or Exempt under the KOR while you take part in it. Reverse charge when the customer pays the VAT. EU goods and services to businesses also go on the ICP report. Services to a business outside the EU are taxed there and stay out of the Dutch return.'**
   String get invoiceFieldVatTreatmentHelp;
 
   /// No description provided for @labelCategoryHelp.
@@ -2891,7 +2891,7 @@ abstract class AppLocalizations {
   /// No description provided for @assetsValidateCatalogueValue.
   ///
   /// In en, this message translates to:
-  /// **'Enter the catalogue value, including VAT and BPM'**
+  /// **'Enter the catalogue value including VAT and BPM, above zero: the private-use addition is a percentage of it.'**
   String get assetsValidateCatalogueValue;
 
   /// No description provided for @assetsFieldFirstRegistration.
@@ -3599,7 +3599,7 @@ abstract class AppLocalizations {
   /// No description provided for @vatRow3aHelp.
   ///
   /// In en, this message translates to:
-  /// **'Exports of goods to countries outside the EU.'**
+  /// **'Exports of goods to countries outside the EU. Services to businesses outside the EU are not reported.'**
   String get vatRow3aHelp;
 
   /// No description provided for @vatRow3bHelp.
@@ -3635,13 +3635,13 @@ abstract class AppLocalizations {
   /// No description provided for @expensesFieldPurchaseVat.
   ///
   /// In en, this message translates to:
-  /// **'BTW on this purchase'**
+  /// **'VAT on this purchase'**
   String get expensesFieldPurchaseVat;
 
   /// No description provided for @expensesFieldPurchaseVatHelp.
   ///
   /// In en, this message translates to:
-  /// **'Dutch BTW when the supplier charged it. Shifted when the invoice says the BTW is reverse-charged to you, or the supplier is abroad: you then report and deduct the BTW yourself.'**
+  /// **'Dutch VAT when the supplier charged it. Shifted when the invoice says the VAT is reverse-charged to you, or the supplier is abroad: you then report and deduct the VAT yourself.'**
   String get expensesFieldPurchaseVatHelp;
 
   /// No description provided for @purchaseVatDomestic.
@@ -3671,13 +3671,13 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnShiftedSection.
   ///
   /// In en, this message translates to:
-  /// **'BTW shifted to you'**
+  /// **'VAT shifted to you'**
   String get vatReturnShiftedSection;
 
   /// No description provided for @vatReturnShiftedSectionHelp.
   ///
   /// In en, this message translates to:
-  /// **'Purchases where you report the BTW yourself. You deduct the same BTW in 5b, so on balance you usually pay nothing.'**
+  /// **'Purchases where you report the VAT yourself. You deduct the same VAT in 5b, so on balance you usually pay nothing.'**
   String get vatReturnShiftedSectionHelp;
 
   /// No description provided for @vatRow2a.
@@ -3689,7 +3689,7 @@ abstract class AppLocalizations {
   /// No description provided for @vatRow2aHelp.
   ///
   /// In en, this message translates to:
-  /// **'Purchases from Dutch suppliers who shifted the BTW to you.'**
+  /// **'Purchases from Dutch suppliers who shifted the VAT to you.'**
   String get vatRow2aHelp;
 
   /// No description provided for @vatRow4a.
@@ -3719,13 +3719,13 @@ abstract class AppLocalizations {
   /// No description provided for @vatBaseAndVat.
   ///
   /// In en, this message translates to:
-  /// **'{base}, BTW {vat}'**
+  /// **'{base}, VAT {vat}'**
   String vatBaseAndVat(String base, String vat);
 
   /// No description provided for @expensesBusinessUseHelp.
   ///
   /// In en, this message translates to:
-  /// **'The share used for the business. Only that share of the cost and BTW is deductible.'**
+  /// **'The share used for the business. Only that share of the cost and VAT is deductible.'**
   String get expensesBusinessUseHelp;
 
   /// No description provided for @settingsLanguageSectionHelp.
@@ -3733,6 +3733,402 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The language of the app. Invoices and CSV exports are always in Dutch.'**
   String get settingsLanguageSectionHelp;
+
+  /// No description provided for @vatTreatmentServicesOutsideEu.
+  ///
+  /// In en, this message translates to:
+  /// **'Services to a business outside the EU (not in the VAT return)'**
+  String get vatTreatmentServicesOutsideEu;
+
+  /// No description provided for @invoiceValidateTreatmentCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'This VAT treatment does not fit the client\'s country. Domestic reverse charge is for Dutch clients, the EU treatments for other EU countries and the treatments outside the EU for countries outside it.'**
+  String get invoiceValidateTreatmentCountry;
+
+  /// No description provided for @invoiceSelfBilled.
+  ///
+  /// In en, this message translates to:
+  /// **'Issued by the customer (self-billing)'**
+  String get invoiceSelfBilled;
+
+  /// No description provided for @invoiceSelfBilledHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Tick this when the customer, such as a reseller, makes the invoice for what it owes you. The law allows this when you agreed on it beforehand and you accept each invoice. Florin records it with the customer\'s number and makes no PDF: the customer\'s document is the invoice.'**
+  String get invoiceSelfBilledHelp;
+
+  /// No description provided for @invoiceFieldNumberSelfBilledHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The number on the invoice the customer issued to you.'**
+  String get invoiceFieldNumberSelfBilledHelp;
+
+  /// No description provided for @invoiceActionRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Record'**
+  String get invoiceActionRecord;
+
+  /// No description provided for @invoiceRecordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Record invoice'**
+  String get invoiceRecordTitle;
+
+  /// No description provided for @invoiceRecordMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'After recording, the invoice can no longer be changed or deleted. A correction is a credit note that names this invoice.'**
+  String get invoiceRecordMessage;
+
+  /// No description provided for @invoiceStatusSelfBilled.
+  ///
+  /// In en, this message translates to:
+  /// **'Issued by customer'**
+  String get invoiceStatusSelfBilled;
+
+  /// No description provided for @invoiceMerchantOfRecordNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is a merchant of record: it sells your product to end customers and pays you. Invoice it for what it owes you for those sales. One invoice may cover several sales over at most one calendar month. Florin records amounts in euros: for a payout in another currency, enter the euro amounts and keep the reseller\'s statement.'**
+  String invoiceMerchantOfRecordNotice(String name);
+
+  /// No description provided for @invoicePaidDateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Date paid'**
+  String get invoicePaidDateTitle;
+
+  /// No description provided for @clientsMerchantOfRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Merchant of record (reseller)'**
+  String get clientsMerchantOfRecord;
+
+  /// No description provided for @clientsMerchantOfRecordHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Tick this for a platform that sells your product to end customers in its own name and pays you, such as a merchant of record or an app store. It is the seller towards the end customers, so you invoice only the platform. The Wet DBA section is about working relationships and is hidden for a reseller.'**
+  String get clientsMerchantOfRecordHelp;
+
+  /// No description provided for @clientsBadgeMerchantOfRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Merchant of record'**
+  String get clientsBadgeMerchantOfRecord;
+
+  /// No description provided for @vatRowOutsideReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Services to businesses outside the EU (not in the return)'**
+  String get vatRowOutsideReturn;
+
+  /// No description provided for @vatRowOutsideReturnHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue from services to businesses outside the EU. The Belastingdienst says these are not reported in the Dutch return when the service is taxed outside the EU. Shown so you can see where that revenue went.'**
+  String get vatRowOutsideReturnHelp;
+
+  /// No description provided for @vatShortReverseCharge.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse-charged'**
+  String get vatShortReverseCharge;
+
+  /// No description provided for @vatShortNotTaxedNl.
+  ///
+  /// In en, this message translates to:
+  /// **'Not taxed in NL'**
+  String get vatShortNotTaxedNl;
+
+  /// No description provided for @invoiceValidateNumberSelfBilled.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the number on the invoice the customer issued, so it can be traced to that invoice.'**
+  String get invoiceValidateNumberSelfBilled;
+
+  /// No description provided for @amountInvalidError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an amount in euros, such as 1.234,50, with a comma before the cents and at most two decimals.'**
+  String get amountInvalidError;
+
+  /// No description provided for @amountRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an amount above zero: a record without an amount has no effect on your figures.'**
+  String get amountRequiredError;
+
+  /// No description provided for @clientsValidateVatCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'A VAT number of a client in this country starts with {prefix}. Check the number or the country: the ICP report lists them together.'**
+  String clientsValidateVatCountry(String prefix);
+
+  /// No description provided for @hoursValidateDayTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'This day already has {logged} hours logged. A day has 24 hours, so enter at most {left}.'**
+  String hoursValidateDayTotal(String logged, String left);
+
+  /// No description provided for @assetsValidateDisposalBeforePurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'The sale date is before the purchase date. Change one of them: an asset is sold after it was bought.'**
+  String get assetsValidateDisposalBeforePurchase;
+
+  /// No description provided for @invoiceValidateCreditDate.
+  ///
+  /// In en, this message translates to:
+  /// **'A credit note is dated on or after the invoice it corrects, which is dated {date}.'**
+  String invoiceValidateCreditDate(String date);
+
+  /// No description provided for @invoiceValidateCreditAboveInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'This credit note is more than is left to correct on invoice {number}: at most {amount} excluding VAT. A credit note can only reverse what was invoiced.'**
+  String invoiceValidateCreditAboveInvoice(String number, String amount);
+
+  /// No description provided for @vatTreatmentKor.
+  ///
+  /// In en, this message translates to:
+  /// **'Exempt under the KOR (no VAT on the invoice)'**
+  String get vatTreatmentKor;
+
+  /// No description provided for @vatShortKor.
+  ///
+  /// In en, this message translates to:
+  /// **'KOR exempt'**
+  String get vatShortKor;
+
+  /// No description provided for @vatRowKorExempt.
+  ///
+  /// In en, this message translates to:
+  /// **'Exempt under the KOR (not in the return)'**
+  String get vatRowKorExempt;
+
+  /// No description provided for @vatRowKorExemptHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue exempt under the kleineondernemersregeling. You charged no VAT on it and it is not reported in a return.'**
+  String get vatRowKorExemptHelp;
+
+  /// No description provided for @invoiceValidateKorNotActive.
+  ///
+  /// In en, this message translates to:
+  /// **'The KOR does not apply on this date: you do not take part, or your turnover passed the limit. Choose the treatment that fits, usually Dutch VAT.'**
+  String get invoiceValidateKorNotActive;
+
+  /// No description provided for @invoiceValidateKorTreatment.
+  ///
+  /// In en, this message translates to:
+  /// **'You take part in the KOR on this date: you charge no VAT and the invoice may not mention it. Choose Exempt under the KOR.'**
+  String get invoiceValidateKorTreatment;
+
+  /// No description provided for @invoiceValidateKorExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'This invoice takes your turnover for the KOR past {limit}. The KOR ends with this supply, so it carries VAT: choose Dutch VAT, and deregister from the KOR in Mijn Belastingdienst Zakelijk.'**
+  String invoiceValidateKorExceeded(String limit);
+
+  /// No description provided for @expensesValidateKorReclaim.
+  ///
+  /// In en, this message translates to:
+  /// **'You take part in the KOR on this date, so you cannot reclaim VAT on purchases. Untick Reclaim VAT: the VAT then counts as part of the cost.'**
+  String get expensesValidateKorReclaim;
+
+  /// No description provided for @expensesKorNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'You take part in the KOR on this date. VAT on purchases is not reclaimed; it counts as part of the cost for income tax.'**
+  String get expensesKorNotice;
+
+  /// No description provided for @settingsKorStart.
+  ///
+  /// In en, this message translates to:
+  /// **'KOR applies from'**
+  String get settingsKorStart;
+
+  /// No description provided for @settingsKorStartHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst\'s confirmation. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most € 20.000 a year. Leave empty when you do not take part.'**
+  String get settingsKorStartHelp;
+
+  /// No description provided for @settingsKorEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'KOR ended on'**
+  String get settingsKorEnd;
+
+  /// No description provided for @settingsKorEndHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The first day the KOR no longer applies after you deregistered yourself. Leave empty otherwise: when your turnover passes the limit, Florin ends the KOR from that invoice on.'**
+  String get settingsKorEndHelp;
+
+  /// No description provided for @settingsValidateKorStart.
+  ///
+  /// In en, this message translates to:
+  /// **'The KOR starts on the first day of a return period, so enter a 1st of the month, as in the Belastingdienst\'s confirmation.'**
+  String get settingsValidateKorStart;
+
+  /// No description provided for @settingsValidateKorEndDay.
+  ///
+  /// In en, this message translates to:
+  /// **'A deregistration takes effect on the first day of a return period, so enter a 1st of the month.'**
+  String get settingsValidateKorEndDay;
+
+  /// No description provided for @settingsValidateKorEndBeforeStart.
+  ///
+  /// In en, this message translates to:
+  /// **'The end of the KOR comes after its start. Check both dates.'**
+  String get settingsValidateKorEndBeforeStart;
+
+  /// No description provided for @settingsValidateKorEndNoStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter when the KOR started first: an end date only applies to a KOR you took part in.'**
+  String get settingsValidateKorEndNoStart;
+
+  /// No description provided for @settingsKorClear.
+  ///
+  /// In en, this message translates to:
+  /// **'I do not take part in the KOR'**
+  String get settingsKorClear;
+
+  /// No description provided for @korProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{turnover} of {limit}'**
+  String korProgress(String turnover, String limit);
+
+  /// No description provided for @korExceededBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit passed on {date}'**
+  String korExceededBadge(String date);
+
+  /// No description provided for @korLeftBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'{left} below the limit'**
+  String korLeftBadge(String left);
+
+  /// No description provided for @dashboardKor.
+  ///
+  /// In en, this message translates to:
+  /// **'KOR turnover'**
+  String get dashboardKor;
+
+  /// No description provided for @dashboardKorHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above € 20.000 in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next.'**
+  String get dashboardKorHelp;
+
+  /// No description provided for @deadlineStatusKor.
+  ///
+  /// In en, this message translates to:
+  /// **'no return (KOR)'**
+  String get deadlineStatusKor;
+
+  /// No description provided for @deadlineBadgeKor.
+  ///
+  /// In en, this message translates to:
+  /// **'No return: KOR'**
+  String get deadlineBadgeKor;
+
+  /// No description provided for @vatReturnKorNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'You take part in the KOR for this whole quarter: you charge no VAT and file no regular return. When VAT was shifted to you (2a, 4a or 4b), you may still owe it in an incidental return: the Belastingdienst\'s Incidentele btw-aangifte tool says whether you do. Florin shows those amounts below.'**
+  String get vatReturnKorNotice;
+
+  /// No description provided for @vatReturnKorPartNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'The KOR applies for part of this quarter. Invoices exempt under the KOR are not in the return and VAT on purchases in that part is not reclaimed. File a return for the part outside the KOR.'**
+  String get vatReturnKorPartNotice;
+
+  /// No description provided for @vatReturnKorExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Your turnover for the KOR passed {limit} on {date}. The KOR ended with that supply: from then on you charge VAT and file returns. Deregister in Mijn Belastingdienst Zakelijk; you cannot take part again this year or next year.'**
+  String vatReturnKorExceeded(String date, String limit);
+
+  /// No description provided for @errorDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Another record already uses this value, such as the same invoice number. Use a value that is not taken yet.'**
+  String get errorDuplicate;
+
+  /// No description provided for @errorInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Other records refer to this one, such as invoices of a client. Remove or change those first, or mark this one inactive.'**
+  String get errorInUse;
+
+  /// No description provided for @errorBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'The database is in use by another program. Close that program, or wait a moment, and try again.'**
+  String get errorBusy;
+
+  /// No description provided for @errorReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'The database file cannot be written. Check that the folder is not read-only and that you have permission to change it.'**
+  String get errorReadOnly;
+
+  /// No description provided for @errorCorrupt.
+  ///
+  /// In en, this message translates to:
+  /// **'The database file is damaged and cannot be read. Restore it from a backup, such as your iCloud Drive, OneDrive or Dropbox history.'**
+  String get errorCorrupt;
+
+  /// No description provided for @errorDiskFull.
+  ///
+  /// In en, this message translates to:
+  /// **'The disk is full. Free up space and try again.'**
+  String get errorDiskFull;
+
+  /// No description provided for @errorCannotOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'The database file cannot be opened. Check that its folder still exists, or choose its location again in Settings.'**
+  String get errorCannotOpen;
+
+  /// No description provided for @errorFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not use {path}: {reason}'**
+  String errorFile(String path, String reason);
+
+  /// No description provided for @genericUnhandledError.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong: {error}'**
+  String genericUnhandledError(String error);
+
+  /// No description provided for @invoiceNoProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in your business details in Settings first: every invoice shows them.'**
+  String get invoiceNoProfile;
+
+  /// No description provided for @invoiceTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get invoiceTotal;
+
+  /// No description provided for @settingsTaxKor.
+  ///
+  /// In en, this message translates to:
+  /// **'KOR turnover limit'**
+  String get settingsTaxKor;
 }
 
 class _AppLocalizationsDelegate

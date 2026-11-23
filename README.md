@@ -28,7 +28,7 @@ Florin keeps your invoices, expenses, BTW returns, hours, mileage, assets and pe
 - **Built on Dutch tax law, with the sources.** Every rate, threshold and invoice rule in Florin is checked against the statute on wetten.overheid.nl or the Belastingdienst, and the quote and link are in [`docs/legal.md`](docs/legal.md) and [`docs/tax-years/`](docs/tax-years/).
 - **Know your numbers all year.** The dashboard shows revenue, costs, BTW to pay and an estimate of your income tax as you add invoices and expenses. Every estimate is marked as one.
 - **Explained as you go.** Every field and every tax term has a short explanation one hover away.
-- **Invoices built from the BTW rules.** PDF invoices include the items listed in article 35a of the Wet op de omzetbelasting, with btw verlegd, intra-Community supplies and credit notes that name the invoice they correct.
+- **Invoices built from the BTW rules.** PDF invoices include the items listed in article 35a of the Wet op de omzetbelasting, with btw verlegd, intra-Community supplies, services outside the EU and credit notes that name the invoice they correct.
 - **Your data stays yours.** One local database file, in a folder you choose. Keep it in iCloud Drive, OneDrive or Dropbox for backup.
 - **Ready for your returns and your accountant.** Export a full year to CSV files in one click: every record, the BTW return of each quarter by rubriek in whole euros as the form asks, the ICP list of each quarter and the estimated income tax.
 - **Free and open source** under the MIT license.
@@ -37,9 +37,10 @@ Florin keeps your invoices, expenses, BTW returns, hours, mileage, assets and pe
 
 | | |
 |---|---|
-| **Invoicing** | Dutch PDF invoices with automatic numbering. Dutch BTW, btw verlegd to Dutch and EU businesses, intra-Community supplies of goods and export outside the EU. Issued invoices are locked; corrections are credit notes. Status from draft to paid, including overdue. |
+| **Invoicing** | Dutch PDF invoices with automatic numbering. Dutch BTW, btw verlegd to Dutch and EU businesses, intra-Community supplies of goods, export outside the EU and services to businesses outside the EU, with the treatment checked against the client's country. Sell through a merchant of record such as an app store or reseller: mark it as one and record the invoices it issues to you (self-billing). Issued invoices are locked; corrections are credit notes. Status from draft to paid, including overdue. |
 | **Expenses** | Costs by category with BTW reclaim, business use percentage and receipt tracking, including purchases where the BTW is shifted to you. Food, drinks and representation use whichever of the 80% rule and the € 5.700 threshold deducts more, and BTW on restaurant meals is not reclaimed. |
 | **BTW return** | Each quarter pre-filled from your records: rubrieken 1a, 1b, 1d, 1e, 2a, 3a, 3b, 4a, 4b, 5a and 5b, plus the supplies for the ICP-opgaaf. Filing and payment tracked per quarter, with the deadline shown. |
+| **Kleineondernemersregeling** | Enter when your KOR started and Florin follows it: KOR invoices without BTW, no BTW reclaimed on purchases, no regular return for quarters the KOR covers, and your turnover against the € 20.000 limit. The invoice that passes the limit carries BTW again and Florin ends the KOR from there. |
 | **Income tax estimate** | Zelfstandigenaftrek, startersaftrek, S&O-aftrek, meewerkaftrek, stakingsaftrek, startersaftrek bij arbeidsongeschiktheid, mkb-winstvrijstelling, KIA, EIA, MIA, desinvesteringsbijtelling, herinvesteringsreserve, depreciation, gains on sold assets, lijfrente, disability insurance, losses from earlier years, algemene heffingskorting, arbeidskorting and the Zvw contribution. |
 | **Urencriterium** | Hours per client and project, with progress towards the 1,225 hours you need for the zelfstandigenaftrek. |
 | **Mileage** | Business and commuting trips with odometer readings and purpose, deducted at the Belastingdienst rate for the year. |

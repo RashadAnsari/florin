@@ -11,15 +11,9 @@ import '../theme/app_theme.dart';
 import 'domain.dart';
 
 /// Invoice PDFs. The copy is Dutch whatever the app language. Required
-/// content follows Wet OB 1968 art. 35a; see `docs/legal.md`.
+/// content follows Wet OB 1968 art. 35a; see `docs/legal.md`. A self-billed
+/// invoice is the customer's document, so Florin makes no PDF of it.
 abstract final class InvoicePdfService {
-  static String _rate(VatRate r) => switch (r) {
-    VatRate.high => '21%',
-    VatRate.low => '9%',
-    VatRate.zero => '0%',
-    VatRate.exempt => 'Vrijgesteld',
-  };
-
   static String _treatmentNote(VatTreatment t) => switch (t) {
     VatTreatment.standard => '',
     VatTreatment.reverseChargeNl => 'Btw verlegd',
@@ -28,6 +22,12 @@ abstract final class InvoicePdfService {
       'Intracommunautaire levering, 0% btw: artikel 138, lid 1, '
           'Richtlijn 2006/112',
     VatTreatment.exportOutsideEu => 'Uitvoer buiten de EU, 0% btw',
+    VatTreatment.servicesOutsideEu =>
+      'Niet in Nederland belast: dienst aan een ondernemer buiten de EU '
+          '(artikel 6, lid 1, Wet OB 1968)',
+    // Art. 25a lid 4 forbids any mention of the tax on the invoice; the
+    // Belastingdienst asks to state that an exemption applies.
+    VatTreatment.kor => 'Vrijgesteld op grond van de kleineondernemersregeling',
   };
 
   static Future<void> save({
@@ -66,10 +66,11 @@ abstract final class InvoicePdfService {
       await rootBundle.load('assets/fonts/NotoSans-Bold.ttf'),
     );
 
-    final isCredit = invoice.invoiceType == InvoiceType.creditNote;
-    final sign = isCredit ? -1 : 1;
+    final isCredit = invoice.isCreditNote;
+    final sign = invoice.sign;
     String money(int cents) => AppFormat.cents(sign * cents);
     final note = _treatmentNote(invoice.vatTreatment);
+    final kor = invoice.vatTreatment == VatTreatment.kor;
 
     // Wet OB art. 35a lid 1 h: the amount per rate or exemption.
     final byRate = <VatRate, (int, int)>{};
@@ -108,9 +109,10 @@ abstract final class InvoicePdfService {
         );
 
     pw.Widget total(String l, String v, {bool strong = false}) => pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Text(l, style: strong ? heading : small),
+        pw.Expanded(child: pw.Text(l, style: strong ? heading : small)),
+        pw.SizedBox(width: 8),
         pw.Text(v, style: strong ? heading : small),
       ],
     );
@@ -159,7 +161,7 @@ abstract final class InvoicePdfService {
               party('Van', [
                 invoice.sellerName,
                 ...invoice.sellerAddress.split('\n'),
-                'Btw-id: ${invoice.sellerVatNumber}',
+                if (!kor) 'Btw-id: ${invoice.sellerVatNumber}',
                 'KvK: ${invoice.sellerKvkNumber}',
               ]),
               pw.SizedBox(width: 40),
@@ -191,12 +193,12 @@ abstract final class InvoicePdfService {
           pw.SizedBox(height: 16),
           pw.Table(
             border: pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
-            columnWidths: const {
-              0: pw.FlexColumnWidth(5),
-              1: pw.FlexColumnWidth(1.4),
-              2: pw.FlexColumnWidth(1.8),
-              3: pw.FlexColumnWidth(1.4),
-              4: pw.FlexColumnWidth(1.8),
+            columnWidths: {
+              0: const pw.FlexColumnWidth(5),
+              1: const pw.FlexColumnWidth(1.4),
+              2: const pw.FlexColumnWidth(1.8),
+              if (!kor) 3: const pw.FlexColumnWidth(1.4),
+              (kor ? 3 : 4): const pw.FlexColumnWidth(1.8),
             },
             children: [
               pw.TableRow(
@@ -204,9 +206,17 @@ abstract final class InvoicePdfService {
                 children: [
                   cell('Omschrijving', head: true),
                   cell('Aantal', right: true, head: true),
-                  cell('Prijs excl. btw', right: true, head: true),
-                  cell('Btw', right: true, head: true),
-                  cell('Bedrag excl. btw', right: true, head: true),
+                  cell(
+                    kor ? 'Prijs' : 'Prijs excl. btw',
+                    right: true,
+                    head: true,
+                  ),
+                  if (!kor) cell('Btw', right: true, head: true),
+                  cell(
+                    kor ? 'Bedrag' : 'Bedrag excl. btw',
+                    right: true,
+                    head: true,
+                  ),
                 ],
               ),
               for (final l in lines)
@@ -219,12 +229,13 @@ abstract final class InvoicePdfService {
                       right: true,
                     ),
                     cell(AppFormat.cents(l.unitPriceExclVat), right: true),
-                    cell(
-                      invoice.vatTreatment == VatTreatment.standard
-                          ? _rate(l.vatRate)
-                          : '-',
-                      right: true,
-                    ),
+                    if (!kor)
+                      cell(
+                        invoice.vatTreatment == VatTreatment.standard
+                            ? l.vatRate.dutchLabel
+                            : '-',
+                        right: true,
+                      ),
                     cell(money(l.lineTotalExclVat), right: true),
                   ],
                 ),
@@ -236,25 +247,33 @@ abstract final class InvoicePdfService {
             child: pw.SizedBox(
               width: 260,
               child: pw.Column(
-                children: [
-                  total('Totaal excl. btw', money(invoice.totalExclVat)),
-                  if (invoice.vatTreatment == VatTreatment.standard)
-                    for (final e in byRate.entries)
-                      total(
-                        e.key == VatRate.exempt
-                            ? 'Vrijgesteld van btw over ${money(e.value.$1)}'
-                            : 'Btw ${_rate(e.key)} over ${money(e.value.$1)}',
-                        e.key == VatRate.exempt ? '-' : money(e.value.$2),
-                      )
-                  else
-                    total(note, money(0)),
-                  pw.Divider(color: PdfColors.grey400),
-                  total(
-                    'Totaal incl. btw',
-                    money(invoice.totalInclVat),
-                    strong: true,
-                  ),
-                ],
+                children: kor
+                    ? [
+                        total(
+                          'Totaal',
+                          money(invoice.totalInclVat),
+                          strong: true,
+                        ),
+                      ]
+                    : [
+                        total('Totaal excl. btw', money(invoice.totalExclVat)),
+                        if (invoice.vatTreatment == VatTreatment.standard)
+                          for (final e in byRate.entries)
+                            total(
+                              e.key == VatRate.exempt
+                                  ? 'Vrijgesteld van btw over ${money(e.value.$1)}'
+                                  : 'Btw ${e.key.dutchLabel} over ${money(e.value.$1)}',
+                              e.key == VatRate.exempt ? '-' : money(e.value.$2),
+                            )
+                        else
+                          total('Btw', money(0)),
+                        pw.Divider(color: PdfColors.grey400),
+                        total(
+                          'Totaal incl. btw',
+                          money(invoice.totalInclVat),
+                          strong: true,
+                        ),
+                      ],
               ),
             ),
           ),

@@ -21,6 +21,14 @@ enum VatTreatment {
 
   /// Export of goods outside the EU at 0% (rubriek 3a).
   exportOutsideEu,
+
+  /// Services to a business outside the EU, taxed where the customer is
+  /// (Wet OB 1968 art. 6 lid 1). Not reported in the Dutch return.
+  servicesOutsideEu,
+
+  /// Exempt under the kleineondernemersregeling (Wet OB 1968 art. 25a): no
+  /// BTW and no mention of it on the invoice.
+  kor,
 }
 
 /// BTW rate on an invoice line or expense (Wet OB 1968 art. 9 and 11).

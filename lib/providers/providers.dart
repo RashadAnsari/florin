@@ -18,6 +18,7 @@ import '../services/asset_service.dart';
 import '../services/car_service.dart';
 import '../services/pension_service.dart';
 import '../services/tax_rules/tax_year_rules.dart';
+import '../services/kor_service.dart';
 import '../services/tax_service.dart';
 import '../services/vat_service.dart';
 
@@ -128,6 +129,35 @@ final vatReturnsProvider = StreamProvider.family<List<VatReturn>, int>(
   (ref, year) => ref.watch(vatReturnDaoProvider).watchYear(year),
 );
 
+/// The first error or loading state among [values], or null when all have
+/// data. Providers that combine several streams return this first.
+AsyncValue<T>? waitForAll<T>(List<AsyncValue<Object?>> values) {
+  for (final a in values) {
+    if (a.hasError) return AsyncError<T>(a.error!, a.stackTrace!);
+  }
+  if (values.any((a) => !a.hasValue)) return AsyncLoading<T>();
+  return null;
+}
+
+/// Whether and when the kleineondernemersregeling applies.
+final korStatusProvider = Provider<AsyncValue<KorStatus>>((ref) {
+  final profile = ref.watch(businessProfileProvider);
+  final invoices = ref.watch(allInvoicesProvider);
+  return waitForAll<KorStatus>([profile, invoices]) ??
+      AsyncData(KorService.status(profile.requireValue, invoices.requireValue));
+});
+
+/// The expenses of [year] as they count, with the KOR applied.
+final effectiveExpensesProvider =
+    Provider.family<AsyncValue<List<Expense>>, int>((ref, year) {
+      final expenses = ref.watch(expensesProvider(year));
+      final kor = ref.watch(korStatusProvider);
+      return waitForAll<List<Expense>>([expenses, kor]) ??
+          AsyncData(
+            KorService.applyToExpenses(expenses.requireValue, kor.requireValue),
+          );
+    });
+
 /// Verified statutory figures for a supported year.
 final taxRulesProvider = Provider.family<TaxYearRules, int>(
   (ref, year) => taxYears[year]!,
@@ -142,7 +172,7 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
   final rules = ref.watch(taxRulesProvider(year));
   final profile = ref.watch(businessProfileProvider);
   final invoices = ref.watch(invoicesProvider(year));
-  final expenses = ref.watch(expensesProvider(year));
+  final expenses = ref.watch(effectiveExpensesProvider(year));
   final hours = ref.watch(hourEntriesProvider(year));
   final trips = ref.watch(mileageTripsProvider(year));
   final assets = ref.watch(assetsProvider(year));
@@ -160,10 +190,8 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
     pension,
     inputs,
   ];
-  for (final a in all) {
-    if (a.hasError) return AsyncError(a.error!, a.stackTrace!);
-  }
-  if (all.any((a) => !a.hasValue)) return const AsyncLoading();
+  final pending = waitForAll<TaxEstimate>(all);
+  if (pending != null) return pending;
 
   final totalHours = hours.requireValue.fold(0.0, (s, h) => s + h.hours);
   final yearOver = year < DateTime.now().year;
@@ -242,14 +270,17 @@ final vatQuarterProvider =
     ) {
       final invoices = ref.watch(invoicesProvider(key.year));
       final lines = ref.watch(invoiceLinesProvider(key.year));
-      final expenses = ref.watch(expensesProvider(key.year));
+      final expenses = ref.watch(effectiveExpensesProvider(key.year));
       final trips = ref.watch(mileageTripsProvider(key.year));
       final assets = ref.watch(allAssetsProvider);
-      final all = [invoices, lines, expenses, trips, assets];
-      for (final a in all) {
-        if (a.hasError) return AsyncError(a.error!, a.stackTrace!);
-      }
-      if (all.any((a) => !a.hasValue)) return const AsyncLoading();
+      final pending = waitForAll<VatQuarterResult>([
+        invoices,
+        lines,
+        expenses,
+        trips,
+        assets,
+      ]);
+      if (pending != null) return pending;
       return AsyncData(
         VatService.calculateQuarter(
           invoices: invoices.requireValue,

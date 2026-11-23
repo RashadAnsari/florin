@@ -18,6 +18,8 @@ import '../../widgets/detail_scaffold.dart';
 import '../../widgets/enum_dropdown.dart';
 import '../../widgets/feedback.dart';
 import '../../widgets/form_row.dart';
+import '../../widgets/validators.dart';
+import '../../services/formats.dart';
 import '../../widgets/list_scaffold.dart';
 import '../../widgets/summary_bar.dart';
 
@@ -107,8 +109,8 @@ class _MileageDetailPageState extends ConsumerState<MileageDetailPage> {
   late final _purpose = TextEditingController(text: widget.trip?.purpose);
   late final _notes = TextEditingController(text: widget.trip?.notes);
 
-  int? get _start => int.tryParse(_odoStart.text.trim());
-  int? get _end => int.tryParse(_odoEnd.text.trim());
+  int? get _start => parseWholeNumber(_odoStart.text);
+  int? get _end => parseWholeNumber(_odoEnd.text);
 
   @override
   void dispose() {
@@ -129,7 +131,6 @@ class _MileageDetailPageState extends ConsumerState<MileageDetailPage> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    final notes = _notes.text.trim();
     final saved = await guardSave(
       context,
       () => ref
@@ -150,7 +151,7 @@ class _MileageDetailPageState extends ConsumerState<MileageDetailPage> {
               tripType: Value(_tripType),
               purpose: Value(_purpose.text.trim()),
               routeDeviation: Value(_routeDeviation),
-              notes: Value(notes.isEmpty ? null : notes),
+              notes: Value(optionalText(_notes.text)),
             ),
           ),
     );
@@ -175,9 +176,6 @@ class _MileageDetailPageState extends ConsumerState<MileageDetailPage> {
     );
     if (deleted && mounted) context.pop();
   }
-
-  String? _required(String? v, String message) =>
-      (v ?? '').trim().isEmpty ? message : null;
 
   @override
   Widget build(BuildContext context) {
@@ -237,7 +235,8 @@ class _MileageDetailPageState extends ConsumerState<MileageDetailPage> {
                     help: l.mileageFieldMakeModelHelp,
                     required: true,
                   ),
-                  validator: (v) => _required(v, l.mileageValidateMakeModel),
+                  validator: (v) =>
+                      Validate.required(v, l.mileageValidateMakeModel),
                 ),
                 TextFormField(
                   controller: _plate,
@@ -246,7 +245,8 @@ class _MileageDetailPageState extends ConsumerState<MileageDetailPage> {
                     help: l.mileageFieldPlateHelp,
                     required: true,
                   ),
-                  validator: (v) => _required(v, l.mileageValidatePlate),
+                  validator: (v) =>
+                      Validate.required(v, l.mileageValidatePlate),
                 ),
               ],
             ),
@@ -262,7 +262,7 @@ class _MileageDetailPageState extends ConsumerState<MileageDetailPage> {
                   ),
                   minLines: 3,
                   maxLines: 4,
-                  validator: (v) => _required(v, l.mileageValidateFrom),
+                  validator: (v) => Validate.required(v, l.mileageValidateFrom),
                 ),
                 TextFormField(
                   controller: _to,
@@ -273,7 +273,7 @@ class _MileageDetailPageState extends ConsumerState<MileageDetailPage> {
                   ),
                   minLines: 3,
                   maxLines: 4,
-                  validator: (v) => _required(v, l.mileageValidateTo),
+                  validator: (v) => Validate.required(v, l.mileageValidateTo),
                 ),
               ],
             ),
@@ -290,12 +290,8 @@ class _MileageDetailPageState extends ConsumerState<MileageDetailPage> {
                   ),
                   keyboardType: TextInputType.number,
                   onChanged: (_) => setState(() {}),
-                  validator: (v) {
-                    final n = int.tryParse((v ?? '').trim());
-                    return n == null || n < 0
-                        ? l.mileageValidateOdoStart
-                        : null;
-                  },
+                  validator: (v) =>
+                      Validate.wholeNumber(v, l.mileageValidateOdoStart),
                 ),
                 TextFormField(
                   controller: _odoEnd,
@@ -307,14 +303,13 @@ class _MileageDetailPageState extends ConsumerState<MileageDetailPage> {
                   ),
                   keyboardType: TextInputType.number,
                   onChanged: (_) => setState(() {}),
-                  validator: (v) {
-                    final n = int.tryParse((v ?? '').trim());
-                    if (n == null || n < 0) return l.mileageValidateOdoEnd;
-                    if (start != null && n <= start) {
-                      return l.mileageFieldOdoError;
-                    }
-                    return null;
-                  },
+                  validator: (v) =>
+                      Validate.wholeNumber(v, l.mileageValidateOdoEnd) ??
+                      Validate.wholeNumber(
+                        v,
+                        l.mileageFieldOdoError,
+                        min: (start ?? -1) + 1,
+                      ),
                 ),
                 InputDecorator(
                   decoration: fieldDecoration(
@@ -333,7 +328,7 @@ class _MileageDetailPageState extends ConsumerState<MileageDetailPage> {
                 help: l.mileageFieldPurposeHelp,
                 required: true,
               ),
-              validator: (v) => _required(v, l.mileageValidatePurpose),
+              validator: (v) => Validate.required(v, l.mileageValidatePurpose),
             ),
             const SizedBox(height: AppSpacing.field),
             HelpCheckbox(

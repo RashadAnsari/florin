@@ -19,6 +19,10 @@ class Invoices extends Table {
   IntColumn get clientId =>
       integer().references(Clients, #id, onDelete: KeyAction.restrict)();
   TextColumn get vatTreatment => textEnum<VatTreatment>()();
+
+  /// Issued by the customer instead of the user (Wet OB 1968 art. 35 lid 2).
+  /// The number is the customer's and Florin makes no PDF.
+  BoolColumn get selfBilled => boolean().withDefault(const Constant(false))();
   TextColumn get sellerName => text()();
   TextColumn get sellerVatNumber => text()();
   TextColumn get sellerKvkNumber => text()();

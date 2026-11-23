@@ -97,7 +97,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
         ),
         subtitle: EllipsisText(
           '${inv.invoiceNumber}  ${AppFormat.date(inv.invoiceDate)}'
-          '${inv.invoiceType == InvoiceType.creditNote ? '  ${inv.invoiceType.label(l)}' : ''}',
+          '${inv.isCreditNote ? '  ${inv.invoiceType.label(l)}' : ''}',
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
@@ -105,11 +105,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
             InvoiceStatusBadge(inv),
             const SizedBox(width: AppSpacing.field),
             Text(
-              AppFormat.cents(
-                inv.invoiceType == InvoiceType.creditNote
-                    ? -inv.totalInclVat
-                    : inv.totalInclVat,
-              ),
+              AppFormat.cents(inv.signedInclVat),
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
           ],

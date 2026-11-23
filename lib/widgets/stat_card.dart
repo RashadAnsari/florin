@@ -47,10 +47,16 @@ class StatCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.heading),
-            Text(
-              value,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w700,
+            // An amount stays on one line; it shrinks rather than wraps.
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: AlignmentDirectional.centerStart,
+              child: Text(
+                value,
+                maxLines: 1,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
             if (delta != null) ...[

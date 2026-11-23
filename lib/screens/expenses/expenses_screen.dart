@@ -1,5 +1,9 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
+import '../../widgets/validators.dart';
+import '../../widgets/form_error_text.dart';
+import '../../services/kor_service.dart';
+import '../../services/formats.dart';
 import '../../widgets/help.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -165,13 +169,18 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
 
   int get _vatAmount => _vatRate.vatOn(_amountExclVat);
 
-  /// BTW that cannot be reclaimed is part of the cost for income tax.
-  int get _deductibleAmount =>
-      ((_amountExclVat + (_vatReclaimable ? 0 : _vatAmount)) * _businessUsePct)
-          .round();
+  int get _deductibleAmount => ExpenseMath.deductible(
+    amountExclVat: _amountExclVat,
+    vatAmount: _vatAmount,
+    businessUsePct: _businessUsePct,
+    vatReclaimable: _vatReclaimable,
+  );
 
-  int get _vatToReclaim =>
-      _vatReclaimable ? (_vatAmount * _businessUsePct).round() : 0;
+  int get _vatToReclaim => ExpenseMath.vatToReclaim(
+    vatAmount: _vatAmount,
+    businessUsePct: _businessUsePct,
+    vatReclaimable: _vatReclaimable,
+  );
 
   @override
   void dispose() {
@@ -183,7 +192,6 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    String? n(String s) => s.trim().isEmpty ? null : s.trim();
     final saved = await guardSave(
       context,
       () => ref
@@ -207,9 +215,9 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
               deductibleAmount: Value(_deductibleAmount),
               vatReclaimable: Value(_vatReclaimable),
               vatToReclaim: Value(_vatToReclaim),
-              notes: Value(n(_notes.text)),
-              paidFrom: Value(n(_paidFrom.text)),
-              paymentReference: Value(n(_paymentRef.text)),
+              notes: Value(optionalText(_notes.text)),
+              paidFrom: Value(optionalText(_paidFrom.text)),
+              paymentReference: Value(optionalText(_paymentRef.text)),
               carAssetId: Value(_carAssetId),
             ),
           ),
@@ -233,6 +241,17 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
     if (deleted && mounted) context.pop();
   }
 
+  bool get _korApplies =>
+      (ref.read(korStatusProvider).valueOrNull ?? KorStatus.none).appliesOn(
+        _date,
+      );
+
+  /// Under the KOR no BTW is deducted (Wet OB 1968 art. 25a lid 4).
+  void _setDate(DateTime d) => setState(() {
+    _date = d;
+    if (_korApplies) _vatReclaimable = false;
+  });
+
   void _setCategory(ExpenseCategory c) => setState(() {
     if (c == ExpenseCategory.foodAndRepresentation &&
         _category != ExpenseCategory.foodAndRepresentation) {
@@ -244,6 +263,7 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
+    ref.watch(korStatusProvider);
     return DetailScaffold(
       title: widget.expense == null
           ? l.expensesNewHeader
@@ -263,7 +283,7 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
                   label: l.labelDate,
                   help: l.labelDateHelp,
                   value: _date,
-                  onChanged: (d) => setState(() => _date = d),
+                  onChanged: _setDate,
                   required: true,
                 ),
                 EnumDropdown(
@@ -278,6 +298,10 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
                 ),
               ],
             ),
+            if (_korApplies) ...[
+              const SizedBox(height: AppSpacing.field),
+              NoticeBanner(l.expensesKorNotice),
+            ],
             if (_category == ExpenseCategory.foodAndRepresentation) ...[
               const SizedBox(height: AppSpacing.field),
               NoticeBanner(l.expensesFoodNotice),
@@ -293,9 +317,8 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
                     required: true,
                     hintText: l.expensesHintSupplier,
                   ),
-                  validator: (v) => (v ?? '').trim().isEmpty
-                      ? l.expensesValidateSupplier
-                      : null,
+                  validator: (v) =>
+                      Validate.required(v, l.expensesValidateSupplier),
                 ),
                 TextFormField(
                   controller: _description,
@@ -304,9 +327,8 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
                     help: l.expensesFieldDescriptionHelp,
                     required: true,
                   ),
-                  validator: (v) => (v ?? '').trim().isEmpty
-                      ? l.expensesValidateDescription
-                      : null,
+                  validator: (v) =>
+                      Validate.required(v, l.expensesValidateDescription),
                 ),
               ],
             ),
@@ -318,6 +340,7 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
                   help: l.expensesFieldAmountExclHelp,
                   initialValueCents: _amountExclVat,
                   required: true,
+                  positive: true,
                   validatorMessage: l.expensesValidateAmount,
                   onChanged: (v) => setState(() => _amountExclVat = v),
                 ),
@@ -373,6 +396,11 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
               onChanged: (v) => setState(() => _vatReclaimable = v),
               title: l.expensesReclaimVat,
               help: l.expensesReclaimVatHelp,
+            ),
+            FormErrorText(
+              validator: () => _korApplies && _vatReclaimable
+                  ? l.expensesValidateKorReclaim
+                  : null,
             ),
             HelpCheckbox(
               value: _receiptAttached,

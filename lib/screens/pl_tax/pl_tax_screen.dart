@@ -1,5 +1,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
+import '../../services/formats.dart';
+import '../../widgets/validators.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
@@ -15,11 +17,7 @@ import '../../widgets/feedback.dart';
 import '../../widgets/form_row.dart';
 import '../../widgets/help.dart';
 import '../../widgets/notice_banner.dart';
-import '../../widgets/urencriterium_progress.dart';
 import '../../widgets/value_row.dart';
-
-String _pct(double rate, [int digits = 2]) =>
-    (rate * 100).toStringAsFixed(digits);
 
 class PlTaxScreen extends ConsumerWidget {
   const PlTaxScreen({super.key});
@@ -61,7 +59,7 @@ class PlTaxScreen extends ConsumerWidget {
                 if (!estimate.meetsUrencriterium) ...[
                   NoticeBanner(
                     l.plTaxUrenBanner(
-                      formatHours(estimate.totalHours),
+                      AppFormat.hours(estimate.totalHours),
                       '${rules.urencriterium}',
                       estimate.yearOver
                           ? l.plTaxUrenBannerSuffixDone
@@ -91,7 +89,7 @@ class PlTaxScreen extends ConsumerWidget {
                     ),
                     -TaxService.gemengdeKostenDeductible(food, rules),
                     help: l.plTaxFoodLimitedHelp(
-                      _pct(rules.gemengdeKostenPct, 0),
+                      AppFormat.percent(rules.gemengdeKostenPct, 0),
                       AppFormat.cents(rules.gemengdeKostenDrempel),
                     ),
                   ),
@@ -197,7 +195,7 @@ class PlTaxScreen extends ConsumerWidget {
                     help: l.plTaxStakingsHelp,
                   ),
                 ValueRow.cents(
-                  l.plTaxMkb(_pct(rules.mkbWinstvrijstelling, 1)),
+                  l.plTaxMkb(AppFormat.percent(rules.mkbWinstvrijstelling, 1)),
                   -r.mkbWinstvrijstelling,
                   help: l.plTaxMkbHelp,
                 ),
@@ -236,7 +234,10 @@ class PlTaxScreen extends ConsumerWidget {
                 for (var i = 0; i < r.bracketTax.length; i++)
                   if (i == 0 || r.bracketTax[i] > 0)
                     ValueRow.cents(
-                      l.plTaxBracket(i + 1, _pct(rules.box1Brackets[i].rate)),
+                      l.plTaxBracket(
+                        i + 1,
+                        AppFormat.percent(rules.box1Brackets[i].rate),
+                      ),
                       r.bracketTax[i],
                     ),
                 ValueRow.cents(
@@ -251,7 +252,7 @@ class PlTaxScreen extends ConsumerWidget {
                 ),
                 ValueRow.cents(l.plTaxInkomsten, r.box1Tax, bold: true),
                 ValueRow.cents(
-                  l.plTaxZvw(_pct(rules.zvwRate)),
+                  l.plTaxZvw(AppFormat.percent(rules.zvwRate)),
                   r.zvwContribution,
                   help: l.plTaxZvwHelp,
                 ),
@@ -265,7 +266,7 @@ class PlTaxScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.field),
                 Text(
                   l.plTaxEffectiveRate(
-                    (r.effectiveTaxRate / 100).toStringAsFixed(1),
+                    AppFormat.percent(r.effectiveTaxRate / 10000, 1),
                   ),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
@@ -425,13 +426,15 @@ class _WholeNumberFieldState extends State<_WholeNumberField> {
   late final _controller = TextEditingController(text: '${widget.value}');
   late final _focus = FocusNode()..addListener(_commit);
 
-  int? get _parsed {
-    final v = int.tryParse(_controller.text.trim());
-    if (v == null || v < 0 || (widget.max != null && v > widget.max!)) {
-      return null;
-    }
-    return v;
-  }
+  String? _error(AppLocalizations l) => Validate.wholeNumber(
+    _controller.text,
+    l.inputWholeNumber(widget.max ?? 9999),
+    max: widget.max,
+  );
+
+  int? get _parsed => _error(AppLocalizations.of(context)!) == null
+      ? parseWholeNumber(_controller.text)
+      : null;
 
   void _commit() {
     if (!_focus.hasFocus && _parsed != null) widget.onChanged(_parsed!);
@@ -453,8 +456,7 @@ class _WholeNumberFieldState extends State<_WholeNumberField> {
       keyboardType: TextInputType.number,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: fieldDecoration(label: widget.label, help: widget.help),
-      validator: (_) =>
-          _parsed == null ? l.inputWholeNumber(widget.max ?? 9999) : null,
+      validator: (_) => _error(l),
     );
   }
 }

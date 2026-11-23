@@ -7,13 +7,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 import 'app.dart';
 import 'providers/providers.dart';
+import 'widgets/feedback.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   FlutterError.onError = FlutterError.presentError;
+  // An error no screen caught is logged and shown, never swallowed.
   PlatformDispatcher.instance.onError = (error, stack) {
     debugPrint('Unhandled error: $error\n$stack');
+    showUnhandledError(error);
     return true;
   };
 

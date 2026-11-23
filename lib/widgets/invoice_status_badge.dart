@@ -21,7 +21,9 @@ class InvoiceStatusBadge extends StatelessWidget {
       );
     }
     return ToneBadge(
-      label: invoice.status.label(l),
+      label: invoice.selfBilled && invoice.status == InvoiceStatus.sent
+          ? l.invoiceStatusSelfBilled
+          : invoice.status.label(l),
       color: switch (invoice.status) {
         InvoiceStatus.draft => Theme.of(context).colorScheme.outline,
         InvoiceStatus.sent => Theme.of(context).colorScheme.primary,

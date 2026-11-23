@@ -336,18 +336,37 @@ abstract final class AppFormat {
   /// A quantity such as 1 or 1,5 without trailing zeros.
   static String number(double n) => _decimal.format(n);
 
+  /// A rate as a percentage without the sign, e.g. 0.3575 as `35,75`. Copy
+  /// adds the `%`.
+  static String percent(double rate, [int digits = 2]) =>
+      (rate * 100).toStringAsFixed(digits).replaceAll('.', ',');
+
+  /// Hours with one decimal, e.g. `7,5`.
+  static String hours(double h) => h.toStringAsFixed(1).replaceAll('.', ',');
+
   /// Cents as an editable amount, e.g. `1234,50`.
   static String centsInput(int cents) =>
       (cents / 100).toStringAsFixed(2).replaceAll('.', ',');
 
-  /// Parses a Dutch-formatted amount such as `€ 1.234,50` to cents.
+  // `1.234,50`, `1234,5`, `-12` or `12.50`: dots group thousands in threes,
+  // except one dot followed by one or two digits, which is read as decimals.
+  static final _dutchAmount = RegExp(r'^-?(\d{1,3}(\.\d{3})+|\d+)(,\d{1,2})?$');
+  static final _dotDecimal = RegExp(r'^-?\d+\.\d{1,2}$');
+
+  /// Parses an amount such as `€ 1.234,50` to cents. Returns null for text
+  /// that is not an amount, including more than two decimals, so `12.5`
+  /// and `12,50` both mean twelve and a half and `1.2345` is rejected.
   static int? parseCents(String text) {
-    final cleaned = text
-        .replaceAll('€', '')
-        .replaceAll(RegExp(r'\s'), '')
-        .replaceAll('.', '')
-        .replaceAll(',', '.');
-    final v = double.tryParse(cleaned);
+    final s = text.replaceAll('€', '').replaceAll(RegExp(r'\s'), '');
+    final String normalized;
+    if (_dotDecimal.hasMatch(s)) {
+      normalized = s;
+    } else if (_dutchAmount.hasMatch(s)) {
+      normalized = s.replaceAll('.', '').replaceAll(',', '.');
+    } else {
+      return null;
+    }
+    final v = double.tryParse(normalized);
     return v == null ? null : (v * 100).round();
   }
 }
