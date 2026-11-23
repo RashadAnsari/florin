@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:florin/db/database.dart';
 import 'package:florin/services/csv_export_service.dart';
 import 'package:florin/services/vat_service.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart' as p;
 
 Invoice _invoice(
   int id,
@@ -115,5 +118,24 @@ void main() {
     );
     expect(rows, hasLength(2));
     expect(rows[1], ['BE', 'BE0123456789', 500.0, 150.0]);
+  });
+
+  test('each export gets its own folder named after the moment', () async {
+    final parent = await Directory.systemTemp.createTemp('florin_export');
+    addTearDown(() => parent.delete(recursive: true));
+    final at = DateTime(2026, 11, 23, 14, 30, 5);
+    final first = await CsvExportService.createExportFolder(
+      parent.path,
+      2026,
+      at,
+    );
+    final second = await CsvExportService.createExportFolder(
+      parent.path,
+      2026,
+      at,
+    );
+    expect(p.basename(first.path), 'florin_2026_export_2026-11-23_14-30-05');
+    expect(p.basename(second.path), 'florin_2026_export_2026-11-23_14-30-05_2');
+    expect(await first.exists(), isTrue);
   });
 }

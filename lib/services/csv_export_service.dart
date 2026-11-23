@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:drift/drift.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 
 import '../db/database.dart';
@@ -215,6 +216,24 @@ class CsvExportService {
     ['Totaal', _euro(t.totalTax)],
   ];
 
+  /// A new folder inside [parent] for one export, named after the year and
+  /// the moment of the export, so exports never mix with each other or with
+  /// what the folder held: `florin_2026_export_2026-11-23_14-30-05`.
+  static Future<Directory> createExportFolder(
+    String parent,
+    int year,
+    DateTime now,
+  ) async {
+    final name =
+        'florin_${year}_export_'
+        '${DateFormat('yyyy-MM-dd_HH-mm-ss').format(now)}';
+    var dir = Directory(p.join(parent, name));
+    for (var n = 2; await dir.exists(); n++) {
+      dir = Directory(p.join(parent, '${name}_$n'));
+    }
+    return dir.create(recursive: true);
+  }
+
   /// Writes the year's files. [quarters] holds the BTW returns for Q1 to Q4;
   /// every quarter gets its files, empty or not.
   Future<String?> exportYear(
@@ -224,10 +243,11 @@ class CsvExportService {
     required TaxResult? incomeTax,
   }) async {
     assert(quarters.length == 4);
-    final dir = await FilePicker.platform.getDirectoryPath(
+    final parent = await FilePicker.platform.getDirectoryPath(
       dialogTitle: dialogTitle,
     );
-    if (dir == null) return null;
+    if (parent == null) return null;
+    final dir = (await createExportFolder(parent, year, DateTime.now())).path;
 
     final invoices =
         await (db.select(db.invoices)

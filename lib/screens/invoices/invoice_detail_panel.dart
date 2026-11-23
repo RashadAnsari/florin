@@ -307,9 +307,9 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
   }
 
   void _setClient(int? id, List<Client> clients) {
+    final c = clients.where((x) => x.id == id).firstOrNull;
     setState(() {
       _clientId = id;
-      final c = _client(clients);
       // A new invoice starts with the treatment that fits the client.
       if (c != null && _isNew) {
         _treatment = c.suggestedVatTreatment(
@@ -317,6 +317,10 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
         );
       }
     });
+    // The option is hidden for other clients, so it may not stay ticked.
+    if (_isNew && _selfBilled && !(c?.isMerchantOfRecord ?? false)) {
+      _setSelfBilled(false);
+    }
   }
 
   Future<void> _exportPdf() async {
@@ -593,13 +597,17 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                     ? l.invoiceValidateTreatmentCountry
                     : _korError(t, l),
               ),
-              const SizedBox(height: AppSpacing.field),
-              HelpCheckbox(
-                value: _selfBilled,
-                onChanged: isCredit ? null : _setSelfBilled,
-                title: l.invoiceSelfBilled,
-                help: l.invoiceSelfBilledHelp,
-              ),
+              // Self-billing is a reseller's practice, so the option shows
+              // only there, or on an invoice that already uses it.
+              if (_selfBilled || (client?.isMerchantOfRecord ?? false)) ...[
+                const SizedBox(height: AppSpacing.field),
+                HelpCheckbox(
+                  value: _selfBilled,
+                  onChanged: isCredit ? null : _setSelfBilled,
+                  title: l.invoiceSelfBilled,
+                  help: l.invoiceSelfBilledHelp,
+                ),
+              ],
               const SizedBox(height: AppSpacing.section),
               Text(l.invoiceFieldLines, style: theme.textTheme.titleSmall),
               const SizedBox(height: AppSpacing.heading),

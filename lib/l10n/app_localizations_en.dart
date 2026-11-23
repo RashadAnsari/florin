@@ -101,7 +101,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String dashboardInvoiceCount(int count) {
-    return '$count invoice(s)';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count invoices',
+      one: '1 invoice',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1021,7 +1027,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String settingsExportDescription(int year) {
-    return 'Export all $year data to CSV files, with the VAT return of each quarter by rubriek in whole euros, the ICP list of each quarter and the estimated income tax of the year.';
+    return 'Export all $year data to CSV files, with the VAT return of each quarter by rubriek in whole euros, the ICP list of each quarter and the estimated income tax of the year. Florin puts them in a new folder named after the export date, inside the folder you choose.';
   }
 
   @override
@@ -2265,10 +2271,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'The end of the KOR comes after its start. Check both dates.';
 
   @override
-  String get settingsValidateKorEndNoStart =>
-      'Enter when the KOR started first: an end date only applies to a KOR you took part in.';
-
-  @override
   String get settingsKorClear => 'I do not take part in the KOR';
 
   @override
@@ -2358,4 +2360,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsTaxKor => 'KOR turnover limit';
+
+  @override
+  String get settingsKorSection => 'Kleineondernemersregeling (KOR)';
+
+  @override
+  String get settingsKorSectionHelp =>
+      'A BTW exemption for businesses with at most € 20.000 turnover in the Netherlands a year. You join and leave it with the Belastingdienst; enter its dates here so Florin follows it.';
 }

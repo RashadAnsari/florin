@@ -8,6 +8,7 @@ import '../theme/app_spacing.dart';
 import 'date_field.dart';
 import 'form_row.dart';
 import 'validators.dart';
+import 'value_row.dart';
 
 /// The values behind [BusinessProfileForm].
 class BusinessProfileFields {
@@ -144,7 +145,9 @@ class _BusinessProfileFormState extends State<BusinessProfileForm> {
           help: l.settingsStartersaftrekHelp,
           subtitle: l.firstLaunchStartersSubtitle,
         ),
-        const SizedBox(height: AppSpacing.field),
+        const SizedBox(height: AppSpacing.group),
+        SectionLabel(l.settingsKorSection, help: l.settingsKorSectionHelp),
+        const SizedBox(height: AppSpacing.heading),
         FormRow(
           children: [
             // The KOR may have started before the years Florin supports.
@@ -158,25 +161,27 @@ class _BusinessProfileFormState extends State<BusinessProfileForm> {
                   ? l.settingsValidateKorStart
                   : null,
             ),
-            DateField(
-              label: l.settingsKorEnd,
-              help: l.settingsKorEndHelp,
-              value: f.korEnd,
-              firstDate: DateTime(2000),
-              onChanged: (d) => setState(() => f.korEnd = d),
-              validator: (_) {
-                final end = f.korEnd;
-                if (end == null) return null;
-                if (f.korStart == null) return l.settingsValidateKorEndNoStart;
-                if (!end.isAfter(f.korStart!)) {
-                  return l.settingsValidateKorEndBeforeStart;
-                }
-                return end.day != 1 ? l.settingsValidateKorEndDay : null;
-              },
-            ),
+            if (f.korStart == null)
+              const SizedBox.shrink()
+            else
+              DateField(
+                label: l.settingsKorEnd,
+                help: l.settingsKorEndHelp,
+                value: f.korEnd,
+                firstDate: DateTime(2000),
+                onChanged: (d) => setState(() => f.korEnd = d),
+                validator: (_) {
+                  final end = f.korEnd;
+                  if (end == null) return null;
+                  if (!end.isAfter(f.korStart!)) {
+                    return l.settingsValidateKorEndBeforeStart;
+                  }
+                  return end.day != 1 ? l.settingsValidateKorEndDay : null;
+                },
+              ),
           ],
         ),
-        if (f.korStart != null || f.korEnd != null) ...[
+        if (f.korStart != null) ...[
           const SizedBox(height: AppSpacing.tight),
           Align(
             alignment: AlignmentDirectional.centerStart,
