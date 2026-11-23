@@ -36,103 +36,137 @@ void main() {
     }
   });
 
-  test(
-    'migration from v1 to v2 keeps the profile, clients and invoices',
-    () async {
-      const oldProfile = v1.BusinessProfilesData(
-        id: 1,
-        name: 'Studio',
-        vatNumber: 'NL000099998B57',
-        kvkNumber: '12345678',
-        address: 'Straat 2',
-        iban: 'NL91ABNA0417164300',
-        isStarter: 0,
-      );
-      const newProfile = v2.BusinessProfilesData(
-        id: 1,
-        name: 'Studio',
-        vatNumber: 'NL000099998B57',
-        kvkNumber: '12345678',
-        address: 'Straat 2',
-        iban: 'NL91ABNA0417164300',
-        isStarter: 0,
-      );
-      const oldClient = v1.ClientsData(
-        id: 1,
-        name: 'Voorbeeld BV',
-        country: 'NL',
-        address: 'Straat 1',
-        wetDbaRisk: 'low',
-        contractSigned: 1,
-        isActive: 1,
-      );
-      const newClient = v2.ClientsData(
-        id: 1,
-        name: 'Voorbeeld BV',
-        country: 'NL',
-        address: 'Straat 1',
-        wetDbaRisk: 'low',
-        contractSigned: 1,
-        isActive: 1,
-        isMerchantOfRecord: 0,
-      );
-      const oldInvoice = v1.InvoicesData(
-        id: 1,
-        invoiceNumber: 'F-2026-001',
-        invoiceType: 'invoice',
-        invoiceDate: 1767225600,
-        clientId: 1,
-        vatTreatment: 'standard',
-        sellerName: 'Studio',
-        sellerVatNumber: 'NL000099998B57',
-        sellerKvkNumber: '12345678',
-        sellerAddress: 'Straat 2',
-        sellerIban: 'NL91ABNA0417164300',
-        paymentTermDays: 14,
-        status: 'paid',
-        totalExclVat: 10000,
-        totalVat: 2100,
-        totalInclVat: 12100,
-      );
-      const newInvoice = v2.InvoicesData(
-        id: 1,
-        invoiceNumber: 'F-2026-001',
-        invoiceType: 'invoice',
-        invoiceDate: 1767225600,
-        clientId: 1,
-        vatTreatment: 'standard',
-        selfBilled: 0,
-        sellerName: 'Studio',
-        sellerVatNumber: 'NL000099998B57',
-        sellerKvkNumber: '12345678',
-        sellerAddress: 'Straat 2',
-        sellerIban: 'NL91ABNA0417164300',
-        paymentTermDays: 14,
-        status: 'paid',
-        totalExclVat: 10000,
-        totalVat: 2100,
-        totalInclVat: 12100,
-      );
+  test('migration from v1 to v2 keeps the profile, clients, invoices and '
+      'expenses', () async {
+    const oldExpense = v1.ExpensesData(
+      id: 1,
+      date: 1767225600,
+      supplier: 'Leverancier',
+      description: 'Software',
+      category: 'software',
+      receiptAttached: 1,
+      amountExclVat: 10000,
+      vatRate: 'high',
+      purchaseVat: 'domestic',
+      vatAmount: 2100,
+      totalInclVat: 12100,
+      businessUsePct: 1,
+      deductibleAmount: 10000,
+      vatReclaimable: 1,
+      vatToReclaim: 2100,
+    );
+    // The paper flag keeps its value under its new name.
+    const newExpense = v2.ExpensesData(
+      id: 1,
+      date: 1767225600,
+      supplier: 'Leverancier',
+      description: 'Software',
+      category: 'software',
+      paperOriginalKept: 1,
+      amountExclVat: 10000,
+      vatRate: 'high',
+      purchaseVat: 'domestic',
+      vatAmount: 2100,
+      totalInclVat: 12100,
+      businessUsePct: 1,
+      deductibleAmount: 10000,
+      vatReclaimable: 1,
+      vatToReclaim: 2100,
+    );
+    const oldProfile = v1.BusinessProfilesData(
+      id: 1,
+      name: 'Studio',
+      vatNumber: 'NL000099998B57',
+      kvkNumber: '12345678',
+      address: 'Straat 2',
+      iban: 'NL91ABNA0417164300',
+      isStarter: 0,
+    );
+    const newProfile = v2.BusinessProfilesData(
+      id: 1,
+      name: 'Studio',
+      vatNumber: 'NL000099998B57',
+      kvkNumber: '12345678',
+      address: 'Straat 2',
+      iban: 'NL91ABNA0417164300',
+      isStarter: 0,
+    );
+    const oldClient = v1.ClientsData(
+      id: 1,
+      name: 'Voorbeeld BV',
+      country: 'NL',
+      address: 'Straat 1',
+      wetDbaRisk: 'low',
+      contractSigned: 1,
+      isActive: 1,
+    );
+    const newClient = v2.ClientsData(
+      id: 1,
+      name: 'Voorbeeld BV',
+      country: 'NL',
+      address: 'Straat 1',
+      wetDbaRisk: 'low',
+      contractSigned: 1,
+      isActive: 1,
+      isMerchantOfRecord: 0,
+    );
+    const oldInvoice = v1.InvoicesData(
+      id: 1,
+      invoiceNumber: 'F-2026-001',
+      invoiceType: 'invoice',
+      invoiceDate: 1767225600,
+      clientId: 1,
+      vatTreatment: 'standard',
+      sellerName: 'Studio',
+      sellerVatNumber: 'NL000099998B57',
+      sellerKvkNumber: '12345678',
+      sellerAddress: 'Straat 2',
+      sellerIban: 'NL91ABNA0417164300',
+      paymentTermDays: 14,
+      status: 'paid',
+      totalExclVat: 10000,
+      totalVat: 2100,
+      totalInclVat: 12100,
+    );
+    const newInvoice = v2.InvoicesData(
+      id: 1,
+      invoiceNumber: 'F-2026-001',
+      invoiceType: 'invoice',
+      invoiceDate: 1767225600,
+      clientId: 1,
+      vatTreatment: 'standard',
+      selfBilled: 0,
+      sellerName: 'Studio',
+      sellerVatNumber: 'NL000099998B57',
+      sellerKvkNumber: '12345678',
+      sellerAddress: 'Straat 2',
+      sellerIban: 'NL91ABNA0417164300',
+      paymentTermDays: 14,
+      status: 'paid',
+      totalExclVat: 10000,
+      totalVat: 2100,
+      totalInclVat: 12100,
+    );
 
-      await verifier.testWithDataIntegrity(
-        oldVersion: 1,
-        newVersion: 2,
-        createOld: v1.DatabaseAtV1.new,
-        createNew: v2.DatabaseAtV2.new,
-        openTestedDatabase: AppDatabase.new,
-        createItems: (batch, oldDb) {
-          batch.insertAll(oldDb.businessProfiles, [oldProfile]);
-          batch.insertAll(oldDb.clients, [oldClient]);
-          batch.insertAll(oldDb.invoices, [oldInvoice]);
-        },
-        validateItems: (newDb) async {
-          expect(await newDb.select(newDb.businessProfiles).get(), [
-            newProfile,
-          ]);
-          expect(await newDb.select(newDb.clients).get(), [newClient]);
-          expect(await newDb.select(newDb.invoices).get(), [newInvoice]);
-        },
-      );
-    },
-  );
+    await verifier.testWithDataIntegrity(
+      oldVersion: 1,
+      newVersion: 2,
+      createOld: v1.DatabaseAtV1.new,
+      createNew: v2.DatabaseAtV2.new,
+      openTestedDatabase: AppDatabase.new,
+      createItems: (batch, oldDb) {
+        batch.insertAll(oldDb.businessProfiles, [oldProfile]);
+        batch.insertAll(oldDb.clients, [oldClient]);
+        batch.insertAll(oldDb.invoices, [oldInvoice]);
+        batch.insertAll(oldDb.expenses, [oldExpense]);
+      },
+      validateItems: (newDb) async {
+        expect(await newDb.select(newDb.businessProfiles).get(), [newProfile]);
+        expect(await newDb.select(newDb.clients).get(), [newClient]);
+        expect(await newDb.select(newDb.invoices).get(), [newInvoice]);
+        expect(await newDb.select(newDb.expenses).get(), [newExpense]);
+        expect(await newDb.select(newDb.receipts).get(), isEmpty);
+      },
+    );
+  });
 }

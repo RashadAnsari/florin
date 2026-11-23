@@ -160,6 +160,38 @@ Where Florin implements it: `KorService` and `KorStatus` in
   year's turnover before the first year Florin holds are not modelled; the
   user's start date stands for the Belastingdienst's confirmation.
 
+## Receipts
+
+> Alle facturen die u verstuurt of ontvangt, bewaart u in uw administratie. Dat is verplicht, want wij moeten uw administratie kunnen controleren. U bewaart de facturen in de vorm waarin u ze hebt verstuurd of ontvangen. Digitale facturen drukt u dus niet af, maar slaat u digitaal op. U bewaart de facturen 7 jaar. Facturen over onroerende zaken bewaart u 10 jaar. […] U mag facturen en bonnetjes ook scannen en digitaal bewaren. Er moet dan wel sprake zijn van een juiste en volledige weergave van het origineel. Belangrijk hierbij is dat de echtheidskenmerken ook worden opgeslagen. […] Als u aan de voorwaarden voldoet, hoeft u de originele facturen en bonnetjes niet te bewaren. Ook deze digitale administratie moet 7 of 10 jaar worden bewaard en binnen een redelijke termijn controleerbaar zijn.
+
+[Belastingdienst, Uw facturen bewaren](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/administratie_bijhouden/facturen_maken/uw_facturen_bewaren), read 2026-11-23
+
+> Voor het bepalen van de start van de bewaartermijn gebruikt u de actuele waarde van een gegeven. Zolang gegevens actueel blijven, horen zij bij de administratie. Vervalt de actualiteitswaarde? Dan begint de bewaartermijn.
+
+[Belastingdienst, Hoelang moet u gegevens bewaren?](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/ondernemen/administratie/hoelang-moet-u-gegevens-bewaren), read 2026-11-23
+
+Where Florin implements it: `ReceiptStore` and `ReceiptService`.
+
+- Receipt files are copied into `receipts/<year>/<uuid>.<extension>` next to
+  the database, byte for byte: never printed, converted or compressed, so a
+  file received digitally is kept in the form it was received. A SHA-256 of
+  each file is stored, and Settings checks that every file is still there
+  and unchanged.
+- Florin accepts PDF, JPEG, PNG, HEIC, TIFF and UBL e-invoices, recognised by
+  their content, up to 25 MB a file. Whether a scan or photo is a complete
+  and faithful copy, with its authenticity marks, is up to the user; the
+  help text says what the Belastingdienst asks.
+- The keep-until date is the end of the seventh year after the record's
+  year, the cautious reading of when the term starts. An asset's purchase
+  invoice stays current while the asset is in use, so it shows "while in
+  use, then 7 years" until the asset is sold. Florin never deletes a file
+  itself: a removed file goes to `receipts/.trash/` until the user empties
+  it. Property records (10 years) and OSS records (10 years) are not kept in
+  Florin.
+- When an invoice is issued, Florin stores its PDF at that moment and hands
+  out that file on every later export, so the invoice stays in the form it
+  was sent. A self-billed invoice keeps the customer's document instead.
+
 ## ICP-opgaaf
 
 > De opgaaf ICP over goederen mag u per maand, per kwartaal of per jaar doen. Als u per kwartaal opgaaf ICP wilt doen, mag u niet meer dan € 50.000 aan goederen leveren per kwartaal.

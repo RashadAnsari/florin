@@ -3707,13 +3707,14 @@ class Expenses extends Table with TableInfo<Expenses, ExpensesData> {
     requiredDuringInsert: true,
     $customConstraints: 'NOT NULL',
   );
-  late final GeneratedColumn<int> receiptAttached = GeneratedColumn<int>(
-    'receipt_attached',
+  late final GeneratedColumn<int> paperOriginalKept = GeneratedColumn<int>(
+    'paper_original_kept',
     aliasedName,
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT 0 CHECK (receipt_attached IN (0, 1))',
+    $customConstraints:
+        'NOT NULL DEFAULT 0 CHECK (paper_original_kept IN (0, 1))',
     defaultValue: const CustomExpression('0'),
   );
   late final GeneratedColumn<int> amountExclVat = GeneratedColumn<int>(
@@ -3828,7 +3829,7 @@ class Expenses extends Table with TableInfo<Expenses, ExpensesData> {
     supplier,
     description,
     category,
-    receiptAttached,
+    paperOriginalKept,
     amountExclVat,
     vatRate,
     purchaseVat,
@@ -3874,9 +3875,9 @@ class Expenses extends Table with TableInfo<Expenses, ExpensesData> {
         DriftSqlType.string,
         data['${effectivePrefix}category'],
       )!,
-      receiptAttached: attachedDatabase.typeMapping.read(
+      paperOriginalKept: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}receipt_attached'],
+        data['${effectivePrefix}paper_original_kept'],
       )!,
       amountExclVat: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -3948,7 +3949,7 @@ class ExpensesData extends DataClass implements Insertable<ExpensesData> {
   final String supplier;
   final String description;
   final String category;
-  final int receiptAttached;
+  final int paperOriginalKept;
   final int amountExclVat;
   final String vatRate;
   final String purchaseVat;
@@ -3968,7 +3969,7 @@ class ExpensesData extends DataClass implements Insertable<ExpensesData> {
     required this.supplier,
     required this.description,
     required this.category,
-    required this.receiptAttached,
+    required this.paperOriginalKept,
     required this.amountExclVat,
     required this.vatRate,
     required this.purchaseVat,
@@ -3991,7 +3992,7 @@ class ExpensesData extends DataClass implements Insertable<ExpensesData> {
     map['supplier'] = Variable<String>(supplier);
     map['description'] = Variable<String>(description);
     map['category'] = Variable<String>(category);
-    map['receipt_attached'] = Variable<int>(receiptAttached);
+    map['paper_original_kept'] = Variable<int>(paperOriginalKept);
     map['amount_excl_vat'] = Variable<int>(amountExclVat);
     map['vat_rate'] = Variable<String>(vatRate);
     map['purchase_vat'] = Variable<String>(purchaseVat);
@@ -4023,7 +4024,7 @@ class ExpensesData extends DataClass implements Insertable<ExpensesData> {
       supplier: Value(supplier),
       description: Value(description),
       category: Value(category),
-      receiptAttached: Value(receiptAttached),
+      paperOriginalKept: Value(paperOriginalKept),
       amountExclVat: Value(amountExclVat),
       vatRate: Value(vatRate),
       purchaseVat: Value(purchaseVat),
@@ -4059,7 +4060,7 @@ class ExpensesData extends DataClass implements Insertable<ExpensesData> {
       supplier: serializer.fromJson<String>(json['supplier']),
       description: serializer.fromJson<String>(json['description']),
       category: serializer.fromJson<String>(json['category']),
-      receiptAttached: serializer.fromJson<int>(json['receiptAttached']),
+      paperOriginalKept: serializer.fromJson<int>(json['paperOriginalKept']),
       amountExclVat: serializer.fromJson<int>(json['amountExclVat']),
       vatRate: serializer.fromJson<String>(json['vatRate']),
       purchaseVat: serializer.fromJson<String>(json['purchaseVat']),
@@ -4084,7 +4085,7 @@ class ExpensesData extends DataClass implements Insertable<ExpensesData> {
       'supplier': serializer.toJson<String>(supplier),
       'description': serializer.toJson<String>(description),
       'category': serializer.toJson<String>(category),
-      'receiptAttached': serializer.toJson<int>(receiptAttached),
+      'paperOriginalKept': serializer.toJson<int>(paperOriginalKept),
       'amountExclVat': serializer.toJson<int>(amountExclVat),
       'vatRate': serializer.toJson<String>(vatRate),
       'purchaseVat': serializer.toJson<String>(purchaseVat),
@@ -4107,7 +4108,7 @@ class ExpensesData extends DataClass implements Insertable<ExpensesData> {
     String? supplier,
     String? description,
     String? category,
-    int? receiptAttached,
+    int? paperOriginalKept,
     int? amountExclVat,
     String? vatRate,
     String? purchaseVat,
@@ -4127,7 +4128,7 @@ class ExpensesData extends DataClass implements Insertable<ExpensesData> {
     supplier: supplier ?? this.supplier,
     description: description ?? this.description,
     category: category ?? this.category,
-    receiptAttached: receiptAttached ?? this.receiptAttached,
+    paperOriginalKept: paperOriginalKept ?? this.paperOriginalKept,
     amountExclVat: amountExclVat ?? this.amountExclVat,
     vatRate: vatRate ?? this.vatRate,
     purchaseVat: purchaseVat ?? this.purchaseVat,
@@ -4153,9 +4154,9 @@ class ExpensesData extends DataClass implements Insertable<ExpensesData> {
           ? data.description.value
           : this.description,
       category: data.category.present ? data.category.value : this.category,
-      receiptAttached: data.receiptAttached.present
-          ? data.receiptAttached.value
-          : this.receiptAttached,
+      paperOriginalKept: data.paperOriginalKept.present
+          ? data.paperOriginalKept.value
+          : this.paperOriginalKept,
       amountExclVat: data.amountExclVat.present
           ? data.amountExclVat.value
           : this.amountExclVat,
@@ -4198,7 +4199,7 @@ class ExpensesData extends DataClass implements Insertable<ExpensesData> {
           ..write('supplier: $supplier, ')
           ..write('description: $description, ')
           ..write('category: $category, ')
-          ..write('receiptAttached: $receiptAttached, ')
+          ..write('paperOriginalKept: $paperOriginalKept, ')
           ..write('amountExclVat: $amountExclVat, ')
           ..write('vatRate: $vatRate, ')
           ..write('purchaseVat: $purchaseVat, ')
@@ -4223,7 +4224,7 @@ class ExpensesData extends DataClass implements Insertable<ExpensesData> {
     supplier,
     description,
     category,
-    receiptAttached,
+    paperOriginalKept,
     amountExclVat,
     vatRate,
     purchaseVat,
@@ -4247,7 +4248,7 @@ class ExpensesData extends DataClass implements Insertable<ExpensesData> {
           other.supplier == this.supplier &&
           other.description == this.description &&
           other.category == this.category &&
-          other.receiptAttached == this.receiptAttached &&
+          other.paperOriginalKept == this.paperOriginalKept &&
           other.amountExclVat == this.amountExclVat &&
           other.vatRate == this.vatRate &&
           other.purchaseVat == this.purchaseVat &&
@@ -4269,7 +4270,7 @@ class ExpensesCompanion extends UpdateCompanion<ExpensesData> {
   final Value<String> supplier;
   final Value<String> description;
   final Value<String> category;
-  final Value<int> receiptAttached;
+  final Value<int> paperOriginalKept;
   final Value<int> amountExclVat;
   final Value<String> vatRate;
   final Value<String> purchaseVat;
@@ -4289,7 +4290,7 @@ class ExpensesCompanion extends UpdateCompanion<ExpensesData> {
     this.supplier = const Value.absent(),
     this.description = const Value.absent(),
     this.category = const Value.absent(),
-    this.receiptAttached = const Value.absent(),
+    this.paperOriginalKept = const Value.absent(),
     this.amountExclVat = const Value.absent(),
     this.vatRate = const Value.absent(),
     this.purchaseVat = const Value.absent(),
@@ -4310,7 +4311,7 @@ class ExpensesCompanion extends UpdateCompanion<ExpensesData> {
     required String supplier,
     required String description,
     required String category,
-    this.receiptAttached = const Value.absent(),
+    this.paperOriginalKept = const Value.absent(),
     required int amountExclVat,
     required String vatRate,
     this.purchaseVat = const Value.absent(),
@@ -4342,7 +4343,7 @@ class ExpensesCompanion extends UpdateCompanion<ExpensesData> {
     Expression<String>? supplier,
     Expression<String>? description,
     Expression<String>? category,
-    Expression<int>? receiptAttached,
+    Expression<int>? paperOriginalKept,
     Expression<int>? amountExclVat,
     Expression<String>? vatRate,
     Expression<String>? purchaseVat,
@@ -4363,7 +4364,7 @@ class ExpensesCompanion extends UpdateCompanion<ExpensesData> {
       if (supplier != null) 'supplier': supplier,
       if (description != null) 'description': description,
       if (category != null) 'category': category,
-      if (receiptAttached != null) 'receipt_attached': receiptAttached,
+      if (paperOriginalKept != null) 'paper_original_kept': paperOriginalKept,
       if (amountExclVat != null) 'amount_excl_vat': amountExclVat,
       if (vatRate != null) 'vat_rate': vatRate,
       if (purchaseVat != null) 'purchase_vat': purchaseVat,
@@ -4386,7 +4387,7 @@ class ExpensesCompanion extends UpdateCompanion<ExpensesData> {
     Value<String>? supplier,
     Value<String>? description,
     Value<String>? category,
-    Value<int>? receiptAttached,
+    Value<int>? paperOriginalKept,
     Value<int>? amountExclVat,
     Value<String>? vatRate,
     Value<String>? purchaseVat,
@@ -4407,7 +4408,7 @@ class ExpensesCompanion extends UpdateCompanion<ExpensesData> {
       supplier: supplier ?? this.supplier,
       description: description ?? this.description,
       category: category ?? this.category,
-      receiptAttached: receiptAttached ?? this.receiptAttached,
+      paperOriginalKept: paperOriginalKept ?? this.paperOriginalKept,
       amountExclVat: amountExclVat ?? this.amountExclVat,
       vatRate: vatRate ?? this.vatRate,
       purchaseVat: purchaseVat ?? this.purchaseVat,
@@ -4442,8 +4443,8 @@ class ExpensesCompanion extends UpdateCompanion<ExpensesData> {
     if (category.present) {
       map['category'] = Variable<String>(category.value);
     }
-    if (receiptAttached.present) {
-      map['receipt_attached'] = Variable<int>(receiptAttached.value);
+    if (paperOriginalKept.present) {
+      map['paper_original_kept'] = Variable<int>(paperOriginalKept.value);
     }
     if (amountExclVat.present) {
       map['amount_excl_vat'] = Variable<int>(amountExclVat.value);
@@ -4495,7 +4496,7 @@ class ExpensesCompanion extends UpdateCompanion<ExpensesData> {
           ..write('supplier: $supplier, ')
           ..write('description: $description, ')
           ..write('category: $category, ')
-          ..write('receiptAttached: $receiptAttached, ')
+          ..write('paperOriginalKept: $paperOriginalKept, ')
           ..write('amountExclVat: $amountExclVat, ')
           ..write('vatRate: $vatRate, ')
           ..write('purchaseVat: $purchaseVat, ')
@@ -6708,6 +6709,517 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInputsData> {
   }
 }
 
+class Receipts extends Table with TableInfo<Receipts, ReceiptsData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  Receipts(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<int> expenseId = GeneratedColumn<int>(
+    'expense_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL REFERENCES expenses(id)ON DELETE RESTRICT',
+  );
+  late final GeneratedColumn<int> assetId = GeneratedColumn<int>(
+    'asset_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL REFERENCES fixed_assets(id)ON DELETE RESTRICT',
+  );
+  late final GeneratedColumn<int> invoiceId = GeneratedColumn<int>(
+    'invoice_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL REFERENCES invoices(id)ON DELETE RESTRICT',
+  );
+  late final GeneratedColumn<int> year = GeneratedColumn<int>(
+    'year',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> originalName = GeneratedColumn<String>(
+    'original_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<int> sizeBytes = GeneratedColumn<int>(
+    'size_bytes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> sha256 = GeneratedColumn<String>(
+    'sha256',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<int> addedAt = GeneratedColumn<int>(
+    'added_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    expenseId,
+    assetId,
+    invoiceId,
+    year,
+    type,
+    originalName,
+    sizeBytes,
+    sha256,
+    addedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipts';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ReceiptsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReceiptsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      expenseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}expense_id'],
+      ),
+      assetId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}asset_id'],
+      ),
+      invoiceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}invoice_id'],
+      ),
+      year: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year'],
+      )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
+      originalName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}original_name'],
+      )!,
+      sizeBytes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}size_bytes'],
+      )!,
+      sha256: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sha256'],
+      )!,
+      addedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}added_at'],
+      )!,
+    );
+  }
+
+  @override
+  Receipts createAlias(String alias) {
+    return Receipts(attachedDatabase, alias);
+  }
+
+  @override
+  List<String> get customConstraints => const [
+    'PRIMARY KEY(id)',
+    'CHECK((expense_id IS NOT NULL)+(asset_id IS NOT NULL)+(invoice_id IS NOT NULL)= 1)',
+  ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class ReceiptsData extends DataClass implements Insertable<ReceiptsData> {
+  final String id;
+  final int? expenseId;
+  final int? assetId;
+  final int? invoiceId;
+  final int year;
+  final String type;
+  final String originalName;
+  final int sizeBytes;
+  final String sha256;
+  final int addedAt;
+  const ReceiptsData({
+    required this.id,
+    this.expenseId,
+    this.assetId,
+    this.invoiceId,
+    required this.year,
+    required this.type,
+    required this.originalName,
+    required this.sizeBytes,
+    required this.sha256,
+    required this.addedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    if (!nullToAbsent || expenseId != null) {
+      map['expense_id'] = Variable<int>(expenseId);
+    }
+    if (!nullToAbsent || assetId != null) {
+      map['asset_id'] = Variable<int>(assetId);
+    }
+    if (!nullToAbsent || invoiceId != null) {
+      map['invoice_id'] = Variable<int>(invoiceId);
+    }
+    map['year'] = Variable<int>(year);
+    map['type'] = Variable<String>(type);
+    map['original_name'] = Variable<String>(originalName);
+    map['size_bytes'] = Variable<int>(sizeBytes);
+    map['sha256'] = Variable<String>(sha256);
+    map['added_at'] = Variable<int>(addedAt);
+    return map;
+  }
+
+  ReceiptsCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptsCompanion(
+      id: Value(id),
+      expenseId: expenseId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(expenseId),
+      assetId: assetId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(assetId),
+      invoiceId: invoiceId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(invoiceId),
+      year: Value(year),
+      type: Value(type),
+      originalName: Value(originalName),
+      sizeBytes: Value(sizeBytes),
+      sha256: Value(sha256),
+      addedAt: Value(addedAt),
+    );
+  }
+
+  factory ReceiptsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReceiptsData(
+      id: serializer.fromJson<String>(json['id']),
+      expenseId: serializer.fromJson<int?>(json['expenseId']),
+      assetId: serializer.fromJson<int?>(json['assetId']),
+      invoiceId: serializer.fromJson<int?>(json['invoiceId']),
+      year: serializer.fromJson<int>(json['year']),
+      type: serializer.fromJson<String>(json['type']),
+      originalName: serializer.fromJson<String>(json['originalName']),
+      sizeBytes: serializer.fromJson<int>(json['sizeBytes']),
+      sha256: serializer.fromJson<String>(json['sha256']),
+      addedAt: serializer.fromJson<int>(json['addedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'expenseId': serializer.toJson<int?>(expenseId),
+      'assetId': serializer.toJson<int?>(assetId),
+      'invoiceId': serializer.toJson<int?>(invoiceId),
+      'year': serializer.toJson<int>(year),
+      'type': serializer.toJson<String>(type),
+      'originalName': serializer.toJson<String>(originalName),
+      'sizeBytes': serializer.toJson<int>(sizeBytes),
+      'sha256': serializer.toJson<String>(sha256),
+      'addedAt': serializer.toJson<int>(addedAt),
+    };
+  }
+
+  ReceiptsData copyWith({
+    String? id,
+    Value<int?> expenseId = const Value.absent(),
+    Value<int?> assetId = const Value.absent(),
+    Value<int?> invoiceId = const Value.absent(),
+    int? year,
+    String? type,
+    String? originalName,
+    int? sizeBytes,
+    String? sha256,
+    int? addedAt,
+  }) => ReceiptsData(
+    id: id ?? this.id,
+    expenseId: expenseId.present ? expenseId.value : this.expenseId,
+    assetId: assetId.present ? assetId.value : this.assetId,
+    invoiceId: invoiceId.present ? invoiceId.value : this.invoiceId,
+    year: year ?? this.year,
+    type: type ?? this.type,
+    originalName: originalName ?? this.originalName,
+    sizeBytes: sizeBytes ?? this.sizeBytes,
+    sha256: sha256 ?? this.sha256,
+    addedAt: addedAt ?? this.addedAt,
+  );
+  ReceiptsData copyWithCompanion(ReceiptsCompanion data) {
+    return ReceiptsData(
+      id: data.id.present ? data.id.value : this.id,
+      expenseId: data.expenseId.present ? data.expenseId.value : this.expenseId,
+      assetId: data.assetId.present ? data.assetId.value : this.assetId,
+      invoiceId: data.invoiceId.present ? data.invoiceId.value : this.invoiceId,
+      year: data.year.present ? data.year.value : this.year,
+      type: data.type.present ? data.type.value : this.type,
+      originalName: data.originalName.present
+          ? data.originalName.value
+          : this.originalName,
+      sizeBytes: data.sizeBytes.present ? data.sizeBytes.value : this.sizeBytes,
+      sha256: data.sha256.present ? data.sha256.value : this.sha256,
+      addedAt: data.addedAt.present ? data.addedAt.value : this.addedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptsData(')
+          ..write('id: $id, ')
+          ..write('expenseId: $expenseId, ')
+          ..write('assetId: $assetId, ')
+          ..write('invoiceId: $invoiceId, ')
+          ..write('year: $year, ')
+          ..write('type: $type, ')
+          ..write('originalName: $originalName, ')
+          ..write('sizeBytes: $sizeBytes, ')
+          ..write('sha256: $sha256, ')
+          ..write('addedAt: $addedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    expenseId,
+    assetId,
+    invoiceId,
+    year,
+    type,
+    originalName,
+    sizeBytes,
+    sha256,
+    addedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReceiptsData &&
+          other.id == this.id &&
+          other.expenseId == this.expenseId &&
+          other.assetId == this.assetId &&
+          other.invoiceId == this.invoiceId &&
+          other.year == this.year &&
+          other.type == this.type &&
+          other.originalName == this.originalName &&
+          other.sizeBytes == this.sizeBytes &&
+          other.sha256 == this.sha256 &&
+          other.addedAt == this.addedAt);
+}
+
+class ReceiptsCompanion extends UpdateCompanion<ReceiptsData> {
+  final Value<String> id;
+  final Value<int?> expenseId;
+  final Value<int?> assetId;
+  final Value<int?> invoiceId;
+  final Value<int> year;
+  final Value<String> type;
+  final Value<String> originalName;
+  final Value<int> sizeBytes;
+  final Value<String> sha256;
+  final Value<int> addedAt;
+  final Value<int> rowid;
+  const ReceiptsCompanion({
+    this.id = const Value.absent(),
+    this.expenseId = const Value.absent(),
+    this.assetId = const Value.absent(),
+    this.invoiceId = const Value.absent(),
+    this.year = const Value.absent(),
+    this.type = const Value.absent(),
+    this.originalName = const Value.absent(),
+    this.sizeBytes = const Value.absent(),
+    this.sha256 = const Value.absent(),
+    this.addedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptsCompanion.insert({
+    required String id,
+    this.expenseId = const Value.absent(),
+    this.assetId = const Value.absent(),
+    this.invoiceId = const Value.absent(),
+    required int year,
+    required String type,
+    required String originalName,
+    required int sizeBytes,
+    required String sha256,
+    required int addedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       year = Value(year),
+       type = Value(type),
+       originalName = Value(originalName),
+       sizeBytes = Value(sizeBytes),
+       sha256 = Value(sha256),
+       addedAt = Value(addedAt);
+  static Insertable<ReceiptsData> custom({
+    Expression<String>? id,
+    Expression<int>? expenseId,
+    Expression<int>? assetId,
+    Expression<int>? invoiceId,
+    Expression<int>? year,
+    Expression<String>? type,
+    Expression<String>? originalName,
+    Expression<int>? sizeBytes,
+    Expression<String>? sha256,
+    Expression<int>? addedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (expenseId != null) 'expense_id': expenseId,
+      if (assetId != null) 'asset_id': assetId,
+      if (invoiceId != null) 'invoice_id': invoiceId,
+      if (year != null) 'year': year,
+      if (type != null) 'type': type,
+      if (originalName != null) 'original_name': originalName,
+      if (sizeBytes != null) 'size_bytes': sizeBytes,
+      if (sha256 != null) 'sha256': sha256,
+      if (addedAt != null) 'added_at': addedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptsCompanion copyWith({
+    Value<String>? id,
+    Value<int?>? expenseId,
+    Value<int?>? assetId,
+    Value<int?>? invoiceId,
+    Value<int>? year,
+    Value<String>? type,
+    Value<String>? originalName,
+    Value<int>? sizeBytes,
+    Value<String>? sha256,
+    Value<int>? addedAt,
+    Value<int>? rowid,
+  }) {
+    return ReceiptsCompanion(
+      id: id ?? this.id,
+      expenseId: expenseId ?? this.expenseId,
+      assetId: assetId ?? this.assetId,
+      invoiceId: invoiceId ?? this.invoiceId,
+      year: year ?? this.year,
+      type: type ?? this.type,
+      originalName: originalName ?? this.originalName,
+      sizeBytes: sizeBytes ?? this.sizeBytes,
+      sha256: sha256 ?? this.sha256,
+      addedAt: addedAt ?? this.addedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (expenseId.present) {
+      map['expense_id'] = Variable<int>(expenseId.value);
+    }
+    if (assetId.present) {
+      map['asset_id'] = Variable<int>(assetId.value);
+    }
+    if (invoiceId.present) {
+      map['invoice_id'] = Variable<int>(invoiceId.value);
+    }
+    if (year.present) {
+      map['year'] = Variable<int>(year.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (originalName.present) {
+      map['original_name'] = Variable<String>(originalName.value);
+    }
+    if (sizeBytes.present) {
+      map['size_bytes'] = Variable<int>(sizeBytes.value);
+    }
+    if (sha256.present) {
+      map['sha256'] = Variable<String>(sha256.value);
+    }
+    if (addedAt.present) {
+      map['added_at'] = Variable<int>(addedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptsCompanion(')
+          ..write('id: $id, ')
+          ..write('expenseId: $expenseId, ')
+          ..write('assetId: $assetId, ')
+          ..write('invoiceId: $invoiceId, ')
+          ..write('year: $year, ')
+          ..write('type: $type, ')
+          ..write('originalName: $originalName, ')
+          ..write('sizeBytes: $sizeBytes, ')
+          ..write('sha256: $sha256, ')
+          ..write('addedAt: $addedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class DatabaseAtV2 extends GeneratedDatabase {
   DatabaseAtV2(QueryExecutor e) : super(e);
   late final BusinessProfiles businessProfiles = BusinessProfiles(this);
@@ -6721,6 +7233,7 @@ class DatabaseAtV2 extends GeneratedDatabase {
   late final PensionEntries pensionEntries = PensionEntries(this);
   late final VatReturns vatReturns = VatReturns(this);
   late final TaxYearInputs taxYearInputs = TaxYearInputs(this);
+  late final Receipts receipts = Receipts(this);
   late final Index invoicesInvoiceDate = Index(
     'invoices_invoice_date',
     'CREATE INDEX invoices_invoice_date ON invoices (invoice_date)',
@@ -6753,6 +7266,7 @@ class DatabaseAtV2 extends GeneratedDatabase {
     pensionEntries,
     vatReturns,
     taxYearInputs,
+    receipts,
     invoicesInvoiceDate,
     expensesDate,
     hourEntriesDate,

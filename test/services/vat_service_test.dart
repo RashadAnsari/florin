@@ -96,7 +96,7 @@ void main() {
       supplier: 's',
       description: 'd',
       category: ExpenseCategory.software,
-      receiptAttached: true,
+      paperOriginalKept: true,
       amountExclVat: 10000,
       vatRate: VatRate.high,
       purchaseVat: p,

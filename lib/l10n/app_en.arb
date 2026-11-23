@@ -194,7 +194,6 @@
   "expensesDeductible": "Deductible",
   "expensesReclaimVat": "Reclaim VAT",
   "expensesVatBack": "VAT back",
-  "expensesReceiptAttached": "Receipt attached",
   "expensesDeleteTitle": "Delete expense",
   "expensesDeleteMessage": "Are you sure you want to delete this expense?",
   "expenseCatOffice": "Office & supplies",
@@ -498,7 +497,7 @@
       }
     }
   },
-  "settingsMoveDatabase": "Copy database to another folder",
+  "settingsMoveDatabase": "Copy database and receipts to another folder",
   "settingsExportSection": "Export",
   "settingsExportDescription": "Export all {year} data to CSV files, with the VAT return of each quarter by rubriek in whole euros, the ICP list of each quarter and the estimated income tax of the year. Florin puts them in a new folder named after the export date, inside the folder you choose.",
   "@settingsExportDescription": {
@@ -698,7 +697,6 @@
   "expensesFieldPaymentRefHelp": "The reference of the payment or invoice, to find it back later.",
   "expensesFieldSupplierHelp": "The business you bought from, as on the receipt.",
   "expensesFieldVatRateHelp": "The VAT rate on the receipt: 21%, 9%, 0% or exempt.",
-  "expensesReceiptAttachedHelp": "Tick when you have kept the receipt or invoice. You need it to reclaim VAT and to prove the cost.",
   "expensesReclaimVatHelp": "Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, or for private use.",
   "hoursFieldClientProjectHelp": "The client or project the hours were for.",
   "hoursFieldDateHelp": "The day you worked.",
@@ -1103,5 +1101,141 @@
   "invoiceTotal": "Total",
   "settingsTaxKor": "KOR turnover limit",
   "settingsKorSection": "Kleineondernemersregeling (KOR)",
-  "settingsKorSectionHelp": "A BTW exemption for businesses with at most € 20.000 turnover in the Netherlands a year. You join and leave it with the Belastingdienst; enter its dates here so Florin follows it."
+  "settingsKorSectionHelp": "A BTW exemption for businesses with at most € 20.000 turnover in the Netherlands a year. You join and leave it with the Belastingdienst; enter its dates here so Florin follows it.",
+  "receiptTypeEInvoice": "E-invoice (UBL)",
+  "receiptsTitle": "Receipts",
+  "receiptsHelp": "The receipt or invoice for this expense, as a PDF, photo or scan. Florin copies it into the receipts folder next to your database and leaves your file as it is. The Belastingdienst asks you to keep receipts and invoices for 7 years in the form you received them; a scan or photo must show the whole document, front and back.",
+  "receiptsAssetTitle": "Purchase invoice and receipts",
+  "receiptsAssetHelp": "The purchase invoice of this asset and any other proof, as a PDF, photo or scan. It belongs in your records while the asset is in use, and 7 years after that.",
+  "receiptsInvoiceTitle": "Documents",
+  "receiptsInvoiceHelp": "The PDF of this invoice exactly as Florin made it when you issued it, kept as sent. For an invoice your customer issued, add their document here.",
+  "receiptsNone": "No files yet. Drop PDFs, photos or scans here, or add them.",
+  "receiptsAdd": "Add files",
+  "receiptsPickDialog": "Choose receipts",
+  "receiptsOpen": "Open",
+  "receiptsRemove": "Move to the trash",
+  "receiptsUnstage": "Do not add",
+  "receiptsRemoved": "Moved to the receipts trash",
+  "receiptsUndo": "Undo",
+  "receiptsStaged": "Stored when you save",
+  "receiptsAdded": "added {date}",
+  "receiptsMissing": "The file is missing from the receipts folder. Restore it from a backup.",
+  "receiptsKeepUntil": "Keep until",
+  "receiptsKeepUntilHelp": "The Belastingdienst asks you to keep invoices and receipts for 7 years. Florin counts them from the end of the year they belong to and never deletes them itself.",
+  "receiptsKeepWhileInUse": "While in use, then 7 years",
+  "receiptsRejectedEmpty": "{name} is empty. Choose the file again.",
+  "receiptsRejectedTooLarge": "{name} is larger than {max}. Save the scan at a lower resolution, keeping every page readable, and add it again.",
+  "receiptsRejectedType": "{name} is not a PDF, JPEG, PNG, HEIC, TIFF or UBL e-invoice. Save or print it as PDF and add it again.",
+  "receiptsDuplicate": "{name} is already stored with another record. It was added here too.",
+  "receiptsOpenFailed": "Could not open {name}. Open it from the receipts folder instead.",
+  "@receiptsAdded": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@receiptsRejectedEmpty": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@receiptsRejectedTooLarge": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "@receiptsRejectedType": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@receiptsDuplicate": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@receiptsOpenFailed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "expensesPaperOriginalKept": "Paper original kept",
+  "expensesPaperOriginalKeptHelp": "Tick when you keep the paper receipt or invoice yourself, for example a till receipt you have not scanned. You need proof to reclaim VAT and to show the cost; a file added above counts too.",
+  "expensesHasFiles": "Receipt stored in Florin",
+  "expensesPaperOnly": "Paper original kept",
+  "receiptsNotStored": "No PDF is stored for this invoice. Florin stores it the first time you export it.",
+  "settingsReceiptsSection": "Receipts",
+  "settingsReceiptsSectionHelp": "Florin keeps the receipt files of expenses and assets, and the PDFs of issued invoices, in a receipts folder next to the database. It moves with the database and belongs in the same backup.",
+  "settingsReceiptsLocation": "Folder: {path}",
+  "settingsReceiptsCount": "{count, plural, =1{1 file} other{{count} files}}, {size}",
+  "settingsReceiptsShowFolder": "Show folder",
+  "settingsReceiptsCheck": "Check files",
+  "settingsReceiptsChecking": "Checking",
+  "settingsReceiptsAllOk": "{count, plural, =0{No files to check.} =1{The file is present and unchanged.} other{All {count} files are present and unchanged.}}",
+  "settingsReceiptsProblems": "{count, plural, =1{1 file needs attention. Restore it from a backup:} other{{count} files need attention. Restore them from a backup:}}",
+  "settingsReceiptMissing": "missing",
+  "settingsReceiptChanged": "changed since it was added",
+  "settingsEmptyTrash": "Empty trash ({count})",
+  "settingsEmptyTrashTitle": "Empty the receipts trash",
+  "settingsEmptyTrashMessage": "{count, plural, =1{1 removed file is deleted for good.} other{{count} removed files are deleted for good.}} Keep receipts for 7 years: only empty the trash when you are sure none of them is still needed.",
+  "settingsReceiptsOpenFailed": "The folder could not be opened",
+  "@settingsReceiptsLocation": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@settingsReceiptsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "@settingsReceiptsAllOk": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@settingsReceiptsProblems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@settingsEmptyTrash": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@settingsEmptyTrashMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

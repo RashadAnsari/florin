@@ -4,7 +4,9 @@
 //
 // Every name, number and address here is made up.
 
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
@@ -19,7 +21,10 @@ import 'package:florin/db/daos/pension_dao.dart';
 import 'package:florin/db/daos/tax_year_inputs_dao.dart';
 import 'package:florin/db/daos/vat_return_dao.dart';
 import 'package:florin/db/database.dart';
+import 'package:florin/db/daos/receipt_dao.dart';
 import 'package:florin/services/domain.dart';
+import 'package:florin/services/receipt_service.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 const _year = 2026;
 
@@ -33,14 +38,18 @@ Future<void> main(List<String> args) async {
     ..createSync(recursive: true);
   final file = File('${dir.path}/florin.db');
   if (file.existsSync()) file.deleteSync();
+  final receipts = Directory('${dir.path}/${ReceiptStore.folderName}');
+  if (receipts.existsSync()) receipts.deleteSync(recursive: true);
   final db = AppDatabase(NativeDatabase(file));
-  await fillDemo(db);
+  await fillDemo(db, folder: dir.path);
   await db.close();
   stdout.writeln('Demo database written to ${file.path}');
 }
 
-/// Fills [db] with the fictional business.
-Future<void> fillDemo(AppDatabase db) async {
+/// Fills [db] with the fictional business. Receipt files go into the
+/// receipts folder inside [folder], next to the database.
+Future<void> fillDemo(AppDatabase db, {required String folder}) async {
+  final receipts = ReceiptService(ReceiptDao(db), ReceiptStore(folder));
   await BusinessProfileDao(db).save(
     BusinessProfilesCompanion(
       id: const Value(1),
@@ -297,6 +306,22 @@ Future<void> fillDemo(AppDatabase db) async {
       unit: 'licentie',
       supplyDate: DateTime(_year, month + 1, 0),
     );
+    // The reseller's own document is the invoice.
+    final number = 'VR-$_year-${month.toString().padLeft(2, '0')}';
+    final id = (await (db.select(
+      db.invoices,
+    )..where((i) => i.invoiceNumber.equals(number))).getSingle()).id;
+    await receipts.attachBytes(
+      ReceiptOwner.invoice(id),
+      await _demoPdf('Voorbeeld Reseller Ltd', [
+        'Self-billed invoice $number',
+        'Template sales ${month.toString().padLeft(2, '0')}-$_year: '
+            '${licences[month - 1]} x EUR 29,00',
+        'Factuur uitgereikt door afnemer',
+      ]),
+      'statement-$number.pdf',
+      _year,
+    );
   }
   await invoice(
     clientId: dutch,
@@ -378,12 +403,22 @@ Future<void> fillDemo(AppDatabase db) async {
     ),
   );
 
-  await asset(
+  final macbook = await asset(
     'MacBook Pro',
     320000,
     DateTime(_year, 2, 1),
     residual: 20000,
     kia: true,
+  );
+  await receipts.attachBytes(
+    ReceiptOwner.asset(macbook),
+    await _demoPdf('Computerwinkel Voorbeeld', [
+      'Factuur 2026-0117, 01-02-2026',
+      'MacBook Pro: EUR 3.200,00 excl. btw',
+      'Btw 21%: EUR 672,00',
+    ]),
+    'factuur-macbook.pdf',
+    _year,
   );
   await asset('Bureau en stoel', 180000, DateTime(_year, 1, 15), kia: true);
   await asset(
@@ -495,7 +530,9 @@ Future<void> fillDemo(AppDatabase db) async {
     PurchaseVat purchaseVat = PurchaseVat.domestic,
     double use = 1.0,
     bool receipt = true,
-  }) {
+    List<(String, Uint8List)> files = const [],
+    bool? paper,
+  }) async {
     final vat = rate.vatOn(amount);
     // Under the KOR no BTW is reclaimed.
     final reclaimed = reclaim && !date.isBefore(_korEndedOn);
@@ -506,7 +543,9 @@ Future<void> fillDemo(AppDatabase db) async {
             supplier: Value(supplier),
             description: Value(description),
             category: Value(category),
-            receiptAttached: Value(receipt),
+            // A digital receipt has no paper original, unless it is a photo
+            // of one.
+            paperOriginalKept: Value(paper ?? (receipt && files.isEmpty)),
             amountExclVat: Value(amount),
             vatRate: Value(rate),
             purchaseVat: Value(purchaseVat),
@@ -536,10 +575,20 @@ Future<void> fillDemo(AppDatabase db) async {
             paymentReference: Value('REF-${date.month}-${amount % 997}'),
           ),
         )
-        .then((_) {});
+        .then((id) async {
+          for (final (name, bytes) in files) {
+            await receipts.attachBytes(
+              ReceiptOwner.expense(id),
+              bytes,
+              name,
+              date.year,
+            );
+          }
+        });
   }
 
   for (var month = 1; month <= 11; month++) {
+    final m = month.toString().padLeft(2, '0');
     await expense(
       DateTime(_year, month, 3),
       'Design Software Europe Ltd',
@@ -547,6 +596,16 @@ Future<void> fillDemo(AppDatabase db) async {
       ExpenseCategory.software,
       5500,
       purchaseVat: PurchaseVat.fromEu,
+      files: [
+        (
+          'invoice-DSE-$_year-$m.pdf',
+          await _demoPdf('Design Software Europe Ltd', [
+            'Invoice DSE-$_year-$m, 03-$m-$_year',
+            'Design software subscription: EUR 55,00',
+            'VAT reverse-charged, customer NL000099998B57',
+          ]),
+        ),
+      ],
     );
     await expense(
       DateTime(_year, month, 5),
@@ -555,6 +614,10 @@ Future<void> fillDemo(AppDatabase db) async {
       ExpenseCategory.phoneAndInternet,
       4500,
       use: 0.8,
+      // The telecom provider sends UBL e-invoices from October.
+      files: month >= 10
+          ? [('TV-$_year-$m.xml', _demoEInvoice('TV-$_year-$m'))]
+          : const [],
     );
     if (month >= 4) {
       await expense(
@@ -614,6 +677,8 @@ Future<void> fillDemo(AppDatabase db) async {
     'Externe schijf',
     ExpenseCategory.hardware,
     12000,
+    files: [('bon-hardware.png', _demoPhoto())],
+    paper: true,
   );
   await expense(
     DateTime(_year, 4, 18),
@@ -807,3 +872,84 @@ Future<void> fillDemo(AppDatabase db) async {
     ),
   );
 }
+
+/// A one-page PDF standing in for a supplier's invoice.
+Future<Uint8List> _demoPdf(String from, List<String> lines) async {
+  // The font bundled for invoices, read from the project the tool runs in.
+  final font = pw.Font.ttf(
+    File(
+      'assets/fonts/NotoSans-Regular.ttf',
+    ).readAsBytesSync().buffer.asByteData(),
+  );
+  final doc = pw.Document(theme: pw.ThemeData.withFont(base: font))
+    ..addPage(
+      pw.Page(
+        build: (_) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(from, style: pw.TextStyle(fontSize: 20)),
+            pw.SizedBox(height: 16),
+            for (final l in lines) pw.Text(l),
+            pw.SizedBox(height: 16),
+            pw.Text('Fictief document voor de demo van Florin'),
+          ],
+        ),
+      ),
+    );
+  return doc.save();
+}
+
+/// A small greyscale PNG of a till receipt: white paper with lines of print.
+Uint8List _demoPhoto() {
+  const width = 90, height = 160;
+  final raw = BytesBuilder();
+  for (var y = 0; y < height; y++) {
+    raw.addByte(0); // No filter for this row.
+    for (var x = 0; x < width; x++) {
+      final printed =
+          y > 12 &&
+          y < height - 12 &&
+          y % 9 < 3 &&
+          x > 10 &&
+          x < width - 10 - (y * 7 % 30);
+      raw.addByte(printed ? 70 : 245);
+    }
+  }
+  List<int> chunk(String type, List<int> data) {
+    final body = [...ascii.encode(type), ...data];
+    return [..._u32(data.length), ...body, ..._u32(_crc32(body))];
+  }
+
+  return Uint8List.fromList([
+    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, //
+    ...chunk('IHDR', [..._u32(width), ..._u32(height), 8, 0, 0, 0, 0]),
+    ...chunk('IDAT', zlib.encode(raw.toBytes())),
+    ...chunk('IEND', const []),
+  ]);
+}
+
+List<int> _u32(int v) => [v >> 24 & 255, v >> 16 & 255, v >> 8 & 255, v & 255];
+
+int _crc32(List<int> bytes) {
+  var crc = 0xFFFFFFFF;
+  for (final b in bytes) {
+    crc ^= b;
+    for (var k = 0; k < 8; k++) {
+      crc = crc & 1 != 0 ? 0xEDB88320 ^ (crc >> 1) : crc >> 1;
+    }
+  }
+  return crc ^ 0xFFFFFFFF;
+}
+
+/// A UBL e-invoice as a supplier would send it.
+Uint8List _demoEInvoice(String number) => Uint8List.fromList(
+  utf8.encode('''<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+  xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+  <cbc:ID>$number</cbc:ID>
+  <cbc:IssueDate>2026-10-05</cbc:IssueDate>
+  <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+  <cbc:Note>Fictieve e-factuur voor de demo van Florin</cbc:Note>
+</Invoice>
+'''),
+);

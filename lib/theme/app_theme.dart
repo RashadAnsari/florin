@@ -341,6 +341,14 @@ abstract final class AppFormat {
   static String percent(double rate, [int digits = 2]) =>
       (rate * 100).toStringAsFixed(digits).replaceAll('.', ',');
 
+  /// A file size such as `840 kB` or `1,2 MB`.
+  static String fileSize(int bytes) {
+    if (bytes < 1000 * 1000) {
+      return '${(bytes / 1000).ceil()} kB';
+    }
+    return '${(bytes / 1000 / 1000).toStringAsFixed(1).replaceAll('.', ',')} MB';
+  }
+
   /// Hours with one decimal, e.g. `7,5`.
   static String hours(double h) => h.toStringAsFixed(1).replaceAll('.', ',');
 

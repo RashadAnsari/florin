@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import '../../widgets/confirmation_dialog.dart';
+import '../../services/receipt_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:florin/l10n/app_localizations.dart';
@@ -36,7 +41,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (dir == null || !mounted) return;
     String? path;
     final ok = await guardSave(context, () async {
-      path = await DbLocationService.copyTo(ref.read(databaseProvider), dir);
+      path = await DbLocationService.copyTo(
+        ref.read(databaseProvider),
+        dir,
+        ref.read(receiptServiceProvider).store,
+      );
     });
     if (ok && mounted) {
       await ref.read(dbPathNotifierProvider).setPath(path!);
@@ -61,6 +70,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ref.read(vatQuarterProvider((year: year, quarter: q))).requireValue,
         ],
         incomeTax: ref.read(taxEstimateProvider(year)).valueOrNull?.result,
+        receipts: ref.read(receiptServiceProvider).store,
       );
       if (dir != null && mounted) {
         ScaffoldMessenger.of(
@@ -142,6 +152,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               label: Text(l.settingsMoveDatabase),
             ),
             const SizedBox(height: AppSpacing.settingsSection),
+            LabelWithHelp(
+              l.settingsReceiptsSection,
+              help: l.settingsReceiptsSectionHelp,
+              style: sectionTitle,
+            ),
+            const SizedBox(height: AppSpacing.field),
+            const _ReceiptsSettings(),
+            const SizedBox(height: AppSpacing.settingsSection),
             Text(l.settingsExportSection, style: sectionTitle),
             const SizedBox(height: AppSpacing.heading),
             Text(l.settingsExportDescription(year)),
@@ -162,6 +180,161 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// The receipts folder: what it holds, a check of every file, and the trash.
+class _ReceiptsSettings extends ConsumerStatefulWidget {
+  const _ReceiptsSettings();
+
+  @override
+  ConsumerState<_ReceiptsSettings> createState() => _ReceiptsSettingsState();
+}
+
+class _ReceiptsSettingsState extends ConsumerState<_ReceiptsSettings> {
+  int? _trashed;
+  bool _checking = false;
+
+  /// The outcome of the last check, shown under the buttons.
+  String? _result;
+  bool _resultIsProblem = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _countTrash();
+  }
+
+  Future<void> _countTrash() async {
+    try {
+      final files = await ref.read(receiptServiceProvider).store.trashed();
+      if (mounted) setState(() => _trashed = files.length);
+    } catch (e) {
+      // The count is information only; the error shows where it would be.
+      if (mounted) {
+        setState(() {
+          _result = describeError(e, AppLocalizations.of(context)!);
+          _resultIsProblem = true;
+        });
+      }
+    }
+  }
+
+  Future<void> _check() async {
+    final l = AppLocalizations.of(context)!;
+    setState(() => _checking = true);
+    try {
+      final service = ref.read(receiptServiceProvider);
+      final problems = await service.problems();
+      final count = (await service.dao.all()).length;
+      if (!mounted) return;
+      setState(() {
+        _resultIsProblem = problems.isNotEmpty;
+        _result = problems.isEmpty
+            ? l.settingsReceiptsAllOk(count)
+            : [
+                l.settingsReceiptsProblems(problems.length),
+                for (final (r, health) in problems)
+                  '${r.originalName}: ${health == ReceiptHealth.missing ? l.settingsReceiptMissing : l.settingsReceiptChanged}',
+              ].join('\n');
+      });
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _result = describeError(e, l);
+          _resultIsProblem = true;
+        });
+      }
+    } finally {
+      if (mounted) setState(() => _checking = false);
+    }
+  }
+
+  Future<void> _emptyTrash() async {
+    final l = AppLocalizations.of(context)!;
+    final confirmed = await showConfirmationDialog(
+      context,
+      title: l.settingsEmptyTrashTitle,
+      message: l.settingsEmptyTrashMessage(_trashed ?? 0),
+      isDestructive: true,
+    );
+    if (!confirmed || !mounted) return;
+    await guardSave(
+      context,
+      () => ref.read(receiptServiceProvider).store.emptyTrash(),
+    );
+    await _countTrash();
+  }
+
+  Future<void> _showFolder() async {
+    final l = AppLocalizations.of(context)!;
+    final folder = Directory(ref.read(receiptServiceProvider).store.folder);
+    await guardSave(context, () async {
+      await folder.create(recursive: true);
+      if (!await launchUrl(Uri.directory(folder.path))) {
+        throw FileSystemException(l.settingsReceiptsOpenFailed, folder.path);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final store = ref.watch(receiptServiceProvider).store;
+    final receipts = ref.watch(allReceiptsProvider).valueOrNull ?? const [];
+    final size = receipts.fold(0, (s, r) => s + r.sizeBytes);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l.settingsReceiptsLocation(store.folder),
+          style: theme.textTheme.bodySmall,
+        ),
+        const SizedBox(height: AppSpacing.tight),
+        Text(
+          l.settingsReceiptsCount(receipts.length, AppFormat.fileSize(size)),
+          style: theme.textTheme.bodySmall,
+        ),
+        const SizedBox(height: AppSpacing.heading),
+        Wrap(
+          spacing: AppSpacing.field,
+          runSpacing: AppSpacing.heading,
+          children: [
+            OutlinedButton.icon(
+              onPressed: _showFolder,
+              icon: const Icon(Icons.open_in_new, size: 16),
+              label: Text(l.settingsReceiptsShowFolder),
+            ),
+            OutlinedButton.icon(
+              onPressed: _checking ? null : _check,
+              icon: const Icon(Icons.fact_check_outlined, size: 16),
+              label: Text(
+                _checking
+                    ? l.settingsReceiptsChecking
+                    : l.settingsReceiptsCheck,
+              ),
+            ),
+            OutlinedButton.icon(
+              onPressed: (_trashed ?? 0) == 0 ? null : _emptyTrash,
+              icon: const Icon(Icons.delete_outline, size: 16),
+              label: Text(l.settingsEmptyTrash(_trashed ?? 0)),
+            ),
+          ],
+        ),
+        if (_result != null) ...[
+          const SizedBox(height: AppSpacing.heading),
+          Text(
+            _result!,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: _resultIsProblem
+                  ? theme.colorScheme.error
+                  : context.colors.income,
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../widgets/validators.dart';
 import '../../widgets/form_error_text.dart';
 import '../../services/kor_service.dart';
+import '../../services/receipt_service.dart';
+import '../receipts/receipts_section.dart';
 import '../../services/formats.dart';
 import '../../widgets/help.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,6 +45,10 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
     final year = ref.watch(fiscalYearProvider);
+    final withFiles = {
+      for (final r in ref.watch(allReceiptsProvider).valueOrNull ?? const [])
+        ?r.expenseId,
+    };
     final expenses = ref
         .watch(expensesProvider(year))
         .whenData(
@@ -89,6 +95,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
       ),
       itemBuilder: (context, e) => _ExpenseTile(
         expense: e,
+        hasFiles: withFiles.contains(e.id),
         onTap: () => context.push('/expenses/${e.id}', extra: e),
       ),
     );
@@ -99,7 +106,14 @@ class _ExpenseTile extends StatelessWidget {
   final Expense expense;
   final VoidCallback onTap;
 
-  const _ExpenseTile({required this.expense, required this.onTap});
+  /// Whether receipt files are stored for this expense.
+  final bool hasFiles;
+
+  const _ExpenseTile({
+    required this.expense,
+    required this.hasFiles,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -121,8 +135,17 @@ class _ExpenseTile extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (expense.receiptAttached)
-            Icon(Icons.attach_file, size: 14, color: muted?.color),
+          // An icon with a tooltip, so the proof shows without colour.
+          if (hasFiles)
+            Tooltip(
+              message: l.expensesHasFiles,
+              child: Icon(Icons.attach_file, size: 14, color: muted?.color),
+            )
+          else if (expense.paperOriginalKept)
+            Tooltip(
+              message: l.expensesPaperOnly,
+              child: Icon(Icons.receipt_long, size: 14, color: muted?.color),
+            ),
           const SizedBox(width: AppSpacing.tight),
           Text(AppFormat.cents(expense.totalInclVat)),
         ],
@@ -164,7 +187,8 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
   late int _amountExclVat = widget.expense?.amountExclVat ?? 0;
   late double _businessUsePct = widget.expense?.businessUsePct ?? 1.0;
   late bool _vatReclaimable = widget.expense?.vatReclaimable ?? true;
-  late bool _receiptAttached = widget.expense?.receiptAttached ?? false;
+  late bool _paperOriginalKept = widget.expense?.paperOriginalKept ?? false;
+  final _receiptDraft = ReceiptDraft();
   late int? _carAssetId = widget.expense?.carAssetId;
 
   int get _vatAmount => _vatRate.vatOn(_amountExclVat);
@@ -187,14 +211,15 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
     for (final c in [_supplier, _description, _paidFrom, _paymentRef, _notes]) {
       c.dispose();
     }
+    _receiptDraft.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    final saved = await guardSave(
-      context,
-      () => ref
+    final receipts = ref.read(receiptServiceProvider);
+    final saved = await guardSave(context, () async {
+      final id = await ref
           .read(expenseDaoProvider)
           .save(
             ExpensesCompanion(
@@ -205,7 +230,7 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
               supplier: Value(_supplier.text.trim()),
               description: Value(_description.text.trim()),
               category: Value(_category!),
-              receiptAttached: Value(_receiptAttached),
+              paperOriginalKept: Value(_paperOriginalKept),
               amountExclVat: Value(_amountExclVat),
               vatRate: Value(_vatRate),
               purchaseVat: Value(_purchaseVat),
@@ -220,8 +245,12 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
               paymentReference: Value(optionalText(_paymentRef.text)),
               carAssetId: Value(_carAssetId),
             ),
-          ),
-    );
+          );
+      final owner = ReceiptOwner.expense(widget.expense?.id ?? id);
+      // Files follow the expense into the folder of its year.
+      await receipts.relocateFor(owner, _date.year);
+      await _receiptDraft.commit(receipts, owner, _date.year);
+    });
     if (saved && mounted) context.pop();
   }
 
@@ -234,10 +263,12 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
-    final deleted = await guardSave(
-      context,
-      () => ref.read(expenseDaoProvider).remove(widget.expense!),
-    );
+    final deleted = await guardSave(context, () async {
+      await ref
+          .read(receiptServiceProvider)
+          .removeAllFor(ReceiptOwner.expense(widget.expense!.id));
+      await ref.read(expenseDaoProvider).remove(widget.expense!);
+    });
     if (deleted && mounted) context.pop();
   }
 
@@ -402,12 +433,6 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
                   ? l.expensesValidateKorReclaim
                   : null,
             ),
-            HelpCheckbox(
-              value: _receiptAttached,
-              onChanged: (v) => setState(() => _receiptAttached = v),
-              title: l.expensesReceiptAttached,
-              help: l.expensesReceiptAttachedHelp,
-            ),
             if ((ref.watch(allAssetsProvider).valueOrNull ??
                     const <FixedAsset>[])
                 .any((a) => a.kind == AssetKind.car)) ...[
@@ -451,6 +476,24 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
                 help: l.labelNotesHelp,
               ),
               maxLines: 2,
+            ),
+            const SizedBox(height: AppSpacing.section),
+            ReceiptsSection(
+              owner: widget.expense == null
+                  ? null
+                  : ReceiptOwner.expense(widget.expense!.id),
+              draft: _receiptDraft,
+              year: _date.year,
+              title: l.receiptsTitle,
+              help: l.receiptsHelp,
+              keepUntil: AppFormat.date(ReceiptService.keepUntil(_date.year)),
+            ),
+            const SizedBox(height: AppSpacing.field),
+            HelpCheckbox(
+              value: _paperOriginalKept,
+              onChanged: (v) => setState(() => _paperOriginalKept = v),
+              title: l.expensesPaperOriginalKept,
+              help: l.expensesPaperOriginalKeptHelp,
             ),
           ],
         ),

@@ -43,9 +43,18 @@ abstract final class InvoicePdfService {
       client: client,
       correctedInvoice: correctedInvoice,
     );
+    await saveBytes(bytes, '${invoice.invoiceNumber}.pdf', dialogTitle);
+  }
+
+  /// Asks where to save [bytes], such as the stored PDF of an issued invoice.
+  static Future<void> saveBytes(
+    Uint8List bytes,
+    String fileName,
+    String dialogTitle,
+  ) async {
     final path = await FilePicker.platform.saveFile(
       dialogTitle: dialogTitle,
-      fileName: '${invoice.invoiceNumber}.pdf',
+      fileName: fileName,
       type: FileType.custom,
       allowedExtensions: ['pdf'],
     );

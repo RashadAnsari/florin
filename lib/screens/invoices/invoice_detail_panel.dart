@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import '../../widgets/validators.dart';
@@ -14,6 +16,8 @@ import '../../providers/providers.dart';
 import '../../services/domain.dart';
 import '../../services/invoice_pdf_service.dart';
 import '../../services/kor_service.dart';
+import '../../services/receipt_service.dart';
+import '../receipts/receipts_section.dart';
 import '../../services/tax_rules/tax_year_rules.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_theme.dart';
@@ -90,6 +94,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
   InvoiceType _type = InvoiceType.invoice;
   VatTreatment _treatment = VatTreatment.standard;
   bool _selfBilled = false;
+  final _receiptDraft = ReceiptDraft();
   int? _clientId;
   late DateTime _invoiceDate = todayIn(ref.read(fiscalYearProvider));
   DateTime? _supplyDate;
@@ -105,6 +110,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
     _number.dispose();
     _paymentTerm.dispose();
     _notes.dispose();
+    _receiptDraft.dispose();
     for (final l in _lines) {
       l.dispose();
     }
@@ -243,8 +249,12 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
         ),
     ];
     int? id;
+    final receipts = ref.read(receiptServiceProvider);
     final saved = await guardSave(context, () async {
       id = await ref.read(invoiceDaoProvider).saveWithLines(invoice, lines);
+      final owner = ReceiptOwner.invoice(id!);
+      await receipts.relocateFor(owner, _invoiceDate.year);
+      await _receiptDraft.commit(receipts, owner, _invoiceDate.year);
     });
     if (!saved || !mounted) return;
     if (_isNew) {
@@ -272,7 +282,42 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
       title: _selfBilled ? l.invoiceRecordTitle : l.invoiceIssueTitle,
       message: _selfBilled ? l.invoiceRecordMessage : l.invoiceIssueMessage,
     );
-    if (confirmed && mounted) await _setStatus(InvoiceStatus.sent);
+    if (!confirmed || !mounted) return;
+    // The PDF is kept as it is sent; a customer's own document is added by
+    // the user instead.
+    if (!_selfBilled) {
+      final stored = await guardSave(context, _storeIssuedPdf);
+      if (!stored || !mounted) return;
+    }
+    await _setStatus(InvoiceStatus.sent);
+  }
+
+  /// The PDF of this invoice as Florin makes it now.
+  Future<Uint8List> _generatePdf() async {
+    final inv = _original!;
+    final client = await ref.read(clientDaoProvider).getById(inv.clientId);
+    final lines = await ref.read(invoiceDaoProvider).getLines(inv.id);
+    return InvoicePdfService.generate(
+      invoice: inv,
+      lines: lines,
+      client: client!,
+      correctedInvoice: _corrected,
+    );
+  }
+
+  /// Stores the PDF of the invoice being issued, replacing one left by an
+  /// earlier attempt that did not finish.
+  Future<Receipt> _storeIssuedPdf() async {
+    final inv = _original!;
+    final receipts = ref.read(receiptServiceProvider);
+    final owner = ReceiptOwner.invoice(inv.id);
+    await receipts.removeAllFor(owner);
+    return receipts.attachBytes(
+      owner,
+      await _generatePdf(),
+      '${inv.invoiceNumber}.pdf',
+      inv.invoiceDate.year,
+    );
   }
 
   /// Asks for the date the payment arrived, within the supported years and
@@ -326,15 +371,28 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
   Future<void> _exportPdf() async {
     final l = AppLocalizations.of(context)!;
     final inv = _original!;
+    final receipts = ref.read(receiptServiceProvider);
     await guardSave(context, () async {
-      final client = await ref.read(clientDaoProvider).getById(inv.clientId);
-      final lines = await ref.read(invoiceDaoProvider).getLines(inv.id);
-      await InvoicePdfService.save(
-        invoice: inv,
-        lines: lines,
-        client: client!,
-        correctedInvoice: _corrected,
-        dialogTitle: l.invoiceSaveAsDialog,
+      final name = '${inv.invoiceNumber}.pdf';
+      if (!inv.isIssued) {
+        // A draft is a preview: nothing is kept.
+        await InvoicePdfService.saveBytes(
+          await _generatePdf(),
+          name,
+          l.invoiceSaveAsDialog,
+        );
+        return;
+      }
+      // An issued invoice is handed out exactly as stored when it was sent.
+      // One issued before Florin kept PDFs gets its PDF stored now.
+      final stored = (await receipts.dao.forOwner(
+        ReceiptOwner.invoice(inv.id),
+      )).where((r) => r.type == ReceiptType.pdf).firstOrNull;
+      final receipt = stored ?? await _storeIssuedPdf();
+      await InvoicePdfService.saveBytes(
+        await receipts.store.fileOf(receipt).readAsBytes(),
+        name,
+        l.invoiceSaveAsDialog,
       );
     });
   }
@@ -392,10 +450,12 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
-    final deleted = await guardSave(
-      context,
-      () => ref.read(invoiceDaoProvider).remove(_original!),
-    );
+    final deleted = await guardSave(context, () async {
+      await ref
+          .read(receiptServiceProvider)
+          .removeAllFor(ReceiptOwner.invoice(_original!.id));
+      await ref.read(invoiceDaoProvider).remove(_original!);
+    });
     if (deleted && mounted) context.pop();
   }
 
@@ -470,198 +530,223 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
             ),
         ],
       ],
-      body: Form(
-        key: _formKey,
-        child: AbsorbPointer(
-          absorbing: !_isEditable,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (_corrected != null) ...[
-                NoticeBanner(l.invoiceCorrects(_corrected!.invoiceNumber)),
-                const SizedBox(height: AppSpacing.group),
-              ],
-              if (client != null && client.isMerchantOfRecord) ...[
-                NoticeBanner(l.invoiceMerchantOfRecordNotice(client.name)),
-                const SizedBox(height: AppSpacing.group),
-              ],
-              FormRow(
-                flex: const [3, 2],
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Form(
+            key: _formKey,
+            child: AbsorbPointer(
+              absorbing: !_isEditable,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  DropdownButtonFormField<int>(
-                    initialValue: _clientId,
-                    isExpanded: true,
-                    decoration: fieldDecoration(
-                      label: l.invoiceFieldClient,
-                      help: l.invoiceFieldClientHelp,
-                      required: true,
-                    ),
-                    items: [
-                      for (final c in clients)
-                        DropdownMenuItem(value: c.id, child: Text(c.name)),
+                  if (_corrected != null) ...[
+                    NoticeBanner(l.invoiceCorrects(_corrected!.invoiceNumber)),
+                    const SizedBox(height: AppSpacing.group),
+                  ],
+                  if (client != null && client.isMerchantOfRecord) ...[
+                    NoticeBanner(l.invoiceMerchantOfRecordNotice(client.name)),
+                    const SizedBox(height: AppSpacing.group),
+                  ],
+                  FormRow(
+                    flex: const [3, 2],
+                    children: [
+                      DropdownButtonFormField<int>(
+                        initialValue: _clientId,
+                        isExpanded: true,
+                        decoration: fieldDecoration(
+                          label: l.invoiceFieldClient,
+                          help: l.invoiceFieldClientHelp,
+                          required: true,
+                        ),
+                        items: [
+                          for (final c in clients)
+                            DropdownMenuItem(value: c.id, child: Text(c.name)),
+                        ],
+                        onChanged: isCredit
+                            ? null
+                            : (v) => _setClient(v, allClients),
+                        validator: (_) {
+                          if (client == null) return l.invoiceValidateClient;
+                          if (_treatment.needsCustomerVatNumber &&
+                              (client.vatNumber ?? '').isEmpty) {
+                            return l.invoiceValidateClientVat;
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _number,
+                        decoration: fieldDecoration(
+                          label: l.invoiceFieldNumber,
+                          help: _selfBilled
+                              ? l.invoiceFieldNumberSelfBilledHelp
+                              : l.invoiceFieldNumberHelp,
+                          required: true,
+                        ),
+                        validator: (v) => (v ?? '').trim().isNotEmpty
+                            ? null
+                            : _selfBilled
+                            ? l.invoiceValidateNumberSelfBilled
+                            : l.invoiceValidateNumber,
+                      ),
                     ],
-                    onChanged: isCredit
-                        ? null
-                        : (v) => _setClient(v, allClients),
-                    validator: (_) {
-                      if (client == null) return l.invoiceValidateClient;
-                      if (_treatment.needsCustomerVatNumber &&
-                          (client.vatNumber ?? '').isEmpty) {
-                        return l.invoiceValidateClientVat;
-                      }
-                      return null;
-                    },
                   ),
-                  TextFormField(
-                    controller: _number,
-                    decoration: fieldDecoration(
-                      label: l.invoiceFieldNumber,
-                      help: _selfBilled
-                          ? l.invoiceFieldNumberSelfBilledHelp
-                          : l.invoiceFieldNumberHelp,
-                      required: true,
-                    ),
-                    validator: (v) => (v ?? '').trim().isNotEmpty
-                        ? null
-                        : _selfBilled
-                        ? l.invoiceValidateNumberSelfBilled
-                        : l.invoiceValidateNumber,
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.field),
-              FormRow(
-                children: [
-                  DateField(
-                    label: l.invoiceFieldInvoiceDate,
-                    help: l.invoiceFieldInvoiceDateHelp,
-                    value: _invoiceDate,
-                    onChanged: _setInvoiceDate,
-                    required: true,
-                    validator: (_) =>
-                        _corrected != null &&
-                            _invoiceDate.isBefore(_corrected!.invoiceDate)
-                        ? l.invoiceValidateCreditDate(
-                            AppFormat.date(_corrected!.invoiceDate),
-                          )
-                        : null,
-                  ),
-                  DateField(
-                    label: l.invoiceFieldSupplyDate,
-                    help: l.invoiceFieldSupplyDateHelp,
-                    value: _supplyDate,
-                    onChanged: (d) => setState(() => _supplyDate = d),
-                  ),
-                  TextFormField(
-                    controller: _paymentTerm,
-                    decoration: fieldDecoration(
-                      label: l.invoiceFieldPaymentTerm,
-                      help: l.invoiceFieldPaymentTermHelp,
-                      required: true,
-                    ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (_) => setState(() {}),
-                    validator: (v) =>
-                        Validate.wholeNumber(v, l.invoiceValidatePaymentTerm),
-                  ),
-                  InputDecorator(
-                    decoration: fieldDecoration(
-                      label: l.invoiceFieldDueDate,
-                      help: l.invoiceFieldDueDateHelp,
-                    ),
-                    child: Text(
-                      AppFormat.date(
-                        _invoiceDate.add(
-                          Duration(
-                            days: parseWholeNumber(_paymentTerm.text) ?? 0,
+                  const SizedBox(height: AppSpacing.field),
+                  FormRow(
+                    children: [
+                      DateField(
+                        label: l.invoiceFieldInvoiceDate,
+                        help: l.invoiceFieldInvoiceDateHelp,
+                        value: _invoiceDate,
+                        onChanged: _setInvoiceDate,
+                        required: true,
+                        validator: (_) =>
+                            _corrected != null &&
+                                _invoiceDate.isBefore(_corrected!.invoiceDate)
+                            ? l.invoiceValidateCreditDate(
+                                AppFormat.date(_corrected!.invoiceDate),
+                              )
+                            : null,
+                      ),
+                      DateField(
+                        label: l.invoiceFieldSupplyDate,
+                        help: l.invoiceFieldSupplyDateHelp,
+                        value: _supplyDate,
+                        onChanged: (d) => setState(() => _supplyDate = d),
+                      ),
+                      TextFormField(
+                        controller: _paymentTerm,
+                        decoration: fieldDecoration(
+                          label: l.invoiceFieldPaymentTerm,
+                          help: l.invoiceFieldPaymentTermHelp,
+                          required: true,
+                        ),
+                        keyboardType: TextInputType.number,
+                        onChanged: (_) => setState(() {}),
+                        validator: (v) => Validate.wholeNumber(
+                          v,
+                          l.invoiceValidatePaymentTerm,
+                        ),
+                      ),
+                      InputDecorator(
+                        decoration: fieldDecoration(
+                          label: l.invoiceFieldDueDate,
+                          help: l.invoiceFieldDueDateHelp,
+                        ),
+                        child: Text(
+                          AppFormat.date(
+                            _invoiceDate.add(
+                              Duration(
+                                days: parseWholeNumber(_paymentTerm.text) ?? 0,
+                              ),
+                            ),
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.field),
+                  EnumDropdown<VatTreatment>(
+                    label: l.invoiceFieldVatTreatment,
+                    help: l.invoiceFieldVatTreatmentHelp,
+                    value: _treatment,
+                    values: VatTreatment.values,
+                    labelOf: (t) => t.label(l),
+                    onChanged: isCredit
+                        ? null
+                        : (t) => setState(() => _treatment = t),
+                    required: true,
+                    validator: (t) =>
+                        client != null && !t.fitsCountry(client.country)
+                        ? l.invoiceValidateTreatmentCountry
+                        : _korError(t, l),
+                  ),
+                  // Self-billing is a reseller's practice, so the option shows
+                  // only there, or on an invoice that already uses it.
+                  if (_selfBilled || (client?.isMerchantOfRecord ?? false)) ...[
+                    const SizedBox(height: AppSpacing.field),
+                    HelpCheckbox(
+                      value: _selfBilled,
+                      onChanged: isCredit ? null : _setSelfBilled,
+                      title: l.invoiceSelfBilled,
+                      help: l.invoiceSelfBilledHelp,
                     ),
+                  ],
+                  const SizedBox(height: AppSpacing.section),
+                  Text(l.invoiceFieldLines, style: theme.textTheme.titleSmall),
+                  const SizedBox(height: AppSpacing.heading),
+                  for (var i = 0; i < _lines.length; i++) _lineRow(i, l),
+                  const SizedBox(height: AppSpacing.heading),
+                  TextButton.icon(
+                    icon: const Icon(Icons.add, size: 16),
+                    label: Text(l.invoiceFieldAddLine),
+                    onPressed: () => setState(() => _lines.add(_LineItem())),
+                  ),
+                  const SizedBox(height: AppSpacing.section),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: SizedBox(
+                      width: 320,
+                      child: Column(
+                        children: [
+                          // A KOR invoice mentions no VAT, so only its total.
+                          if (_treatment != VatTreatment.kor) ...[
+                            ValueRow(
+                              label: l.invoiceSubtotal,
+                              value: AppFormat.cents(_totalExclVat),
+                            ),
+                            ValueRow(
+                              label: l.invoiceVatTotal,
+                              value: AppFormat.cents(_totalVat),
+                            ),
+                            const Divider(),
+                          ],
+                          ValueRow(
+                            label: _treatment == VatTreatment.kor
+                                ? l.invoiceTotal
+                                : l.invoiceTotalInclVat,
+                            value: AppFormat.cents(_totalExclVat + _totalVat),
+                            bold: true,
+                          ),
+                          if (_corrected != null)
+                            FormErrorText(
+                              validator: () => _creditLimitError(l),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.section),
+                  TextFormField(
+                    controller: _notes,
+                    decoration: fieldDecoration(
+                      label: l.invoiceFieldRemarks,
+                      help: l.invoiceFieldRemarksHelp,
+                    ),
+                    maxLines: 3,
                   ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.field),
-              EnumDropdown<VatTreatment>(
-                label: l.invoiceFieldVatTreatment,
-                help: l.invoiceFieldVatTreatmentHelp,
-                value: _treatment,
-                values: VatTreatment.values,
-                labelOf: (t) => t.label(l),
-                onChanged: isCredit
-                    ? null
-                    : (t) => setState(() => _treatment = t),
-                required: true,
-                validator: (t) =>
-                    client != null && !t.fitsCountry(client.country)
-                    ? l.invoiceValidateTreatmentCountry
-                    : _korError(t, l),
-              ),
-              // Self-billing is a reseller's practice, so the option shows
-              // only there, or on an invoice that already uses it.
-              if (_selfBilled || (client?.isMerchantOfRecord ?? false)) ...[
-                const SizedBox(height: AppSpacing.field),
-                HelpCheckbox(
-                  value: _selfBilled,
-                  onChanged: isCredit ? null : _setSelfBilled,
-                  title: l.invoiceSelfBilled,
-                  help: l.invoiceSelfBilledHelp,
-                ),
-              ],
-              const SizedBox(height: AppSpacing.section),
-              Text(l.invoiceFieldLines, style: theme.textTheme.titleSmall),
-              const SizedBox(height: AppSpacing.heading),
-              for (var i = 0; i < _lines.length; i++) _lineRow(i, l),
-              const SizedBox(height: AppSpacing.heading),
-              TextButton.icon(
-                icon: const Icon(Icons.add, size: 16),
-                label: Text(l.invoiceFieldAddLine),
-                onPressed: () => setState(() => _lines.add(_LineItem())),
-              ),
-              const SizedBox(height: AppSpacing.section),
-              Align(
-                alignment: Alignment.centerRight,
-                child: SizedBox(
-                  width: 320,
-                  child: Column(
-                    children: [
-                      // A KOR invoice mentions no VAT, so only its total.
-                      if (_treatment != VatTreatment.kor) ...[
-                        ValueRow(
-                          label: l.invoiceSubtotal,
-                          value: AppFormat.cents(_totalExclVat),
-                        ),
-                        ValueRow(
-                          label: l.invoiceVatTotal,
-                          value: AppFormat.cents(_totalVat),
-                        ),
-                        const Divider(),
-                      ],
-                      ValueRow(
-                        label: _treatment == VatTreatment.kor
-                            ? l.invoiceTotal
-                            : l.invoiceTotalInclVat,
-                        value: AppFormat.cents(_totalExclVat + _totalVat),
-                        bold: true,
-                      ),
-                      if (_corrected != null)
-                        FormErrorText(validator: () => _creditLimitError(l)),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.section),
-              TextFormField(
-                controller: _notes,
-                decoration: fieldDecoration(
-                  label: l.invoiceFieldRemarks,
-                  help: l.invoiceFieldRemarksHelp,
-                ),
-                maxLines: 3,
-              ),
-            ],
+            ),
           ),
-        ),
+          // Outside the locked form: a customer's document can be added to a
+          // recorded self-billed invoice; an issued PDF is shown read-only.
+          if (_selfBilled || (_original?.isIssued ?? false)) ...[
+            const SizedBox(height: AppSpacing.section),
+            ReceiptsSection(
+              owner: _isNew ? null : ReceiptOwner.invoice(_original!.id),
+              draft: _receiptDraft,
+              year: _invoiceDate.year,
+              title: l.receiptsInvoiceTitle,
+              help: l.receiptsInvoiceHelp,
+              keepUntil: AppFormat.date(
+                ReceiptService.keepUntil(_invoiceDate.year),
+              ),
+              editable: _selfBilled,
+            ),
+          ],
+        ],
       ),
     );
   }

@@ -74,6 +74,25 @@ enum MiaCategory { one, two, three }
 /// (Wet IB 2001 art. 3.20 lid 2). Hydrogen and integrated solar have no cap.
 enum ZeroEmission { none, battery, hydrogenOrSolar }
 
+/// The kind of a stored receipt file, detected from its content.
+enum ReceiptType {
+  pdf('pdf'),
+  jpeg('jpg'),
+  png('png'),
+  heic('heic'),
+  tiff('tiff'),
+
+  /// A UBL e-invoice, kept as received.
+  xml('xml');
+
+  final String extension;
+
+  const ReceiptType(this.extension);
+
+  bool get isImage =>
+      this == jpeg || this == png || this == heic || this == tiff;
+}
+
 /// Who accounts for the BTW on a purchase. Shifted BTW is reported by the
 /// buyer and deducted again (rubrieken 2a, 4a, 4b and 5b).
 enum PurchaseVat { domestic, reverseChargeNl, fromEu, fromOutsideEu }

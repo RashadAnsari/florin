@@ -457,9 +457,6 @@ class AppLocalizationsNl extends AppLocalizations {
   String get expensesVatBack => 'BTW terug';
 
   @override
-  String get expensesReceiptAttached => 'Bon aanwezig';
-
-  @override
   String get expensesDeleteTitle => 'Uitgave verwijderen';
 
   @override
@@ -1024,7 +1021,8 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get settingsMoveDatabase => 'Database naar andere map kopiëren';
+  String get settingsMoveDatabase =>
+      'Database en bonnen naar een andere map kopiëren';
 
   @override
   String get settingsExportSection => 'Exporteren';
@@ -1381,10 +1379,6 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get expensesFieldVatRateHelp =>
       'Het btw-tarief op de bon: 21%, 9%, 0% of vrijgesteld.';
-
-  @override
-  String get expensesReceiptAttachedHelp =>
-      'Vink aan als je de bon of factuur hebt bewaard. Die heb je nodig om btw terug te vragen en de kosten aan te tonen.';
 
   @override
   String get expensesReclaimVatHelp =>
@@ -2378,4 +2372,200 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get settingsKorSectionHelp =>
       'Een btw-vrijstelling voor ondernemers met hoogstens € 20.000 omzet in Nederland per jaar. Je meldt je aan en af bij de Belastingdienst; vul hier de datums in zodat Florin hem volgt.';
+
+  @override
+  String get receiptTypeEInvoice => 'E-factuur (UBL)';
+
+  @override
+  String get receiptsTitle => 'Bonnen';
+
+  @override
+  String get receiptsHelp =>
+      'De bon of factuur van deze uitgave, als pdf, foto of scan. Florin kopieert hem naar de map met bonnen naast je database en laat je eigen bestand ongemoeid. De Belastingdienst vraagt bonnen en facturen 7 jaar te bewaren in de vorm waarin je ze ontving; een scan of foto moet het hele document tonen, voor- en achterkant.';
+
+  @override
+  String get receiptsAssetTitle => 'Aankoopfactuur en bonnen';
+
+  @override
+  String get receiptsAssetHelp =>
+      'De aankoopfactuur van dit bedrijfsmiddel en ander bewijs, als pdf, foto of scan. Die hoort in je administratie zolang je het bedrijfsmiddel gebruikt, en 7 jaar daarna.';
+
+  @override
+  String get receiptsInvoiceTitle => 'Documenten';
+
+  @override
+  String get receiptsInvoiceHelp =>
+      'De pdf van deze factuur precies zoals Florin hem maakte toen je hem uitreikte, bewaard zoals verstuurd. Voeg bij een factuur die je klant uitreikte hier zijn document toe.';
+
+  @override
+  String get receiptsNone =>
+      'Nog geen bestanden. Sleep pdf\'s, foto\'s of scans hierheen, of voeg ze toe.';
+
+  @override
+  String get receiptsAdd => 'Bestanden toevoegen';
+
+  @override
+  String get receiptsPickDialog => 'Kies bonnen';
+
+  @override
+  String get receiptsOpen => 'Openen';
+
+  @override
+  String get receiptsRemove => 'Naar de prullenbak';
+
+  @override
+  String get receiptsUnstage => 'Niet toevoegen';
+
+  @override
+  String get receiptsRemoved => 'Verplaatst naar de prullenbak voor bonnen';
+
+  @override
+  String get receiptsUndo => 'Ongedaan maken';
+
+  @override
+  String get receiptsStaged => 'Wordt opgeslagen als je bewaart';
+
+  @override
+  String receiptsAdded(String date) {
+    return 'toegevoegd $date';
+  }
+
+  @override
+  String get receiptsMissing =>
+      'Het bestand ontbreekt in de map met bonnen. Zet het terug uit een back-up.';
+
+  @override
+  String get receiptsKeepUntil => 'Bewaren tot';
+
+  @override
+  String get receiptsKeepUntilHelp =>
+      'De Belastingdienst vraagt facturen en bonnen 7 jaar te bewaren. Florin telt vanaf het einde van het jaar waar ze bij horen en verwijdert ze nooit zelf.';
+
+  @override
+  String get receiptsKeepWhileInUse => 'Zolang in gebruik, daarna 7 jaar';
+
+  @override
+  String receiptsRejectedEmpty(String name) {
+    return '$name is leeg. Kies het bestand opnieuw.';
+  }
+
+  @override
+  String receiptsRejectedTooLarge(String name, String max) {
+    return '$name is groter dan $max. Sla de scan op met een lagere resolutie, met elke pagina leesbaar, en voeg hem opnieuw toe.';
+  }
+
+  @override
+  String receiptsRejectedType(String name) {
+    return '$name is geen pdf, JPEG, PNG, HEIC, TIFF of UBL-e-factuur. Sla hem op of druk hem af als pdf en voeg hem opnieuw toe.';
+  }
+
+  @override
+  String receiptsDuplicate(String name) {
+    return '$name is al opgeslagen bij een andere registratie. Hij is hier ook toegevoegd.';
+  }
+
+  @override
+  String receiptsOpenFailed(String name) {
+    return 'Kon $name niet openen. Open hem vanuit de map met bonnen.';
+  }
+
+  @override
+  String get expensesPaperOriginalKept => 'Papieren origineel bewaard';
+
+  @override
+  String get expensesPaperOriginalKeptHelp =>
+      'Vink aan als je de papieren bon of factuur zelf bewaart, bijvoorbeeld een kassabon die je niet hebt gescand. Je hebt bewijs nodig om btw terug te vragen en de kosten aan te tonen; een bestand hierboven telt ook.';
+
+  @override
+  String get expensesHasFiles => 'Bon opgeslagen in Florin';
+
+  @override
+  String get expensesPaperOnly => 'Papieren origineel bewaard';
+
+  @override
+  String get receiptsNotStored =>
+      'Voor deze factuur is geen pdf opgeslagen. Florin slaat hem op zodra je hem voor het eerst exporteert.';
+
+  @override
+  String get settingsReceiptsSection => 'Bonnen';
+
+  @override
+  String get settingsReceiptsSectionHelp =>
+      'Florin bewaart de bonnen van uitgaven en bedrijfsmiddelen, en de pdf\'s van verstuurde facturen, in een map met bonnen naast de database. Die verhuist mee met de database en hoort in dezelfde back-up.';
+
+  @override
+  String settingsReceiptsLocation(String path) {
+    return 'Map: $path';
+  }
+
+  @override
+  String settingsReceiptsCount(int count, String size) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bestanden',
+      one: '1 bestand',
+    );
+    return '$_temp0, $size';
+  }
+
+  @override
+  String get settingsReceiptsShowFolder => 'Map tonen';
+
+  @override
+  String get settingsReceiptsCheck => 'Bestanden controleren';
+
+  @override
+  String get settingsReceiptsChecking => 'Bezig met controleren';
+
+  @override
+  String settingsReceiptsAllOk(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Alle $count bestanden zijn aanwezig en ongewijzigd.',
+      one: 'Het bestand is aanwezig en ongewijzigd.',
+      zero: 'Geen bestanden om te controleren.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String settingsReceiptsProblems(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bestanden vragen aandacht. Zet ze terug uit een back-up:',
+      one: '1 bestand vraagt aandacht. Zet het terug uit een back-up:',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsReceiptMissing => 'ontbreekt';
+
+  @override
+  String get settingsReceiptChanged => 'gewijzigd sinds het werd toegevoegd';
+
+  @override
+  String settingsEmptyTrash(int count) {
+    return 'Prullenbak legen ($count)';
+  }
+
+  @override
+  String get settingsEmptyTrashTitle => 'Prullenbak voor bonnen legen';
+
+  @override
+  String settingsEmptyTrashMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count verwijderde bestanden worden definitief gewist.',
+      one: '1 verwijderd bestand wordt definitief gewist.',
+    );
+    return '$_temp0 Bewaar bonnen 7 jaar: leeg de prullenbak alleen als je zeker weet dat je ze niet meer nodig hebt.';
+  }
+
+  @override
+  String get settingsReceiptsOpenFailed => 'De map kon niet worden geopend';
 }

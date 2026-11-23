@@ -20,6 +20,7 @@ final class Schema2 extends i0.VersionedSchema {
     pensionEntries,
     vatReturns,
     taxYearInputs,
+    receipts,
     invoicesInvoiceDate,
     expensesDate,
     hourEntriesDate,
@@ -285,6 +286,31 @@ final class Schema2 extends i0.VersionedSchema {
         _column_111,
         _column_112,
         _column_113,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape11 receipts = Shape11(
+    source: i0.VersionedTable(
+      entityName: 'receipts',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [
+        'PRIMARY KEY(id)',
+        'CHECK((expense_id IS NOT NULL)+(asset_id IS NOT NULL)+(invoice_id IS NOT NULL)= 1)',
+      ],
+      columns: [
+        _column_114,
+        _column_115,
+        _column_116,
+        _column_117,
+        _column_95,
+        _column_118,
+        _column_119,
+        _column_120,
+        _column_121,
+        _column_122,
       ],
       attachedDatabase: database,
     ),
@@ -1087,8 +1113,8 @@ class Shape5 extends i0.VersionedTable {
       columnsByName['description']! as i1.GeneratedColumn<String>;
   i1.GeneratedColumn<String> get category =>
       columnsByName['category']! as i1.GeneratedColumn<String>;
-  i1.GeneratedColumn<int> get receiptAttached =>
-      columnsByName['receipt_attached']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get paperOriginalKept =>
+      columnsByName['paper_original_kept']! as i1.GeneratedColumn<int>;
   i1.GeneratedColumn<int> get amountExclVat =>
       columnsByName['amount_excl_vat']! as i1.GeneratedColumn<int>;
   i1.GeneratedColumn<String> get vatRate =>
@@ -1143,12 +1169,12 @@ i1.GeneratedColumn<String> _column_73(String aliasedName) =>
     );
 i1.GeneratedColumn<int> _column_74(String aliasedName) =>
     i1.GeneratedColumn<int>(
-      'receipt_attached',
+      'paper_original_kept',
       aliasedName,
       false,
       type: i1.DriftSqlType.int,
       $customConstraints:
-          'NOT NULL DEFAULT 0 CHECK (receipt_attached IN (0, 1))',
+          'NOT NULL DEFAULT 0 CHECK (paper_original_kept IN (0, 1))',
       defaultValue: const i1.CustomExpression('0'),
     );
 i1.GeneratedColumn<int> _column_75(String aliasedName) =>
@@ -1593,6 +1619,103 @@ i1.GeneratedColumn<int> _column_113(String aliasedName) =>
       type: i1.DriftSqlType.int,
       $customConstraints: 'NOT NULL DEFAULT 0',
       defaultValue: const i1.CustomExpression('0'),
+    );
+
+class Shape11 extends i0.VersionedTable {
+  Shape11({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get expenseId =>
+      columnsByName['expense_id']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get assetId =>
+      columnsByName['asset_id']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get invoiceId =>
+      columnsByName['invoice_id']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get year =>
+      columnsByName['year']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get type =>
+      columnsByName['type']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get originalName =>
+      columnsByName['original_name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get sizeBytes =>
+      columnsByName['size_bytes']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get sha256 =>
+      columnsByName['sha256']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get addedAt =>
+      columnsByName['added_at']! as i1.GeneratedColumn<int>;
+}
+
+i1.GeneratedColumn<String> _column_114(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'id',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<int> _column_115(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'expense_id',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NULL REFERENCES expenses(id)ON DELETE RESTRICT',
+    );
+i1.GeneratedColumn<int> _column_116(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'asset_id',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NULL REFERENCES fixed_assets(id)ON DELETE RESTRICT',
+    );
+i1.GeneratedColumn<int> _column_117(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'invoice_id',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NULL REFERENCES invoices(id)ON DELETE RESTRICT',
+    );
+i1.GeneratedColumn<String> _column_118(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'type',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_119(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'original_name',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<int> _column_120(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'size_bytes',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_121(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'sha256',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<int> _column_122(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'added_at',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL',
     );
 i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
