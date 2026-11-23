@@ -9,7 +9,9 @@ class Expenses extends Table {
   TextColumn get supplier => text()();
   TextColumn get description => text()();
   TextColumn get category => textEnum<ExpenseCategory>()();
-  BoolColumn get receiptAttached =>
+
+  /// The user keeps the paper receipt; files are in the receipts table.
+  BoolColumn get paperOriginalKept =>
       boolean().withDefault(const Constant(false))();
   IntColumn get amountExclVat => integer()();
   TextColumn get vatRate => textEnum<VatRate>()();

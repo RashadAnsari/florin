@@ -4697,18 +4697,18 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   ).withConverter<ExpenseCategory>($ExpensesTable.$convertercategory);
-  static const VerificationMeta _receiptAttachedMeta = const VerificationMeta(
-    'receiptAttached',
+  static const VerificationMeta _paperOriginalKeptMeta = const VerificationMeta(
+    'paperOriginalKept',
   );
   @override
-  late final GeneratedColumn<bool> receiptAttached = GeneratedColumn<bool>(
-    'receipt_attached',
+  late final GeneratedColumn<bool> paperOriginalKept = GeneratedColumn<bool>(
+    'paper_original_kept',
     aliasedName,
     false,
     type: DriftSqlType.bool,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("receipt_attached" IN (0, 1))',
+      'CHECK ("paper_original_kept" IN (0, 1))',
     ),
     defaultValue: const Constant(false),
   );
@@ -4863,7 +4863,7 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     supplier,
     description,
     category,
-    receiptAttached,
+    paperOriginalKept,
     amountExclVat,
     vatRate,
     purchaseVat,
@@ -4920,12 +4920,12 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     } else if (isInserting) {
       context.missing(_descriptionMeta);
     }
-    if (data.containsKey('receipt_attached')) {
+    if (data.containsKey('paper_original_kept')) {
       context.handle(
-        _receiptAttachedMeta,
-        receiptAttached.isAcceptableOrUnknown(
-          data['receipt_attached']!,
-          _receiptAttachedMeta,
+        _paperOriginalKeptMeta,
+        paperOriginalKept.isAcceptableOrUnknown(
+          data['paper_original_kept']!,
+          _paperOriginalKeptMeta,
         ),
       );
     }
@@ -5064,9 +5064,9 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
           data['${effectivePrefix}category'],
         )!,
       ),
-      receiptAttached: attachedDatabase.typeMapping.read(
+      paperOriginalKept: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
-        data['${effectivePrefix}receipt_attached'],
+        data['${effectivePrefix}paper_original_kept'],
       )!,
       amountExclVat: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -5148,7 +5148,9 @@ class Expense extends DataClass implements Insertable<Expense> {
   final String supplier;
   final String description;
   final ExpenseCategory category;
-  final bool receiptAttached;
+
+  /// The user keeps the paper receipt; files are in the receipts table.
+  final bool paperOriginalKept;
   final int amountExclVat;
   final VatRate vatRate;
   final PurchaseVat purchaseVat;
@@ -5170,7 +5172,7 @@ class Expense extends DataClass implements Insertable<Expense> {
     required this.supplier,
     required this.description,
     required this.category,
-    required this.receiptAttached,
+    required this.paperOriginalKept,
     required this.amountExclVat,
     required this.vatRate,
     required this.purchaseVat,
@@ -5197,7 +5199,7 @@ class Expense extends DataClass implements Insertable<Expense> {
         $ExpensesTable.$convertercategory.toSql(category),
       );
     }
-    map['receipt_attached'] = Variable<bool>(receiptAttached);
+    map['paper_original_kept'] = Variable<bool>(paperOriginalKept);
     map['amount_excl_vat'] = Variable<int>(amountExclVat);
     {
       map['vat_rate'] = Variable<String>(
@@ -5237,7 +5239,7 @@ class Expense extends DataClass implements Insertable<Expense> {
       supplier: Value(supplier),
       description: Value(description),
       category: Value(category),
-      receiptAttached: Value(receiptAttached),
+      paperOriginalKept: Value(paperOriginalKept),
       amountExclVat: Value(amountExclVat),
       vatRate: Value(vatRate),
       purchaseVat: Value(purchaseVat),
@@ -5275,7 +5277,7 @@ class Expense extends DataClass implements Insertable<Expense> {
       category: $ExpensesTable.$convertercategory.fromJson(
         serializer.fromJson<String>(json['category']),
       ),
-      receiptAttached: serializer.fromJson<bool>(json['receiptAttached']),
+      paperOriginalKept: serializer.fromJson<bool>(json['paperOriginalKept']),
       amountExclVat: serializer.fromJson<int>(json['amountExclVat']),
       vatRate: $ExpensesTable.$convertervatRate.fromJson(
         serializer.fromJson<String>(json['vatRate']),
@@ -5306,7 +5308,7 @@ class Expense extends DataClass implements Insertable<Expense> {
       'category': serializer.toJson<String>(
         $ExpensesTable.$convertercategory.toJson(category),
       ),
-      'receiptAttached': serializer.toJson<bool>(receiptAttached),
+      'paperOriginalKept': serializer.toJson<bool>(paperOriginalKept),
       'amountExclVat': serializer.toJson<int>(amountExclVat),
       'vatRate': serializer.toJson<String>(
         $ExpensesTable.$convertervatRate.toJson(vatRate),
@@ -5333,7 +5335,7 @@ class Expense extends DataClass implements Insertable<Expense> {
     String? supplier,
     String? description,
     ExpenseCategory? category,
-    bool? receiptAttached,
+    bool? paperOriginalKept,
     int? amountExclVat,
     VatRate? vatRate,
     PurchaseVat? purchaseVat,
@@ -5353,7 +5355,7 @@ class Expense extends DataClass implements Insertable<Expense> {
     supplier: supplier ?? this.supplier,
     description: description ?? this.description,
     category: category ?? this.category,
-    receiptAttached: receiptAttached ?? this.receiptAttached,
+    paperOriginalKept: paperOriginalKept ?? this.paperOriginalKept,
     amountExclVat: amountExclVat ?? this.amountExclVat,
     vatRate: vatRate ?? this.vatRate,
     purchaseVat: purchaseVat ?? this.purchaseVat,
@@ -5379,9 +5381,9 @@ class Expense extends DataClass implements Insertable<Expense> {
           ? data.description.value
           : this.description,
       category: data.category.present ? data.category.value : this.category,
-      receiptAttached: data.receiptAttached.present
-          ? data.receiptAttached.value
-          : this.receiptAttached,
+      paperOriginalKept: data.paperOriginalKept.present
+          ? data.paperOriginalKept.value
+          : this.paperOriginalKept,
       amountExclVat: data.amountExclVat.present
           ? data.amountExclVat.value
           : this.amountExclVat,
@@ -5424,7 +5426,7 @@ class Expense extends DataClass implements Insertable<Expense> {
           ..write('supplier: $supplier, ')
           ..write('description: $description, ')
           ..write('category: $category, ')
-          ..write('receiptAttached: $receiptAttached, ')
+          ..write('paperOriginalKept: $paperOriginalKept, ')
           ..write('amountExclVat: $amountExclVat, ')
           ..write('vatRate: $vatRate, ')
           ..write('purchaseVat: $purchaseVat, ')
@@ -5449,7 +5451,7 @@ class Expense extends DataClass implements Insertable<Expense> {
     supplier,
     description,
     category,
-    receiptAttached,
+    paperOriginalKept,
     amountExclVat,
     vatRate,
     purchaseVat,
@@ -5473,7 +5475,7 @@ class Expense extends DataClass implements Insertable<Expense> {
           other.supplier == this.supplier &&
           other.description == this.description &&
           other.category == this.category &&
-          other.receiptAttached == this.receiptAttached &&
+          other.paperOriginalKept == this.paperOriginalKept &&
           other.amountExclVat == this.amountExclVat &&
           other.vatRate == this.vatRate &&
           other.purchaseVat == this.purchaseVat &&
@@ -5495,7 +5497,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
   final Value<String> supplier;
   final Value<String> description;
   final Value<ExpenseCategory> category;
-  final Value<bool> receiptAttached;
+  final Value<bool> paperOriginalKept;
   final Value<int> amountExclVat;
   final Value<VatRate> vatRate;
   final Value<PurchaseVat> purchaseVat;
@@ -5515,7 +5517,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     this.supplier = const Value.absent(),
     this.description = const Value.absent(),
     this.category = const Value.absent(),
-    this.receiptAttached = const Value.absent(),
+    this.paperOriginalKept = const Value.absent(),
     this.amountExclVat = const Value.absent(),
     this.vatRate = const Value.absent(),
     this.purchaseVat = const Value.absent(),
@@ -5536,7 +5538,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     required String supplier,
     required String description,
     required ExpenseCategory category,
-    this.receiptAttached = const Value.absent(),
+    this.paperOriginalKept = const Value.absent(),
     required int amountExclVat,
     required VatRate vatRate,
     this.purchaseVat = const Value.absent(),
@@ -5568,7 +5570,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     Expression<String>? supplier,
     Expression<String>? description,
     Expression<String>? category,
-    Expression<bool>? receiptAttached,
+    Expression<bool>? paperOriginalKept,
     Expression<int>? amountExclVat,
     Expression<String>? vatRate,
     Expression<String>? purchaseVat,
@@ -5589,7 +5591,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
       if (supplier != null) 'supplier': supplier,
       if (description != null) 'description': description,
       if (category != null) 'category': category,
-      if (receiptAttached != null) 'receipt_attached': receiptAttached,
+      if (paperOriginalKept != null) 'paper_original_kept': paperOriginalKept,
       if (amountExclVat != null) 'amount_excl_vat': amountExclVat,
       if (vatRate != null) 'vat_rate': vatRate,
       if (purchaseVat != null) 'purchase_vat': purchaseVat,
@@ -5612,7 +5614,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     Value<String>? supplier,
     Value<String>? description,
     Value<ExpenseCategory>? category,
-    Value<bool>? receiptAttached,
+    Value<bool>? paperOriginalKept,
     Value<int>? amountExclVat,
     Value<VatRate>? vatRate,
     Value<PurchaseVat>? purchaseVat,
@@ -5633,7 +5635,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
       supplier: supplier ?? this.supplier,
       description: description ?? this.description,
       category: category ?? this.category,
-      receiptAttached: receiptAttached ?? this.receiptAttached,
+      paperOriginalKept: paperOriginalKept ?? this.paperOriginalKept,
       amountExclVat: amountExclVat ?? this.amountExclVat,
       vatRate: vatRate ?? this.vatRate,
       purchaseVat: purchaseVat ?? this.purchaseVat,
@@ -5670,8 +5672,8 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
         $ExpensesTable.$convertercategory.toSql(category.value),
       );
     }
-    if (receiptAttached.present) {
-      map['receipt_attached'] = Variable<bool>(receiptAttached.value);
+    if (paperOriginalKept.present) {
+      map['paper_original_kept'] = Variable<bool>(paperOriginalKept.value);
     }
     if (amountExclVat.present) {
       map['amount_excl_vat'] = Variable<int>(amountExclVat.value);
@@ -5727,7 +5729,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
           ..write('supplier: $supplier, ')
           ..write('description: $description, ')
           ..write('category: $category, ')
-          ..write('receiptAttached: $receiptAttached, ')
+          ..write('paperOriginalKept: $paperOriginalKept, ')
           ..write('amountExclVat: $amountExclVat, ')
           ..write('vatRate: $vatRate, ')
           ..write('purchaseVat: $purchaseVat, ')
@@ -8460,6 +8462,636 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
   }
 }
 
+class $ReceiptsTable extends Receipts with TableInfo<$ReceiptsTable, Receipt> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ReceiptsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _expenseIdMeta = const VerificationMeta(
+    'expenseId',
+  );
+  @override
+  late final GeneratedColumn<int> expenseId = GeneratedColumn<int>(
+    'expense_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES expenses (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _assetIdMeta = const VerificationMeta(
+    'assetId',
+  );
+  @override
+  late final GeneratedColumn<int> assetId = GeneratedColumn<int>(
+    'asset_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES fixed_assets (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _invoiceIdMeta = const VerificationMeta(
+    'invoiceId',
+  );
+  @override
+  late final GeneratedColumn<int> invoiceId = GeneratedColumn<int>(
+    'invoice_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES invoices (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _yearMeta = const VerificationMeta('year');
+  @override
+  late final GeneratedColumn<int> year = GeneratedColumn<int>(
+    'year',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<ReceiptType, String> type =
+      GeneratedColumn<String>(
+        'type',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<ReceiptType>($ReceiptsTable.$convertertype);
+  static const VerificationMeta _originalNameMeta = const VerificationMeta(
+    'originalName',
+  );
+  @override
+  late final GeneratedColumn<String> originalName = GeneratedColumn<String>(
+    'original_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sizeBytesMeta = const VerificationMeta(
+    'sizeBytes',
+  );
+  @override
+  late final GeneratedColumn<int> sizeBytes = GeneratedColumn<int>(
+    'size_bytes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sha256Meta = const VerificationMeta('sha256');
+  @override
+  late final GeneratedColumn<String> sha256 = GeneratedColumn<String>(
+    'sha256',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _addedAtMeta = const VerificationMeta(
+    'addedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> addedAt = GeneratedColumn<DateTime>(
+    'added_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    expenseId,
+    assetId,
+    invoiceId,
+    year,
+    type,
+    originalName,
+    sizeBytes,
+    sha256,
+    addedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Receipt> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('expense_id')) {
+      context.handle(
+        _expenseIdMeta,
+        expenseId.isAcceptableOrUnknown(data['expense_id']!, _expenseIdMeta),
+      );
+    }
+    if (data.containsKey('asset_id')) {
+      context.handle(
+        _assetIdMeta,
+        assetId.isAcceptableOrUnknown(data['asset_id']!, _assetIdMeta),
+      );
+    }
+    if (data.containsKey('invoice_id')) {
+      context.handle(
+        _invoiceIdMeta,
+        invoiceId.isAcceptableOrUnknown(data['invoice_id']!, _invoiceIdMeta),
+      );
+    }
+    if (data.containsKey('year')) {
+      context.handle(
+        _yearMeta,
+        year.isAcceptableOrUnknown(data['year']!, _yearMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_yearMeta);
+    }
+    if (data.containsKey('original_name')) {
+      context.handle(
+        _originalNameMeta,
+        originalName.isAcceptableOrUnknown(
+          data['original_name']!,
+          _originalNameMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_originalNameMeta);
+    }
+    if (data.containsKey('size_bytes')) {
+      context.handle(
+        _sizeBytesMeta,
+        sizeBytes.isAcceptableOrUnknown(data['size_bytes']!, _sizeBytesMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sizeBytesMeta);
+    }
+    if (data.containsKey('sha256')) {
+      context.handle(
+        _sha256Meta,
+        sha256.isAcceptableOrUnknown(data['sha256']!, _sha256Meta),
+      );
+    } else if (isInserting) {
+      context.missing(_sha256Meta);
+    }
+    if (data.containsKey('added_at')) {
+      context.handle(
+        _addedAtMeta,
+        addedAt.isAcceptableOrUnknown(data['added_at']!, _addedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_addedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Receipt map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Receipt(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      expenseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}expense_id'],
+      ),
+      assetId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}asset_id'],
+      ),
+      invoiceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}invoice_id'],
+      ),
+      year: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year'],
+      )!,
+      type: $ReceiptsTable.$convertertype.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}type'],
+        )!,
+      ),
+      originalName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}original_name'],
+      )!,
+      sizeBytes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}size_bytes'],
+      )!,
+      sha256: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sha256'],
+      )!,
+      addedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}added_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ReceiptsTable createAlias(String alias) {
+    return $ReceiptsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<ReceiptType, String, String> $convertertype =
+      const EnumNameConverter<ReceiptType>(ReceiptType.values);
+}
+
+class Receipt extends DataClass implements Insertable<Receipt> {
+  /// A random UUID, which is also the file name.
+  final String id;
+  final int? expenseId;
+  final int? assetId;
+  final int? invoiceId;
+
+  /// The year folder the file is in: the bookkeeping year of its owner.
+  final int year;
+  final ReceiptType type;
+
+  /// The name of the file the user added, shown and used in exports.
+  final String originalName;
+  final int sizeBytes;
+
+  /// SHA-256 of the stored file, to find duplicates and changed files.
+  final String sha256;
+  final DateTime addedAt;
+  const Receipt({
+    required this.id,
+    this.expenseId,
+    this.assetId,
+    this.invoiceId,
+    required this.year,
+    required this.type,
+    required this.originalName,
+    required this.sizeBytes,
+    required this.sha256,
+    required this.addedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    if (!nullToAbsent || expenseId != null) {
+      map['expense_id'] = Variable<int>(expenseId);
+    }
+    if (!nullToAbsent || assetId != null) {
+      map['asset_id'] = Variable<int>(assetId);
+    }
+    if (!nullToAbsent || invoiceId != null) {
+      map['invoice_id'] = Variable<int>(invoiceId);
+    }
+    map['year'] = Variable<int>(year);
+    {
+      map['type'] = Variable<String>($ReceiptsTable.$convertertype.toSql(type));
+    }
+    map['original_name'] = Variable<String>(originalName);
+    map['size_bytes'] = Variable<int>(sizeBytes);
+    map['sha256'] = Variable<String>(sha256);
+    map['added_at'] = Variable<DateTime>(addedAt);
+    return map;
+  }
+
+  ReceiptsCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptsCompanion(
+      id: Value(id),
+      expenseId: expenseId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(expenseId),
+      assetId: assetId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(assetId),
+      invoiceId: invoiceId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(invoiceId),
+      year: Value(year),
+      type: Value(type),
+      originalName: Value(originalName),
+      sizeBytes: Value(sizeBytes),
+      sha256: Value(sha256),
+      addedAt: Value(addedAt),
+    );
+  }
+
+  factory Receipt.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Receipt(
+      id: serializer.fromJson<String>(json['id']),
+      expenseId: serializer.fromJson<int?>(json['expenseId']),
+      assetId: serializer.fromJson<int?>(json['assetId']),
+      invoiceId: serializer.fromJson<int?>(json['invoiceId']),
+      year: serializer.fromJson<int>(json['year']),
+      type: $ReceiptsTable.$convertertype.fromJson(
+        serializer.fromJson<String>(json['type']),
+      ),
+      originalName: serializer.fromJson<String>(json['originalName']),
+      sizeBytes: serializer.fromJson<int>(json['sizeBytes']),
+      sha256: serializer.fromJson<String>(json['sha256']),
+      addedAt: serializer.fromJson<DateTime>(json['addedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'expenseId': serializer.toJson<int?>(expenseId),
+      'assetId': serializer.toJson<int?>(assetId),
+      'invoiceId': serializer.toJson<int?>(invoiceId),
+      'year': serializer.toJson<int>(year),
+      'type': serializer.toJson<String>(
+        $ReceiptsTable.$convertertype.toJson(type),
+      ),
+      'originalName': serializer.toJson<String>(originalName),
+      'sizeBytes': serializer.toJson<int>(sizeBytes),
+      'sha256': serializer.toJson<String>(sha256),
+      'addedAt': serializer.toJson<DateTime>(addedAt),
+    };
+  }
+
+  Receipt copyWith({
+    String? id,
+    Value<int?> expenseId = const Value.absent(),
+    Value<int?> assetId = const Value.absent(),
+    Value<int?> invoiceId = const Value.absent(),
+    int? year,
+    ReceiptType? type,
+    String? originalName,
+    int? sizeBytes,
+    String? sha256,
+    DateTime? addedAt,
+  }) => Receipt(
+    id: id ?? this.id,
+    expenseId: expenseId.present ? expenseId.value : this.expenseId,
+    assetId: assetId.present ? assetId.value : this.assetId,
+    invoiceId: invoiceId.present ? invoiceId.value : this.invoiceId,
+    year: year ?? this.year,
+    type: type ?? this.type,
+    originalName: originalName ?? this.originalName,
+    sizeBytes: sizeBytes ?? this.sizeBytes,
+    sha256: sha256 ?? this.sha256,
+    addedAt: addedAt ?? this.addedAt,
+  );
+  Receipt copyWithCompanion(ReceiptsCompanion data) {
+    return Receipt(
+      id: data.id.present ? data.id.value : this.id,
+      expenseId: data.expenseId.present ? data.expenseId.value : this.expenseId,
+      assetId: data.assetId.present ? data.assetId.value : this.assetId,
+      invoiceId: data.invoiceId.present ? data.invoiceId.value : this.invoiceId,
+      year: data.year.present ? data.year.value : this.year,
+      type: data.type.present ? data.type.value : this.type,
+      originalName: data.originalName.present
+          ? data.originalName.value
+          : this.originalName,
+      sizeBytes: data.sizeBytes.present ? data.sizeBytes.value : this.sizeBytes,
+      sha256: data.sha256.present ? data.sha256.value : this.sha256,
+      addedAt: data.addedAt.present ? data.addedAt.value : this.addedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Receipt(')
+          ..write('id: $id, ')
+          ..write('expenseId: $expenseId, ')
+          ..write('assetId: $assetId, ')
+          ..write('invoiceId: $invoiceId, ')
+          ..write('year: $year, ')
+          ..write('type: $type, ')
+          ..write('originalName: $originalName, ')
+          ..write('sizeBytes: $sizeBytes, ')
+          ..write('sha256: $sha256, ')
+          ..write('addedAt: $addedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    expenseId,
+    assetId,
+    invoiceId,
+    year,
+    type,
+    originalName,
+    sizeBytes,
+    sha256,
+    addedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Receipt &&
+          other.id == this.id &&
+          other.expenseId == this.expenseId &&
+          other.assetId == this.assetId &&
+          other.invoiceId == this.invoiceId &&
+          other.year == this.year &&
+          other.type == this.type &&
+          other.originalName == this.originalName &&
+          other.sizeBytes == this.sizeBytes &&
+          other.sha256 == this.sha256 &&
+          other.addedAt == this.addedAt);
+}
+
+class ReceiptsCompanion extends UpdateCompanion<Receipt> {
+  final Value<String> id;
+  final Value<int?> expenseId;
+  final Value<int?> assetId;
+  final Value<int?> invoiceId;
+  final Value<int> year;
+  final Value<ReceiptType> type;
+  final Value<String> originalName;
+  final Value<int> sizeBytes;
+  final Value<String> sha256;
+  final Value<DateTime> addedAt;
+  final Value<int> rowid;
+  const ReceiptsCompanion({
+    this.id = const Value.absent(),
+    this.expenseId = const Value.absent(),
+    this.assetId = const Value.absent(),
+    this.invoiceId = const Value.absent(),
+    this.year = const Value.absent(),
+    this.type = const Value.absent(),
+    this.originalName = const Value.absent(),
+    this.sizeBytes = const Value.absent(),
+    this.sha256 = const Value.absent(),
+    this.addedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptsCompanion.insert({
+    required String id,
+    this.expenseId = const Value.absent(),
+    this.assetId = const Value.absent(),
+    this.invoiceId = const Value.absent(),
+    required int year,
+    required ReceiptType type,
+    required String originalName,
+    required int sizeBytes,
+    required String sha256,
+    required DateTime addedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       year = Value(year),
+       type = Value(type),
+       originalName = Value(originalName),
+       sizeBytes = Value(sizeBytes),
+       sha256 = Value(sha256),
+       addedAt = Value(addedAt);
+  static Insertable<Receipt> custom({
+    Expression<String>? id,
+    Expression<int>? expenseId,
+    Expression<int>? assetId,
+    Expression<int>? invoiceId,
+    Expression<int>? year,
+    Expression<String>? type,
+    Expression<String>? originalName,
+    Expression<int>? sizeBytes,
+    Expression<String>? sha256,
+    Expression<DateTime>? addedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (expenseId != null) 'expense_id': expenseId,
+      if (assetId != null) 'asset_id': assetId,
+      if (invoiceId != null) 'invoice_id': invoiceId,
+      if (year != null) 'year': year,
+      if (type != null) 'type': type,
+      if (originalName != null) 'original_name': originalName,
+      if (sizeBytes != null) 'size_bytes': sizeBytes,
+      if (sha256 != null) 'sha256': sha256,
+      if (addedAt != null) 'added_at': addedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptsCompanion copyWith({
+    Value<String>? id,
+    Value<int?>? expenseId,
+    Value<int?>? assetId,
+    Value<int?>? invoiceId,
+    Value<int>? year,
+    Value<ReceiptType>? type,
+    Value<String>? originalName,
+    Value<int>? sizeBytes,
+    Value<String>? sha256,
+    Value<DateTime>? addedAt,
+    Value<int>? rowid,
+  }) {
+    return ReceiptsCompanion(
+      id: id ?? this.id,
+      expenseId: expenseId ?? this.expenseId,
+      assetId: assetId ?? this.assetId,
+      invoiceId: invoiceId ?? this.invoiceId,
+      year: year ?? this.year,
+      type: type ?? this.type,
+      originalName: originalName ?? this.originalName,
+      sizeBytes: sizeBytes ?? this.sizeBytes,
+      sha256: sha256 ?? this.sha256,
+      addedAt: addedAt ?? this.addedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (expenseId.present) {
+      map['expense_id'] = Variable<int>(expenseId.value);
+    }
+    if (assetId.present) {
+      map['asset_id'] = Variable<int>(assetId.value);
+    }
+    if (invoiceId.present) {
+      map['invoice_id'] = Variable<int>(invoiceId.value);
+    }
+    if (year.present) {
+      map['year'] = Variable<int>(year.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(
+        $ReceiptsTable.$convertertype.toSql(type.value),
+      );
+    }
+    if (originalName.present) {
+      map['original_name'] = Variable<String>(originalName.value);
+    }
+    if (sizeBytes.present) {
+      map['size_bytes'] = Variable<int>(sizeBytes.value);
+    }
+    if (sha256.present) {
+      map['sha256'] = Variable<String>(sha256.value);
+    }
+    if (addedAt.present) {
+      map['added_at'] = Variable<DateTime>(addedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptsCompanion(')
+          ..write('id: $id, ')
+          ..write('expenseId: $expenseId, ')
+          ..write('assetId: $assetId, ')
+          ..write('invoiceId: $invoiceId, ')
+          ..write('year: $year, ')
+          ..write('type: $type, ')
+          ..write('originalName: $originalName, ')
+          ..write('sizeBytes: $sizeBytes, ')
+          ..write('sha256: $sha256, ')
+          ..write('addedAt: $addedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -8476,6 +9108,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PensionEntriesTable pensionEntries = $PensionEntriesTable(this);
   late final $VatReturnsTable vatReturns = $VatReturnsTable(this);
   late final $TaxYearInputsTable taxYearInputs = $TaxYearInputsTable(this);
+  late final $ReceiptsTable receipts = $ReceiptsTable(this);
   late final Index invoicesInvoiceDate = Index(
     'invoices_invoice_date',
     'CREATE INDEX invoices_invoice_date ON invoices (invoice_date)',
@@ -8508,6 +9141,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     pensionEntries,
     vatReturns,
     taxYearInputs,
+    receipts,
     invoicesInvoiceDate,
     expensesDate,
     hourEntriesDate,
@@ -9409,6 +10043,25 @@ final class $$InvoicesTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$ReceiptsTable, List<Receipt>> _receiptsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.receipts,
+    aliasName: 'invoices__id__receipts__invoice_id',
+  );
+
+  $$ReceiptsTableProcessedTableManager get receiptsRefs {
+    final manager = $$ReceiptsTableTableManager(
+      $_db,
+      $_db.receipts,
+    ).filter((f) => f.invoiceId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_receiptsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$InvoicesTableFilterComposer
@@ -9580,6 +10233,31 @@ class $$InvoicesTableFilterComposer
           }) => $$InvoiceLinesTableFilterComposer(
             $db: $db,
             $table: $db.invoiceLines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> receiptsRefs(
+    Expression<bool> Function($$ReceiptsTableFilterComposer f) f,
+  ) {
+    final $$ReceiptsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.invoiceId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableFilterComposer(
+            $db: $db,
+            $table: $db.receipts,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -9907,6 +10585,31 @@ class $$InvoicesTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> receiptsRefs<T extends Object>(
+    Expression<T> Function($$ReceiptsTableAnnotationComposer a) f,
+  ) {
+    final $$ReceiptsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.invoiceId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.receipts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$InvoicesTableTableManager
@@ -9926,6 +10629,7 @@ class $$InvoicesTableTableManager
             bool correctedInvoiceId,
             bool clientId,
             bool invoiceLinesRefs,
+            bool receiptsRefs,
           })
         > {
   $$InvoicesTableTableManager(_$AppDatabase db, $InvoicesTable table)
@@ -10044,11 +10748,13 @@ class $$InvoicesTableTableManager
                 correctedInvoiceId = false,
                 clientId = false,
                 invoiceLinesRefs = false,
+                receiptsRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (invoiceLinesRefs) db.invoiceLines,
+                    if (receiptsRefs) db.receipts,
                   ],
                   addJoins:
                       <
@@ -10117,6 +10823,26 @@ class $$InvoicesTableTableManager
                           referencedColumn: 'invoice_id',
                           typedResults: items,
                         ),
+                      if (receiptsRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Invoice,
+                          $InvoicesTable,
+                          Receipt,
+                          $ReceiptsTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$InvoicesTableReferences
+                              ._receiptsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$InvoicesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).receiptsRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'invoice_id',
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -10141,6 +10867,7 @@ typedef $$InvoicesTableProcessedTableManager =
         bool correctedInvoiceId,
         bool clientId,
         bool invoiceLinesRefs,
+        bool receiptsRefs,
       })
     >;
 typedef $$InvoiceLinesTableCreateCompanionBuilder =
@@ -10649,6 +11376,25 @@ final class $$FixedAssetsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$ReceiptsTable, List<Receipt>> _receiptsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.receipts,
+    aliasName: 'fixed_assets__id__receipts__asset_id',
+  );
+
+  $$ReceiptsTableProcessedTableManager get receiptsRefs {
+    final manager = $$ReceiptsTableTableManager(
+      $_db,
+      $_db.receipts,
+    ).filter((f) => f.assetId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_receiptsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$FixedAssetsTableFilterComposer
@@ -10819,6 +11565,31 @@ class $$FixedAssetsTableFilterComposer
           }) => $$MileageTripsTableFilterComposer(
             $db: $db,
             $table: $db.mileageTrips,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> receiptsRefs(
+    Expression<bool> Function($$ReceiptsTableFilterComposer f) f,
+  ) {
+    final $$ReceiptsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.assetId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableFilterComposer(
+            $db: $db,
+            $table: $db.receipts,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -11121,6 +11892,31 @@ class $$FixedAssetsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> receiptsRefs<T extends Object>(
+    Expression<T> Function($$ReceiptsTableAnnotationComposer a) f,
+  ) {
+    final $$ReceiptsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.assetId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.receipts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$FixedAssetsTableTableManager
@@ -11136,7 +11932,11 @@ class $$FixedAssetsTableTableManager
           $$FixedAssetsTableUpdateCompanionBuilder,
           (FixedAsset, $$FixedAssetsTableReferences),
           FixedAsset,
-          PrefetchHooks Function({bool expensesRefs, bool mileageTripsRefs})
+          PrefetchHooks Function({
+            bool expensesRefs,
+            bool mileageTripsRefs,
+            bool receiptsRefs,
+          })
         > {
   $$FixedAssetsTableTableManager(_$AppDatabase db, $FixedAssetsTable table)
     : super(
@@ -11258,12 +12058,17 @@ class $$FixedAssetsTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({expensesRefs = false, mileageTripsRefs = false}) {
+              ({
+                expensesRefs = false,
+                mileageTripsRefs = false,
+                receiptsRefs = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (expensesRefs) db.expenses,
                     if (mileageTripsRefs) db.mileageTrips,
+                    if (receiptsRefs) db.receipts,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
@@ -11308,6 +12113,26 @@ class $$FixedAssetsTableTableManager
                           referencedColumn: 'car_asset_id',
                           typedResults: items,
                         ),
+                      if (receiptsRefs)
+                        await $_getPrefetchedDataByColumns<
+                          FixedAsset,
+                          $FixedAssetsTable,
+                          Receipt,
+                          $ReceiptsTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$FixedAssetsTableReferences
+                              ._receiptsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$FixedAssetsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).receiptsRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'asset_id',
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -11328,7 +12153,11 @@ typedef $$FixedAssetsTableProcessedTableManager =
       $$FixedAssetsTableUpdateCompanionBuilder,
       (FixedAsset, $$FixedAssetsTableReferences),
       FixedAsset,
-      PrefetchHooks Function({bool expensesRefs, bool mileageTripsRefs})
+      PrefetchHooks Function({
+        bool expensesRefs,
+        bool mileageTripsRefs,
+        bool receiptsRefs,
+      })
     >;
 typedef $$ExpensesTableCreateCompanionBuilder =
     ExpensesCompanion Function({
@@ -11337,7 +12166,7 @@ typedef $$ExpensesTableCreateCompanionBuilder =
       required String supplier,
       required String description,
       required ExpenseCategory category,
-      Value<bool> receiptAttached,
+      Value<bool> paperOriginalKept,
       required int amountExclVat,
       required VatRate vatRate,
       Value<PurchaseVat> purchaseVat,
@@ -11359,7 +12188,7 @@ typedef $$ExpensesTableUpdateCompanionBuilder =
       Value<String> supplier,
       Value<String> description,
       Value<ExpenseCategory> category,
-      Value<bool> receiptAttached,
+      Value<bool> paperOriginalKept,
       Value<int> amountExclVat,
       Value<VatRate> vatRate,
       Value<PurchaseVat> purchaseVat,
@@ -11393,6 +12222,25 @@ final class $$ExpensesTableReferences
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$ReceiptsTable, List<Receipt>> _receiptsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.receipts,
+    aliasName: 'expenses__id__receipts__expense_id',
+  );
+
+  $$ReceiptsTableProcessedTableManager get receiptsRefs {
+    final manager = $$ReceiptsTableTableManager(
+      $_db,
+      $_db.receipts,
+    ).filter((f) => f.expenseId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_receiptsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
     );
   }
 }
@@ -11432,8 +12280,8 @@ class $$ExpensesTableFilterComposer
     builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
-  ColumnFilters<bool> get receiptAttached => $composableBuilder(
-    column: $table.receiptAttached,
+  ColumnFilters<bool> get paperOriginalKept => $composableBuilder(
+    column: $table.paperOriginalKept,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -11521,6 +12369,31 @@ class $$ExpensesTableFilterComposer
     );
     return composer;
   }
+
+  Expression<bool> receiptsRefs(
+    Expression<bool> Function($$ReceiptsTableFilterComposer f) f,
+  ) {
+    final $$ReceiptsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.expenseId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableFilterComposer(
+            $db: $db,
+            $table: $db.receipts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ExpensesTableOrderingComposer
@@ -11557,8 +12430,8 @@ class $$ExpensesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<bool> get receiptAttached => $composableBuilder(
-    column: $table.receiptAttached,
+  ColumnOrderings<bool> get paperOriginalKept => $composableBuilder(
+    column: $table.paperOriginalKept,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -11672,8 +12545,8 @@ class $$ExpensesTableAnnotationComposer
   GeneratedColumnWithTypeConverter<ExpenseCategory, String> get category =>
       $composableBuilder(column: $table.category, builder: (column) => column);
 
-  GeneratedColumn<bool> get receiptAttached => $composableBuilder(
-    column: $table.receiptAttached,
+  GeneratedColumn<bool> get paperOriginalKept => $composableBuilder(
+    column: $table.paperOriginalKept,
     builder: (column) => column,
   );
 
@@ -11752,6 +12625,31 @@ class $$ExpensesTableAnnotationComposer
     );
     return composer;
   }
+
+  Expression<T> receiptsRefs<T extends Object>(
+    Expression<T> Function($$ReceiptsTableAnnotationComposer a) f,
+  ) {
+    final $$ReceiptsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.expenseId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.receipts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ExpensesTableTableManager
@@ -11767,7 +12665,7 @@ class $$ExpensesTableTableManager
           $$ExpensesTableUpdateCompanionBuilder,
           (Expense, $$ExpensesTableReferences),
           Expense,
-          PrefetchHooks Function({bool carAssetId})
+          PrefetchHooks Function({bool carAssetId, bool receiptsRefs})
         > {
   $$ExpensesTableTableManager(_$AppDatabase db, $ExpensesTable table)
     : super(
@@ -11787,7 +12685,7 @@ class $$ExpensesTableTableManager
                 Value<String> supplier = const Value.absent(),
                 Value<String> description = const Value.absent(),
                 Value<ExpenseCategory> category = const Value.absent(),
-                Value<bool> receiptAttached = const Value.absent(),
+                Value<bool> paperOriginalKept = const Value.absent(),
                 Value<int> amountExclVat = const Value.absent(),
                 Value<VatRate> vatRate = const Value.absent(),
                 Value<PurchaseVat> purchaseVat = const Value.absent(),
@@ -11807,7 +12705,7 @@ class $$ExpensesTableTableManager
                 supplier: supplier,
                 description: description,
                 category: category,
-                receiptAttached: receiptAttached,
+                paperOriginalKept: paperOriginalKept,
                 amountExclVat: amountExclVat,
                 vatRate: vatRate,
                 purchaseVat: purchaseVat,
@@ -11829,7 +12727,7 @@ class $$ExpensesTableTableManager
                 required String supplier,
                 required String description,
                 required ExpenseCategory category,
-                Value<bool> receiptAttached = const Value.absent(),
+                Value<bool> paperOriginalKept = const Value.absent(),
                 required int amountExclVat,
                 required VatRate vatRate,
                 Value<PurchaseVat> purchaseVat = const Value.absent(),
@@ -11849,7 +12747,7 @@ class $$ExpensesTableTableManager
                 supplier: supplier,
                 description: description,
                 category: category,
-                receiptAttached: receiptAttached,
+                paperOriginalKept: paperOriginalKept,
                 amountExclVat: amountExclVat,
                 vatRate: vatRate,
                 purchaseVat: purchaseVat,
@@ -11872,10 +12770,10 @@ class $$ExpensesTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({carAssetId = false}) {
+          prefetchHooksCallback: ({carAssetId = false, receiptsRefs = false}) {
             return PrefetchHooks(
               db: db,
-              explicitlyWatchedTables: [],
+              explicitlyWatchedTables: [if (receiptsRefs) db.receipts],
               addJoins:
                   <
                     T extends TableManagerState<
@@ -11909,7 +12807,24 @@ class $$ExpensesTableTableManager
                     return state;
                   },
               getPrefetchedDataCallback: (items) async {
-                return [];
+                return [
+                  if (receiptsRefs)
+                    await $_getPrefetchedDataByColumns<
+                      Expense,
+                      $ExpensesTable,
+                      Receipt,
+                      $ReceiptsTable
+                    >(
+                      currentTable: table,
+                      referencedTable: $$ExpensesTableReferences
+                          ._receiptsRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$ExpensesTableReferences(db, table, p0).receiptsRefs,
+                      currentColumn: 'id',
+                      referencedColumn: 'expense_id',
+                      typedResults: items,
+                    ),
+                ];
               },
             );
           },
@@ -11929,7 +12844,7 @@ typedef $$ExpensesTableProcessedTableManager =
       $$ExpensesTableUpdateCompanionBuilder,
       (Expense, $$ExpensesTableReferences),
       Expense,
-      PrefetchHooks Function({bool carAssetId})
+      PrefetchHooks Function({bool carAssetId, bool receiptsRefs})
     >;
 typedef $$HourEntriesTableCreateCompanionBuilder =
     HourEntriesCompanion Function({
@@ -13406,6 +14321,594 @@ typedef $$TaxYearInputsTableProcessedTableManager =
       TaxYearInput,
       PrefetchHooks Function()
     >;
+typedef $$ReceiptsTableCreateCompanionBuilder =
+    ReceiptsCompanion Function({
+      required String id,
+      Value<int?> expenseId,
+      Value<int?> assetId,
+      Value<int?> invoiceId,
+      required int year,
+      required ReceiptType type,
+      required String originalName,
+      required int sizeBytes,
+      required String sha256,
+      required DateTime addedAt,
+      Value<int> rowid,
+    });
+typedef $$ReceiptsTableUpdateCompanionBuilder =
+    ReceiptsCompanion Function({
+      Value<String> id,
+      Value<int?> expenseId,
+      Value<int?> assetId,
+      Value<int?> invoiceId,
+      Value<int> year,
+      Value<ReceiptType> type,
+      Value<String> originalName,
+      Value<int> sizeBytes,
+      Value<String> sha256,
+      Value<DateTime> addedAt,
+      Value<int> rowid,
+    });
+
+final class $$ReceiptsTableReferences
+    extends BaseReferences<_$AppDatabase, $ReceiptsTable, Receipt> {
+  $$ReceiptsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $ExpensesTable _expenseIdTable(_$AppDatabase db) =>
+      db.expenses.createAlias('receipts__expense_id__expenses__id');
+
+  $$ExpensesTableProcessedTableManager? get expenseId {
+    final $_column = $_itemColumn<int>('expense_id');
+    if ($_column == null) return null;
+    final manager = $$ExpensesTableTableManager(
+      $_db,
+      $_db.expenses,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_expenseIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $FixedAssetsTable _assetIdTable(_$AppDatabase db) =>
+      db.fixedAssets.createAlias('receipts__asset_id__fixed_assets__id');
+
+  $$FixedAssetsTableProcessedTableManager? get assetId {
+    final $_column = $_itemColumn<int>('asset_id');
+    if ($_column == null) return null;
+    final manager = $$FixedAssetsTableTableManager(
+      $_db,
+      $_db.fixedAssets,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_assetIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $InvoicesTable _invoiceIdTable(_$AppDatabase db) =>
+      db.invoices.createAlias('receipts__invoice_id__invoices__id');
+
+  $$InvoicesTableProcessedTableManager? get invoiceId {
+    final $_column = $_itemColumn<int>('invoice_id');
+    if ($_column == null) return null;
+    final manager = $$InvoicesTableTableManager(
+      $_db,
+      $_db.invoices,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_invoiceIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ReceiptsTableFilterComposer
+    extends Composer<_$AppDatabase, $ReceiptsTable> {
+  $$ReceiptsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<ReceiptType, ReceiptType, String> get type =>
+      $composableBuilder(
+        column: $table.type,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnFilters<String> get originalName => $composableBuilder(
+    column: $table.originalName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sizeBytes => $composableBuilder(
+    column: $table.sizeBytes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sha256 => $composableBuilder(
+    column: $table.sha256,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get addedAt => $composableBuilder(
+    column: $table.addedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ExpensesTableFilterComposer get expenseId {
+    final $$ExpensesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.expenseId,
+      referencedTable: $db.expenses,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExpensesTableFilterComposer(
+            $db: $db,
+            $table: $db.expenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$FixedAssetsTableFilterComposer get assetId {
+    final $$FixedAssetsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.assetId,
+      referencedTable: $db.fixedAssets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FixedAssetsTableFilterComposer(
+            $db: $db,
+            $table: $db.fixedAssets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$InvoicesTableFilterComposer get invoiceId {
+    final $$InvoicesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.invoiceId,
+      referencedTable: $db.invoices,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$InvoicesTableFilterComposer(
+            $db: $db,
+            $table: $db.invoices,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ReceiptsTable> {
+  $$ReceiptsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get originalName => $composableBuilder(
+    column: $table.originalName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sizeBytes => $composableBuilder(
+    column: $table.sizeBytes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sha256 => $composableBuilder(
+    column: $table.sha256,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get addedAt => $composableBuilder(
+    column: $table.addedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ExpensesTableOrderingComposer get expenseId {
+    final $$ExpensesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.expenseId,
+      referencedTable: $db.expenses,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExpensesTableOrderingComposer(
+            $db: $db,
+            $table: $db.expenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$FixedAssetsTableOrderingComposer get assetId {
+    final $$FixedAssetsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.assetId,
+      referencedTable: $db.fixedAssets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FixedAssetsTableOrderingComposer(
+            $db: $db,
+            $table: $db.fixedAssets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$InvoicesTableOrderingComposer get invoiceId {
+    final $$InvoicesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.invoiceId,
+      referencedTable: $db.invoices,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$InvoicesTableOrderingComposer(
+            $db: $db,
+            $table: $db.invoices,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ReceiptsTable> {
+  $$ReceiptsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get year =>
+      $composableBuilder(column: $table.year, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<ReceiptType, String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<String> get originalName => $composableBuilder(
+    column: $table.originalName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get sizeBytes =>
+      $composableBuilder(column: $table.sizeBytes, builder: (column) => column);
+
+  GeneratedColumn<String> get sha256 =>
+      $composableBuilder(column: $table.sha256, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get addedAt =>
+      $composableBuilder(column: $table.addedAt, builder: (column) => column);
+
+  $$ExpensesTableAnnotationComposer get expenseId {
+    final $$ExpensesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.expenseId,
+      referencedTable: $db.expenses,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExpensesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.expenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$FixedAssetsTableAnnotationComposer get assetId {
+    final $$FixedAssetsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.assetId,
+      referencedTable: $db.fixedAssets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FixedAssetsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.fixedAssets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$InvoicesTableAnnotationComposer get invoiceId {
+    final $$InvoicesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.invoiceId,
+      referencedTable: $db.invoices,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$InvoicesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.invoices,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ReceiptsTable,
+          Receipt,
+          $$ReceiptsTableFilterComposer,
+          $$ReceiptsTableOrderingComposer,
+          $$ReceiptsTableAnnotationComposer,
+          $$ReceiptsTableCreateCompanionBuilder,
+          $$ReceiptsTableUpdateCompanionBuilder,
+          (Receipt, $$ReceiptsTableReferences),
+          Receipt,
+          PrefetchHooks Function({bool expenseId, bool assetId, bool invoiceId})
+        > {
+  $$ReceiptsTableTableManager(_$AppDatabase db, $ReceiptsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ReceiptsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ReceiptsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ReceiptsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int?> expenseId = const Value.absent(),
+                Value<int?> assetId = const Value.absent(),
+                Value<int?> invoiceId = const Value.absent(),
+                Value<int> year = const Value.absent(),
+                Value<ReceiptType> type = const Value.absent(),
+                Value<String> originalName = const Value.absent(),
+                Value<int> sizeBytes = const Value.absent(),
+                Value<String> sha256 = const Value.absent(),
+                Value<DateTime> addedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptsCompanion(
+                id: id,
+                expenseId: expenseId,
+                assetId: assetId,
+                invoiceId: invoiceId,
+                year: year,
+                type: type,
+                originalName: originalName,
+                sizeBytes: sizeBytes,
+                sha256: sha256,
+                addedAt: addedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<int?> expenseId = const Value.absent(),
+                Value<int?> assetId = const Value.absent(),
+                Value<int?> invoiceId = const Value.absent(),
+                required int year,
+                required ReceiptType type,
+                required String originalName,
+                required int sizeBytes,
+                required String sha256,
+                required DateTime addedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptsCompanion.insert(
+                id: id,
+                expenseId: expenseId,
+                assetId: assetId,
+                invoiceId: invoiceId,
+                year: year,
+                type: type,
+                originalName: originalName,
+                sizeBytes: sizeBytes,
+                sha256: sha256,
+                addedAt: addedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ReceiptsTable, Receipt>(table),
+                  $$ReceiptsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({expenseId = false, assetId = false, invoiceId = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (expenseId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.expenseId,
+                                    referencedTable: $$ReceiptsTableReferences
+                                        ._expenseIdTable(db),
+                                    referencedColumn: $$ReceiptsTableReferences
+                                        ._expenseIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+                        if (assetId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.assetId,
+                                    referencedTable: $$ReceiptsTableReferences
+                                        ._assetIdTable(db),
+                                    referencedColumn: $$ReceiptsTableReferences
+                                        ._assetIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+                        if (invoiceId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.invoiceId,
+                                    referencedTable: $$ReceiptsTableReferences
+                                        ._invoiceIdTable(db),
+                                    referencedColumn: $$ReceiptsTableReferences
+                                        ._invoiceIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$ReceiptsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ReceiptsTable,
+      Receipt,
+      $$ReceiptsTableFilterComposer,
+      $$ReceiptsTableOrderingComposer,
+      $$ReceiptsTableAnnotationComposer,
+      $$ReceiptsTableCreateCompanionBuilder,
+      $$ReceiptsTableUpdateCompanionBuilder,
+      (Receipt, $$ReceiptsTableReferences),
+      Receipt,
+      PrefetchHooks Function({bool expenseId, bool assetId, bool invoiceId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -13432,4 +14935,6 @@ class $AppDatabaseManager {
       $$VatReturnsTableTableManager(_db, _db.vatReturns);
   $$TaxYearInputsTableTableManager get taxYearInputs =>
       $$TaxYearInputsTableTableManager(_db, _db.taxYearInputs);
+  $$ReceiptsTableTableManager get receipts =>
+      $$ReceiptsTableTableManager(_db, _db.receipts);
 }

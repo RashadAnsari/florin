@@ -54,7 +54,7 @@ Expense carExpense(int carId, int amount, int vat) => Expense(
   supplier: 's',
   description: 'fuel',
   category: ExpenseCategory.travel,
-  receiptAttached: true,
+  paperOriginalKept: true,
   amountExclVat: amount,
   vatRate: VatRate.high,
   purchaseVat: PurchaseVat.domestic,

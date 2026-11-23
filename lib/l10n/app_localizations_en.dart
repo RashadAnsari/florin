@@ -455,9 +455,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expensesVatBack => 'VAT back';
 
   @override
-  String get expensesReceiptAttached => 'Receipt attached';
-
-  @override
   String get expensesDeleteTitle => 'Delete expense';
 
   @override
@@ -1020,7 +1017,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get settingsMoveDatabase => 'Copy database to another folder';
+  String get settingsMoveDatabase =>
+      'Copy database and receipts to another folder';
 
   @override
   String get settingsExportSection => 'Export';
@@ -1377,10 +1375,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get expensesFieldVatRateHelp =>
       'The VAT rate on the receipt: 21%, 9%, 0% or exempt.';
-
-  @override
-  String get expensesReceiptAttachedHelp =>
-      'Tick when you have kept the receipt or invoice. You need it to reclaim VAT and to prove the cost.';
 
   @override
   String get expensesReclaimVatHelp =>
@@ -2367,4 +2361,200 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsKorSectionHelp =>
       'A BTW exemption for businesses with at most € 20.000 turnover in the Netherlands a year. You join and leave it with the Belastingdienst; enter its dates here so Florin follows it.';
+
+  @override
+  String get receiptTypeEInvoice => 'E-invoice (UBL)';
+
+  @override
+  String get receiptsTitle => 'Receipts';
+
+  @override
+  String get receiptsHelp =>
+      'The receipt or invoice for this expense, as a PDF, photo or scan. Florin copies it into the receipts folder next to your database and leaves your file as it is. The Belastingdienst asks you to keep receipts and invoices for 7 years in the form you received them; a scan or photo must show the whole document, front and back.';
+
+  @override
+  String get receiptsAssetTitle => 'Purchase invoice and receipts';
+
+  @override
+  String get receiptsAssetHelp =>
+      'The purchase invoice of this asset and any other proof, as a PDF, photo or scan. It belongs in your records while the asset is in use, and 7 years after that.';
+
+  @override
+  String get receiptsInvoiceTitle => 'Documents';
+
+  @override
+  String get receiptsInvoiceHelp =>
+      'The PDF of this invoice exactly as Florin made it when you issued it, kept as sent. For an invoice your customer issued, add their document here.';
+
+  @override
+  String get receiptsNone =>
+      'No files yet. Drop PDFs, photos or scans here, or add them.';
+
+  @override
+  String get receiptsAdd => 'Add files';
+
+  @override
+  String get receiptsPickDialog => 'Choose receipts';
+
+  @override
+  String get receiptsOpen => 'Open';
+
+  @override
+  String get receiptsRemove => 'Move to the trash';
+
+  @override
+  String get receiptsUnstage => 'Do not add';
+
+  @override
+  String get receiptsRemoved => 'Moved to the receipts trash';
+
+  @override
+  String get receiptsUndo => 'Undo';
+
+  @override
+  String get receiptsStaged => 'Stored when you save';
+
+  @override
+  String receiptsAdded(String date) {
+    return 'added $date';
+  }
+
+  @override
+  String get receiptsMissing =>
+      'The file is missing from the receipts folder. Restore it from a backup.';
+
+  @override
+  String get receiptsKeepUntil => 'Keep until';
+
+  @override
+  String get receiptsKeepUntilHelp =>
+      'The Belastingdienst asks you to keep invoices and receipts for 7 years. Florin counts them from the end of the year they belong to and never deletes them itself.';
+
+  @override
+  String get receiptsKeepWhileInUse => 'While in use, then 7 years';
+
+  @override
+  String receiptsRejectedEmpty(String name) {
+    return '$name is empty. Choose the file again.';
+  }
+
+  @override
+  String receiptsRejectedTooLarge(String name, String max) {
+    return '$name is larger than $max. Save the scan at a lower resolution, keeping every page readable, and add it again.';
+  }
+
+  @override
+  String receiptsRejectedType(String name) {
+    return '$name is not a PDF, JPEG, PNG, HEIC, TIFF or UBL e-invoice. Save or print it as PDF and add it again.';
+  }
+
+  @override
+  String receiptsDuplicate(String name) {
+    return '$name is already stored with another record. It was added here too.';
+  }
+
+  @override
+  String receiptsOpenFailed(String name) {
+    return 'Could not open $name. Open it from the receipts folder instead.';
+  }
+
+  @override
+  String get expensesPaperOriginalKept => 'Paper original kept';
+
+  @override
+  String get expensesPaperOriginalKeptHelp =>
+      'Tick when you keep the paper receipt or invoice yourself, for example a till receipt you have not scanned. You need proof to reclaim VAT and to show the cost; a file added above counts too.';
+
+  @override
+  String get expensesHasFiles => 'Receipt stored in Florin';
+
+  @override
+  String get expensesPaperOnly => 'Paper original kept';
+
+  @override
+  String get receiptsNotStored =>
+      'No PDF is stored for this invoice. Florin stores it the first time you export it.';
+
+  @override
+  String get settingsReceiptsSection => 'Receipts';
+
+  @override
+  String get settingsReceiptsSectionHelp =>
+      'Florin keeps the receipt files of expenses and assets, and the PDFs of issued invoices, in a receipts folder next to the database. It moves with the database and belongs in the same backup.';
+
+  @override
+  String settingsReceiptsLocation(String path) {
+    return 'Folder: $path';
+  }
+
+  @override
+  String settingsReceiptsCount(int count, String size) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files',
+      one: '1 file',
+    );
+    return '$_temp0, $size';
+  }
+
+  @override
+  String get settingsReceiptsShowFolder => 'Show folder';
+
+  @override
+  String get settingsReceiptsCheck => 'Check files';
+
+  @override
+  String get settingsReceiptsChecking => 'Checking';
+
+  @override
+  String settingsReceiptsAllOk(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'All $count files are present and unchanged.',
+      one: 'The file is present and unchanged.',
+      zero: 'No files to check.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String settingsReceiptsProblems(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files need attention. Restore them from a backup:',
+      one: '1 file needs attention. Restore it from a backup:',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsReceiptMissing => 'missing';
+
+  @override
+  String get settingsReceiptChanged => 'changed since it was added';
+
+  @override
+  String settingsEmptyTrash(int count) {
+    return 'Empty trash ($count)';
+  }
+
+  @override
+  String get settingsEmptyTrashTitle => 'Empty the receipts trash';
+
+  @override
+  String settingsEmptyTrashMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count removed files are deleted for good.',
+      one: '1 removed file is deleted for good.',
+    );
+    return '$_temp0 Keep receipts for 7 years: only empty the trash when you are sure none of them is still needed.';
+  }
+
+  @override
+  String get settingsReceiptsOpenFailed => 'The folder could not be opened';
 }

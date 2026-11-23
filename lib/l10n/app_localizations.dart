@@ -926,12 +926,6 @@ abstract class AppLocalizations {
   /// **'VAT back'**
   String get expensesVatBack;
 
-  /// No description provided for @expensesReceiptAttached.
-  ///
-  /// In en, this message translates to:
-  /// **'Receipt attached'**
-  String get expensesReceiptAttached;
-
   /// No description provided for @expensesDeleteTitle.
   ///
   /// In en, this message translates to:
@@ -1967,7 +1961,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsMoveDatabase.
   ///
   /// In en, this message translates to:
-  /// **'Copy database to another folder'**
+  /// **'Copy database and receipts to another folder'**
   String get settingsMoveDatabase;
 
   /// No description provided for @settingsExportSection.
@@ -2539,12 +2533,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The VAT rate on the receipt: 21%, 9%, 0% or exempt.'**
   String get expensesFieldVatRateHelp;
-
-  /// No description provided for @expensesReceiptAttachedHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Tick when you have kept the receipt or invoice. You need it to reclaim VAT and to prove the cost.'**
-  String get expensesReceiptAttachedHelp;
 
   /// No description provided for @expensesReclaimVatHelp.
   ///
@@ -4135,6 +4123,282 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A BTW exemption for businesses with at most € 20.000 turnover in the Netherlands a year. You join and leave it with the Belastingdienst; enter its dates here so Florin follows it.'**
   String get settingsKorSectionHelp;
+
+  /// No description provided for @receiptTypeEInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'E-invoice (UBL)'**
+  String get receiptTypeEInvoice;
+
+  /// No description provided for @receiptsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipts'**
+  String get receiptsTitle;
+
+  /// No description provided for @receiptsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The receipt or invoice for this expense, as a PDF, photo or scan. Florin copies it into the receipts folder next to your database and leaves your file as it is. The Belastingdienst asks you to keep receipts and invoices for 7 years in the form you received them; a scan or photo must show the whole document, front and back.'**
+  String get receiptsHelp;
+
+  /// No description provided for @receiptsAssetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase invoice and receipts'**
+  String get receiptsAssetTitle;
+
+  /// No description provided for @receiptsAssetHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The purchase invoice of this asset and any other proof, as a PDF, photo or scan. It belongs in your records while the asset is in use, and 7 years after that.'**
+  String get receiptsAssetHelp;
+
+  /// No description provided for @receiptsInvoiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get receiptsInvoiceTitle;
+
+  /// No description provided for @receiptsInvoiceHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The PDF of this invoice exactly as Florin made it when you issued it, kept as sent. For an invoice your customer issued, add their document here.'**
+  String get receiptsInvoiceHelp;
+
+  /// No description provided for @receiptsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No files yet. Drop PDFs, photos or scans here, or add them.'**
+  String get receiptsNone;
+
+  /// No description provided for @receiptsAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add files'**
+  String get receiptsAdd;
+
+  /// No description provided for @receiptsPickDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose receipts'**
+  String get receiptsPickDialog;
+
+  /// No description provided for @receiptsOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get receiptsOpen;
+
+  /// No description provided for @receiptsRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to the trash'**
+  String get receiptsRemove;
+
+  /// No description provided for @receiptsUnstage.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not add'**
+  String get receiptsUnstage;
+
+  /// No description provided for @receiptsRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Moved to the receipts trash'**
+  String get receiptsRemoved;
+
+  /// No description provided for @receiptsUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get receiptsUndo;
+
+  /// No description provided for @receiptsStaged.
+  ///
+  /// In en, this message translates to:
+  /// **'Stored when you save'**
+  String get receiptsStaged;
+
+  /// No description provided for @receiptsAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'added {date}'**
+  String receiptsAdded(String date);
+
+  /// No description provided for @receiptsMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'The file is missing from the receipts folder. Restore it from a backup.'**
+  String get receiptsMissing;
+
+  /// No description provided for @receiptsKeepUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep until'**
+  String get receiptsKeepUntil;
+
+  /// No description provided for @receiptsKeepUntilHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The Belastingdienst asks you to keep invoices and receipts for 7 years. Florin counts them from the end of the year they belong to and never deletes them itself.'**
+  String get receiptsKeepUntilHelp;
+
+  /// No description provided for @receiptsKeepWhileInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'While in use, then 7 years'**
+  String get receiptsKeepWhileInUse;
+
+  /// No description provided for @receiptsRejectedEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is empty. Choose the file again.'**
+  String receiptsRejectedEmpty(String name);
+
+  /// No description provided for @receiptsRejectedTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is larger than {max}. Save the scan at a lower resolution, keeping every page readable, and add it again.'**
+  String receiptsRejectedTooLarge(String name, String max);
+
+  /// No description provided for @receiptsRejectedType.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is not a PDF, JPEG, PNG, HEIC, TIFF or UBL e-invoice. Save or print it as PDF and add it again.'**
+  String receiptsRejectedType(String name);
+
+  /// No description provided for @receiptsDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is already stored with another record. It was added here too.'**
+  String receiptsDuplicate(String name);
+
+  /// No description provided for @receiptsOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open {name}. Open it from the receipts folder instead.'**
+  String receiptsOpenFailed(String name);
+
+  /// No description provided for @expensesPaperOriginalKept.
+  ///
+  /// In en, this message translates to:
+  /// **'Paper original kept'**
+  String get expensesPaperOriginalKept;
+
+  /// No description provided for @expensesPaperOriginalKeptHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Tick when you keep the paper receipt or invoice yourself, for example a till receipt you have not scanned. You need proof to reclaim VAT and to show the cost; a file added above counts too.'**
+  String get expensesPaperOriginalKeptHelp;
+
+  /// No description provided for @expensesHasFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt stored in Florin'**
+  String get expensesHasFiles;
+
+  /// No description provided for @expensesPaperOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Paper original kept'**
+  String get expensesPaperOnly;
+
+  /// No description provided for @receiptsNotStored.
+  ///
+  /// In en, this message translates to:
+  /// **'No PDF is stored for this invoice. Florin stores it the first time you export it.'**
+  String get receiptsNotStored;
+
+  /// No description provided for @settingsReceiptsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipts'**
+  String get settingsReceiptsSection;
+
+  /// No description provided for @settingsReceiptsSectionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Florin keeps the receipt files of expenses and assets, and the PDFs of issued invoices, in a receipts folder next to the database. It moves with the database and belongs in the same backup.'**
+  String get settingsReceiptsSectionHelp;
+
+  /// No description provided for @settingsReceiptsLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder: {path}'**
+  String settingsReceiptsLocation(String path);
+
+  /// No description provided for @settingsReceiptsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 file} other{{count} files}}, {size}'**
+  String settingsReceiptsCount(int count, String size);
+
+  /// No description provided for @settingsReceiptsShowFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Show folder'**
+  String get settingsReceiptsShowFolder;
+
+  /// No description provided for @settingsReceiptsCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Check files'**
+  String get settingsReceiptsCheck;
+
+  /// No description provided for @settingsReceiptsChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking'**
+  String get settingsReceiptsChecking;
+
+  /// No description provided for @settingsReceiptsAllOk.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No files to check.} =1{The file is present and unchanged.} other{All {count} files are present and unchanged.}}'**
+  String settingsReceiptsAllOk(int count);
+
+  /// No description provided for @settingsReceiptsProblems.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 file needs attention. Restore it from a backup:} other{{count} files need attention. Restore them from a backup:}}'**
+  String settingsReceiptsProblems(int count);
+
+  /// No description provided for @settingsReceiptMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'missing'**
+  String get settingsReceiptMissing;
+
+  /// No description provided for @settingsReceiptChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'changed since it was added'**
+  String get settingsReceiptChanged;
+
+  /// No description provided for @settingsEmptyTrash.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty trash ({count})'**
+  String settingsEmptyTrash(int count);
+
+  /// No description provided for @settingsEmptyTrashTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty the receipts trash'**
+  String get settingsEmptyTrashTitle;
+
+  /// No description provided for @settingsEmptyTrashMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 removed file is deleted for good.} other{{count} removed files are deleted for good.}} Keep receipts for 7 years: only empty the trash when you are sure none of them is still needed.'**
+  String settingsEmptyTrashMessage(int count);
+
+  /// No description provided for @settingsReceiptsOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The folder could not be opened'**
+  String get settingsReceiptsOpenFailed;
 }
 
 class _AppLocalizationsDelegate

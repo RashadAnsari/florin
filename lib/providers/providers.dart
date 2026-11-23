@@ -19,6 +19,8 @@ import '../services/car_service.dart';
 import '../services/pension_service.dart';
 import '../services/tax_rules/tax_year_rules.dart';
 import '../services/kor_service.dart';
+import '../services/receipt_service.dart';
+import '../db/daos/receipt_dao.dart';
 import '../services/tax_service.dart';
 import '../services/vat_service.dart';
 
@@ -78,6 +80,26 @@ final taxYearInputsDaoProvider = Provider(
 );
 final vatReturnDaoProvider = Provider(
   (ref) => VatReturnDao(ref.watch(databaseProvider)),
+);
+
+/// Receipt files next to the open database and their rows.
+final receiptServiceProvider = Provider((ref) {
+  final path = ref.watch(dbPathNotifierProvider).path;
+  if (path == null) throw StateError('No database path configured');
+  return ReceiptService(
+    ReceiptDao(ref.watch(databaseProvider)),
+    ReceiptStore.forDatabase(path),
+  );
+});
+
+/// The receipts of one expense, asset or invoice.
+final receiptsProvider = StreamProvider.family<List<Receipt>, ReceiptOwner>(
+  (ref, owner) => ref.watch(receiptServiceProvider).dao.watchFor(owner),
+);
+
+/// Every receipt, for the lists that mark which records have files.
+final allReceiptsProvider = StreamProvider(
+  (ref) => ref.watch(receiptServiceProvider).dao.watchAll(),
 );
 
 /// The selected year, always one with verified tax rules.

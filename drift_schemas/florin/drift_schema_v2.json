@@ -1095,14 +1095,14 @@
             }
           },
           {
-            "name": "receipt_attached",
-            "getter_name": "receiptAttached",
+            "name": "paper_original_kept",
+            "getter_name": "paperOriginalKept",
             "moor_type": "bool",
             "nullable": false,
             "customConstraints": null,
-            "defaultConstraints": "CHECK (\"receipt_attached\" IN (0, 1))",
+            "defaultConstraints": "CHECK (\"paper_original_kept\" IN (0, 1))",
             "dialectAwareDefaultConstraints": {
-              "sqlite": "CHECK (\"receipt_attached\" IN (0, 1))"
+              "sqlite": "CHECK (\"paper_original_kept\" IN (0, 1))"
             },
             "default_dart": "const CustomExpression('0')",
             "default_client_dart": null,
@@ -1854,6 +1854,181 @@
     {
       "id": 11,
       "references": [
+        5,
+        4,
+        2
+      ],
+      "type": "table",
+      "data": {
+        "name": "receipts",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "expense_id",
+            "getter_name": "expenseId",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES expenses (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES expenses (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "expenses",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "asset_id",
+            "getter_name": "assetId",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES fixed_assets (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES fixed_assets (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "fixed_assets",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "invoice_id",
+            "getter_name": "invoiceId",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES invoices (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES invoices (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "invoices",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "year",
+            "getter_name": "year",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "type",
+            "getter_name": "type",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [],
+            "type_converter": {
+              "dart_expr": "const EnumNameConverter<ReceiptType>(ReceiptType.values)",
+              "dart_type_name": "ReceiptType"
+            }
+          },
+          {
+            "name": "original_name",
+            "getter_name": "originalName",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "size_bytes",
+            "getter_name": "sizeBytes",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "sha256",
+            "getter_name": "sha256",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "added_at",
+            "getter_name": "addedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK ((expense_id IS NOT NULL) + (asset_id IS NOT NULL) + (invoice_id IS NOT NULL) = 1)"
+        ],
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "references": [
         2
       ],
       "type": "index",
@@ -1871,7 +2046,7 @@
       }
     },
     {
-      "id": 12,
+      "id": 13,
       "references": [
         5
       ],
@@ -1890,7 +2065,7 @@
       }
     },
     {
-      "id": 13,
+      "id": 14,
       "references": [
         6
       ],
@@ -1909,7 +2084,7 @@
       }
     },
     {
-      "id": 14,
+      "id": 15,
       "references": [
         7
       ],
@@ -1979,7 +2154,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"expenses\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"date\" INTEGER NOT NULL, \"supplier\" TEXT NOT NULL, \"description\" TEXT NOT NULL, \"category\" TEXT NOT NULL, \"receipt_attached\" INTEGER NOT NULL DEFAULT 0 CHECK (\"receipt_attached\" IN (0, 1)), \"amount_excl_vat\" INTEGER NOT NULL, \"vat_rate\" TEXT NOT NULL, \"purchase_vat\" TEXT NOT NULL DEFAULT 'domestic', \"vat_amount\" INTEGER NOT NULL, \"total_incl_vat\" INTEGER NOT NULL, \"business_use_pct\" REAL NOT NULL, \"deductible_amount\" INTEGER NOT NULL, \"vat_reclaimable\" INTEGER NOT NULL CHECK (\"vat_reclaimable\" IN (0, 1)), \"vat_to_reclaim\" INTEGER NOT NULL, \"notes\" TEXT NULL, \"paid_from\" TEXT NULL, \"payment_reference\" TEXT NULL, \"car_asset_id\" INTEGER NULL REFERENCES fixed_assets (id) ON DELETE RESTRICT);"
+          "sql": "CREATE TABLE IF NOT EXISTS \"expenses\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"date\" INTEGER NOT NULL, \"supplier\" TEXT NOT NULL, \"description\" TEXT NOT NULL, \"category\" TEXT NOT NULL, \"paper_original_kept\" INTEGER NOT NULL DEFAULT 0 CHECK (\"paper_original_kept\" IN (0, 1)), \"amount_excl_vat\" INTEGER NOT NULL, \"vat_rate\" TEXT NOT NULL, \"purchase_vat\" TEXT NOT NULL DEFAULT 'domestic', \"vat_amount\" INTEGER NOT NULL, \"total_incl_vat\" INTEGER NOT NULL, \"business_use_pct\" REAL NOT NULL, \"deductible_amount\" INTEGER NOT NULL, \"vat_reclaimable\" INTEGER NOT NULL CHECK (\"vat_reclaimable\" IN (0, 1)), \"vat_to_reclaim\" INTEGER NOT NULL, \"notes\" TEXT NULL, \"paid_from\" TEXT NULL, \"payment_reference\" TEXT NULL, \"car_asset_id\" INTEGER NULL REFERENCES fixed_assets (id) ON DELETE RESTRICT);"
         }
       ]
     },
@@ -2025,6 +2200,15 @@
         {
           "dialect": "sqlite",
           "sql": "CREATE TABLE IF NOT EXISTS \"tax_year_inputs\" (\"year\" INTEGER NOT NULL, \"partner_hours\" INTEGER NOT NULL DEFAULT 0, \"has_so_verklaring\" INTEGER NOT NULL DEFAULT 0 CHECK (\"has_so_verklaring\" IN (0, 1)), \"so_starter\" INTEGER NOT NULL DEFAULT 0 CHECK (\"so_starter\" IN (0, 1)), \"business_ceased\" INTEGER NOT NULL DEFAULT 0 CHECK (\"business_ceased\" IN (0, 1)), \"stakingsaftrek_used_before\" INTEGER NOT NULL DEFAULT 0, \"disability_benefit\" INTEGER NOT NULL DEFAULT 0 CHECK (\"disability_benefit\" IN (0, 1)), \"disability_starters_used\" INTEGER NOT NULL DEFAULT 0, \"unrealised_zelfstandigenaftrek\" INTEGER NOT NULL DEFAULT 0, \"loss_carry_forward\" INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (\"year\"));"
+        }
+      ]
+    },
+    {
+      "name": "receipts",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"receipts\" (\"id\" TEXT NOT NULL, \"expense_id\" INTEGER NULL REFERENCES expenses (id) ON DELETE RESTRICT, \"asset_id\" INTEGER NULL REFERENCES fixed_assets (id) ON DELETE RESTRICT, \"invoice_id\" INTEGER NULL REFERENCES invoices (id) ON DELETE RESTRICT, \"year\" INTEGER NOT NULL, \"type\" TEXT NOT NULL, \"original_name\" TEXT NOT NULL, \"size_bytes\" INTEGER NOT NULL, \"sha256\" TEXT NOT NULL, \"added_at\" INTEGER NOT NULL, PRIMARY KEY (\"id\"), CHECK ((expense_id IS NOT NULL) + (asset_id IS NOT NULL) + (invoice_id IS NOT NULL) = 1));"
         }
       ]
     },

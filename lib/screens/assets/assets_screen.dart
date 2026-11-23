@@ -10,6 +10,8 @@ import '../../db/database.dart';
 import '../../providers/providers.dart';
 import '../../l10n/labels.dart';
 import '../../services/asset_service.dart';
+import '../../services/receipt_service.dart';
+import '../receipts/receipts_section.dart';
 import '../../services/tax_rules/tax_year_rules.dart';
 import '../../widgets/enum_dropdown.dart';
 import '../../widgets/value_row.dart';
@@ -161,19 +163,22 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
     return (before?.balance ?? 0) + formedThisYear;
   }
 
+  final _receiptDraft = ReceiptDraft();
+
   @override
   void dispose() {
     _name.dispose();
     _notes.dispose();
     _usefulLife.dispose();
+    _receiptDraft.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    final saved = await guardSave(
-      context,
-      () => ref
+    final receipts = ref.read(receiptServiceProvider);
+    final saved = await guardSave(context, () async {
+      final id = await ref
           .read(assetDaoProvider)
           .save(
             FixedAssetsCompanion(
@@ -207,8 +212,12 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                 _disposalDate == null ? null : _disposalProceeds,
               ),
             ),
-          ),
-    );
+          );
+      // Files of an asset sit in the folder of its purchase year.
+      final owner = ReceiptOwner.asset(widget.asset?.id ?? id);
+      await receipts.relocateFor(owner, _purchaseDate.year);
+      await _receiptDraft.commit(receipts, owner, _purchaseDate.year);
+    });
     if (saved && mounted) context.pop();
   }
 
@@ -221,10 +230,12 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
-    final deleted = await guardSave(
-      context,
-      () => ref.read(assetDaoProvider).remove(widget.asset!),
-    );
+    final deleted = await guardSave(context, () async {
+      await ref
+          .read(receiptServiceProvider)
+          .removeAllFor(ReceiptOwner.asset(widget.asset!.id));
+      await ref.read(assetDaoProvider).remove(widget.asset!);
+    });
     if (deleted && mounted) context.pop();
   }
 
@@ -515,6 +526,22 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                 label: Text(l.assetsClearDisposalDate),
               ),
             ],
+            const SizedBox(height: AppSpacing.section),
+            ReceiptsSection(
+              owner: widget.asset == null
+                  ? null
+                  : ReceiptOwner.asset(widget.asset!.id),
+              draft: _receiptDraft,
+              year: _purchaseDate.year,
+              title: l.receiptsAssetTitle,
+              help: l.receiptsAssetHelp,
+              // The purchase invoice stays current while the asset is used.
+              keepUntil: _disposalDate == null
+                  ? l.receiptsKeepWhileInUse
+                  : AppFormat.date(
+                      ReceiptService.keepUntil(_disposalDate!.year),
+                    ),
+            ),
           ],
         ),
       ),

@@ -68,9 +68,12 @@ lib/
   db/                    Drift: enums, tables, DAOs, database
   l10n/                  ARB files, generated localizations, enum labels
   providers/             Riverpod providers, including the tax and BTW estimates
-  screens/<feature>/     One folder per feature: list screen and detail page
+  screens/<feature>/     One folder per feature: list screen and detail page;
+                         receipts/ holds the receipts section the expense,
+                         asset and invoice pages share
   services/              Business logic: tax, assets, cars, BTW, KOR, pension,
-                         PDF, CSV, domain, and the format checks and parsers
+                         PDF, CSV, receipts, domain, and the format checks
+                         and parsers
     tax_rules/           TaxYearRules, one sourced file per tax year, and the
                          car reductions by registration year
   theme/                 Colours, spacing scale, formatting
@@ -126,6 +129,13 @@ Data rules:
 - **Bookkeeping data lives in the database**, including the business profile
   and BTW filing status. Shared preferences hold only the database path, the
   selected year and the language.
+- **Receipt files live next to the database**, in
+  `receipts/<year>/<uuid>.<extension>`, with a row in `receipts` for each.
+  Go through `ReceiptService`, which keeps the two in step: a file is copied
+  byte for byte and only kept with its row, follows its record to another
+  year folder, and goes to `receipts/.trash/` when removed. Only the user
+  empties the trash. Anything that moves or exports the database takes the
+  receipts folder with it.
 - Each DAO mixes in `Crud` for `save` (insert or update by primary key) and
   `remove`. Add a query method to the DAO, not SQL in a screen.
 
@@ -152,7 +162,8 @@ find, older ones included. These are shared:
 | Whether a treatment fits a country | `VatTreatment.fitsCountry`, `euCountries` |
 | KOR status, turnover and its effect on expenses | `KorService`, `KorStatus`, `korStatusProvider`, `effectiveExpensesProvider` |
 | Combining several provider streams | `waitForAll` in `lib/providers/providers.dart` |
-| Showing money, dates and rates | `AppFormat.cents`, `date`, `number`, `percent`, `hours` in `lib/theme/app_theme.dart` |
+| Showing money, dates and rates | `AppFormat.cents`, `date`, `number`, `percent`, `hours`, `fileSize` in `lib/theme/app_theme.dart` |
+| Storing, checking, trashing and exporting receipt files | `ReceiptService`, `ReceiptStore`, `receiptsProvider`; `CsvExportService.receiptExportPath` for names in an export |
 
 The component library in `lib/widgets/`:
 
@@ -184,6 +195,7 @@ The component library in `lib/widgets/`:
 | An error in words the user can act on | `describeError`, `showSaveError` |
 | Confirmation | `showConfirmationDialog` |
 | Business profile fields | `BusinessProfileForm` |
+| Receipts of an expense, asset or invoice | `ReceiptsSection` with a `ReceiptDraft` for unsaved records (`lib/screens/receipts/`) |
 | Hours against the urencriterium | `UrencriteriumProgress` |
 | Dashboard figure | `StatCard` |
 

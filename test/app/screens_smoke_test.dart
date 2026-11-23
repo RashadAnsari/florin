@@ -60,7 +60,7 @@ void main() {
         final prefs = await SharedPreferences.getInstance();
 
         final db = AppDatabase(NativeDatabase.memory());
-        await tester.runAsync(() => fillDemo(db));
+        await tester.runAsync(() => fillDemo(db, folder: dir.path));
 
         await tester.pumpWidget(
           ProviderScope(

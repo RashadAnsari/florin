@@ -14,6 +14,7 @@ import 'tables/invoice_lines.dart';
 import 'tables/invoices.dart';
 import 'tables/mileage_trips.dart';
 import 'tables/pension.dart';
+import 'tables/receipts.dart';
 import 'tables/tax_year_inputs.dart';
 import 'tables/vat_returns.dart';
 
@@ -34,6 +35,7 @@ part 'database.g.dart';
     PensionEntries,
     VatReturns,
     TaxYearInputs,
+    Receipts,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -70,6 +72,12 @@ class AppDatabase extends _$AppDatabase {
               schema.businessProfiles,
               schema.businessProfiles.korEnd,
             );
+            await m.renameColumn(
+              schema.expenses,
+              'receipt_attached',
+              schema.expenses.paperOriginalKept,
+            );
+            await m.createTable(schema.receipts);
           },
         )(m, from, to),
       );

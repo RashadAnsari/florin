@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:drift/native.dart';
 import 'package:florin/db/database.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,13 +10,18 @@ import '../tool/create_demo_database.dart';
 /// screen and rule can be tried with it.
 void main() {
   late AppDatabase db;
+  late Directory folder;
 
   setUpAll(() async {
     db = AppDatabase(NativeDatabase.memory());
-    await fillDemo(db);
+    folder = await Directory.systemTemp.createTemp('florin_demo');
+    await fillDemo(db, folder: folder.path);
   });
 
-  tearDownAll(() => db.close());
+  tearDownAll(() async {
+    await db.close();
+    await folder.delete(recursive: true);
+  });
 
   test('every table has rows', () async {
     for (final table in db.allTables) {
@@ -74,6 +81,13 @@ void main() {
     expect(invoices.any((i) => i.selfBilled), isTrue);
     final profile = await db.select(db.businessProfiles).getSingle();
     expect(profile.korStart, isNotNull);
+    final receipts = await db.select(db.receipts).get();
+    expect(
+      receipts.map((r) => r.type).toSet(),
+      containsAll([ReceiptType.pdf, ReceiptType.png, ReceiptType.xml]),
+    );
+    expect(receipts.any((r) => r.assetId != null), isTrue);
+    expect(receipts.any((r) => r.invoiceId != null), isTrue);
     expect(assets.any((a) => a.reserveGain), isTrue);
     expect(assets.any((a) => a.reinvestmentReserveApplied > 0), isTrue);
     expect(assets.any((a) => a.investmentDeductionReceived != null), isTrue);

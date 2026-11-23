@@ -138,4 +138,34 @@ void main() {
     expect(p.basename(second.path), 'florin_2026_export_2026-11-23_14-30-05_2');
     expect(await first.exists(), isTrue);
   });
+
+  test('receipts get readable, safe and unique names in an export', () {
+    Receipt receipt({int? expenseId, int? invoiceId}) => Receipt(
+      id: '3f2c9a1e-6b0d-4e8a-9c1f-2a7b5d4e3c10',
+      expenseId: expenseId,
+      invoiceId: invoiceId,
+      year: 2026,
+      type: ReceiptType.pdf,
+      originalName: 'scan.pdf',
+      sizeBytes: 1,
+      sha256: 'h',
+      addedAt: DateTime(2026, 3, 5),
+    );
+    expect(
+      CsvExportService.receiptExportPath(
+        receipt(expenseId: 1),
+        date: DateTime(2026, 3, 4),
+        label: 'Hardware: A/B "Voorbeeld"',
+      ),
+      'bonnen/2026-03-04_Hardware- A-B -Voorbeeld-_3f2c9a1e.pdf',
+    );
+    expect(
+      CsvExportService.receiptExportPath(
+        receipt(invoiceId: 1),
+        date: DateTime(2026, 3, 4),
+        label: 'F-2026-001',
+      ),
+      'facturen/F-2026-001_3f2c9a1e.pdf',
+    );
+  });
 }

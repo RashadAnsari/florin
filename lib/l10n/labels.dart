@@ -73,6 +73,17 @@ extension VatTreatmentLabel on VatTreatment {
   };
 }
 
+extension ReceiptTypeLabel on ReceiptType {
+  String label(AppLocalizations l) => switch (this) {
+    ReceiptType.pdf => 'PDF',
+    ReceiptType.jpeg => 'JPEG',
+    ReceiptType.png => 'PNG',
+    ReceiptType.heic => 'HEIC',
+    ReceiptType.tiff => 'TIFF',
+    ReceiptType.xml => l.receiptTypeEInvoice,
+  };
+}
+
 extension VatRateLabel on VatRate {
   String label(AppLocalizations l) => switch (this) {
     VatRate.high => l.vatRate21,

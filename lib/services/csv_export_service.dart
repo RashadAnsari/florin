@@ -9,6 +9,7 @@ import 'package:path/path.dart' as p;
 import '../db/database.dart';
 import '../theme/app_theme.dart';
 import 'domain.dart';
+import 'receipt_store.dart';
 import 'tax_service.dart';
 import 'vat_service.dart';
 
@@ -234,19 +235,72 @@ class CsvExportService {
     return dir.create(recursive: true);
   }
 
+  static String _receiptType(ReceiptType t) => switch (t) {
+    ReceiptType.pdf => 'PDF',
+    ReceiptType.jpeg => 'JPEG',
+    ReceiptType.png => 'PNG',
+    ReceiptType.heic => 'HEIC',
+    ReceiptType.tiff => 'TIFF',
+    ReceiptType.xml => 'E-factuur (UBL)',
+  };
+
+  /// Text made safe as part of a file name on every platform.
+  static String _safe(String text) {
+    final cleaned = text
+        .replaceAll(RegExp(r'[\\/:*?"<>|\x00-\x1F]'), '-')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
+    return cleaned.length > 60 ? cleaned.substring(0, 60).trim() : cleaned;
+  }
+
+  /// Where a receipt goes in an export, named so a person can find it:
+  /// `bonnen/2026-03-04_Supplier_3f2c9a1e.pdf` for expenses and assets,
+  /// `facturen/F-2026-001_3f2c9a1e.pdf` for invoices. The first part of the
+  /// UUID keeps names unique.
+  static String receiptExportPath(
+    Receipt r, {
+    required DateTime date,
+    required String label,
+  }) {
+    final folder = r.invoiceId != null ? 'facturen' : 'bonnen';
+    final day = DateFormat('yyyy-MM-dd').format(date);
+    final stem = r.invoiceId != null ? _safe(label) : '${day}_${_safe(label)}';
+    return '$folder/${stem}_${r.id.substring(0, 8)}.${r.type.extension}';
+  }
+
   /// Writes the year's files. [quarters] holds the BTW returns for Q1 to Q4;
-  /// every quarter gets its files, empty or not.
+  /// every quarter gets its files, empty or not. The receipts of the year's
+  /// expenses, invoices and the assets in use are copied from [receipts].
   Future<String?> exportYear(
     int year, {
     required String dialogTitle,
     required List<VatQuarterResult> quarters,
     required TaxResult? incomeTax,
+    required ReceiptStore receipts,
   }) async {
-    assert(quarters.length == 4);
     final parent = await FilePicker.platform.getDirectoryPath(
       dialogTitle: dialogTitle,
     );
     if (parent == null) return null;
+    return writeYear(
+      year,
+      parent: parent,
+      quarters: quarters,
+      incomeTax: incomeTax,
+      receipts: receipts,
+    );
+  }
+
+  /// Writes the year's files into a new dated folder inside [parent] and
+  /// returns that folder.
+  Future<String> writeYear(
+    int year, {
+    required String parent,
+    required List<VatQuarterResult> quarters,
+    required TaxResult? incomeTax,
+    required ReceiptStore receipts,
+  }) async {
+    assert(quarters.length == 4);
     final dir = (await createExportFolder(parent, year, DateTime.now())).path;
 
     final invoices =
@@ -286,6 +340,43 @@ class CsvExportService {
     final clients = await db.select(db.clients).get();
     final clientNames = {for (final c in clients) c.id: c.name};
     final clientsById = {for (final c in clients) c.id: c};
+
+    // An asset's purchase invoice matters every year the asset is in use.
+    final assetsInUse = {
+      for (final a in assets)
+        if (a.purchaseDate.year <= year &&
+            (a.disposalDate == null || a.disposalDate!.year >= year))
+          a.id: a,
+    };
+    final expensesById = {for (final e in expenses) e.id: e};
+    final invoicesById = {for (final i in invoices) i.id: i};
+    final exported = <(Receipt, String, String, DateTime, String)>[];
+    for (final r in await db.select(db.receipts).get()) {
+      final e = expensesById[r.expenseId];
+      final a = assetsInUse[r.assetId];
+      final i = invoicesById[r.invoiceId];
+      final (kind, date, label) = e != null
+          ? ('Uitgave', e.date, e.supplier)
+          : a != null
+          ? ('Bedrijfsmiddel', a.purchaseDate, a.assetName)
+          : i != null
+          ? ('Factuur', i.invoiceDate, i.invoiceNumber)
+          : ('', DateTime(0), '');
+      if (kind.isEmpty) continue;
+      exported.add((
+        r,
+        receiptExportPath(r, date: date, label: label),
+        kind,
+        date,
+        label,
+      ));
+    }
+    final filesOfExpense = <int, List<String>>{};
+    for (final (r, path, _, _, _) in exported) {
+      if (r.expenseId != null) {
+        filesOfExpense.putIfAbsent(r.expenseId!, () => []).add(path);
+      }
+    }
 
     Future<void> write(String name, List<List<Object>> rows) => File(
       p.join(dir, 'florin_${year}_$name.csv'),
@@ -367,7 +458,8 @@ class CsvExportService {
         'Zakelijk gebruik %',
         'Zakelijk deel',
         'Btw te vorderen',
-        'Bon aanwezig',
+        'Papieren origineel bewaard',
+        'Bonnen',
         'Kwartaal',
       ],
       for (final e in expenses)
@@ -389,7 +481,8 @@ class CsvExportService {
           (e.businessUsePct * 100).round(),
           _euro(e.deductibleAmount),
           _euro(e.vatToReclaim),
-          _yesNo(e.receiptAttached),
+          _yesNo(e.paperOriginalKept),
+          (filesOfExpense[e.id] ?? const []).join('; '),
           'Q${quarterOf(e.date)}',
         ],
     ]);
@@ -520,6 +613,45 @@ class CsvExportService {
     if (incomeTax != null) {
       await write('inkomstenbelasting_schatting', incomeTaxRows(incomeTax));
     }
+
+    // Each file is copied as stored, so its SHA-256 still matches.
+    final present = <String, bool>{};
+    for (final (r, path, _, _, _) in exported) {
+      final source = receipts.fileOf(r);
+      final exists = await source.exists();
+      present[r.id] = exists;
+      if (!exists) continue;
+      final target = File(p.join(dir, path));
+      await target.parent.create(recursive: true);
+      await source.copy(target.path);
+    }
+    await write('bonnen', [
+      [
+        'Bestand in export',
+        'Hoort bij',
+        'Datum',
+        'Omschrijving',
+        'Oorspronkelijke naam',
+        'Soort',
+        'Grootte (bytes)',
+        'Toegevoegd',
+        'SHA-256',
+        'Aanwezig',
+      ],
+      for (final (r, path, kind, date, label) in exported)
+        [
+          path,
+          kind,
+          _date(date),
+          label,
+          r.originalName,
+          _receiptType(r.type),
+          r.sizeBytes,
+          _date(r.addedAt),
+          r.sha256,
+          _yesNo(present[r.id]!),
+        ],
+    ]);
 
     return dir;
   }
