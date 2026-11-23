@@ -51,4 +51,8 @@ void main() {
     expect(nearestSupportedYear(2030), 2026);
     expect(nearestSupportedYear(2020), 2026);
   });
+
+  test('KOR turnover limit (Wet OB 1968 art. 25a lid 1)', () {
+    expect(rules.korThreshold, 2000000);
+  });
 }

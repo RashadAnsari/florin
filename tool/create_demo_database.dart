@@ -19,8 +19,14 @@ import 'package:florin/db/daos/pension_dao.dart';
 import 'package:florin/db/daos/tax_year_inputs_dao.dart';
 import 'package:florin/db/daos/vat_return_dao.dart';
 import 'package:florin/db/database.dart';
+import 'package:florin/services/domain.dart';
 
 const _year = 2026;
+
+// The business took part in the KOR from 1 January. The invoice of 28 April
+// takes the turnover past € 20.000, which ends the KOR from that supply.
+final _korStart = DateTime(_year, 1, 1);
+final _korEndedOn = DateTime(_year, 4, 28);
 
 Future<void> main(List<String> args) async {
   final dir = Directory(args.isEmpty ? 'demo' : args.first)
@@ -36,14 +42,15 @@ Future<void> main(List<String> args) async {
 /// Fills [db] with the fictional business.
 Future<void> fillDemo(AppDatabase db) async {
   await BusinessProfileDao(db).save(
-    const BusinessProfilesCompanion(
-      id: Value(1),
-      name: Value('Studio Voorbeeld'),
-      vatNumber: Value('NL000099998B57'),
-      kvkNumber: Value('12345678'),
-      address: Value('Voorbeeldstraat 1\n1234 AB Utrecht'),
-      iban: Value('NL91ABNA0417164300'),
-      isStarter: Value(false),
+    BusinessProfilesCompanion(
+      id: const Value(1),
+      name: const Value('Studio Voorbeeld'),
+      vatNumber: const Value('NL000099998B57'),
+      kvkNumber: const Value('12345678'),
+      address: const Value('Voorbeeldstraat 1\n1234 AB Utrecht'),
+      iban: const Value('NL91ABNA0417164300'),
+      isStarter: const Value(false),
+      korStart: Value(_korStart),
     ),
   );
 
@@ -55,6 +62,7 @@ Future<void> fillDemo(AppDatabase db) async {
     String address,
     WetDbaRisk risk, {
     bool active = true,
+    bool reseller = false,
     String? kvk,
   }) => clients.save(
     ClientsCompanion(
@@ -64,8 +72,9 @@ Future<void> fillDemo(AppDatabase db) async {
       kvkNumber: Value(kvk),
       address: Value(address),
       wetDbaRisk: Value(risk),
-      contractSigned: Value(risk != WetDbaRisk.high),
-      contractExpiry: Value(DateTime(_year + 1, 6, 30)),
+      contractSigned: Value(!reseller && risk != WetDbaRisk.high),
+      contractExpiry: Value(reseller ? null : DateTime(_year + 1, 6, 30)),
+      isMerchantOfRecord: Value(reseller),
       contactPerson: const Value('Sam Voorbeeld'),
       phone: const Value('+31 20 000 0000'),
       email: Value('finance@${name.toLowerCase().split(' ').first}.example'),
@@ -117,6 +126,14 @@ Future<void> fillDemo(AppDatabase db) async {
     'Musterweg 9\n8000 Zürich\nSchweiz',
     WetDbaRisk.low,
   );
+  final reseller = await client(
+    'Voorbeeld Reseller Ltd',
+    'GB',
+    'GB999999973',
+    '1 Example Street\nLondon EC1A 1AA\nUnited Kingdom',
+    WetDbaRisk.low,
+    reseller: true,
+  );
   await client(
     'Oud Klant BV',
     'NL',
@@ -136,8 +153,11 @@ Future<void> fillDemo(AppDatabase db) async {
     InvoiceStatus status = InvoiceStatus.paid,
     InvoiceType type = InvoiceType.invoice,
     int? corrects,
+    String? selfBilledNumber,
+    String unit = 'uur',
+    DateTime? supplyDate,
   }) {
-    seq++;
+    if (selfBilledNumber == null) seq++;
     var excl = 0, vat = 0;
     final companions = <InvoiceLinesCompanion>[];
     for (var i = 0; i < lines.length; i++) {
@@ -153,7 +173,7 @@ Future<void> fillDemo(AppDatabase db) async {
           invoiceId: const Value(0),
           description: Value(text),
           quantity: Value(qty),
-          unit: const Value('uur'),
+          unit: Value(unit),
           unitPriceExclVat: Value(price),
           vatRate: Value(
             treatment == VatTreatment.standard ? rate : VatRate.zero,
@@ -166,11 +186,14 @@ Future<void> fillDemo(AppDatabase db) async {
     }
     return invoices.saveWithLines(
       InvoicesCompanion(
-        invoiceNumber: Value('F-$_year-${seq.toString().padLeft(3, '0')}'),
+        invoiceNumber: Value(
+          selfBilledNumber ?? 'F-$_year-${seq.toString().padLeft(3, '0')}',
+        ),
+        selfBilled: Value(selfBilledNumber != null),
         invoiceType: Value(type),
         correctedInvoiceId: Value(corrects),
         invoiceDate: Value(date),
-        supplyDate: Value(date),
+        supplyDate: Value(supplyDate ?? date),
         clientId: Value(clientId),
         vatTreatment: Value(treatment),
         sellerName: const Value('Studio Voorbeeld'),
@@ -194,10 +217,14 @@ Future<void> fillDemo(AppDatabase db) async {
   }
 
   for (var month = 1; month <= 10; month++) {
+    final date = DateTime(_year, month, 28);
     await invoice(
       clientId: dutch,
-      date: DateTime(_year, month, 28),
+      date: date,
       lines: [('Ontwerpwerk website', 60, 8500, VatRate.high)],
+      treatment: date.isBefore(_korEndedOn)
+          ? VatTreatment.kor
+          : VatTreatment.standard,
     );
   }
   final german1 = await invoice(
@@ -249,12 +276,57 @@ Future<void> fillDemo(AppDatabase db) async {
     lines: [('Gedrukte catalogi', 50, 1200, VatRate.high)],
     treatment: VatTreatment.exportOutsideEu,
   );
+  // Template sales through the reseller, which issues a self-billed invoice
+  // per calendar month for what it owes.
+  const licences = [0, 0, 0, 0, 0, 0, 12, 18, 25, 31];
+  for (var month = 7; month <= 10; month++) {
+    await invoice(
+      clientId: reseller,
+      date: DateTime(_year, month + 1, 5),
+      lines: [
+        (
+          'Verkopen ontwerpsjabloon ${month.toString().padLeft(2, '0')}-$_year',
+          licences[month - 1].toDouble(),
+          2900,
+          VatRate.high,
+        ),
+      ],
+      treatment: VatTreatment.servicesOutsideEu,
+      selfBilledNumber: 'VR-$_year-${month.toString().padLeft(2, '0')}',
+      status: month == 10 ? InvoiceStatus.sent : InvoiceStatus.paid,
+      unit: 'licentie',
+      supplyDate: DateTime(_year, month + 1, 0),
+    );
+  }
   await invoice(
     clientId: dutch,
     date: DateTime(_year, 11, 20),
     lines: [('Ontwerp jaarverslag', 30, 8500, VatRate.high)],
     status: InvoiceStatus.draft,
   );
+
+  // Number the own invoices in date order, as one consecutive series
+  // (Wet OB 1968 art. 35a lid 1 b). Self-billed invoices keep the reseller's.
+  final own =
+      await (db.select(db.invoices)
+            ..where((i) => i.selfBilled.not())
+            ..orderBy([
+              (i) => OrderingTerm.asc(i.invoiceDate),
+              (i) => OrderingTerm.asc(i.id),
+            ]))
+          .get();
+  for (final i in own) {
+    await (db.update(db.invoices)..where((r) => r.id.equals(i.id))).write(
+      InvoicesCompanion(invoiceNumber: Value('tmp-${i.id}')),
+    );
+  }
+  for (final (n, i) in own.indexed) {
+    await (db.update(db.invoices)..where((r) => r.id.equals(i.id))).write(
+      InvoicesCompanion(
+        invoiceNumber: Value('F-$_year-${(n + 1).toString().padLeft(3, '0')}'),
+      ),
+    );
+  }
 
   final assets = AssetDao(db);
   Future<int> asset(
@@ -425,6 +497,8 @@ Future<void> fillDemo(AppDatabase db) async {
     bool receipt = true,
   }) {
     final vat = rate.vatOn(amount);
+    // Under the KOR no BTW is reclaimed.
+    final reclaimed = reclaim && !date.isBefore(_korEndedOn);
     return expenses
         .save(
           ExpensesCompanion(
@@ -442,10 +516,21 @@ Future<void> fillDemo(AppDatabase db) async {
             ),
             businessUsePct: Value(use),
             deductibleAmount: Value(
-              ((amount + (reclaim ? 0 : vat)) * use).round(),
+              ExpenseMath.deductible(
+                amountExclVat: amount,
+                vatAmount: vat,
+                businessUsePct: use,
+                vatReclaimable: reclaimed,
+              ),
             ),
-            vatReclaimable: Value(reclaim),
-            vatToReclaim: Value(reclaim ? (vat * use).round() : 0),
+            vatReclaimable: Value(reclaimed),
+            vatToReclaim: Value(
+              ExpenseMath.vatToReclaim(
+                vatAmount: vat,
+                businessUsePct: use,
+                vatReclaimable: reclaimed,
+              ),
+            ),
             carAssetId: Value(carId),
             paidFrom: const Value('Zakelijke rekening'),
             paymentReference: Value('REF-${date.month}-${amount % 997}'),

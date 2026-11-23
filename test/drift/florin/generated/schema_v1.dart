@@ -4,7 +4,8 @@
 //
 import 'package:drift/drift.dart';
 
-class BusinessProfiles extends Table with TableInfo {
+class BusinessProfiles extends Table
+    with TableInfo<BusinessProfiles, BusinessProfilesData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -84,8 +85,38 @@ class BusinessProfiles extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  BusinessProfilesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BusinessProfilesData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      vatNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vat_number'],
+      )!,
+      kvkNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kvk_number'],
+      )!,
+      address: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}address'],
+      )!,
+      iban: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}iban'],
+      )!,
+      isStarter: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}is_starter'],
+      )!,
+    );
   }
 
   @override
@@ -99,7 +130,250 @@ class BusinessProfiles extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class Clients extends Table with TableInfo {
+class BusinessProfilesData extends DataClass
+    implements Insertable<BusinessProfilesData> {
+  final int id;
+  final String name;
+  final String vatNumber;
+  final String kvkNumber;
+  final String address;
+  final String iban;
+  final int isStarter;
+  const BusinessProfilesData({
+    required this.id,
+    required this.name,
+    required this.vatNumber,
+    required this.kvkNumber,
+    required this.address,
+    required this.iban,
+    required this.isStarter,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['vat_number'] = Variable<String>(vatNumber);
+    map['kvk_number'] = Variable<String>(kvkNumber);
+    map['address'] = Variable<String>(address);
+    map['iban'] = Variable<String>(iban);
+    map['is_starter'] = Variable<int>(isStarter);
+    return map;
+  }
+
+  BusinessProfilesCompanion toCompanion(bool nullToAbsent) {
+    return BusinessProfilesCompanion(
+      id: Value(id),
+      name: Value(name),
+      vatNumber: Value(vatNumber),
+      kvkNumber: Value(kvkNumber),
+      address: Value(address),
+      iban: Value(iban),
+      isStarter: Value(isStarter),
+    );
+  }
+
+  factory BusinessProfilesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BusinessProfilesData(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      vatNumber: serializer.fromJson<String>(json['vatNumber']),
+      kvkNumber: serializer.fromJson<String>(json['kvkNumber']),
+      address: serializer.fromJson<String>(json['address']),
+      iban: serializer.fromJson<String>(json['iban']),
+      isStarter: serializer.fromJson<int>(json['isStarter']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'vatNumber': serializer.toJson<String>(vatNumber),
+      'kvkNumber': serializer.toJson<String>(kvkNumber),
+      'address': serializer.toJson<String>(address),
+      'iban': serializer.toJson<String>(iban),
+      'isStarter': serializer.toJson<int>(isStarter),
+    };
+  }
+
+  BusinessProfilesData copyWith({
+    int? id,
+    String? name,
+    String? vatNumber,
+    String? kvkNumber,
+    String? address,
+    String? iban,
+    int? isStarter,
+  }) => BusinessProfilesData(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    vatNumber: vatNumber ?? this.vatNumber,
+    kvkNumber: kvkNumber ?? this.kvkNumber,
+    address: address ?? this.address,
+    iban: iban ?? this.iban,
+    isStarter: isStarter ?? this.isStarter,
+  );
+  BusinessProfilesData copyWithCompanion(BusinessProfilesCompanion data) {
+    return BusinessProfilesData(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      vatNumber: data.vatNumber.present ? data.vatNumber.value : this.vatNumber,
+      kvkNumber: data.kvkNumber.present ? data.kvkNumber.value : this.kvkNumber,
+      address: data.address.present ? data.address.value : this.address,
+      iban: data.iban.present ? data.iban.value : this.iban,
+      isStarter: data.isStarter.present ? data.isStarter.value : this.isStarter,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BusinessProfilesData(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('vatNumber: $vatNumber, ')
+          ..write('kvkNumber: $kvkNumber, ')
+          ..write('address: $address, ')
+          ..write('iban: $iban, ')
+          ..write('isStarter: $isStarter')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, name, vatNumber, kvkNumber, address, iban, isStarter);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BusinessProfilesData &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.vatNumber == this.vatNumber &&
+          other.kvkNumber == this.kvkNumber &&
+          other.address == this.address &&
+          other.iban == this.iban &&
+          other.isStarter == this.isStarter);
+}
+
+class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfilesData> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<String> vatNumber;
+  final Value<String> kvkNumber;
+  final Value<String> address;
+  final Value<String> iban;
+  final Value<int> isStarter;
+  const BusinessProfilesCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.vatNumber = const Value.absent(),
+    this.kvkNumber = const Value.absent(),
+    this.address = const Value.absent(),
+    this.iban = const Value.absent(),
+    this.isStarter = const Value.absent(),
+  });
+  BusinessProfilesCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    required String vatNumber,
+    required String kvkNumber,
+    required String address,
+    required String iban,
+    this.isStarter = const Value.absent(),
+  }) : name = Value(name),
+       vatNumber = Value(vatNumber),
+       kvkNumber = Value(kvkNumber),
+       address = Value(address),
+       iban = Value(iban);
+  static Insertable<BusinessProfilesData> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? vatNumber,
+    Expression<String>? kvkNumber,
+    Expression<String>? address,
+    Expression<String>? iban,
+    Expression<int>? isStarter,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (vatNumber != null) 'vat_number': vatNumber,
+      if (kvkNumber != null) 'kvk_number': kvkNumber,
+      if (address != null) 'address': address,
+      if (iban != null) 'iban': iban,
+      if (isStarter != null) 'is_starter': isStarter,
+    });
+  }
+
+  BusinessProfilesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<String>? vatNumber,
+    Value<String>? kvkNumber,
+    Value<String>? address,
+    Value<String>? iban,
+    Value<int>? isStarter,
+  }) {
+    return BusinessProfilesCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      vatNumber: vatNumber ?? this.vatNumber,
+      kvkNumber: kvkNumber ?? this.kvkNumber,
+      address: address ?? this.address,
+      iban: iban ?? this.iban,
+      isStarter: isStarter ?? this.isStarter,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (vatNumber.present) {
+      map['vat_number'] = Variable<String>(vatNumber.value);
+    }
+    if (kvkNumber.present) {
+      map['kvk_number'] = Variable<String>(kvkNumber.value);
+    }
+    if (address.present) {
+      map['address'] = Variable<String>(address.value);
+    }
+    if (iban.present) {
+      map['iban'] = Variable<String>(iban.value);
+    }
+    if (isStarter.present) {
+      map['is_starter'] = Variable<int>(isStarter.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BusinessProfilesCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('vatNumber: $vatNumber, ')
+          ..write('kvkNumber: $kvkNumber, ')
+          ..write('address: $address, ')
+          ..write('iban: $iban, ')
+          ..write('isStarter: $isStarter')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Clients extends Table with TableInfo<Clients, ClientsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -245,8 +519,66 @@ class Clients extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  ClientsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ClientsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      country: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}country'],
+      )!,
+      vatNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vat_number'],
+      ),
+      kvkNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kvk_number'],
+      ),
+      address: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}address'],
+      )!,
+      contactPerson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}contact_person'],
+      ),
+      email: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}email'],
+      ),
+      phone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone'],
+      ),
+      wetDbaRisk: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}wet_dba_risk'],
+      )!,
+      contractSigned: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}contract_signed'],
+      )!,
+      contractExpiry: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}contract_expiry'],
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}is_active'],
+      )!,
+    );
   }
 
   @override
@@ -258,7 +590,455 @@ class Clients extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class Invoices extends Table with TableInfo {
+class ClientsData extends DataClass implements Insertable<ClientsData> {
+  final int id;
+  final String name;
+  final String country;
+  final String? vatNumber;
+  final String? kvkNumber;
+  final String address;
+  final String? contactPerson;
+  final String? email;
+  final String? phone;
+  final String wetDbaRisk;
+  final int contractSigned;
+  final int? contractExpiry;
+  final String? notes;
+  final int isActive;
+  const ClientsData({
+    required this.id,
+    required this.name,
+    required this.country,
+    this.vatNumber,
+    this.kvkNumber,
+    required this.address,
+    this.contactPerson,
+    this.email,
+    this.phone,
+    required this.wetDbaRisk,
+    required this.contractSigned,
+    this.contractExpiry,
+    this.notes,
+    required this.isActive,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['country'] = Variable<String>(country);
+    if (!nullToAbsent || vatNumber != null) {
+      map['vat_number'] = Variable<String>(vatNumber);
+    }
+    if (!nullToAbsent || kvkNumber != null) {
+      map['kvk_number'] = Variable<String>(kvkNumber);
+    }
+    map['address'] = Variable<String>(address);
+    if (!nullToAbsent || contactPerson != null) {
+      map['contact_person'] = Variable<String>(contactPerson);
+    }
+    if (!nullToAbsent || email != null) {
+      map['email'] = Variable<String>(email);
+    }
+    if (!nullToAbsent || phone != null) {
+      map['phone'] = Variable<String>(phone);
+    }
+    map['wet_dba_risk'] = Variable<String>(wetDbaRisk);
+    map['contract_signed'] = Variable<int>(contractSigned);
+    if (!nullToAbsent || contractExpiry != null) {
+      map['contract_expiry'] = Variable<int>(contractExpiry);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['is_active'] = Variable<int>(isActive);
+    return map;
+  }
+
+  ClientsCompanion toCompanion(bool nullToAbsent) {
+    return ClientsCompanion(
+      id: Value(id),
+      name: Value(name),
+      country: Value(country),
+      vatNumber: vatNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(vatNumber),
+      kvkNumber: kvkNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(kvkNumber),
+      address: Value(address),
+      contactPerson: contactPerson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(contactPerson),
+      email: email == null && nullToAbsent
+          ? const Value.absent()
+          : Value(email),
+      phone: phone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(phone),
+      wetDbaRisk: Value(wetDbaRisk),
+      contractSigned: Value(contractSigned),
+      contractExpiry: contractExpiry == null && nullToAbsent
+          ? const Value.absent()
+          : Value(contractExpiry),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      isActive: Value(isActive),
+    );
+  }
+
+  factory ClientsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ClientsData(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      country: serializer.fromJson<String>(json['country']),
+      vatNumber: serializer.fromJson<String?>(json['vatNumber']),
+      kvkNumber: serializer.fromJson<String?>(json['kvkNumber']),
+      address: serializer.fromJson<String>(json['address']),
+      contactPerson: serializer.fromJson<String?>(json['contactPerson']),
+      email: serializer.fromJson<String?>(json['email']),
+      phone: serializer.fromJson<String?>(json['phone']),
+      wetDbaRisk: serializer.fromJson<String>(json['wetDbaRisk']),
+      contractSigned: serializer.fromJson<int>(json['contractSigned']),
+      contractExpiry: serializer.fromJson<int?>(json['contractExpiry']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      isActive: serializer.fromJson<int>(json['isActive']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'country': serializer.toJson<String>(country),
+      'vatNumber': serializer.toJson<String?>(vatNumber),
+      'kvkNumber': serializer.toJson<String?>(kvkNumber),
+      'address': serializer.toJson<String>(address),
+      'contactPerson': serializer.toJson<String?>(contactPerson),
+      'email': serializer.toJson<String?>(email),
+      'phone': serializer.toJson<String?>(phone),
+      'wetDbaRisk': serializer.toJson<String>(wetDbaRisk),
+      'contractSigned': serializer.toJson<int>(contractSigned),
+      'contractExpiry': serializer.toJson<int?>(contractExpiry),
+      'notes': serializer.toJson<String?>(notes),
+      'isActive': serializer.toJson<int>(isActive),
+    };
+  }
+
+  ClientsData copyWith({
+    int? id,
+    String? name,
+    String? country,
+    Value<String?> vatNumber = const Value.absent(),
+    Value<String?> kvkNumber = const Value.absent(),
+    String? address,
+    Value<String?> contactPerson = const Value.absent(),
+    Value<String?> email = const Value.absent(),
+    Value<String?> phone = const Value.absent(),
+    String? wetDbaRisk,
+    int? contractSigned,
+    Value<int?> contractExpiry = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+    int? isActive,
+  }) => ClientsData(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    country: country ?? this.country,
+    vatNumber: vatNumber.present ? vatNumber.value : this.vatNumber,
+    kvkNumber: kvkNumber.present ? kvkNumber.value : this.kvkNumber,
+    address: address ?? this.address,
+    contactPerson: contactPerson.present
+        ? contactPerson.value
+        : this.contactPerson,
+    email: email.present ? email.value : this.email,
+    phone: phone.present ? phone.value : this.phone,
+    wetDbaRisk: wetDbaRisk ?? this.wetDbaRisk,
+    contractSigned: contractSigned ?? this.contractSigned,
+    contractExpiry: contractExpiry.present
+        ? contractExpiry.value
+        : this.contractExpiry,
+    notes: notes.present ? notes.value : this.notes,
+    isActive: isActive ?? this.isActive,
+  );
+  ClientsData copyWithCompanion(ClientsCompanion data) {
+    return ClientsData(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      country: data.country.present ? data.country.value : this.country,
+      vatNumber: data.vatNumber.present ? data.vatNumber.value : this.vatNumber,
+      kvkNumber: data.kvkNumber.present ? data.kvkNumber.value : this.kvkNumber,
+      address: data.address.present ? data.address.value : this.address,
+      contactPerson: data.contactPerson.present
+          ? data.contactPerson.value
+          : this.contactPerson,
+      email: data.email.present ? data.email.value : this.email,
+      phone: data.phone.present ? data.phone.value : this.phone,
+      wetDbaRisk: data.wetDbaRisk.present
+          ? data.wetDbaRisk.value
+          : this.wetDbaRisk,
+      contractSigned: data.contractSigned.present
+          ? data.contractSigned.value
+          : this.contractSigned,
+      contractExpiry: data.contractExpiry.present
+          ? data.contractExpiry.value
+          : this.contractExpiry,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ClientsData(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('country: $country, ')
+          ..write('vatNumber: $vatNumber, ')
+          ..write('kvkNumber: $kvkNumber, ')
+          ..write('address: $address, ')
+          ..write('contactPerson: $contactPerson, ')
+          ..write('email: $email, ')
+          ..write('phone: $phone, ')
+          ..write('wetDbaRisk: $wetDbaRisk, ')
+          ..write('contractSigned: $contractSigned, ')
+          ..write('contractExpiry: $contractExpiry, ')
+          ..write('notes: $notes, ')
+          ..write('isActive: $isActive')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    country,
+    vatNumber,
+    kvkNumber,
+    address,
+    contactPerson,
+    email,
+    phone,
+    wetDbaRisk,
+    contractSigned,
+    contractExpiry,
+    notes,
+    isActive,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ClientsData &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.country == this.country &&
+          other.vatNumber == this.vatNumber &&
+          other.kvkNumber == this.kvkNumber &&
+          other.address == this.address &&
+          other.contactPerson == this.contactPerson &&
+          other.email == this.email &&
+          other.phone == this.phone &&
+          other.wetDbaRisk == this.wetDbaRisk &&
+          other.contractSigned == this.contractSigned &&
+          other.contractExpiry == this.contractExpiry &&
+          other.notes == this.notes &&
+          other.isActive == this.isActive);
+}
+
+class ClientsCompanion extends UpdateCompanion<ClientsData> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<String> country;
+  final Value<String?> vatNumber;
+  final Value<String?> kvkNumber;
+  final Value<String> address;
+  final Value<String?> contactPerson;
+  final Value<String?> email;
+  final Value<String?> phone;
+  final Value<String> wetDbaRisk;
+  final Value<int> contractSigned;
+  final Value<int?> contractExpiry;
+  final Value<String?> notes;
+  final Value<int> isActive;
+  const ClientsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.country = const Value.absent(),
+    this.vatNumber = const Value.absent(),
+    this.kvkNumber = const Value.absent(),
+    this.address = const Value.absent(),
+    this.contactPerson = const Value.absent(),
+    this.email = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.wetDbaRisk = const Value.absent(),
+    this.contractSigned = const Value.absent(),
+    this.contractExpiry = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.isActive = const Value.absent(),
+  });
+  ClientsCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    this.country = const Value.absent(),
+    this.vatNumber = const Value.absent(),
+    this.kvkNumber = const Value.absent(),
+    required String address,
+    this.contactPerson = const Value.absent(),
+    this.email = const Value.absent(),
+    this.phone = const Value.absent(),
+    required String wetDbaRisk,
+    this.contractSigned = const Value.absent(),
+    this.contractExpiry = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.isActive = const Value.absent(),
+  }) : name = Value(name),
+       address = Value(address),
+       wetDbaRisk = Value(wetDbaRisk);
+  static Insertable<ClientsData> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? country,
+    Expression<String>? vatNumber,
+    Expression<String>? kvkNumber,
+    Expression<String>? address,
+    Expression<String>? contactPerson,
+    Expression<String>? email,
+    Expression<String>? phone,
+    Expression<String>? wetDbaRisk,
+    Expression<int>? contractSigned,
+    Expression<int>? contractExpiry,
+    Expression<String>? notes,
+    Expression<int>? isActive,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (country != null) 'country': country,
+      if (vatNumber != null) 'vat_number': vatNumber,
+      if (kvkNumber != null) 'kvk_number': kvkNumber,
+      if (address != null) 'address': address,
+      if (contactPerson != null) 'contact_person': contactPerson,
+      if (email != null) 'email': email,
+      if (phone != null) 'phone': phone,
+      if (wetDbaRisk != null) 'wet_dba_risk': wetDbaRisk,
+      if (contractSigned != null) 'contract_signed': contractSigned,
+      if (contractExpiry != null) 'contract_expiry': contractExpiry,
+      if (notes != null) 'notes': notes,
+      if (isActive != null) 'is_active': isActive,
+    });
+  }
+
+  ClientsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<String>? country,
+    Value<String?>? vatNumber,
+    Value<String?>? kvkNumber,
+    Value<String>? address,
+    Value<String?>? contactPerson,
+    Value<String?>? email,
+    Value<String?>? phone,
+    Value<String>? wetDbaRisk,
+    Value<int>? contractSigned,
+    Value<int?>? contractExpiry,
+    Value<String?>? notes,
+    Value<int>? isActive,
+  }) {
+    return ClientsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      country: country ?? this.country,
+      vatNumber: vatNumber ?? this.vatNumber,
+      kvkNumber: kvkNumber ?? this.kvkNumber,
+      address: address ?? this.address,
+      contactPerson: contactPerson ?? this.contactPerson,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      wetDbaRisk: wetDbaRisk ?? this.wetDbaRisk,
+      contractSigned: contractSigned ?? this.contractSigned,
+      contractExpiry: contractExpiry ?? this.contractExpiry,
+      notes: notes ?? this.notes,
+      isActive: isActive ?? this.isActive,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (country.present) {
+      map['country'] = Variable<String>(country.value);
+    }
+    if (vatNumber.present) {
+      map['vat_number'] = Variable<String>(vatNumber.value);
+    }
+    if (kvkNumber.present) {
+      map['kvk_number'] = Variable<String>(kvkNumber.value);
+    }
+    if (address.present) {
+      map['address'] = Variable<String>(address.value);
+    }
+    if (contactPerson.present) {
+      map['contact_person'] = Variable<String>(contactPerson.value);
+    }
+    if (email.present) {
+      map['email'] = Variable<String>(email.value);
+    }
+    if (phone.present) {
+      map['phone'] = Variable<String>(phone.value);
+    }
+    if (wetDbaRisk.present) {
+      map['wet_dba_risk'] = Variable<String>(wetDbaRisk.value);
+    }
+    if (contractSigned.present) {
+      map['contract_signed'] = Variable<int>(contractSigned.value);
+    }
+    if (contractExpiry.present) {
+      map['contract_expiry'] = Variable<int>(contractExpiry.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<int>(isActive.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ClientsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('country: $country, ')
+          ..write('vatNumber: $vatNumber, ')
+          ..write('kvkNumber: $kvkNumber, ')
+          ..write('address: $address, ')
+          ..write('contactPerson: $contactPerson, ')
+          ..write('email: $email, ')
+          ..write('phone: $phone, ')
+          ..write('wetDbaRisk: $wetDbaRisk, ')
+          ..write('contractSigned: $contractSigned, ')
+          ..write('contractExpiry: $contractExpiry, ')
+          ..write('notes: $notes, ')
+          ..write('isActive: $isActive')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Invoices extends Table with TableInfo<Invoices, InvoicesData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -455,8 +1235,90 @@ class Invoices extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  InvoicesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return InvoicesData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      invoiceNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}invoice_number'],
+      )!,
+      invoiceType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}invoice_type'],
+      )!,
+      correctedInvoiceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}corrected_invoice_id'],
+      ),
+      invoiceDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}invoice_date'],
+      )!,
+      supplyDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}supply_date'],
+      ),
+      clientId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}client_id'],
+      )!,
+      vatTreatment: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vat_treatment'],
+      )!,
+      sellerName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}seller_name'],
+      )!,
+      sellerVatNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}seller_vat_number'],
+      )!,
+      sellerKvkNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}seller_kvk_number'],
+      )!,
+      sellerAddress: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}seller_address'],
+      )!,
+      sellerIban: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}seller_iban'],
+      )!,
+      paymentTermDays: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}payment_term_days'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      paidDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}paid_date'],
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      totalExclVat: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_excl_vat'],
+      )!,
+      totalVat: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_vat'],
+      )!,
+      totalInclVat: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_incl_vat'],
+      )!,
+    );
   }
 
   @override
@@ -468,7 +1330,613 @@ class Invoices extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class InvoiceLines extends Table with TableInfo {
+class InvoicesData extends DataClass implements Insertable<InvoicesData> {
+  final int id;
+  final String invoiceNumber;
+  final String invoiceType;
+  final int? correctedInvoiceId;
+  final int invoiceDate;
+  final int? supplyDate;
+  final int clientId;
+  final String vatTreatment;
+  final String sellerName;
+  final String sellerVatNumber;
+  final String sellerKvkNumber;
+  final String sellerAddress;
+  final String sellerIban;
+  final int paymentTermDays;
+  final String status;
+  final int? paidDate;
+  final String? notes;
+  final int totalExclVat;
+  final int totalVat;
+  final int totalInclVat;
+  const InvoicesData({
+    required this.id,
+    required this.invoiceNumber,
+    required this.invoiceType,
+    this.correctedInvoiceId,
+    required this.invoiceDate,
+    this.supplyDate,
+    required this.clientId,
+    required this.vatTreatment,
+    required this.sellerName,
+    required this.sellerVatNumber,
+    required this.sellerKvkNumber,
+    required this.sellerAddress,
+    required this.sellerIban,
+    required this.paymentTermDays,
+    required this.status,
+    this.paidDate,
+    this.notes,
+    required this.totalExclVat,
+    required this.totalVat,
+    required this.totalInclVat,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['invoice_number'] = Variable<String>(invoiceNumber);
+    map['invoice_type'] = Variable<String>(invoiceType);
+    if (!nullToAbsent || correctedInvoiceId != null) {
+      map['corrected_invoice_id'] = Variable<int>(correctedInvoiceId);
+    }
+    map['invoice_date'] = Variable<int>(invoiceDate);
+    if (!nullToAbsent || supplyDate != null) {
+      map['supply_date'] = Variable<int>(supplyDate);
+    }
+    map['client_id'] = Variable<int>(clientId);
+    map['vat_treatment'] = Variable<String>(vatTreatment);
+    map['seller_name'] = Variable<String>(sellerName);
+    map['seller_vat_number'] = Variable<String>(sellerVatNumber);
+    map['seller_kvk_number'] = Variable<String>(sellerKvkNumber);
+    map['seller_address'] = Variable<String>(sellerAddress);
+    map['seller_iban'] = Variable<String>(sellerIban);
+    map['payment_term_days'] = Variable<int>(paymentTermDays);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || paidDate != null) {
+      map['paid_date'] = Variable<int>(paidDate);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['total_excl_vat'] = Variable<int>(totalExclVat);
+    map['total_vat'] = Variable<int>(totalVat);
+    map['total_incl_vat'] = Variable<int>(totalInclVat);
+    return map;
+  }
+
+  InvoicesCompanion toCompanion(bool nullToAbsent) {
+    return InvoicesCompanion(
+      id: Value(id),
+      invoiceNumber: Value(invoiceNumber),
+      invoiceType: Value(invoiceType),
+      correctedInvoiceId: correctedInvoiceId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(correctedInvoiceId),
+      invoiceDate: Value(invoiceDate),
+      supplyDate: supplyDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(supplyDate),
+      clientId: Value(clientId),
+      vatTreatment: Value(vatTreatment),
+      sellerName: Value(sellerName),
+      sellerVatNumber: Value(sellerVatNumber),
+      sellerKvkNumber: Value(sellerKvkNumber),
+      sellerAddress: Value(sellerAddress),
+      sellerIban: Value(sellerIban),
+      paymentTermDays: Value(paymentTermDays),
+      status: Value(status),
+      paidDate: paidDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(paidDate),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      totalExclVat: Value(totalExclVat),
+      totalVat: Value(totalVat),
+      totalInclVat: Value(totalInclVat),
+    );
+  }
+
+  factory InvoicesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return InvoicesData(
+      id: serializer.fromJson<int>(json['id']),
+      invoiceNumber: serializer.fromJson<String>(json['invoiceNumber']),
+      invoiceType: serializer.fromJson<String>(json['invoiceType']),
+      correctedInvoiceId: serializer.fromJson<int?>(json['correctedInvoiceId']),
+      invoiceDate: serializer.fromJson<int>(json['invoiceDate']),
+      supplyDate: serializer.fromJson<int?>(json['supplyDate']),
+      clientId: serializer.fromJson<int>(json['clientId']),
+      vatTreatment: serializer.fromJson<String>(json['vatTreatment']),
+      sellerName: serializer.fromJson<String>(json['sellerName']),
+      sellerVatNumber: serializer.fromJson<String>(json['sellerVatNumber']),
+      sellerKvkNumber: serializer.fromJson<String>(json['sellerKvkNumber']),
+      sellerAddress: serializer.fromJson<String>(json['sellerAddress']),
+      sellerIban: serializer.fromJson<String>(json['sellerIban']),
+      paymentTermDays: serializer.fromJson<int>(json['paymentTermDays']),
+      status: serializer.fromJson<String>(json['status']),
+      paidDate: serializer.fromJson<int?>(json['paidDate']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      totalExclVat: serializer.fromJson<int>(json['totalExclVat']),
+      totalVat: serializer.fromJson<int>(json['totalVat']),
+      totalInclVat: serializer.fromJson<int>(json['totalInclVat']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'invoiceNumber': serializer.toJson<String>(invoiceNumber),
+      'invoiceType': serializer.toJson<String>(invoiceType),
+      'correctedInvoiceId': serializer.toJson<int?>(correctedInvoiceId),
+      'invoiceDate': serializer.toJson<int>(invoiceDate),
+      'supplyDate': serializer.toJson<int?>(supplyDate),
+      'clientId': serializer.toJson<int>(clientId),
+      'vatTreatment': serializer.toJson<String>(vatTreatment),
+      'sellerName': serializer.toJson<String>(sellerName),
+      'sellerVatNumber': serializer.toJson<String>(sellerVatNumber),
+      'sellerKvkNumber': serializer.toJson<String>(sellerKvkNumber),
+      'sellerAddress': serializer.toJson<String>(sellerAddress),
+      'sellerIban': serializer.toJson<String>(sellerIban),
+      'paymentTermDays': serializer.toJson<int>(paymentTermDays),
+      'status': serializer.toJson<String>(status),
+      'paidDate': serializer.toJson<int?>(paidDate),
+      'notes': serializer.toJson<String?>(notes),
+      'totalExclVat': serializer.toJson<int>(totalExclVat),
+      'totalVat': serializer.toJson<int>(totalVat),
+      'totalInclVat': serializer.toJson<int>(totalInclVat),
+    };
+  }
+
+  InvoicesData copyWith({
+    int? id,
+    String? invoiceNumber,
+    String? invoiceType,
+    Value<int?> correctedInvoiceId = const Value.absent(),
+    int? invoiceDate,
+    Value<int?> supplyDate = const Value.absent(),
+    int? clientId,
+    String? vatTreatment,
+    String? sellerName,
+    String? sellerVatNumber,
+    String? sellerKvkNumber,
+    String? sellerAddress,
+    String? sellerIban,
+    int? paymentTermDays,
+    String? status,
+    Value<int?> paidDate = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+    int? totalExclVat,
+    int? totalVat,
+    int? totalInclVat,
+  }) => InvoicesData(
+    id: id ?? this.id,
+    invoiceNumber: invoiceNumber ?? this.invoiceNumber,
+    invoiceType: invoiceType ?? this.invoiceType,
+    correctedInvoiceId: correctedInvoiceId.present
+        ? correctedInvoiceId.value
+        : this.correctedInvoiceId,
+    invoiceDate: invoiceDate ?? this.invoiceDate,
+    supplyDate: supplyDate.present ? supplyDate.value : this.supplyDate,
+    clientId: clientId ?? this.clientId,
+    vatTreatment: vatTreatment ?? this.vatTreatment,
+    sellerName: sellerName ?? this.sellerName,
+    sellerVatNumber: sellerVatNumber ?? this.sellerVatNumber,
+    sellerKvkNumber: sellerKvkNumber ?? this.sellerKvkNumber,
+    sellerAddress: sellerAddress ?? this.sellerAddress,
+    sellerIban: sellerIban ?? this.sellerIban,
+    paymentTermDays: paymentTermDays ?? this.paymentTermDays,
+    status: status ?? this.status,
+    paidDate: paidDate.present ? paidDate.value : this.paidDate,
+    notes: notes.present ? notes.value : this.notes,
+    totalExclVat: totalExclVat ?? this.totalExclVat,
+    totalVat: totalVat ?? this.totalVat,
+    totalInclVat: totalInclVat ?? this.totalInclVat,
+  );
+  InvoicesData copyWithCompanion(InvoicesCompanion data) {
+    return InvoicesData(
+      id: data.id.present ? data.id.value : this.id,
+      invoiceNumber: data.invoiceNumber.present
+          ? data.invoiceNumber.value
+          : this.invoiceNumber,
+      invoiceType: data.invoiceType.present
+          ? data.invoiceType.value
+          : this.invoiceType,
+      correctedInvoiceId: data.correctedInvoiceId.present
+          ? data.correctedInvoiceId.value
+          : this.correctedInvoiceId,
+      invoiceDate: data.invoiceDate.present
+          ? data.invoiceDate.value
+          : this.invoiceDate,
+      supplyDate: data.supplyDate.present
+          ? data.supplyDate.value
+          : this.supplyDate,
+      clientId: data.clientId.present ? data.clientId.value : this.clientId,
+      vatTreatment: data.vatTreatment.present
+          ? data.vatTreatment.value
+          : this.vatTreatment,
+      sellerName: data.sellerName.present
+          ? data.sellerName.value
+          : this.sellerName,
+      sellerVatNumber: data.sellerVatNumber.present
+          ? data.sellerVatNumber.value
+          : this.sellerVatNumber,
+      sellerKvkNumber: data.sellerKvkNumber.present
+          ? data.sellerKvkNumber.value
+          : this.sellerKvkNumber,
+      sellerAddress: data.sellerAddress.present
+          ? data.sellerAddress.value
+          : this.sellerAddress,
+      sellerIban: data.sellerIban.present
+          ? data.sellerIban.value
+          : this.sellerIban,
+      paymentTermDays: data.paymentTermDays.present
+          ? data.paymentTermDays.value
+          : this.paymentTermDays,
+      status: data.status.present ? data.status.value : this.status,
+      paidDate: data.paidDate.present ? data.paidDate.value : this.paidDate,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      totalExclVat: data.totalExclVat.present
+          ? data.totalExclVat.value
+          : this.totalExclVat,
+      totalVat: data.totalVat.present ? data.totalVat.value : this.totalVat,
+      totalInclVat: data.totalInclVat.present
+          ? data.totalInclVat.value
+          : this.totalInclVat,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InvoicesData(')
+          ..write('id: $id, ')
+          ..write('invoiceNumber: $invoiceNumber, ')
+          ..write('invoiceType: $invoiceType, ')
+          ..write('correctedInvoiceId: $correctedInvoiceId, ')
+          ..write('invoiceDate: $invoiceDate, ')
+          ..write('supplyDate: $supplyDate, ')
+          ..write('clientId: $clientId, ')
+          ..write('vatTreatment: $vatTreatment, ')
+          ..write('sellerName: $sellerName, ')
+          ..write('sellerVatNumber: $sellerVatNumber, ')
+          ..write('sellerKvkNumber: $sellerKvkNumber, ')
+          ..write('sellerAddress: $sellerAddress, ')
+          ..write('sellerIban: $sellerIban, ')
+          ..write('paymentTermDays: $paymentTermDays, ')
+          ..write('status: $status, ')
+          ..write('paidDate: $paidDate, ')
+          ..write('notes: $notes, ')
+          ..write('totalExclVat: $totalExclVat, ')
+          ..write('totalVat: $totalVat, ')
+          ..write('totalInclVat: $totalInclVat')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    invoiceNumber,
+    invoiceType,
+    correctedInvoiceId,
+    invoiceDate,
+    supplyDate,
+    clientId,
+    vatTreatment,
+    sellerName,
+    sellerVatNumber,
+    sellerKvkNumber,
+    sellerAddress,
+    sellerIban,
+    paymentTermDays,
+    status,
+    paidDate,
+    notes,
+    totalExclVat,
+    totalVat,
+    totalInclVat,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is InvoicesData &&
+          other.id == this.id &&
+          other.invoiceNumber == this.invoiceNumber &&
+          other.invoiceType == this.invoiceType &&
+          other.correctedInvoiceId == this.correctedInvoiceId &&
+          other.invoiceDate == this.invoiceDate &&
+          other.supplyDate == this.supplyDate &&
+          other.clientId == this.clientId &&
+          other.vatTreatment == this.vatTreatment &&
+          other.sellerName == this.sellerName &&
+          other.sellerVatNumber == this.sellerVatNumber &&
+          other.sellerKvkNumber == this.sellerKvkNumber &&
+          other.sellerAddress == this.sellerAddress &&
+          other.sellerIban == this.sellerIban &&
+          other.paymentTermDays == this.paymentTermDays &&
+          other.status == this.status &&
+          other.paidDate == this.paidDate &&
+          other.notes == this.notes &&
+          other.totalExclVat == this.totalExclVat &&
+          other.totalVat == this.totalVat &&
+          other.totalInclVat == this.totalInclVat);
+}
+
+class InvoicesCompanion extends UpdateCompanion<InvoicesData> {
+  final Value<int> id;
+  final Value<String> invoiceNumber;
+  final Value<String> invoiceType;
+  final Value<int?> correctedInvoiceId;
+  final Value<int> invoiceDate;
+  final Value<int?> supplyDate;
+  final Value<int> clientId;
+  final Value<String> vatTreatment;
+  final Value<String> sellerName;
+  final Value<String> sellerVatNumber;
+  final Value<String> sellerKvkNumber;
+  final Value<String> sellerAddress;
+  final Value<String> sellerIban;
+  final Value<int> paymentTermDays;
+  final Value<String> status;
+  final Value<int?> paidDate;
+  final Value<String?> notes;
+  final Value<int> totalExclVat;
+  final Value<int> totalVat;
+  final Value<int> totalInclVat;
+  const InvoicesCompanion({
+    this.id = const Value.absent(),
+    this.invoiceNumber = const Value.absent(),
+    this.invoiceType = const Value.absent(),
+    this.correctedInvoiceId = const Value.absent(),
+    this.invoiceDate = const Value.absent(),
+    this.supplyDate = const Value.absent(),
+    this.clientId = const Value.absent(),
+    this.vatTreatment = const Value.absent(),
+    this.sellerName = const Value.absent(),
+    this.sellerVatNumber = const Value.absent(),
+    this.sellerKvkNumber = const Value.absent(),
+    this.sellerAddress = const Value.absent(),
+    this.sellerIban = const Value.absent(),
+    this.paymentTermDays = const Value.absent(),
+    this.status = const Value.absent(),
+    this.paidDate = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.totalExclVat = const Value.absent(),
+    this.totalVat = const Value.absent(),
+    this.totalInclVat = const Value.absent(),
+  });
+  InvoicesCompanion.insert({
+    this.id = const Value.absent(),
+    required String invoiceNumber,
+    required String invoiceType,
+    this.correctedInvoiceId = const Value.absent(),
+    required int invoiceDate,
+    this.supplyDate = const Value.absent(),
+    required int clientId,
+    required String vatTreatment,
+    required String sellerName,
+    required String sellerVatNumber,
+    required String sellerKvkNumber,
+    required String sellerAddress,
+    required String sellerIban,
+    required int paymentTermDays,
+    required String status,
+    this.paidDate = const Value.absent(),
+    this.notes = const Value.absent(),
+    required int totalExclVat,
+    required int totalVat,
+    required int totalInclVat,
+  }) : invoiceNumber = Value(invoiceNumber),
+       invoiceType = Value(invoiceType),
+       invoiceDate = Value(invoiceDate),
+       clientId = Value(clientId),
+       vatTreatment = Value(vatTreatment),
+       sellerName = Value(sellerName),
+       sellerVatNumber = Value(sellerVatNumber),
+       sellerKvkNumber = Value(sellerKvkNumber),
+       sellerAddress = Value(sellerAddress),
+       sellerIban = Value(sellerIban),
+       paymentTermDays = Value(paymentTermDays),
+       status = Value(status),
+       totalExclVat = Value(totalExclVat),
+       totalVat = Value(totalVat),
+       totalInclVat = Value(totalInclVat);
+  static Insertable<InvoicesData> custom({
+    Expression<int>? id,
+    Expression<String>? invoiceNumber,
+    Expression<String>? invoiceType,
+    Expression<int>? correctedInvoiceId,
+    Expression<int>? invoiceDate,
+    Expression<int>? supplyDate,
+    Expression<int>? clientId,
+    Expression<String>? vatTreatment,
+    Expression<String>? sellerName,
+    Expression<String>? sellerVatNumber,
+    Expression<String>? sellerKvkNumber,
+    Expression<String>? sellerAddress,
+    Expression<String>? sellerIban,
+    Expression<int>? paymentTermDays,
+    Expression<String>? status,
+    Expression<int>? paidDate,
+    Expression<String>? notes,
+    Expression<int>? totalExclVat,
+    Expression<int>? totalVat,
+    Expression<int>? totalInclVat,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (invoiceNumber != null) 'invoice_number': invoiceNumber,
+      if (invoiceType != null) 'invoice_type': invoiceType,
+      if (correctedInvoiceId != null)
+        'corrected_invoice_id': correctedInvoiceId,
+      if (invoiceDate != null) 'invoice_date': invoiceDate,
+      if (supplyDate != null) 'supply_date': supplyDate,
+      if (clientId != null) 'client_id': clientId,
+      if (vatTreatment != null) 'vat_treatment': vatTreatment,
+      if (sellerName != null) 'seller_name': sellerName,
+      if (sellerVatNumber != null) 'seller_vat_number': sellerVatNumber,
+      if (sellerKvkNumber != null) 'seller_kvk_number': sellerKvkNumber,
+      if (sellerAddress != null) 'seller_address': sellerAddress,
+      if (sellerIban != null) 'seller_iban': sellerIban,
+      if (paymentTermDays != null) 'payment_term_days': paymentTermDays,
+      if (status != null) 'status': status,
+      if (paidDate != null) 'paid_date': paidDate,
+      if (notes != null) 'notes': notes,
+      if (totalExclVat != null) 'total_excl_vat': totalExclVat,
+      if (totalVat != null) 'total_vat': totalVat,
+      if (totalInclVat != null) 'total_incl_vat': totalInclVat,
+    });
+  }
+
+  InvoicesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? invoiceNumber,
+    Value<String>? invoiceType,
+    Value<int?>? correctedInvoiceId,
+    Value<int>? invoiceDate,
+    Value<int?>? supplyDate,
+    Value<int>? clientId,
+    Value<String>? vatTreatment,
+    Value<String>? sellerName,
+    Value<String>? sellerVatNumber,
+    Value<String>? sellerKvkNumber,
+    Value<String>? sellerAddress,
+    Value<String>? sellerIban,
+    Value<int>? paymentTermDays,
+    Value<String>? status,
+    Value<int?>? paidDate,
+    Value<String?>? notes,
+    Value<int>? totalExclVat,
+    Value<int>? totalVat,
+    Value<int>? totalInclVat,
+  }) {
+    return InvoicesCompanion(
+      id: id ?? this.id,
+      invoiceNumber: invoiceNumber ?? this.invoiceNumber,
+      invoiceType: invoiceType ?? this.invoiceType,
+      correctedInvoiceId: correctedInvoiceId ?? this.correctedInvoiceId,
+      invoiceDate: invoiceDate ?? this.invoiceDate,
+      supplyDate: supplyDate ?? this.supplyDate,
+      clientId: clientId ?? this.clientId,
+      vatTreatment: vatTreatment ?? this.vatTreatment,
+      sellerName: sellerName ?? this.sellerName,
+      sellerVatNumber: sellerVatNumber ?? this.sellerVatNumber,
+      sellerKvkNumber: sellerKvkNumber ?? this.sellerKvkNumber,
+      sellerAddress: sellerAddress ?? this.sellerAddress,
+      sellerIban: sellerIban ?? this.sellerIban,
+      paymentTermDays: paymentTermDays ?? this.paymentTermDays,
+      status: status ?? this.status,
+      paidDate: paidDate ?? this.paidDate,
+      notes: notes ?? this.notes,
+      totalExclVat: totalExclVat ?? this.totalExclVat,
+      totalVat: totalVat ?? this.totalVat,
+      totalInclVat: totalInclVat ?? this.totalInclVat,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (invoiceNumber.present) {
+      map['invoice_number'] = Variable<String>(invoiceNumber.value);
+    }
+    if (invoiceType.present) {
+      map['invoice_type'] = Variable<String>(invoiceType.value);
+    }
+    if (correctedInvoiceId.present) {
+      map['corrected_invoice_id'] = Variable<int>(correctedInvoiceId.value);
+    }
+    if (invoiceDate.present) {
+      map['invoice_date'] = Variable<int>(invoiceDate.value);
+    }
+    if (supplyDate.present) {
+      map['supply_date'] = Variable<int>(supplyDate.value);
+    }
+    if (clientId.present) {
+      map['client_id'] = Variable<int>(clientId.value);
+    }
+    if (vatTreatment.present) {
+      map['vat_treatment'] = Variable<String>(vatTreatment.value);
+    }
+    if (sellerName.present) {
+      map['seller_name'] = Variable<String>(sellerName.value);
+    }
+    if (sellerVatNumber.present) {
+      map['seller_vat_number'] = Variable<String>(sellerVatNumber.value);
+    }
+    if (sellerKvkNumber.present) {
+      map['seller_kvk_number'] = Variable<String>(sellerKvkNumber.value);
+    }
+    if (sellerAddress.present) {
+      map['seller_address'] = Variable<String>(sellerAddress.value);
+    }
+    if (sellerIban.present) {
+      map['seller_iban'] = Variable<String>(sellerIban.value);
+    }
+    if (paymentTermDays.present) {
+      map['payment_term_days'] = Variable<int>(paymentTermDays.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (paidDate.present) {
+      map['paid_date'] = Variable<int>(paidDate.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (totalExclVat.present) {
+      map['total_excl_vat'] = Variable<int>(totalExclVat.value);
+    }
+    if (totalVat.present) {
+      map['total_vat'] = Variable<int>(totalVat.value);
+    }
+    if (totalInclVat.present) {
+      map['total_incl_vat'] = Variable<int>(totalInclVat.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InvoicesCompanion(')
+          ..write('id: $id, ')
+          ..write('invoiceNumber: $invoiceNumber, ')
+          ..write('invoiceType: $invoiceType, ')
+          ..write('correctedInvoiceId: $correctedInvoiceId, ')
+          ..write('invoiceDate: $invoiceDate, ')
+          ..write('supplyDate: $supplyDate, ')
+          ..write('clientId: $clientId, ')
+          ..write('vatTreatment: $vatTreatment, ')
+          ..write('sellerName: $sellerName, ')
+          ..write('sellerVatNumber: $sellerVatNumber, ')
+          ..write('sellerKvkNumber: $sellerKvkNumber, ')
+          ..write('sellerAddress: $sellerAddress, ')
+          ..write('sellerIban: $sellerIban, ')
+          ..write('paymentTermDays: $paymentTermDays, ')
+          ..write('status: $status, ')
+          ..write('paidDate: $paidDate, ')
+          ..write('notes: $notes, ')
+          ..write('totalExclVat: $totalExclVat, ')
+          ..write('totalVat: $totalVat, ')
+          ..write('totalInclVat: $totalInclVat')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class InvoiceLines extends Table
+    with TableInfo<InvoiceLines, InvoiceLinesData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -575,8 +2043,50 @@ class InvoiceLines extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  InvoiceLinesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return InvoiceLinesData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      invoiceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}invoice_id'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      )!,
+      quantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}quantity'],
+      )!,
+      unit: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}unit'],
+      ),
+      unitPriceExclVat: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}unit_price_excl_vat'],
+      )!,
+      vatRate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vat_rate'],
+      )!,
+      vatAmount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}vat_amount'],
+      )!,
+      lineTotalExclVat: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}line_total_excl_vat'],
+      )!,
+      sortOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_order'],
+      )!,
+    );
   }
 
   @override
@@ -588,7 +2098,337 @@ class InvoiceLines extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class FixedAssets extends Table with TableInfo {
+class InvoiceLinesData extends DataClass
+    implements Insertable<InvoiceLinesData> {
+  final int id;
+  final int invoiceId;
+  final String description;
+  final double quantity;
+  final String? unit;
+  final int unitPriceExclVat;
+  final String vatRate;
+  final int vatAmount;
+  final int lineTotalExclVat;
+  final int sortOrder;
+  const InvoiceLinesData({
+    required this.id,
+    required this.invoiceId,
+    required this.description,
+    required this.quantity,
+    this.unit,
+    required this.unitPriceExclVat,
+    required this.vatRate,
+    required this.vatAmount,
+    required this.lineTotalExclVat,
+    required this.sortOrder,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['invoice_id'] = Variable<int>(invoiceId);
+    map['description'] = Variable<String>(description);
+    map['quantity'] = Variable<double>(quantity);
+    if (!nullToAbsent || unit != null) {
+      map['unit'] = Variable<String>(unit);
+    }
+    map['unit_price_excl_vat'] = Variable<int>(unitPriceExclVat);
+    map['vat_rate'] = Variable<String>(vatRate);
+    map['vat_amount'] = Variable<int>(vatAmount);
+    map['line_total_excl_vat'] = Variable<int>(lineTotalExclVat);
+    map['sort_order'] = Variable<int>(sortOrder);
+    return map;
+  }
+
+  InvoiceLinesCompanion toCompanion(bool nullToAbsent) {
+    return InvoiceLinesCompanion(
+      id: Value(id),
+      invoiceId: Value(invoiceId),
+      description: Value(description),
+      quantity: Value(quantity),
+      unit: unit == null && nullToAbsent ? const Value.absent() : Value(unit),
+      unitPriceExclVat: Value(unitPriceExclVat),
+      vatRate: Value(vatRate),
+      vatAmount: Value(vatAmount),
+      lineTotalExclVat: Value(lineTotalExclVat),
+      sortOrder: Value(sortOrder),
+    );
+  }
+
+  factory InvoiceLinesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return InvoiceLinesData(
+      id: serializer.fromJson<int>(json['id']),
+      invoiceId: serializer.fromJson<int>(json['invoiceId']),
+      description: serializer.fromJson<String>(json['description']),
+      quantity: serializer.fromJson<double>(json['quantity']),
+      unit: serializer.fromJson<String?>(json['unit']),
+      unitPriceExclVat: serializer.fromJson<int>(json['unitPriceExclVat']),
+      vatRate: serializer.fromJson<String>(json['vatRate']),
+      vatAmount: serializer.fromJson<int>(json['vatAmount']),
+      lineTotalExclVat: serializer.fromJson<int>(json['lineTotalExclVat']),
+      sortOrder: serializer.fromJson<int>(json['sortOrder']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'invoiceId': serializer.toJson<int>(invoiceId),
+      'description': serializer.toJson<String>(description),
+      'quantity': serializer.toJson<double>(quantity),
+      'unit': serializer.toJson<String?>(unit),
+      'unitPriceExclVat': serializer.toJson<int>(unitPriceExclVat),
+      'vatRate': serializer.toJson<String>(vatRate),
+      'vatAmount': serializer.toJson<int>(vatAmount),
+      'lineTotalExclVat': serializer.toJson<int>(lineTotalExclVat),
+      'sortOrder': serializer.toJson<int>(sortOrder),
+    };
+  }
+
+  InvoiceLinesData copyWith({
+    int? id,
+    int? invoiceId,
+    String? description,
+    double? quantity,
+    Value<String?> unit = const Value.absent(),
+    int? unitPriceExclVat,
+    String? vatRate,
+    int? vatAmount,
+    int? lineTotalExclVat,
+    int? sortOrder,
+  }) => InvoiceLinesData(
+    id: id ?? this.id,
+    invoiceId: invoiceId ?? this.invoiceId,
+    description: description ?? this.description,
+    quantity: quantity ?? this.quantity,
+    unit: unit.present ? unit.value : this.unit,
+    unitPriceExclVat: unitPriceExclVat ?? this.unitPriceExclVat,
+    vatRate: vatRate ?? this.vatRate,
+    vatAmount: vatAmount ?? this.vatAmount,
+    lineTotalExclVat: lineTotalExclVat ?? this.lineTotalExclVat,
+    sortOrder: sortOrder ?? this.sortOrder,
+  );
+  InvoiceLinesData copyWithCompanion(InvoiceLinesCompanion data) {
+    return InvoiceLinesData(
+      id: data.id.present ? data.id.value : this.id,
+      invoiceId: data.invoiceId.present ? data.invoiceId.value : this.invoiceId,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      unit: data.unit.present ? data.unit.value : this.unit,
+      unitPriceExclVat: data.unitPriceExclVat.present
+          ? data.unitPriceExclVat.value
+          : this.unitPriceExclVat,
+      vatRate: data.vatRate.present ? data.vatRate.value : this.vatRate,
+      vatAmount: data.vatAmount.present ? data.vatAmount.value : this.vatAmount,
+      lineTotalExclVat: data.lineTotalExclVat.present
+          ? data.lineTotalExclVat.value
+          : this.lineTotalExclVat,
+      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InvoiceLinesData(')
+          ..write('id: $id, ')
+          ..write('invoiceId: $invoiceId, ')
+          ..write('description: $description, ')
+          ..write('quantity: $quantity, ')
+          ..write('unit: $unit, ')
+          ..write('unitPriceExclVat: $unitPriceExclVat, ')
+          ..write('vatRate: $vatRate, ')
+          ..write('vatAmount: $vatAmount, ')
+          ..write('lineTotalExclVat: $lineTotalExclVat, ')
+          ..write('sortOrder: $sortOrder')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    invoiceId,
+    description,
+    quantity,
+    unit,
+    unitPriceExclVat,
+    vatRate,
+    vatAmount,
+    lineTotalExclVat,
+    sortOrder,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is InvoiceLinesData &&
+          other.id == this.id &&
+          other.invoiceId == this.invoiceId &&
+          other.description == this.description &&
+          other.quantity == this.quantity &&
+          other.unit == this.unit &&
+          other.unitPriceExclVat == this.unitPriceExclVat &&
+          other.vatRate == this.vatRate &&
+          other.vatAmount == this.vatAmount &&
+          other.lineTotalExclVat == this.lineTotalExclVat &&
+          other.sortOrder == this.sortOrder);
+}
+
+class InvoiceLinesCompanion extends UpdateCompanion<InvoiceLinesData> {
+  final Value<int> id;
+  final Value<int> invoiceId;
+  final Value<String> description;
+  final Value<double> quantity;
+  final Value<String?> unit;
+  final Value<int> unitPriceExclVat;
+  final Value<String> vatRate;
+  final Value<int> vatAmount;
+  final Value<int> lineTotalExclVat;
+  final Value<int> sortOrder;
+  const InvoiceLinesCompanion({
+    this.id = const Value.absent(),
+    this.invoiceId = const Value.absent(),
+    this.description = const Value.absent(),
+    this.quantity = const Value.absent(),
+    this.unit = const Value.absent(),
+    this.unitPriceExclVat = const Value.absent(),
+    this.vatRate = const Value.absent(),
+    this.vatAmount = const Value.absent(),
+    this.lineTotalExclVat = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+  });
+  InvoiceLinesCompanion.insert({
+    this.id = const Value.absent(),
+    required int invoiceId,
+    required String description,
+    required double quantity,
+    this.unit = const Value.absent(),
+    required int unitPriceExclVat,
+    required String vatRate,
+    required int vatAmount,
+    required int lineTotalExclVat,
+    required int sortOrder,
+  }) : invoiceId = Value(invoiceId),
+       description = Value(description),
+       quantity = Value(quantity),
+       unitPriceExclVat = Value(unitPriceExclVat),
+       vatRate = Value(vatRate),
+       vatAmount = Value(vatAmount),
+       lineTotalExclVat = Value(lineTotalExclVat),
+       sortOrder = Value(sortOrder);
+  static Insertable<InvoiceLinesData> custom({
+    Expression<int>? id,
+    Expression<int>? invoiceId,
+    Expression<String>? description,
+    Expression<double>? quantity,
+    Expression<String>? unit,
+    Expression<int>? unitPriceExclVat,
+    Expression<String>? vatRate,
+    Expression<int>? vatAmount,
+    Expression<int>? lineTotalExclVat,
+    Expression<int>? sortOrder,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (invoiceId != null) 'invoice_id': invoiceId,
+      if (description != null) 'description': description,
+      if (quantity != null) 'quantity': quantity,
+      if (unit != null) 'unit': unit,
+      if (unitPriceExclVat != null) 'unit_price_excl_vat': unitPriceExclVat,
+      if (vatRate != null) 'vat_rate': vatRate,
+      if (vatAmount != null) 'vat_amount': vatAmount,
+      if (lineTotalExclVat != null) 'line_total_excl_vat': lineTotalExclVat,
+      if (sortOrder != null) 'sort_order': sortOrder,
+    });
+  }
+
+  InvoiceLinesCompanion copyWith({
+    Value<int>? id,
+    Value<int>? invoiceId,
+    Value<String>? description,
+    Value<double>? quantity,
+    Value<String?>? unit,
+    Value<int>? unitPriceExclVat,
+    Value<String>? vatRate,
+    Value<int>? vatAmount,
+    Value<int>? lineTotalExclVat,
+    Value<int>? sortOrder,
+  }) {
+    return InvoiceLinesCompanion(
+      id: id ?? this.id,
+      invoiceId: invoiceId ?? this.invoiceId,
+      description: description ?? this.description,
+      quantity: quantity ?? this.quantity,
+      unit: unit ?? this.unit,
+      unitPriceExclVat: unitPriceExclVat ?? this.unitPriceExclVat,
+      vatRate: vatRate ?? this.vatRate,
+      vatAmount: vatAmount ?? this.vatAmount,
+      lineTotalExclVat: lineTotalExclVat ?? this.lineTotalExclVat,
+      sortOrder: sortOrder ?? this.sortOrder,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (invoiceId.present) {
+      map['invoice_id'] = Variable<int>(invoiceId.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (quantity.present) {
+      map['quantity'] = Variable<double>(quantity.value);
+    }
+    if (unit.present) {
+      map['unit'] = Variable<String>(unit.value);
+    }
+    if (unitPriceExclVat.present) {
+      map['unit_price_excl_vat'] = Variable<int>(unitPriceExclVat.value);
+    }
+    if (vatRate.present) {
+      map['vat_rate'] = Variable<String>(vatRate.value);
+    }
+    if (vatAmount.present) {
+      map['vat_amount'] = Variable<int>(vatAmount.value);
+    }
+    if (lineTotalExclVat.present) {
+      map['line_total_excl_vat'] = Variable<int>(lineTotalExclVat.value);
+    }
+    if (sortOrder.present) {
+      map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InvoiceLinesCompanion(')
+          ..write('id: $id, ')
+          ..write('invoiceId: $invoiceId, ')
+          ..write('description: $description, ')
+          ..write('quantity: $quantity, ')
+          ..write('unit: $unit, ')
+          ..write('unitPriceExclVat: $unitPriceExclVat, ')
+          ..write('vatRate: $vatRate, ')
+          ..write('vatAmount: $vatAmount, ')
+          ..write('lineTotalExclVat: $lineTotalExclVat, ')
+          ..write('sortOrder: $sortOrder')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class FixedAssets extends Table with TableInfo<FixedAssets, FixedAssetsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -822,8 +2662,102 @@ class FixedAssets extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  FixedAssetsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FixedAssetsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      assetName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}asset_name'],
+      )!,
+      costExclVat: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}cost_excl_vat'],
+      )!,
+      residualValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}residual_value'],
+      )!,
+      purchaseDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}purchase_date'],
+      )!,
+      businessUsePct: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}business_use_pct'],
+      )!,
+      usefulLifeYears: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}useful_life_years'],
+      )!,
+      kiaEligible: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}kia_eligible'],
+      )!,
+      eiaEligible: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}eia_eligible'],
+      )!,
+      miaCategory: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mia_category'],
+      ),
+      investmentDeductionReceived: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}investment_deduction_received'],
+      ),
+      reinvestmentReserveApplied: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}reinvestment_reserve_applied'],
+      )!,
+      reserveGain: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}reserve_gain'],
+      )!,
+      catalogueValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}catalogue_value'],
+      ),
+      firstRegistration: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}first_registration'],
+      ),
+      zeroEmission: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}zero_emission'],
+      )!,
+      marketValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}market_value'],
+      ),
+      keepsTripLog: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}keeps_trip_log'],
+      )!,
+      vatDeductedOnPurchase: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}vat_deducted_on_purchase'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      disposalDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}disposal_date'],
+      ),
+      disposalProceeds: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}disposal_proceeds'],
+      ),
+    );
   }
 
   @override
@@ -835,7 +2769,732 @@ class FixedAssets extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class Expenses extends Table with TableInfo {
+class FixedAssetsData extends DataClass implements Insertable<FixedAssetsData> {
+  final int id;
+  final String kind;
+  final String assetName;
+  final int costExclVat;
+  final int residualValue;
+  final int purchaseDate;
+  final double businessUsePct;
+  final int usefulLifeYears;
+  final int kiaEligible;
+  final int eiaEligible;
+  final String? miaCategory;
+  final int? investmentDeductionReceived;
+  final int reinvestmentReserveApplied;
+  final int reserveGain;
+  final int? catalogueValue;
+  final int? firstRegistration;
+  final String zeroEmission;
+  final int? marketValue;
+  final int keepsTripLog;
+  final int vatDeductedOnPurchase;
+  final String? notes;
+  final int? disposalDate;
+  final int? disposalProceeds;
+  const FixedAssetsData({
+    required this.id,
+    required this.kind,
+    required this.assetName,
+    required this.costExclVat,
+    required this.residualValue,
+    required this.purchaseDate,
+    required this.businessUsePct,
+    required this.usefulLifeYears,
+    required this.kiaEligible,
+    required this.eiaEligible,
+    this.miaCategory,
+    this.investmentDeductionReceived,
+    required this.reinvestmentReserveApplied,
+    required this.reserveGain,
+    this.catalogueValue,
+    this.firstRegistration,
+    required this.zeroEmission,
+    this.marketValue,
+    required this.keepsTripLog,
+    required this.vatDeductedOnPurchase,
+    this.notes,
+    this.disposalDate,
+    this.disposalProceeds,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['kind'] = Variable<String>(kind);
+    map['asset_name'] = Variable<String>(assetName);
+    map['cost_excl_vat'] = Variable<int>(costExclVat);
+    map['residual_value'] = Variable<int>(residualValue);
+    map['purchase_date'] = Variable<int>(purchaseDate);
+    map['business_use_pct'] = Variable<double>(businessUsePct);
+    map['useful_life_years'] = Variable<int>(usefulLifeYears);
+    map['kia_eligible'] = Variable<int>(kiaEligible);
+    map['eia_eligible'] = Variable<int>(eiaEligible);
+    if (!nullToAbsent || miaCategory != null) {
+      map['mia_category'] = Variable<String>(miaCategory);
+    }
+    if (!nullToAbsent || investmentDeductionReceived != null) {
+      map['investment_deduction_received'] = Variable<int>(
+        investmentDeductionReceived,
+      );
+    }
+    map['reinvestment_reserve_applied'] = Variable<int>(
+      reinvestmentReserveApplied,
+    );
+    map['reserve_gain'] = Variable<int>(reserveGain);
+    if (!nullToAbsent || catalogueValue != null) {
+      map['catalogue_value'] = Variable<int>(catalogueValue);
+    }
+    if (!nullToAbsent || firstRegistration != null) {
+      map['first_registration'] = Variable<int>(firstRegistration);
+    }
+    map['zero_emission'] = Variable<String>(zeroEmission);
+    if (!nullToAbsent || marketValue != null) {
+      map['market_value'] = Variable<int>(marketValue);
+    }
+    map['keeps_trip_log'] = Variable<int>(keepsTripLog);
+    map['vat_deducted_on_purchase'] = Variable<int>(vatDeductedOnPurchase);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    if (!nullToAbsent || disposalDate != null) {
+      map['disposal_date'] = Variable<int>(disposalDate);
+    }
+    if (!nullToAbsent || disposalProceeds != null) {
+      map['disposal_proceeds'] = Variable<int>(disposalProceeds);
+    }
+    return map;
+  }
+
+  FixedAssetsCompanion toCompanion(bool nullToAbsent) {
+    return FixedAssetsCompanion(
+      id: Value(id),
+      kind: Value(kind),
+      assetName: Value(assetName),
+      costExclVat: Value(costExclVat),
+      residualValue: Value(residualValue),
+      purchaseDate: Value(purchaseDate),
+      businessUsePct: Value(businessUsePct),
+      usefulLifeYears: Value(usefulLifeYears),
+      kiaEligible: Value(kiaEligible),
+      eiaEligible: Value(eiaEligible),
+      miaCategory: miaCategory == null && nullToAbsent
+          ? const Value.absent()
+          : Value(miaCategory),
+      investmentDeductionReceived:
+          investmentDeductionReceived == null && nullToAbsent
+          ? const Value.absent()
+          : Value(investmentDeductionReceived),
+      reinvestmentReserveApplied: Value(reinvestmentReserveApplied),
+      reserveGain: Value(reserveGain),
+      catalogueValue: catalogueValue == null && nullToAbsent
+          ? const Value.absent()
+          : Value(catalogueValue),
+      firstRegistration: firstRegistration == null && nullToAbsent
+          ? const Value.absent()
+          : Value(firstRegistration),
+      zeroEmission: Value(zeroEmission),
+      marketValue: marketValue == null && nullToAbsent
+          ? const Value.absent()
+          : Value(marketValue),
+      keepsTripLog: Value(keepsTripLog),
+      vatDeductedOnPurchase: Value(vatDeductedOnPurchase),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      disposalDate: disposalDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(disposalDate),
+      disposalProceeds: disposalProceeds == null && nullToAbsent
+          ? const Value.absent()
+          : Value(disposalProceeds),
+    );
+  }
+
+  factory FixedAssetsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FixedAssetsData(
+      id: serializer.fromJson<int>(json['id']),
+      kind: serializer.fromJson<String>(json['kind']),
+      assetName: serializer.fromJson<String>(json['assetName']),
+      costExclVat: serializer.fromJson<int>(json['costExclVat']),
+      residualValue: serializer.fromJson<int>(json['residualValue']),
+      purchaseDate: serializer.fromJson<int>(json['purchaseDate']),
+      businessUsePct: serializer.fromJson<double>(json['businessUsePct']),
+      usefulLifeYears: serializer.fromJson<int>(json['usefulLifeYears']),
+      kiaEligible: serializer.fromJson<int>(json['kiaEligible']),
+      eiaEligible: serializer.fromJson<int>(json['eiaEligible']),
+      miaCategory: serializer.fromJson<String?>(json['miaCategory']),
+      investmentDeductionReceived: serializer.fromJson<int?>(
+        json['investmentDeductionReceived'],
+      ),
+      reinvestmentReserveApplied: serializer.fromJson<int>(
+        json['reinvestmentReserveApplied'],
+      ),
+      reserveGain: serializer.fromJson<int>(json['reserveGain']),
+      catalogueValue: serializer.fromJson<int?>(json['catalogueValue']),
+      firstRegistration: serializer.fromJson<int?>(json['firstRegistration']),
+      zeroEmission: serializer.fromJson<String>(json['zeroEmission']),
+      marketValue: serializer.fromJson<int?>(json['marketValue']),
+      keepsTripLog: serializer.fromJson<int>(json['keepsTripLog']),
+      vatDeductedOnPurchase: serializer.fromJson<int>(
+        json['vatDeductedOnPurchase'],
+      ),
+      notes: serializer.fromJson<String?>(json['notes']),
+      disposalDate: serializer.fromJson<int?>(json['disposalDate']),
+      disposalProceeds: serializer.fromJson<int?>(json['disposalProceeds']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'kind': serializer.toJson<String>(kind),
+      'assetName': serializer.toJson<String>(assetName),
+      'costExclVat': serializer.toJson<int>(costExclVat),
+      'residualValue': serializer.toJson<int>(residualValue),
+      'purchaseDate': serializer.toJson<int>(purchaseDate),
+      'businessUsePct': serializer.toJson<double>(businessUsePct),
+      'usefulLifeYears': serializer.toJson<int>(usefulLifeYears),
+      'kiaEligible': serializer.toJson<int>(kiaEligible),
+      'eiaEligible': serializer.toJson<int>(eiaEligible),
+      'miaCategory': serializer.toJson<String?>(miaCategory),
+      'investmentDeductionReceived': serializer.toJson<int?>(
+        investmentDeductionReceived,
+      ),
+      'reinvestmentReserveApplied': serializer.toJson<int>(
+        reinvestmentReserveApplied,
+      ),
+      'reserveGain': serializer.toJson<int>(reserveGain),
+      'catalogueValue': serializer.toJson<int?>(catalogueValue),
+      'firstRegistration': serializer.toJson<int?>(firstRegistration),
+      'zeroEmission': serializer.toJson<String>(zeroEmission),
+      'marketValue': serializer.toJson<int?>(marketValue),
+      'keepsTripLog': serializer.toJson<int>(keepsTripLog),
+      'vatDeductedOnPurchase': serializer.toJson<int>(vatDeductedOnPurchase),
+      'notes': serializer.toJson<String?>(notes),
+      'disposalDate': serializer.toJson<int?>(disposalDate),
+      'disposalProceeds': serializer.toJson<int?>(disposalProceeds),
+    };
+  }
+
+  FixedAssetsData copyWith({
+    int? id,
+    String? kind,
+    String? assetName,
+    int? costExclVat,
+    int? residualValue,
+    int? purchaseDate,
+    double? businessUsePct,
+    int? usefulLifeYears,
+    int? kiaEligible,
+    int? eiaEligible,
+    Value<String?> miaCategory = const Value.absent(),
+    Value<int?> investmentDeductionReceived = const Value.absent(),
+    int? reinvestmentReserveApplied,
+    int? reserveGain,
+    Value<int?> catalogueValue = const Value.absent(),
+    Value<int?> firstRegistration = const Value.absent(),
+    String? zeroEmission,
+    Value<int?> marketValue = const Value.absent(),
+    int? keepsTripLog,
+    int? vatDeductedOnPurchase,
+    Value<String?> notes = const Value.absent(),
+    Value<int?> disposalDate = const Value.absent(),
+    Value<int?> disposalProceeds = const Value.absent(),
+  }) => FixedAssetsData(
+    id: id ?? this.id,
+    kind: kind ?? this.kind,
+    assetName: assetName ?? this.assetName,
+    costExclVat: costExclVat ?? this.costExclVat,
+    residualValue: residualValue ?? this.residualValue,
+    purchaseDate: purchaseDate ?? this.purchaseDate,
+    businessUsePct: businessUsePct ?? this.businessUsePct,
+    usefulLifeYears: usefulLifeYears ?? this.usefulLifeYears,
+    kiaEligible: kiaEligible ?? this.kiaEligible,
+    eiaEligible: eiaEligible ?? this.eiaEligible,
+    miaCategory: miaCategory.present ? miaCategory.value : this.miaCategory,
+    investmentDeductionReceived: investmentDeductionReceived.present
+        ? investmentDeductionReceived.value
+        : this.investmentDeductionReceived,
+    reinvestmentReserveApplied:
+        reinvestmentReserveApplied ?? this.reinvestmentReserveApplied,
+    reserveGain: reserveGain ?? this.reserveGain,
+    catalogueValue: catalogueValue.present
+        ? catalogueValue.value
+        : this.catalogueValue,
+    firstRegistration: firstRegistration.present
+        ? firstRegistration.value
+        : this.firstRegistration,
+    zeroEmission: zeroEmission ?? this.zeroEmission,
+    marketValue: marketValue.present ? marketValue.value : this.marketValue,
+    keepsTripLog: keepsTripLog ?? this.keepsTripLog,
+    vatDeductedOnPurchase: vatDeductedOnPurchase ?? this.vatDeductedOnPurchase,
+    notes: notes.present ? notes.value : this.notes,
+    disposalDate: disposalDate.present ? disposalDate.value : this.disposalDate,
+    disposalProceeds: disposalProceeds.present
+        ? disposalProceeds.value
+        : this.disposalProceeds,
+  );
+  FixedAssetsData copyWithCompanion(FixedAssetsCompanion data) {
+    return FixedAssetsData(
+      id: data.id.present ? data.id.value : this.id,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      assetName: data.assetName.present ? data.assetName.value : this.assetName,
+      costExclVat: data.costExclVat.present
+          ? data.costExclVat.value
+          : this.costExclVat,
+      residualValue: data.residualValue.present
+          ? data.residualValue.value
+          : this.residualValue,
+      purchaseDate: data.purchaseDate.present
+          ? data.purchaseDate.value
+          : this.purchaseDate,
+      businessUsePct: data.businessUsePct.present
+          ? data.businessUsePct.value
+          : this.businessUsePct,
+      usefulLifeYears: data.usefulLifeYears.present
+          ? data.usefulLifeYears.value
+          : this.usefulLifeYears,
+      kiaEligible: data.kiaEligible.present
+          ? data.kiaEligible.value
+          : this.kiaEligible,
+      eiaEligible: data.eiaEligible.present
+          ? data.eiaEligible.value
+          : this.eiaEligible,
+      miaCategory: data.miaCategory.present
+          ? data.miaCategory.value
+          : this.miaCategory,
+      investmentDeductionReceived: data.investmentDeductionReceived.present
+          ? data.investmentDeductionReceived.value
+          : this.investmentDeductionReceived,
+      reinvestmentReserveApplied: data.reinvestmentReserveApplied.present
+          ? data.reinvestmentReserveApplied.value
+          : this.reinvestmentReserveApplied,
+      reserveGain: data.reserveGain.present
+          ? data.reserveGain.value
+          : this.reserveGain,
+      catalogueValue: data.catalogueValue.present
+          ? data.catalogueValue.value
+          : this.catalogueValue,
+      firstRegistration: data.firstRegistration.present
+          ? data.firstRegistration.value
+          : this.firstRegistration,
+      zeroEmission: data.zeroEmission.present
+          ? data.zeroEmission.value
+          : this.zeroEmission,
+      marketValue: data.marketValue.present
+          ? data.marketValue.value
+          : this.marketValue,
+      keepsTripLog: data.keepsTripLog.present
+          ? data.keepsTripLog.value
+          : this.keepsTripLog,
+      vatDeductedOnPurchase: data.vatDeductedOnPurchase.present
+          ? data.vatDeductedOnPurchase.value
+          : this.vatDeductedOnPurchase,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      disposalDate: data.disposalDate.present
+          ? data.disposalDate.value
+          : this.disposalDate,
+      disposalProceeds: data.disposalProceeds.present
+          ? data.disposalProceeds.value
+          : this.disposalProceeds,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FixedAssetsData(')
+          ..write('id: $id, ')
+          ..write('kind: $kind, ')
+          ..write('assetName: $assetName, ')
+          ..write('costExclVat: $costExclVat, ')
+          ..write('residualValue: $residualValue, ')
+          ..write('purchaseDate: $purchaseDate, ')
+          ..write('businessUsePct: $businessUsePct, ')
+          ..write('usefulLifeYears: $usefulLifeYears, ')
+          ..write('kiaEligible: $kiaEligible, ')
+          ..write('eiaEligible: $eiaEligible, ')
+          ..write('miaCategory: $miaCategory, ')
+          ..write('investmentDeductionReceived: $investmentDeductionReceived, ')
+          ..write('reinvestmentReserveApplied: $reinvestmentReserveApplied, ')
+          ..write('reserveGain: $reserveGain, ')
+          ..write('catalogueValue: $catalogueValue, ')
+          ..write('firstRegistration: $firstRegistration, ')
+          ..write('zeroEmission: $zeroEmission, ')
+          ..write('marketValue: $marketValue, ')
+          ..write('keepsTripLog: $keepsTripLog, ')
+          ..write('vatDeductedOnPurchase: $vatDeductedOnPurchase, ')
+          ..write('notes: $notes, ')
+          ..write('disposalDate: $disposalDate, ')
+          ..write('disposalProceeds: $disposalProceeds')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    kind,
+    assetName,
+    costExclVat,
+    residualValue,
+    purchaseDate,
+    businessUsePct,
+    usefulLifeYears,
+    kiaEligible,
+    eiaEligible,
+    miaCategory,
+    investmentDeductionReceived,
+    reinvestmentReserveApplied,
+    reserveGain,
+    catalogueValue,
+    firstRegistration,
+    zeroEmission,
+    marketValue,
+    keepsTripLog,
+    vatDeductedOnPurchase,
+    notes,
+    disposalDate,
+    disposalProceeds,
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FixedAssetsData &&
+          other.id == this.id &&
+          other.kind == this.kind &&
+          other.assetName == this.assetName &&
+          other.costExclVat == this.costExclVat &&
+          other.residualValue == this.residualValue &&
+          other.purchaseDate == this.purchaseDate &&
+          other.businessUsePct == this.businessUsePct &&
+          other.usefulLifeYears == this.usefulLifeYears &&
+          other.kiaEligible == this.kiaEligible &&
+          other.eiaEligible == this.eiaEligible &&
+          other.miaCategory == this.miaCategory &&
+          other.investmentDeductionReceived ==
+              this.investmentDeductionReceived &&
+          other.reinvestmentReserveApplied == this.reinvestmentReserveApplied &&
+          other.reserveGain == this.reserveGain &&
+          other.catalogueValue == this.catalogueValue &&
+          other.firstRegistration == this.firstRegistration &&
+          other.zeroEmission == this.zeroEmission &&
+          other.marketValue == this.marketValue &&
+          other.keepsTripLog == this.keepsTripLog &&
+          other.vatDeductedOnPurchase == this.vatDeductedOnPurchase &&
+          other.notes == this.notes &&
+          other.disposalDate == this.disposalDate &&
+          other.disposalProceeds == this.disposalProceeds);
+}
+
+class FixedAssetsCompanion extends UpdateCompanion<FixedAssetsData> {
+  final Value<int> id;
+  final Value<String> kind;
+  final Value<String> assetName;
+  final Value<int> costExclVat;
+  final Value<int> residualValue;
+  final Value<int> purchaseDate;
+  final Value<double> businessUsePct;
+  final Value<int> usefulLifeYears;
+  final Value<int> kiaEligible;
+  final Value<int> eiaEligible;
+  final Value<String?> miaCategory;
+  final Value<int?> investmentDeductionReceived;
+  final Value<int> reinvestmentReserveApplied;
+  final Value<int> reserveGain;
+  final Value<int?> catalogueValue;
+  final Value<int?> firstRegistration;
+  final Value<String> zeroEmission;
+  final Value<int?> marketValue;
+  final Value<int> keepsTripLog;
+  final Value<int> vatDeductedOnPurchase;
+  final Value<String?> notes;
+  final Value<int?> disposalDate;
+  final Value<int?> disposalProceeds;
+  const FixedAssetsCompanion({
+    this.id = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.assetName = const Value.absent(),
+    this.costExclVat = const Value.absent(),
+    this.residualValue = const Value.absent(),
+    this.purchaseDate = const Value.absent(),
+    this.businessUsePct = const Value.absent(),
+    this.usefulLifeYears = const Value.absent(),
+    this.kiaEligible = const Value.absent(),
+    this.eiaEligible = const Value.absent(),
+    this.miaCategory = const Value.absent(),
+    this.investmentDeductionReceived = const Value.absent(),
+    this.reinvestmentReserveApplied = const Value.absent(),
+    this.reserveGain = const Value.absent(),
+    this.catalogueValue = const Value.absent(),
+    this.firstRegistration = const Value.absent(),
+    this.zeroEmission = const Value.absent(),
+    this.marketValue = const Value.absent(),
+    this.keepsTripLog = const Value.absent(),
+    this.vatDeductedOnPurchase = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.disposalDate = const Value.absent(),
+    this.disposalProceeds = const Value.absent(),
+  });
+  FixedAssetsCompanion.insert({
+    this.id = const Value.absent(),
+    this.kind = const Value.absent(),
+    required String assetName,
+    required int costExclVat,
+    required int residualValue,
+    required int purchaseDate,
+    required double businessUsePct,
+    required int usefulLifeYears,
+    this.kiaEligible = const Value.absent(),
+    this.eiaEligible = const Value.absent(),
+    this.miaCategory = const Value.absent(),
+    this.investmentDeductionReceived = const Value.absent(),
+    this.reinvestmentReserveApplied = const Value.absent(),
+    this.reserveGain = const Value.absent(),
+    this.catalogueValue = const Value.absent(),
+    this.firstRegistration = const Value.absent(),
+    this.zeroEmission = const Value.absent(),
+    this.marketValue = const Value.absent(),
+    this.keepsTripLog = const Value.absent(),
+    this.vatDeductedOnPurchase = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.disposalDate = const Value.absent(),
+    this.disposalProceeds = const Value.absent(),
+  }) : assetName = Value(assetName),
+       costExclVat = Value(costExclVat),
+       residualValue = Value(residualValue),
+       purchaseDate = Value(purchaseDate),
+       businessUsePct = Value(businessUsePct),
+       usefulLifeYears = Value(usefulLifeYears);
+  static Insertable<FixedAssetsData> custom({
+    Expression<int>? id,
+    Expression<String>? kind,
+    Expression<String>? assetName,
+    Expression<int>? costExclVat,
+    Expression<int>? residualValue,
+    Expression<int>? purchaseDate,
+    Expression<double>? businessUsePct,
+    Expression<int>? usefulLifeYears,
+    Expression<int>? kiaEligible,
+    Expression<int>? eiaEligible,
+    Expression<String>? miaCategory,
+    Expression<int>? investmentDeductionReceived,
+    Expression<int>? reinvestmentReserveApplied,
+    Expression<int>? reserveGain,
+    Expression<int>? catalogueValue,
+    Expression<int>? firstRegistration,
+    Expression<String>? zeroEmission,
+    Expression<int>? marketValue,
+    Expression<int>? keepsTripLog,
+    Expression<int>? vatDeductedOnPurchase,
+    Expression<String>? notes,
+    Expression<int>? disposalDate,
+    Expression<int>? disposalProceeds,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (kind != null) 'kind': kind,
+      if (assetName != null) 'asset_name': assetName,
+      if (costExclVat != null) 'cost_excl_vat': costExclVat,
+      if (residualValue != null) 'residual_value': residualValue,
+      if (purchaseDate != null) 'purchase_date': purchaseDate,
+      if (businessUsePct != null) 'business_use_pct': businessUsePct,
+      if (usefulLifeYears != null) 'useful_life_years': usefulLifeYears,
+      if (kiaEligible != null) 'kia_eligible': kiaEligible,
+      if (eiaEligible != null) 'eia_eligible': eiaEligible,
+      if (miaCategory != null) 'mia_category': miaCategory,
+      if (investmentDeductionReceived != null)
+        'investment_deduction_received': investmentDeductionReceived,
+      if (reinvestmentReserveApplied != null)
+        'reinvestment_reserve_applied': reinvestmentReserveApplied,
+      if (reserveGain != null) 'reserve_gain': reserveGain,
+      if (catalogueValue != null) 'catalogue_value': catalogueValue,
+      if (firstRegistration != null) 'first_registration': firstRegistration,
+      if (zeroEmission != null) 'zero_emission': zeroEmission,
+      if (marketValue != null) 'market_value': marketValue,
+      if (keepsTripLog != null) 'keeps_trip_log': keepsTripLog,
+      if (vatDeductedOnPurchase != null)
+        'vat_deducted_on_purchase': vatDeductedOnPurchase,
+      if (notes != null) 'notes': notes,
+      if (disposalDate != null) 'disposal_date': disposalDate,
+      if (disposalProceeds != null) 'disposal_proceeds': disposalProceeds,
+    });
+  }
+
+  FixedAssetsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? kind,
+    Value<String>? assetName,
+    Value<int>? costExclVat,
+    Value<int>? residualValue,
+    Value<int>? purchaseDate,
+    Value<double>? businessUsePct,
+    Value<int>? usefulLifeYears,
+    Value<int>? kiaEligible,
+    Value<int>? eiaEligible,
+    Value<String?>? miaCategory,
+    Value<int?>? investmentDeductionReceived,
+    Value<int>? reinvestmentReserveApplied,
+    Value<int>? reserveGain,
+    Value<int?>? catalogueValue,
+    Value<int?>? firstRegistration,
+    Value<String>? zeroEmission,
+    Value<int?>? marketValue,
+    Value<int>? keepsTripLog,
+    Value<int>? vatDeductedOnPurchase,
+    Value<String?>? notes,
+    Value<int?>? disposalDate,
+    Value<int?>? disposalProceeds,
+  }) {
+    return FixedAssetsCompanion(
+      id: id ?? this.id,
+      kind: kind ?? this.kind,
+      assetName: assetName ?? this.assetName,
+      costExclVat: costExclVat ?? this.costExclVat,
+      residualValue: residualValue ?? this.residualValue,
+      purchaseDate: purchaseDate ?? this.purchaseDate,
+      businessUsePct: businessUsePct ?? this.businessUsePct,
+      usefulLifeYears: usefulLifeYears ?? this.usefulLifeYears,
+      kiaEligible: kiaEligible ?? this.kiaEligible,
+      eiaEligible: eiaEligible ?? this.eiaEligible,
+      miaCategory: miaCategory ?? this.miaCategory,
+      investmentDeductionReceived:
+          investmentDeductionReceived ?? this.investmentDeductionReceived,
+      reinvestmentReserveApplied:
+          reinvestmentReserveApplied ?? this.reinvestmentReserveApplied,
+      reserveGain: reserveGain ?? this.reserveGain,
+      catalogueValue: catalogueValue ?? this.catalogueValue,
+      firstRegistration: firstRegistration ?? this.firstRegistration,
+      zeroEmission: zeroEmission ?? this.zeroEmission,
+      marketValue: marketValue ?? this.marketValue,
+      keepsTripLog: keepsTripLog ?? this.keepsTripLog,
+      vatDeductedOnPurchase:
+          vatDeductedOnPurchase ?? this.vatDeductedOnPurchase,
+      notes: notes ?? this.notes,
+      disposalDate: disposalDate ?? this.disposalDate,
+      disposalProceeds: disposalProceeds ?? this.disposalProceeds,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (assetName.present) {
+      map['asset_name'] = Variable<String>(assetName.value);
+    }
+    if (costExclVat.present) {
+      map['cost_excl_vat'] = Variable<int>(costExclVat.value);
+    }
+    if (residualValue.present) {
+      map['residual_value'] = Variable<int>(residualValue.value);
+    }
+    if (purchaseDate.present) {
+      map['purchase_date'] = Variable<int>(purchaseDate.value);
+    }
+    if (businessUsePct.present) {
+      map['business_use_pct'] = Variable<double>(businessUsePct.value);
+    }
+    if (usefulLifeYears.present) {
+      map['useful_life_years'] = Variable<int>(usefulLifeYears.value);
+    }
+    if (kiaEligible.present) {
+      map['kia_eligible'] = Variable<int>(kiaEligible.value);
+    }
+    if (eiaEligible.present) {
+      map['eia_eligible'] = Variable<int>(eiaEligible.value);
+    }
+    if (miaCategory.present) {
+      map['mia_category'] = Variable<String>(miaCategory.value);
+    }
+    if (investmentDeductionReceived.present) {
+      map['investment_deduction_received'] = Variable<int>(
+        investmentDeductionReceived.value,
+      );
+    }
+    if (reinvestmentReserveApplied.present) {
+      map['reinvestment_reserve_applied'] = Variable<int>(
+        reinvestmentReserveApplied.value,
+      );
+    }
+    if (reserveGain.present) {
+      map['reserve_gain'] = Variable<int>(reserveGain.value);
+    }
+    if (catalogueValue.present) {
+      map['catalogue_value'] = Variable<int>(catalogueValue.value);
+    }
+    if (firstRegistration.present) {
+      map['first_registration'] = Variable<int>(firstRegistration.value);
+    }
+    if (zeroEmission.present) {
+      map['zero_emission'] = Variable<String>(zeroEmission.value);
+    }
+    if (marketValue.present) {
+      map['market_value'] = Variable<int>(marketValue.value);
+    }
+    if (keepsTripLog.present) {
+      map['keeps_trip_log'] = Variable<int>(keepsTripLog.value);
+    }
+    if (vatDeductedOnPurchase.present) {
+      map['vat_deducted_on_purchase'] = Variable<int>(
+        vatDeductedOnPurchase.value,
+      );
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (disposalDate.present) {
+      map['disposal_date'] = Variable<int>(disposalDate.value);
+    }
+    if (disposalProceeds.present) {
+      map['disposal_proceeds'] = Variable<int>(disposalProceeds.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FixedAssetsCompanion(')
+          ..write('id: $id, ')
+          ..write('kind: $kind, ')
+          ..write('assetName: $assetName, ')
+          ..write('costExclVat: $costExclVat, ')
+          ..write('residualValue: $residualValue, ')
+          ..write('purchaseDate: $purchaseDate, ')
+          ..write('businessUsePct: $businessUsePct, ')
+          ..write('usefulLifeYears: $usefulLifeYears, ')
+          ..write('kiaEligible: $kiaEligible, ')
+          ..write('eiaEligible: $eiaEligible, ')
+          ..write('miaCategory: $miaCategory, ')
+          ..write('investmentDeductionReceived: $investmentDeductionReceived, ')
+          ..write('reinvestmentReserveApplied: $reinvestmentReserveApplied, ')
+          ..write('reserveGain: $reserveGain, ')
+          ..write('catalogueValue: $catalogueValue, ')
+          ..write('firstRegistration: $firstRegistration, ')
+          ..write('zeroEmission: $zeroEmission, ')
+          ..write('marketValue: $marketValue, ')
+          ..write('keepsTripLog: $keepsTripLog, ')
+          ..write('vatDeductedOnPurchase: $vatDeductedOnPurchase, ')
+          ..write('notes: $notes, ')
+          ..write('disposalDate: $disposalDate, ')
+          ..write('disposalProceeds: $disposalProceeds')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Expenses extends Table with TableInfo<Expenses, ExpensesData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1025,8 +3684,86 @@ class Expenses extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  ExpensesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ExpensesData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}date'],
+      )!,
+      supplier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}supplier'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      )!,
+      category: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category'],
+      )!,
+      receiptAttached: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}receipt_attached'],
+      )!,
+      amountExclVat: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_excl_vat'],
+      )!,
+      vatRate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vat_rate'],
+      )!,
+      purchaseVat: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}purchase_vat'],
+      )!,
+      vatAmount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}vat_amount'],
+      )!,
+      totalInclVat: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_incl_vat'],
+      )!,
+      businessUsePct: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}business_use_pct'],
+      )!,
+      deductibleAmount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deductible_amount'],
+      )!,
+      vatReclaimable: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}vat_reclaimable'],
+      )!,
+      vatToReclaim: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}vat_to_reclaim'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      paidFrom: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}paid_from'],
+      ),
+      paymentReference: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payment_reference'],
+      ),
+      carAssetId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}car_asset_id'],
+      ),
+    );
   }
 
   @override
@@ -1038,7 +3775,579 @@ class Expenses extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class HourEntries extends Table with TableInfo {
+class ExpensesData extends DataClass implements Insertable<ExpensesData> {
+  final int id;
+  final int date;
+  final String supplier;
+  final String description;
+  final String category;
+  final int receiptAttached;
+  final int amountExclVat;
+  final String vatRate;
+  final String purchaseVat;
+  final int vatAmount;
+  final int totalInclVat;
+  final double businessUsePct;
+  final int deductibleAmount;
+  final int vatReclaimable;
+  final int vatToReclaim;
+  final String? notes;
+  final String? paidFrom;
+  final String? paymentReference;
+  final int? carAssetId;
+  const ExpensesData({
+    required this.id,
+    required this.date,
+    required this.supplier,
+    required this.description,
+    required this.category,
+    required this.receiptAttached,
+    required this.amountExclVat,
+    required this.vatRate,
+    required this.purchaseVat,
+    required this.vatAmount,
+    required this.totalInclVat,
+    required this.businessUsePct,
+    required this.deductibleAmount,
+    required this.vatReclaimable,
+    required this.vatToReclaim,
+    this.notes,
+    this.paidFrom,
+    this.paymentReference,
+    this.carAssetId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['date'] = Variable<int>(date);
+    map['supplier'] = Variable<String>(supplier);
+    map['description'] = Variable<String>(description);
+    map['category'] = Variable<String>(category);
+    map['receipt_attached'] = Variable<int>(receiptAttached);
+    map['amount_excl_vat'] = Variable<int>(amountExclVat);
+    map['vat_rate'] = Variable<String>(vatRate);
+    map['purchase_vat'] = Variable<String>(purchaseVat);
+    map['vat_amount'] = Variable<int>(vatAmount);
+    map['total_incl_vat'] = Variable<int>(totalInclVat);
+    map['business_use_pct'] = Variable<double>(businessUsePct);
+    map['deductible_amount'] = Variable<int>(deductibleAmount);
+    map['vat_reclaimable'] = Variable<int>(vatReclaimable);
+    map['vat_to_reclaim'] = Variable<int>(vatToReclaim);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    if (!nullToAbsent || paidFrom != null) {
+      map['paid_from'] = Variable<String>(paidFrom);
+    }
+    if (!nullToAbsent || paymentReference != null) {
+      map['payment_reference'] = Variable<String>(paymentReference);
+    }
+    if (!nullToAbsent || carAssetId != null) {
+      map['car_asset_id'] = Variable<int>(carAssetId);
+    }
+    return map;
+  }
+
+  ExpensesCompanion toCompanion(bool nullToAbsent) {
+    return ExpensesCompanion(
+      id: Value(id),
+      date: Value(date),
+      supplier: Value(supplier),
+      description: Value(description),
+      category: Value(category),
+      receiptAttached: Value(receiptAttached),
+      amountExclVat: Value(amountExclVat),
+      vatRate: Value(vatRate),
+      purchaseVat: Value(purchaseVat),
+      vatAmount: Value(vatAmount),
+      totalInclVat: Value(totalInclVat),
+      businessUsePct: Value(businessUsePct),
+      deductibleAmount: Value(deductibleAmount),
+      vatReclaimable: Value(vatReclaimable),
+      vatToReclaim: Value(vatToReclaim),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      paidFrom: paidFrom == null && nullToAbsent
+          ? const Value.absent()
+          : Value(paidFrom),
+      paymentReference: paymentReference == null && nullToAbsent
+          ? const Value.absent()
+          : Value(paymentReference),
+      carAssetId: carAssetId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(carAssetId),
+    );
+  }
+
+  factory ExpensesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ExpensesData(
+      id: serializer.fromJson<int>(json['id']),
+      date: serializer.fromJson<int>(json['date']),
+      supplier: serializer.fromJson<String>(json['supplier']),
+      description: serializer.fromJson<String>(json['description']),
+      category: serializer.fromJson<String>(json['category']),
+      receiptAttached: serializer.fromJson<int>(json['receiptAttached']),
+      amountExclVat: serializer.fromJson<int>(json['amountExclVat']),
+      vatRate: serializer.fromJson<String>(json['vatRate']),
+      purchaseVat: serializer.fromJson<String>(json['purchaseVat']),
+      vatAmount: serializer.fromJson<int>(json['vatAmount']),
+      totalInclVat: serializer.fromJson<int>(json['totalInclVat']),
+      businessUsePct: serializer.fromJson<double>(json['businessUsePct']),
+      deductibleAmount: serializer.fromJson<int>(json['deductibleAmount']),
+      vatReclaimable: serializer.fromJson<int>(json['vatReclaimable']),
+      vatToReclaim: serializer.fromJson<int>(json['vatToReclaim']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      paidFrom: serializer.fromJson<String?>(json['paidFrom']),
+      paymentReference: serializer.fromJson<String?>(json['paymentReference']),
+      carAssetId: serializer.fromJson<int?>(json['carAssetId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'date': serializer.toJson<int>(date),
+      'supplier': serializer.toJson<String>(supplier),
+      'description': serializer.toJson<String>(description),
+      'category': serializer.toJson<String>(category),
+      'receiptAttached': serializer.toJson<int>(receiptAttached),
+      'amountExclVat': serializer.toJson<int>(amountExclVat),
+      'vatRate': serializer.toJson<String>(vatRate),
+      'purchaseVat': serializer.toJson<String>(purchaseVat),
+      'vatAmount': serializer.toJson<int>(vatAmount),
+      'totalInclVat': serializer.toJson<int>(totalInclVat),
+      'businessUsePct': serializer.toJson<double>(businessUsePct),
+      'deductibleAmount': serializer.toJson<int>(deductibleAmount),
+      'vatReclaimable': serializer.toJson<int>(vatReclaimable),
+      'vatToReclaim': serializer.toJson<int>(vatToReclaim),
+      'notes': serializer.toJson<String?>(notes),
+      'paidFrom': serializer.toJson<String?>(paidFrom),
+      'paymentReference': serializer.toJson<String?>(paymentReference),
+      'carAssetId': serializer.toJson<int?>(carAssetId),
+    };
+  }
+
+  ExpensesData copyWith({
+    int? id,
+    int? date,
+    String? supplier,
+    String? description,
+    String? category,
+    int? receiptAttached,
+    int? amountExclVat,
+    String? vatRate,
+    String? purchaseVat,
+    int? vatAmount,
+    int? totalInclVat,
+    double? businessUsePct,
+    int? deductibleAmount,
+    int? vatReclaimable,
+    int? vatToReclaim,
+    Value<String?> notes = const Value.absent(),
+    Value<String?> paidFrom = const Value.absent(),
+    Value<String?> paymentReference = const Value.absent(),
+    Value<int?> carAssetId = const Value.absent(),
+  }) => ExpensesData(
+    id: id ?? this.id,
+    date: date ?? this.date,
+    supplier: supplier ?? this.supplier,
+    description: description ?? this.description,
+    category: category ?? this.category,
+    receiptAttached: receiptAttached ?? this.receiptAttached,
+    amountExclVat: amountExclVat ?? this.amountExclVat,
+    vatRate: vatRate ?? this.vatRate,
+    purchaseVat: purchaseVat ?? this.purchaseVat,
+    vatAmount: vatAmount ?? this.vatAmount,
+    totalInclVat: totalInclVat ?? this.totalInclVat,
+    businessUsePct: businessUsePct ?? this.businessUsePct,
+    deductibleAmount: deductibleAmount ?? this.deductibleAmount,
+    vatReclaimable: vatReclaimable ?? this.vatReclaimable,
+    vatToReclaim: vatToReclaim ?? this.vatToReclaim,
+    notes: notes.present ? notes.value : this.notes,
+    paidFrom: paidFrom.present ? paidFrom.value : this.paidFrom,
+    paymentReference: paymentReference.present
+        ? paymentReference.value
+        : this.paymentReference,
+    carAssetId: carAssetId.present ? carAssetId.value : this.carAssetId,
+  );
+  ExpensesData copyWithCompanion(ExpensesCompanion data) {
+    return ExpensesData(
+      id: data.id.present ? data.id.value : this.id,
+      date: data.date.present ? data.date.value : this.date,
+      supplier: data.supplier.present ? data.supplier.value : this.supplier,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      category: data.category.present ? data.category.value : this.category,
+      receiptAttached: data.receiptAttached.present
+          ? data.receiptAttached.value
+          : this.receiptAttached,
+      amountExclVat: data.amountExclVat.present
+          ? data.amountExclVat.value
+          : this.amountExclVat,
+      vatRate: data.vatRate.present ? data.vatRate.value : this.vatRate,
+      purchaseVat: data.purchaseVat.present
+          ? data.purchaseVat.value
+          : this.purchaseVat,
+      vatAmount: data.vatAmount.present ? data.vatAmount.value : this.vatAmount,
+      totalInclVat: data.totalInclVat.present
+          ? data.totalInclVat.value
+          : this.totalInclVat,
+      businessUsePct: data.businessUsePct.present
+          ? data.businessUsePct.value
+          : this.businessUsePct,
+      deductibleAmount: data.deductibleAmount.present
+          ? data.deductibleAmount.value
+          : this.deductibleAmount,
+      vatReclaimable: data.vatReclaimable.present
+          ? data.vatReclaimable.value
+          : this.vatReclaimable,
+      vatToReclaim: data.vatToReclaim.present
+          ? data.vatToReclaim.value
+          : this.vatToReclaim,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      paidFrom: data.paidFrom.present ? data.paidFrom.value : this.paidFrom,
+      paymentReference: data.paymentReference.present
+          ? data.paymentReference.value
+          : this.paymentReference,
+      carAssetId: data.carAssetId.present
+          ? data.carAssetId.value
+          : this.carAssetId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExpensesData(')
+          ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('supplier: $supplier, ')
+          ..write('description: $description, ')
+          ..write('category: $category, ')
+          ..write('receiptAttached: $receiptAttached, ')
+          ..write('amountExclVat: $amountExclVat, ')
+          ..write('vatRate: $vatRate, ')
+          ..write('purchaseVat: $purchaseVat, ')
+          ..write('vatAmount: $vatAmount, ')
+          ..write('totalInclVat: $totalInclVat, ')
+          ..write('businessUsePct: $businessUsePct, ')
+          ..write('deductibleAmount: $deductibleAmount, ')
+          ..write('vatReclaimable: $vatReclaimable, ')
+          ..write('vatToReclaim: $vatToReclaim, ')
+          ..write('notes: $notes, ')
+          ..write('paidFrom: $paidFrom, ')
+          ..write('paymentReference: $paymentReference, ')
+          ..write('carAssetId: $carAssetId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    date,
+    supplier,
+    description,
+    category,
+    receiptAttached,
+    amountExclVat,
+    vatRate,
+    purchaseVat,
+    vatAmount,
+    totalInclVat,
+    businessUsePct,
+    deductibleAmount,
+    vatReclaimable,
+    vatToReclaim,
+    notes,
+    paidFrom,
+    paymentReference,
+    carAssetId,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ExpensesData &&
+          other.id == this.id &&
+          other.date == this.date &&
+          other.supplier == this.supplier &&
+          other.description == this.description &&
+          other.category == this.category &&
+          other.receiptAttached == this.receiptAttached &&
+          other.amountExclVat == this.amountExclVat &&
+          other.vatRate == this.vatRate &&
+          other.purchaseVat == this.purchaseVat &&
+          other.vatAmount == this.vatAmount &&
+          other.totalInclVat == this.totalInclVat &&
+          other.businessUsePct == this.businessUsePct &&
+          other.deductibleAmount == this.deductibleAmount &&
+          other.vatReclaimable == this.vatReclaimable &&
+          other.vatToReclaim == this.vatToReclaim &&
+          other.notes == this.notes &&
+          other.paidFrom == this.paidFrom &&
+          other.paymentReference == this.paymentReference &&
+          other.carAssetId == this.carAssetId);
+}
+
+class ExpensesCompanion extends UpdateCompanion<ExpensesData> {
+  final Value<int> id;
+  final Value<int> date;
+  final Value<String> supplier;
+  final Value<String> description;
+  final Value<String> category;
+  final Value<int> receiptAttached;
+  final Value<int> amountExclVat;
+  final Value<String> vatRate;
+  final Value<String> purchaseVat;
+  final Value<int> vatAmount;
+  final Value<int> totalInclVat;
+  final Value<double> businessUsePct;
+  final Value<int> deductibleAmount;
+  final Value<int> vatReclaimable;
+  final Value<int> vatToReclaim;
+  final Value<String?> notes;
+  final Value<String?> paidFrom;
+  final Value<String?> paymentReference;
+  final Value<int?> carAssetId;
+  const ExpensesCompanion({
+    this.id = const Value.absent(),
+    this.date = const Value.absent(),
+    this.supplier = const Value.absent(),
+    this.description = const Value.absent(),
+    this.category = const Value.absent(),
+    this.receiptAttached = const Value.absent(),
+    this.amountExclVat = const Value.absent(),
+    this.vatRate = const Value.absent(),
+    this.purchaseVat = const Value.absent(),
+    this.vatAmount = const Value.absent(),
+    this.totalInclVat = const Value.absent(),
+    this.businessUsePct = const Value.absent(),
+    this.deductibleAmount = const Value.absent(),
+    this.vatReclaimable = const Value.absent(),
+    this.vatToReclaim = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.paidFrom = const Value.absent(),
+    this.paymentReference = const Value.absent(),
+    this.carAssetId = const Value.absent(),
+  });
+  ExpensesCompanion.insert({
+    this.id = const Value.absent(),
+    required int date,
+    required String supplier,
+    required String description,
+    required String category,
+    this.receiptAttached = const Value.absent(),
+    required int amountExclVat,
+    required String vatRate,
+    this.purchaseVat = const Value.absent(),
+    required int vatAmount,
+    required int totalInclVat,
+    required double businessUsePct,
+    required int deductibleAmount,
+    required int vatReclaimable,
+    required int vatToReclaim,
+    this.notes = const Value.absent(),
+    this.paidFrom = const Value.absent(),
+    this.paymentReference = const Value.absent(),
+    this.carAssetId = const Value.absent(),
+  }) : date = Value(date),
+       supplier = Value(supplier),
+       description = Value(description),
+       category = Value(category),
+       amountExclVat = Value(amountExclVat),
+       vatRate = Value(vatRate),
+       vatAmount = Value(vatAmount),
+       totalInclVat = Value(totalInclVat),
+       businessUsePct = Value(businessUsePct),
+       deductibleAmount = Value(deductibleAmount),
+       vatReclaimable = Value(vatReclaimable),
+       vatToReclaim = Value(vatToReclaim);
+  static Insertable<ExpensesData> custom({
+    Expression<int>? id,
+    Expression<int>? date,
+    Expression<String>? supplier,
+    Expression<String>? description,
+    Expression<String>? category,
+    Expression<int>? receiptAttached,
+    Expression<int>? amountExclVat,
+    Expression<String>? vatRate,
+    Expression<String>? purchaseVat,
+    Expression<int>? vatAmount,
+    Expression<int>? totalInclVat,
+    Expression<double>? businessUsePct,
+    Expression<int>? deductibleAmount,
+    Expression<int>? vatReclaimable,
+    Expression<int>? vatToReclaim,
+    Expression<String>? notes,
+    Expression<String>? paidFrom,
+    Expression<String>? paymentReference,
+    Expression<int>? carAssetId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (date != null) 'date': date,
+      if (supplier != null) 'supplier': supplier,
+      if (description != null) 'description': description,
+      if (category != null) 'category': category,
+      if (receiptAttached != null) 'receipt_attached': receiptAttached,
+      if (amountExclVat != null) 'amount_excl_vat': amountExclVat,
+      if (vatRate != null) 'vat_rate': vatRate,
+      if (purchaseVat != null) 'purchase_vat': purchaseVat,
+      if (vatAmount != null) 'vat_amount': vatAmount,
+      if (totalInclVat != null) 'total_incl_vat': totalInclVat,
+      if (businessUsePct != null) 'business_use_pct': businessUsePct,
+      if (deductibleAmount != null) 'deductible_amount': deductibleAmount,
+      if (vatReclaimable != null) 'vat_reclaimable': vatReclaimable,
+      if (vatToReclaim != null) 'vat_to_reclaim': vatToReclaim,
+      if (notes != null) 'notes': notes,
+      if (paidFrom != null) 'paid_from': paidFrom,
+      if (paymentReference != null) 'payment_reference': paymentReference,
+      if (carAssetId != null) 'car_asset_id': carAssetId,
+    });
+  }
+
+  ExpensesCompanion copyWith({
+    Value<int>? id,
+    Value<int>? date,
+    Value<String>? supplier,
+    Value<String>? description,
+    Value<String>? category,
+    Value<int>? receiptAttached,
+    Value<int>? amountExclVat,
+    Value<String>? vatRate,
+    Value<String>? purchaseVat,
+    Value<int>? vatAmount,
+    Value<int>? totalInclVat,
+    Value<double>? businessUsePct,
+    Value<int>? deductibleAmount,
+    Value<int>? vatReclaimable,
+    Value<int>? vatToReclaim,
+    Value<String?>? notes,
+    Value<String?>? paidFrom,
+    Value<String?>? paymentReference,
+    Value<int?>? carAssetId,
+  }) {
+    return ExpensesCompanion(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      supplier: supplier ?? this.supplier,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      receiptAttached: receiptAttached ?? this.receiptAttached,
+      amountExclVat: amountExclVat ?? this.amountExclVat,
+      vatRate: vatRate ?? this.vatRate,
+      purchaseVat: purchaseVat ?? this.purchaseVat,
+      vatAmount: vatAmount ?? this.vatAmount,
+      totalInclVat: totalInclVat ?? this.totalInclVat,
+      businessUsePct: businessUsePct ?? this.businessUsePct,
+      deductibleAmount: deductibleAmount ?? this.deductibleAmount,
+      vatReclaimable: vatReclaimable ?? this.vatReclaimable,
+      vatToReclaim: vatToReclaim ?? this.vatToReclaim,
+      notes: notes ?? this.notes,
+      paidFrom: paidFrom ?? this.paidFrom,
+      paymentReference: paymentReference ?? this.paymentReference,
+      carAssetId: carAssetId ?? this.carAssetId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<int>(date.value);
+    }
+    if (supplier.present) {
+      map['supplier'] = Variable<String>(supplier.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    if (receiptAttached.present) {
+      map['receipt_attached'] = Variable<int>(receiptAttached.value);
+    }
+    if (amountExclVat.present) {
+      map['amount_excl_vat'] = Variable<int>(amountExclVat.value);
+    }
+    if (vatRate.present) {
+      map['vat_rate'] = Variable<String>(vatRate.value);
+    }
+    if (purchaseVat.present) {
+      map['purchase_vat'] = Variable<String>(purchaseVat.value);
+    }
+    if (vatAmount.present) {
+      map['vat_amount'] = Variable<int>(vatAmount.value);
+    }
+    if (totalInclVat.present) {
+      map['total_incl_vat'] = Variable<int>(totalInclVat.value);
+    }
+    if (businessUsePct.present) {
+      map['business_use_pct'] = Variable<double>(businessUsePct.value);
+    }
+    if (deductibleAmount.present) {
+      map['deductible_amount'] = Variable<int>(deductibleAmount.value);
+    }
+    if (vatReclaimable.present) {
+      map['vat_reclaimable'] = Variable<int>(vatReclaimable.value);
+    }
+    if (vatToReclaim.present) {
+      map['vat_to_reclaim'] = Variable<int>(vatToReclaim.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (paidFrom.present) {
+      map['paid_from'] = Variable<String>(paidFrom.value);
+    }
+    if (paymentReference.present) {
+      map['payment_reference'] = Variable<String>(paymentReference.value);
+    }
+    if (carAssetId.present) {
+      map['car_asset_id'] = Variable<int>(carAssetId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExpensesCompanion(')
+          ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('supplier: $supplier, ')
+          ..write('description: $description, ')
+          ..write('category: $category, ')
+          ..write('receiptAttached: $receiptAttached, ')
+          ..write('amountExclVat: $amountExclVat, ')
+          ..write('vatRate: $vatRate, ')
+          ..write('purchaseVat: $purchaseVat, ')
+          ..write('vatAmount: $vatAmount, ')
+          ..write('totalInclVat: $totalInclVat, ')
+          ..write('businessUsePct: $businessUsePct, ')
+          ..write('deductibleAmount: $deductibleAmount, ')
+          ..write('vatReclaimable: $vatReclaimable, ')
+          ..write('vatToReclaim: $vatToReclaim, ')
+          ..write('notes: $notes, ')
+          ..write('paidFrom: $paidFrom, ')
+          ..write('paymentReference: $paymentReference, ')
+          ..write('carAssetId: $carAssetId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class HourEntries extends Table with TableInfo<HourEntries, HourEntriesData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1118,8 +4427,38 @@ class HourEntries extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  HourEntriesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return HourEntriesData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}date'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      )!,
+      workType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}work_type'],
+      )!,
+      hours: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}hours'],
+      )!,
+      clientProject: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}client_project'],
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+    );
   }
 
   @override
@@ -1131,7 +4470,263 @@ class HourEntries extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class MileageTrips extends Table with TableInfo {
+class HourEntriesData extends DataClass implements Insertable<HourEntriesData> {
+  final int id;
+  final int date;
+  final String description;
+  final String workType;
+  final double hours;
+  final String? clientProject;
+  final String? notes;
+  const HourEntriesData({
+    required this.id,
+    required this.date,
+    required this.description,
+    required this.workType,
+    required this.hours,
+    this.clientProject,
+    this.notes,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['date'] = Variable<int>(date);
+    map['description'] = Variable<String>(description);
+    map['work_type'] = Variable<String>(workType);
+    map['hours'] = Variable<double>(hours);
+    if (!nullToAbsent || clientProject != null) {
+      map['client_project'] = Variable<String>(clientProject);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    return map;
+  }
+
+  HourEntriesCompanion toCompanion(bool nullToAbsent) {
+    return HourEntriesCompanion(
+      id: Value(id),
+      date: Value(date),
+      description: Value(description),
+      workType: Value(workType),
+      hours: Value(hours),
+      clientProject: clientProject == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clientProject),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+    );
+  }
+
+  factory HourEntriesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return HourEntriesData(
+      id: serializer.fromJson<int>(json['id']),
+      date: serializer.fromJson<int>(json['date']),
+      description: serializer.fromJson<String>(json['description']),
+      workType: serializer.fromJson<String>(json['workType']),
+      hours: serializer.fromJson<double>(json['hours']),
+      clientProject: serializer.fromJson<String?>(json['clientProject']),
+      notes: serializer.fromJson<String?>(json['notes']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'date': serializer.toJson<int>(date),
+      'description': serializer.toJson<String>(description),
+      'workType': serializer.toJson<String>(workType),
+      'hours': serializer.toJson<double>(hours),
+      'clientProject': serializer.toJson<String?>(clientProject),
+      'notes': serializer.toJson<String?>(notes),
+    };
+  }
+
+  HourEntriesData copyWith({
+    int? id,
+    int? date,
+    String? description,
+    String? workType,
+    double? hours,
+    Value<String?> clientProject = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+  }) => HourEntriesData(
+    id: id ?? this.id,
+    date: date ?? this.date,
+    description: description ?? this.description,
+    workType: workType ?? this.workType,
+    hours: hours ?? this.hours,
+    clientProject: clientProject.present
+        ? clientProject.value
+        : this.clientProject,
+    notes: notes.present ? notes.value : this.notes,
+  );
+  HourEntriesData copyWithCompanion(HourEntriesCompanion data) {
+    return HourEntriesData(
+      id: data.id.present ? data.id.value : this.id,
+      date: data.date.present ? data.date.value : this.date,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      workType: data.workType.present ? data.workType.value : this.workType,
+      hours: data.hours.present ? data.hours.value : this.hours,
+      clientProject: data.clientProject.present
+          ? data.clientProject.value
+          : this.clientProject,
+      notes: data.notes.present ? data.notes.value : this.notes,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HourEntriesData(')
+          ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('description: $description, ')
+          ..write('workType: $workType, ')
+          ..write('hours: $hours, ')
+          ..write('clientProject: $clientProject, ')
+          ..write('notes: $notes')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, date, description, workType, hours, clientProject, notes);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is HourEntriesData &&
+          other.id == this.id &&
+          other.date == this.date &&
+          other.description == this.description &&
+          other.workType == this.workType &&
+          other.hours == this.hours &&
+          other.clientProject == this.clientProject &&
+          other.notes == this.notes);
+}
+
+class HourEntriesCompanion extends UpdateCompanion<HourEntriesData> {
+  final Value<int> id;
+  final Value<int> date;
+  final Value<String> description;
+  final Value<String> workType;
+  final Value<double> hours;
+  final Value<String?> clientProject;
+  final Value<String?> notes;
+  const HourEntriesCompanion({
+    this.id = const Value.absent(),
+    this.date = const Value.absent(),
+    this.description = const Value.absent(),
+    this.workType = const Value.absent(),
+    this.hours = const Value.absent(),
+    this.clientProject = const Value.absent(),
+    this.notes = const Value.absent(),
+  });
+  HourEntriesCompanion.insert({
+    this.id = const Value.absent(),
+    required int date,
+    required String description,
+    required String workType,
+    required double hours,
+    this.clientProject = const Value.absent(),
+    this.notes = const Value.absent(),
+  }) : date = Value(date),
+       description = Value(description),
+       workType = Value(workType),
+       hours = Value(hours);
+  static Insertable<HourEntriesData> custom({
+    Expression<int>? id,
+    Expression<int>? date,
+    Expression<String>? description,
+    Expression<String>? workType,
+    Expression<double>? hours,
+    Expression<String>? clientProject,
+    Expression<String>? notes,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (date != null) 'date': date,
+      if (description != null) 'description': description,
+      if (workType != null) 'work_type': workType,
+      if (hours != null) 'hours': hours,
+      if (clientProject != null) 'client_project': clientProject,
+      if (notes != null) 'notes': notes,
+    });
+  }
+
+  HourEntriesCompanion copyWith({
+    Value<int>? id,
+    Value<int>? date,
+    Value<String>? description,
+    Value<String>? workType,
+    Value<double>? hours,
+    Value<String?>? clientProject,
+    Value<String?>? notes,
+  }) {
+    return HourEntriesCompanion(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      description: description ?? this.description,
+      workType: workType ?? this.workType,
+      hours: hours ?? this.hours,
+      clientProject: clientProject ?? this.clientProject,
+      notes: notes ?? this.notes,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<int>(date.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (workType.present) {
+      map['work_type'] = Variable<String>(workType.value);
+    }
+    if (hours.present) {
+      map['hours'] = Variable<double>(hours.value);
+    }
+    if (clientProject.present) {
+      map['client_project'] = Variable<String>(clientProject.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HourEntriesCompanion(')
+          ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('description: $description, ')
+          ..write('workType: $workType, ')
+          ..write('hours: $hours, ')
+          ..write('clientProject: $clientProject, ')
+          ..write('notes: $notes')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class MileageTrips extends Table
+    with TableInfo<MileageTrips, MileageTripsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1267,8 +4862,62 @@ class MileageTrips extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  MileageTripsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MileageTripsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}date'],
+      )!,
+      carAssetId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}car_asset_id'],
+      ),
+      vehicleMakeModel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vehicle_make_model'],
+      )!,
+      vehicleLicensePlate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vehicle_license_plate'],
+      )!,
+      departureAddress: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}departure_address'],
+      )!,
+      arrivalAddress: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}arrival_address'],
+      )!,
+      odometerStart: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}odometer_start'],
+      )!,
+      odometerEnd: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}odometer_end'],
+      )!,
+      tripType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}trip_type'],
+      )!,
+      purpose: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}purpose'],
+      )!,
+      routeDeviation: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}route_deviation'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+    );
   }
 
   @override
@@ -1280,7 +4929,429 @@ class MileageTrips extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class PensionEntries extends Table with TableInfo {
+class MileageTripsData extends DataClass
+    implements Insertable<MileageTripsData> {
+  final int id;
+  final int date;
+  final int? carAssetId;
+  final String vehicleMakeModel;
+  final String vehicleLicensePlate;
+  final String departureAddress;
+  final String arrivalAddress;
+  final int odometerStart;
+  final int odometerEnd;
+  final String tripType;
+  final String purpose;
+  final int routeDeviation;
+  final String? notes;
+  const MileageTripsData({
+    required this.id,
+    required this.date,
+    this.carAssetId,
+    required this.vehicleMakeModel,
+    required this.vehicleLicensePlate,
+    required this.departureAddress,
+    required this.arrivalAddress,
+    required this.odometerStart,
+    required this.odometerEnd,
+    required this.tripType,
+    required this.purpose,
+    required this.routeDeviation,
+    this.notes,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['date'] = Variable<int>(date);
+    if (!nullToAbsent || carAssetId != null) {
+      map['car_asset_id'] = Variable<int>(carAssetId);
+    }
+    map['vehicle_make_model'] = Variable<String>(vehicleMakeModel);
+    map['vehicle_license_plate'] = Variable<String>(vehicleLicensePlate);
+    map['departure_address'] = Variable<String>(departureAddress);
+    map['arrival_address'] = Variable<String>(arrivalAddress);
+    map['odometer_start'] = Variable<int>(odometerStart);
+    map['odometer_end'] = Variable<int>(odometerEnd);
+    map['trip_type'] = Variable<String>(tripType);
+    map['purpose'] = Variable<String>(purpose);
+    map['route_deviation'] = Variable<int>(routeDeviation);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    return map;
+  }
+
+  MileageTripsCompanion toCompanion(bool nullToAbsent) {
+    return MileageTripsCompanion(
+      id: Value(id),
+      date: Value(date),
+      carAssetId: carAssetId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(carAssetId),
+      vehicleMakeModel: Value(vehicleMakeModel),
+      vehicleLicensePlate: Value(vehicleLicensePlate),
+      departureAddress: Value(departureAddress),
+      arrivalAddress: Value(arrivalAddress),
+      odometerStart: Value(odometerStart),
+      odometerEnd: Value(odometerEnd),
+      tripType: Value(tripType),
+      purpose: Value(purpose),
+      routeDeviation: Value(routeDeviation),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+    );
+  }
+
+  factory MileageTripsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MileageTripsData(
+      id: serializer.fromJson<int>(json['id']),
+      date: serializer.fromJson<int>(json['date']),
+      carAssetId: serializer.fromJson<int?>(json['carAssetId']),
+      vehicleMakeModel: serializer.fromJson<String>(json['vehicleMakeModel']),
+      vehicleLicensePlate: serializer.fromJson<String>(
+        json['vehicleLicensePlate'],
+      ),
+      departureAddress: serializer.fromJson<String>(json['departureAddress']),
+      arrivalAddress: serializer.fromJson<String>(json['arrivalAddress']),
+      odometerStart: serializer.fromJson<int>(json['odometerStart']),
+      odometerEnd: serializer.fromJson<int>(json['odometerEnd']),
+      tripType: serializer.fromJson<String>(json['tripType']),
+      purpose: serializer.fromJson<String>(json['purpose']),
+      routeDeviation: serializer.fromJson<int>(json['routeDeviation']),
+      notes: serializer.fromJson<String?>(json['notes']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'date': serializer.toJson<int>(date),
+      'carAssetId': serializer.toJson<int?>(carAssetId),
+      'vehicleMakeModel': serializer.toJson<String>(vehicleMakeModel),
+      'vehicleLicensePlate': serializer.toJson<String>(vehicleLicensePlate),
+      'departureAddress': serializer.toJson<String>(departureAddress),
+      'arrivalAddress': serializer.toJson<String>(arrivalAddress),
+      'odometerStart': serializer.toJson<int>(odometerStart),
+      'odometerEnd': serializer.toJson<int>(odometerEnd),
+      'tripType': serializer.toJson<String>(tripType),
+      'purpose': serializer.toJson<String>(purpose),
+      'routeDeviation': serializer.toJson<int>(routeDeviation),
+      'notes': serializer.toJson<String?>(notes),
+    };
+  }
+
+  MileageTripsData copyWith({
+    int? id,
+    int? date,
+    Value<int?> carAssetId = const Value.absent(),
+    String? vehicleMakeModel,
+    String? vehicleLicensePlate,
+    String? departureAddress,
+    String? arrivalAddress,
+    int? odometerStart,
+    int? odometerEnd,
+    String? tripType,
+    String? purpose,
+    int? routeDeviation,
+    Value<String?> notes = const Value.absent(),
+  }) => MileageTripsData(
+    id: id ?? this.id,
+    date: date ?? this.date,
+    carAssetId: carAssetId.present ? carAssetId.value : this.carAssetId,
+    vehicleMakeModel: vehicleMakeModel ?? this.vehicleMakeModel,
+    vehicleLicensePlate: vehicleLicensePlate ?? this.vehicleLicensePlate,
+    departureAddress: departureAddress ?? this.departureAddress,
+    arrivalAddress: arrivalAddress ?? this.arrivalAddress,
+    odometerStart: odometerStart ?? this.odometerStart,
+    odometerEnd: odometerEnd ?? this.odometerEnd,
+    tripType: tripType ?? this.tripType,
+    purpose: purpose ?? this.purpose,
+    routeDeviation: routeDeviation ?? this.routeDeviation,
+    notes: notes.present ? notes.value : this.notes,
+  );
+  MileageTripsData copyWithCompanion(MileageTripsCompanion data) {
+    return MileageTripsData(
+      id: data.id.present ? data.id.value : this.id,
+      date: data.date.present ? data.date.value : this.date,
+      carAssetId: data.carAssetId.present
+          ? data.carAssetId.value
+          : this.carAssetId,
+      vehicleMakeModel: data.vehicleMakeModel.present
+          ? data.vehicleMakeModel.value
+          : this.vehicleMakeModel,
+      vehicleLicensePlate: data.vehicleLicensePlate.present
+          ? data.vehicleLicensePlate.value
+          : this.vehicleLicensePlate,
+      departureAddress: data.departureAddress.present
+          ? data.departureAddress.value
+          : this.departureAddress,
+      arrivalAddress: data.arrivalAddress.present
+          ? data.arrivalAddress.value
+          : this.arrivalAddress,
+      odometerStart: data.odometerStart.present
+          ? data.odometerStart.value
+          : this.odometerStart,
+      odometerEnd: data.odometerEnd.present
+          ? data.odometerEnd.value
+          : this.odometerEnd,
+      tripType: data.tripType.present ? data.tripType.value : this.tripType,
+      purpose: data.purpose.present ? data.purpose.value : this.purpose,
+      routeDeviation: data.routeDeviation.present
+          ? data.routeDeviation.value
+          : this.routeDeviation,
+      notes: data.notes.present ? data.notes.value : this.notes,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MileageTripsData(')
+          ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('carAssetId: $carAssetId, ')
+          ..write('vehicleMakeModel: $vehicleMakeModel, ')
+          ..write('vehicleLicensePlate: $vehicleLicensePlate, ')
+          ..write('departureAddress: $departureAddress, ')
+          ..write('arrivalAddress: $arrivalAddress, ')
+          ..write('odometerStart: $odometerStart, ')
+          ..write('odometerEnd: $odometerEnd, ')
+          ..write('tripType: $tripType, ')
+          ..write('purpose: $purpose, ')
+          ..write('routeDeviation: $routeDeviation, ')
+          ..write('notes: $notes')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    date,
+    carAssetId,
+    vehicleMakeModel,
+    vehicleLicensePlate,
+    departureAddress,
+    arrivalAddress,
+    odometerStart,
+    odometerEnd,
+    tripType,
+    purpose,
+    routeDeviation,
+    notes,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MileageTripsData &&
+          other.id == this.id &&
+          other.date == this.date &&
+          other.carAssetId == this.carAssetId &&
+          other.vehicleMakeModel == this.vehicleMakeModel &&
+          other.vehicleLicensePlate == this.vehicleLicensePlate &&
+          other.departureAddress == this.departureAddress &&
+          other.arrivalAddress == this.arrivalAddress &&
+          other.odometerStart == this.odometerStart &&
+          other.odometerEnd == this.odometerEnd &&
+          other.tripType == this.tripType &&
+          other.purpose == this.purpose &&
+          other.routeDeviation == this.routeDeviation &&
+          other.notes == this.notes);
+}
+
+class MileageTripsCompanion extends UpdateCompanion<MileageTripsData> {
+  final Value<int> id;
+  final Value<int> date;
+  final Value<int?> carAssetId;
+  final Value<String> vehicleMakeModel;
+  final Value<String> vehicleLicensePlate;
+  final Value<String> departureAddress;
+  final Value<String> arrivalAddress;
+  final Value<int> odometerStart;
+  final Value<int> odometerEnd;
+  final Value<String> tripType;
+  final Value<String> purpose;
+  final Value<int> routeDeviation;
+  final Value<String?> notes;
+  const MileageTripsCompanion({
+    this.id = const Value.absent(),
+    this.date = const Value.absent(),
+    this.carAssetId = const Value.absent(),
+    this.vehicleMakeModel = const Value.absent(),
+    this.vehicleLicensePlate = const Value.absent(),
+    this.departureAddress = const Value.absent(),
+    this.arrivalAddress = const Value.absent(),
+    this.odometerStart = const Value.absent(),
+    this.odometerEnd = const Value.absent(),
+    this.tripType = const Value.absent(),
+    this.purpose = const Value.absent(),
+    this.routeDeviation = const Value.absent(),
+    this.notes = const Value.absent(),
+  });
+  MileageTripsCompanion.insert({
+    this.id = const Value.absent(),
+    required int date,
+    this.carAssetId = const Value.absent(),
+    required String vehicleMakeModel,
+    required String vehicleLicensePlate,
+    required String departureAddress,
+    required String arrivalAddress,
+    required int odometerStart,
+    required int odometerEnd,
+    required String tripType,
+    required String purpose,
+    this.routeDeviation = const Value.absent(),
+    this.notes = const Value.absent(),
+  }) : date = Value(date),
+       vehicleMakeModel = Value(vehicleMakeModel),
+       vehicleLicensePlate = Value(vehicleLicensePlate),
+       departureAddress = Value(departureAddress),
+       arrivalAddress = Value(arrivalAddress),
+       odometerStart = Value(odometerStart),
+       odometerEnd = Value(odometerEnd),
+       tripType = Value(tripType),
+       purpose = Value(purpose);
+  static Insertable<MileageTripsData> custom({
+    Expression<int>? id,
+    Expression<int>? date,
+    Expression<int>? carAssetId,
+    Expression<String>? vehicleMakeModel,
+    Expression<String>? vehicleLicensePlate,
+    Expression<String>? departureAddress,
+    Expression<String>? arrivalAddress,
+    Expression<int>? odometerStart,
+    Expression<int>? odometerEnd,
+    Expression<String>? tripType,
+    Expression<String>? purpose,
+    Expression<int>? routeDeviation,
+    Expression<String>? notes,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (date != null) 'date': date,
+      if (carAssetId != null) 'car_asset_id': carAssetId,
+      if (vehicleMakeModel != null) 'vehicle_make_model': vehicleMakeModel,
+      if (vehicleLicensePlate != null)
+        'vehicle_license_plate': vehicleLicensePlate,
+      if (departureAddress != null) 'departure_address': departureAddress,
+      if (arrivalAddress != null) 'arrival_address': arrivalAddress,
+      if (odometerStart != null) 'odometer_start': odometerStart,
+      if (odometerEnd != null) 'odometer_end': odometerEnd,
+      if (tripType != null) 'trip_type': tripType,
+      if (purpose != null) 'purpose': purpose,
+      if (routeDeviation != null) 'route_deviation': routeDeviation,
+      if (notes != null) 'notes': notes,
+    });
+  }
+
+  MileageTripsCompanion copyWith({
+    Value<int>? id,
+    Value<int>? date,
+    Value<int?>? carAssetId,
+    Value<String>? vehicleMakeModel,
+    Value<String>? vehicleLicensePlate,
+    Value<String>? departureAddress,
+    Value<String>? arrivalAddress,
+    Value<int>? odometerStart,
+    Value<int>? odometerEnd,
+    Value<String>? tripType,
+    Value<String>? purpose,
+    Value<int>? routeDeviation,
+    Value<String?>? notes,
+  }) {
+    return MileageTripsCompanion(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      carAssetId: carAssetId ?? this.carAssetId,
+      vehicleMakeModel: vehicleMakeModel ?? this.vehicleMakeModel,
+      vehicleLicensePlate: vehicleLicensePlate ?? this.vehicleLicensePlate,
+      departureAddress: departureAddress ?? this.departureAddress,
+      arrivalAddress: arrivalAddress ?? this.arrivalAddress,
+      odometerStart: odometerStart ?? this.odometerStart,
+      odometerEnd: odometerEnd ?? this.odometerEnd,
+      tripType: tripType ?? this.tripType,
+      purpose: purpose ?? this.purpose,
+      routeDeviation: routeDeviation ?? this.routeDeviation,
+      notes: notes ?? this.notes,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<int>(date.value);
+    }
+    if (carAssetId.present) {
+      map['car_asset_id'] = Variable<int>(carAssetId.value);
+    }
+    if (vehicleMakeModel.present) {
+      map['vehicle_make_model'] = Variable<String>(vehicleMakeModel.value);
+    }
+    if (vehicleLicensePlate.present) {
+      map['vehicle_license_plate'] = Variable<String>(
+        vehicleLicensePlate.value,
+      );
+    }
+    if (departureAddress.present) {
+      map['departure_address'] = Variable<String>(departureAddress.value);
+    }
+    if (arrivalAddress.present) {
+      map['arrival_address'] = Variable<String>(arrivalAddress.value);
+    }
+    if (odometerStart.present) {
+      map['odometer_start'] = Variable<int>(odometerStart.value);
+    }
+    if (odometerEnd.present) {
+      map['odometer_end'] = Variable<int>(odometerEnd.value);
+    }
+    if (tripType.present) {
+      map['trip_type'] = Variable<String>(tripType.value);
+    }
+    if (purpose.present) {
+      map['purpose'] = Variable<String>(purpose.value);
+    }
+    if (routeDeviation.present) {
+      map['route_deviation'] = Variable<int>(routeDeviation.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MileageTripsCompanion(')
+          ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('carAssetId: $carAssetId, ')
+          ..write('vehicleMakeModel: $vehicleMakeModel, ')
+          ..write('vehicleLicensePlate: $vehicleLicensePlate, ')
+          ..write('departureAddress: $departureAddress, ')
+          ..write('arrivalAddress: $arrivalAddress, ')
+          ..write('odometerStart: $odometerStart, ')
+          ..write('odometerEnd: $odometerEnd, ')
+          ..write('tripType: $tripType, ')
+          ..write('purpose: $purpose, ')
+          ..write('routeDeviation: $routeDeviation, ')
+          ..write('notes: $notes')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class PensionEntries extends Table
+    with TableInfo<PensionEntries, PensionEntriesData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1365,8 +5436,38 @@ class PensionEntries extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {year};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  PensionEntriesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PensionEntriesData(
+      year: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year'],
+      )!,
+      priorYearIncome: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}prior_year_income'],
+      )!,
+      factorA: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}factor_a'],
+      )!,
+      reserveringsruimte: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}reserveringsruimte'],
+      )!,
+      plannedContribution: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}planned_contribution'],
+      )!,
+      aovInsured: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}aov_insured'],
+      )!,
+      monthlyAovPremium: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}monthly_aov_premium'],
+      )!,
+    );
   }
 
   @override
@@ -1380,7 +5481,266 @@ class PensionEntries extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class VatReturns extends Table with TableInfo {
+class PensionEntriesData extends DataClass
+    implements Insertable<PensionEntriesData> {
+  final int year;
+  final int priorYearIncome;
+  final int factorA;
+  final int reserveringsruimte;
+  final int plannedContribution;
+  final int aovInsured;
+  final int monthlyAovPremium;
+  const PensionEntriesData({
+    required this.year,
+    required this.priorYearIncome,
+    required this.factorA,
+    required this.reserveringsruimte,
+    required this.plannedContribution,
+    required this.aovInsured,
+    required this.monthlyAovPremium,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['year'] = Variable<int>(year);
+    map['prior_year_income'] = Variable<int>(priorYearIncome);
+    map['factor_a'] = Variable<int>(factorA);
+    map['reserveringsruimte'] = Variable<int>(reserveringsruimte);
+    map['planned_contribution'] = Variable<int>(plannedContribution);
+    map['aov_insured'] = Variable<int>(aovInsured);
+    map['monthly_aov_premium'] = Variable<int>(monthlyAovPremium);
+    return map;
+  }
+
+  PensionEntriesCompanion toCompanion(bool nullToAbsent) {
+    return PensionEntriesCompanion(
+      year: Value(year),
+      priorYearIncome: Value(priorYearIncome),
+      factorA: Value(factorA),
+      reserveringsruimte: Value(reserveringsruimte),
+      plannedContribution: Value(plannedContribution),
+      aovInsured: Value(aovInsured),
+      monthlyAovPremium: Value(monthlyAovPremium),
+    );
+  }
+
+  factory PensionEntriesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PensionEntriesData(
+      year: serializer.fromJson<int>(json['year']),
+      priorYearIncome: serializer.fromJson<int>(json['priorYearIncome']),
+      factorA: serializer.fromJson<int>(json['factorA']),
+      reserveringsruimte: serializer.fromJson<int>(json['reserveringsruimte']),
+      plannedContribution: serializer.fromJson<int>(
+        json['plannedContribution'],
+      ),
+      aovInsured: serializer.fromJson<int>(json['aovInsured']),
+      monthlyAovPremium: serializer.fromJson<int>(json['monthlyAovPremium']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'year': serializer.toJson<int>(year),
+      'priorYearIncome': serializer.toJson<int>(priorYearIncome),
+      'factorA': serializer.toJson<int>(factorA),
+      'reserveringsruimte': serializer.toJson<int>(reserveringsruimte),
+      'plannedContribution': serializer.toJson<int>(plannedContribution),
+      'aovInsured': serializer.toJson<int>(aovInsured),
+      'monthlyAovPremium': serializer.toJson<int>(monthlyAovPremium),
+    };
+  }
+
+  PensionEntriesData copyWith({
+    int? year,
+    int? priorYearIncome,
+    int? factorA,
+    int? reserveringsruimte,
+    int? plannedContribution,
+    int? aovInsured,
+    int? monthlyAovPremium,
+  }) => PensionEntriesData(
+    year: year ?? this.year,
+    priorYearIncome: priorYearIncome ?? this.priorYearIncome,
+    factorA: factorA ?? this.factorA,
+    reserveringsruimte: reserveringsruimte ?? this.reserveringsruimte,
+    plannedContribution: plannedContribution ?? this.plannedContribution,
+    aovInsured: aovInsured ?? this.aovInsured,
+    monthlyAovPremium: monthlyAovPremium ?? this.monthlyAovPremium,
+  );
+  PensionEntriesData copyWithCompanion(PensionEntriesCompanion data) {
+    return PensionEntriesData(
+      year: data.year.present ? data.year.value : this.year,
+      priorYearIncome: data.priorYearIncome.present
+          ? data.priorYearIncome.value
+          : this.priorYearIncome,
+      factorA: data.factorA.present ? data.factorA.value : this.factorA,
+      reserveringsruimte: data.reserveringsruimte.present
+          ? data.reserveringsruimte.value
+          : this.reserveringsruimte,
+      plannedContribution: data.plannedContribution.present
+          ? data.plannedContribution.value
+          : this.plannedContribution,
+      aovInsured: data.aovInsured.present
+          ? data.aovInsured.value
+          : this.aovInsured,
+      monthlyAovPremium: data.monthlyAovPremium.present
+          ? data.monthlyAovPremium.value
+          : this.monthlyAovPremium,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PensionEntriesData(')
+          ..write('year: $year, ')
+          ..write('priorYearIncome: $priorYearIncome, ')
+          ..write('factorA: $factorA, ')
+          ..write('reserveringsruimte: $reserveringsruimte, ')
+          ..write('plannedContribution: $plannedContribution, ')
+          ..write('aovInsured: $aovInsured, ')
+          ..write('monthlyAovPremium: $monthlyAovPremium')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    year,
+    priorYearIncome,
+    factorA,
+    reserveringsruimte,
+    plannedContribution,
+    aovInsured,
+    monthlyAovPremium,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PensionEntriesData &&
+          other.year == this.year &&
+          other.priorYearIncome == this.priorYearIncome &&
+          other.factorA == this.factorA &&
+          other.reserveringsruimte == this.reserveringsruimte &&
+          other.plannedContribution == this.plannedContribution &&
+          other.aovInsured == this.aovInsured &&
+          other.monthlyAovPremium == this.monthlyAovPremium);
+}
+
+class PensionEntriesCompanion extends UpdateCompanion<PensionEntriesData> {
+  final Value<int> year;
+  final Value<int> priorYearIncome;
+  final Value<int> factorA;
+  final Value<int> reserveringsruimte;
+  final Value<int> plannedContribution;
+  final Value<int> aovInsured;
+  final Value<int> monthlyAovPremium;
+  const PensionEntriesCompanion({
+    this.year = const Value.absent(),
+    this.priorYearIncome = const Value.absent(),
+    this.factorA = const Value.absent(),
+    this.reserveringsruimte = const Value.absent(),
+    this.plannedContribution = const Value.absent(),
+    this.aovInsured = const Value.absent(),
+    this.monthlyAovPremium = const Value.absent(),
+  });
+  PensionEntriesCompanion.insert({
+    this.year = const Value.absent(),
+    this.priorYearIncome = const Value.absent(),
+    this.factorA = const Value.absent(),
+    this.reserveringsruimte = const Value.absent(),
+    this.plannedContribution = const Value.absent(),
+    this.aovInsured = const Value.absent(),
+    this.monthlyAovPremium = const Value.absent(),
+  });
+  static Insertable<PensionEntriesData> custom({
+    Expression<int>? year,
+    Expression<int>? priorYearIncome,
+    Expression<int>? factorA,
+    Expression<int>? reserveringsruimte,
+    Expression<int>? plannedContribution,
+    Expression<int>? aovInsured,
+    Expression<int>? monthlyAovPremium,
+  }) {
+    return RawValuesInsertable({
+      if (year != null) 'year': year,
+      if (priorYearIncome != null) 'prior_year_income': priorYearIncome,
+      if (factorA != null) 'factor_a': factorA,
+      if (reserveringsruimte != null) 'reserveringsruimte': reserveringsruimte,
+      if (plannedContribution != null)
+        'planned_contribution': plannedContribution,
+      if (aovInsured != null) 'aov_insured': aovInsured,
+      if (monthlyAovPremium != null) 'monthly_aov_premium': monthlyAovPremium,
+    });
+  }
+
+  PensionEntriesCompanion copyWith({
+    Value<int>? year,
+    Value<int>? priorYearIncome,
+    Value<int>? factorA,
+    Value<int>? reserveringsruimte,
+    Value<int>? plannedContribution,
+    Value<int>? aovInsured,
+    Value<int>? monthlyAovPremium,
+  }) {
+    return PensionEntriesCompanion(
+      year: year ?? this.year,
+      priorYearIncome: priorYearIncome ?? this.priorYearIncome,
+      factorA: factorA ?? this.factorA,
+      reserveringsruimte: reserveringsruimte ?? this.reserveringsruimte,
+      plannedContribution: plannedContribution ?? this.plannedContribution,
+      aovInsured: aovInsured ?? this.aovInsured,
+      monthlyAovPremium: monthlyAovPremium ?? this.monthlyAovPremium,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (year.present) {
+      map['year'] = Variable<int>(year.value);
+    }
+    if (priorYearIncome.present) {
+      map['prior_year_income'] = Variable<int>(priorYearIncome.value);
+    }
+    if (factorA.present) {
+      map['factor_a'] = Variable<int>(factorA.value);
+    }
+    if (reserveringsruimte.present) {
+      map['reserveringsruimte'] = Variable<int>(reserveringsruimte.value);
+    }
+    if (plannedContribution.present) {
+      map['planned_contribution'] = Variable<int>(plannedContribution.value);
+    }
+    if (aovInsured.present) {
+      map['aov_insured'] = Variable<int>(aovInsured.value);
+    }
+    if (monthlyAovPremium.present) {
+      map['monthly_aov_premium'] = Variable<int>(monthlyAovPremium.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PensionEntriesCompanion(')
+          ..write('year: $year, ')
+          ..write('priorYearIncome: $priorYearIncome, ')
+          ..write('factorA: $factorA, ')
+          ..write('reserveringsruimte: $reserveringsruimte, ')
+          ..write('plannedContribution: $plannedContribution, ')
+          ..write('aovInsured: $aovInsured, ')
+          ..write('monthlyAovPremium: $monthlyAovPremium')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class VatReturns extends Table with TableInfo<VatReturns, VatReturnsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1429,8 +5789,26 @@ class VatReturns extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {year, quarter};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  VatReturnsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return VatReturnsData(
+      year: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year'],
+      )!,
+      quarter: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quarter'],
+      )!,
+      filed: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}filed'],
+      )!,
+      paid: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}paid'],
+      )!,
+    );
   }
 
   @override
@@ -1444,7 +5822,187 @@ class VatReturns extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class TaxYearInputs extends Table with TableInfo {
+class VatReturnsData extends DataClass implements Insertable<VatReturnsData> {
+  final int year;
+  final int quarter;
+  final int filed;
+  final int paid;
+  const VatReturnsData({
+    required this.year,
+    required this.quarter,
+    required this.filed,
+    required this.paid,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['year'] = Variable<int>(year);
+    map['quarter'] = Variable<int>(quarter);
+    map['filed'] = Variable<int>(filed);
+    map['paid'] = Variable<int>(paid);
+    return map;
+  }
+
+  VatReturnsCompanion toCompanion(bool nullToAbsent) {
+    return VatReturnsCompanion(
+      year: Value(year),
+      quarter: Value(quarter),
+      filed: Value(filed),
+      paid: Value(paid),
+    );
+  }
+
+  factory VatReturnsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return VatReturnsData(
+      year: serializer.fromJson<int>(json['year']),
+      quarter: serializer.fromJson<int>(json['quarter']),
+      filed: serializer.fromJson<int>(json['filed']),
+      paid: serializer.fromJson<int>(json['paid']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'year': serializer.toJson<int>(year),
+      'quarter': serializer.toJson<int>(quarter),
+      'filed': serializer.toJson<int>(filed),
+      'paid': serializer.toJson<int>(paid),
+    };
+  }
+
+  VatReturnsData copyWith({int? year, int? quarter, int? filed, int? paid}) =>
+      VatReturnsData(
+        year: year ?? this.year,
+        quarter: quarter ?? this.quarter,
+        filed: filed ?? this.filed,
+        paid: paid ?? this.paid,
+      );
+  VatReturnsData copyWithCompanion(VatReturnsCompanion data) {
+    return VatReturnsData(
+      year: data.year.present ? data.year.value : this.year,
+      quarter: data.quarter.present ? data.quarter.value : this.quarter,
+      filed: data.filed.present ? data.filed.value : this.filed,
+      paid: data.paid.present ? data.paid.value : this.paid,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VatReturnsData(')
+          ..write('year: $year, ')
+          ..write('quarter: $quarter, ')
+          ..write('filed: $filed, ')
+          ..write('paid: $paid')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(year, quarter, filed, paid);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is VatReturnsData &&
+          other.year == this.year &&
+          other.quarter == this.quarter &&
+          other.filed == this.filed &&
+          other.paid == this.paid);
+}
+
+class VatReturnsCompanion extends UpdateCompanion<VatReturnsData> {
+  final Value<int> year;
+  final Value<int> quarter;
+  final Value<int> filed;
+  final Value<int> paid;
+  final Value<int> rowid;
+  const VatReturnsCompanion({
+    this.year = const Value.absent(),
+    this.quarter = const Value.absent(),
+    this.filed = const Value.absent(),
+    this.paid = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  VatReturnsCompanion.insert({
+    required int year,
+    required int quarter,
+    this.filed = const Value.absent(),
+    this.paid = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : year = Value(year),
+       quarter = Value(quarter);
+  static Insertable<VatReturnsData> custom({
+    Expression<int>? year,
+    Expression<int>? quarter,
+    Expression<int>? filed,
+    Expression<int>? paid,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (year != null) 'year': year,
+      if (quarter != null) 'quarter': quarter,
+      if (filed != null) 'filed': filed,
+      if (paid != null) 'paid': paid,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  VatReturnsCompanion copyWith({
+    Value<int>? year,
+    Value<int>? quarter,
+    Value<int>? filed,
+    Value<int>? paid,
+    Value<int>? rowid,
+  }) {
+    return VatReturnsCompanion(
+      year: year ?? this.year,
+      quarter: quarter ?? this.quarter,
+      filed: filed ?? this.filed,
+      paid: paid ?? this.paid,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (year.present) {
+      map['year'] = Variable<int>(year.value);
+    }
+    if (quarter.present) {
+      map['quarter'] = Variable<int>(quarter.value);
+    }
+    if (filed.present) {
+      map['filed'] = Variable<int>(filed.value);
+    }
+    if (paid.present) {
+      map['paid'] = Variable<int>(paid.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VatReturnsCompanion(')
+          ..write('year: $year, ')
+          ..write('quarter: $quarter, ')
+          ..write('filed: $filed, ')
+          ..write('paid: $paid, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class TaxYearInputs extends Table
+    with TableInfo<TaxYearInputs, TaxYearInputsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1563,8 +6121,50 @@ class TaxYearInputs extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {year};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  TaxYearInputsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TaxYearInputsData(
+      year: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year'],
+      )!,
+      partnerHours: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}partner_hours'],
+      )!,
+      hasSoVerklaring: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}has_so_verklaring'],
+      )!,
+      soStarter: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}so_starter'],
+      )!,
+      businessCeased: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}business_ceased'],
+      )!,
+      stakingsaftrekUsedBefore: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}stakingsaftrek_used_before'],
+      )!,
+      disabilityBenefit: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}disability_benefit'],
+      )!,
+      disabilityStartersUsed: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}disability_starters_used'],
+      )!,
+      unrealisedZelfstandigenaftrek: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}unrealised_zelfstandigenaftrek'],
+      )!,
+      lossCarryForward: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}loss_carry_forward'],
+      )!,
+    );
   }
 
   @override
@@ -1576,6 +6176,369 @@ class TaxYearInputs extends Table with TableInfo {
   List<String> get customConstraints => const ['PRIMARY KEY(year)'];
   @override
   bool get dontWriteConstraints => true;
+}
+
+class TaxYearInputsData extends DataClass
+    implements Insertable<TaxYearInputsData> {
+  final int year;
+  final int partnerHours;
+  final int hasSoVerklaring;
+  final int soStarter;
+  final int businessCeased;
+  final int stakingsaftrekUsedBefore;
+  final int disabilityBenefit;
+  final int disabilityStartersUsed;
+  final int unrealisedZelfstandigenaftrek;
+  final int lossCarryForward;
+  const TaxYearInputsData({
+    required this.year,
+    required this.partnerHours,
+    required this.hasSoVerklaring,
+    required this.soStarter,
+    required this.businessCeased,
+    required this.stakingsaftrekUsedBefore,
+    required this.disabilityBenefit,
+    required this.disabilityStartersUsed,
+    required this.unrealisedZelfstandigenaftrek,
+    required this.lossCarryForward,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['year'] = Variable<int>(year);
+    map['partner_hours'] = Variable<int>(partnerHours);
+    map['has_so_verklaring'] = Variable<int>(hasSoVerklaring);
+    map['so_starter'] = Variable<int>(soStarter);
+    map['business_ceased'] = Variable<int>(businessCeased);
+    map['stakingsaftrek_used_before'] = Variable<int>(stakingsaftrekUsedBefore);
+    map['disability_benefit'] = Variable<int>(disabilityBenefit);
+    map['disability_starters_used'] = Variable<int>(disabilityStartersUsed);
+    map['unrealised_zelfstandigenaftrek'] = Variable<int>(
+      unrealisedZelfstandigenaftrek,
+    );
+    map['loss_carry_forward'] = Variable<int>(lossCarryForward);
+    return map;
+  }
+
+  TaxYearInputsCompanion toCompanion(bool nullToAbsent) {
+    return TaxYearInputsCompanion(
+      year: Value(year),
+      partnerHours: Value(partnerHours),
+      hasSoVerklaring: Value(hasSoVerklaring),
+      soStarter: Value(soStarter),
+      businessCeased: Value(businessCeased),
+      stakingsaftrekUsedBefore: Value(stakingsaftrekUsedBefore),
+      disabilityBenefit: Value(disabilityBenefit),
+      disabilityStartersUsed: Value(disabilityStartersUsed),
+      unrealisedZelfstandigenaftrek: Value(unrealisedZelfstandigenaftrek),
+      lossCarryForward: Value(lossCarryForward),
+    );
+  }
+
+  factory TaxYearInputsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TaxYearInputsData(
+      year: serializer.fromJson<int>(json['year']),
+      partnerHours: serializer.fromJson<int>(json['partnerHours']),
+      hasSoVerklaring: serializer.fromJson<int>(json['hasSoVerklaring']),
+      soStarter: serializer.fromJson<int>(json['soStarter']),
+      businessCeased: serializer.fromJson<int>(json['businessCeased']),
+      stakingsaftrekUsedBefore: serializer.fromJson<int>(
+        json['stakingsaftrekUsedBefore'],
+      ),
+      disabilityBenefit: serializer.fromJson<int>(json['disabilityBenefit']),
+      disabilityStartersUsed: serializer.fromJson<int>(
+        json['disabilityStartersUsed'],
+      ),
+      unrealisedZelfstandigenaftrek: serializer.fromJson<int>(
+        json['unrealisedZelfstandigenaftrek'],
+      ),
+      lossCarryForward: serializer.fromJson<int>(json['lossCarryForward']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'year': serializer.toJson<int>(year),
+      'partnerHours': serializer.toJson<int>(partnerHours),
+      'hasSoVerklaring': serializer.toJson<int>(hasSoVerklaring),
+      'soStarter': serializer.toJson<int>(soStarter),
+      'businessCeased': serializer.toJson<int>(businessCeased),
+      'stakingsaftrekUsedBefore': serializer.toJson<int>(
+        stakingsaftrekUsedBefore,
+      ),
+      'disabilityBenefit': serializer.toJson<int>(disabilityBenefit),
+      'disabilityStartersUsed': serializer.toJson<int>(disabilityStartersUsed),
+      'unrealisedZelfstandigenaftrek': serializer.toJson<int>(
+        unrealisedZelfstandigenaftrek,
+      ),
+      'lossCarryForward': serializer.toJson<int>(lossCarryForward),
+    };
+  }
+
+  TaxYearInputsData copyWith({
+    int? year,
+    int? partnerHours,
+    int? hasSoVerklaring,
+    int? soStarter,
+    int? businessCeased,
+    int? stakingsaftrekUsedBefore,
+    int? disabilityBenefit,
+    int? disabilityStartersUsed,
+    int? unrealisedZelfstandigenaftrek,
+    int? lossCarryForward,
+  }) => TaxYearInputsData(
+    year: year ?? this.year,
+    partnerHours: partnerHours ?? this.partnerHours,
+    hasSoVerklaring: hasSoVerklaring ?? this.hasSoVerklaring,
+    soStarter: soStarter ?? this.soStarter,
+    businessCeased: businessCeased ?? this.businessCeased,
+    stakingsaftrekUsedBefore:
+        stakingsaftrekUsedBefore ?? this.stakingsaftrekUsedBefore,
+    disabilityBenefit: disabilityBenefit ?? this.disabilityBenefit,
+    disabilityStartersUsed:
+        disabilityStartersUsed ?? this.disabilityStartersUsed,
+    unrealisedZelfstandigenaftrek:
+        unrealisedZelfstandigenaftrek ?? this.unrealisedZelfstandigenaftrek,
+    lossCarryForward: lossCarryForward ?? this.lossCarryForward,
+  );
+  TaxYearInputsData copyWithCompanion(TaxYearInputsCompanion data) {
+    return TaxYearInputsData(
+      year: data.year.present ? data.year.value : this.year,
+      partnerHours: data.partnerHours.present
+          ? data.partnerHours.value
+          : this.partnerHours,
+      hasSoVerklaring: data.hasSoVerklaring.present
+          ? data.hasSoVerklaring.value
+          : this.hasSoVerklaring,
+      soStarter: data.soStarter.present ? data.soStarter.value : this.soStarter,
+      businessCeased: data.businessCeased.present
+          ? data.businessCeased.value
+          : this.businessCeased,
+      stakingsaftrekUsedBefore: data.stakingsaftrekUsedBefore.present
+          ? data.stakingsaftrekUsedBefore.value
+          : this.stakingsaftrekUsedBefore,
+      disabilityBenefit: data.disabilityBenefit.present
+          ? data.disabilityBenefit.value
+          : this.disabilityBenefit,
+      disabilityStartersUsed: data.disabilityStartersUsed.present
+          ? data.disabilityStartersUsed.value
+          : this.disabilityStartersUsed,
+      unrealisedZelfstandigenaftrek: data.unrealisedZelfstandigenaftrek.present
+          ? data.unrealisedZelfstandigenaftrek.value
+          : this.unrealisedZelfstandigenaftrek,
+      lossCarryForward: data.lossCarryForward.present
+          ? data.lossCarryForward.value
+          : this.lossCarryForward,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TaxYearInputsData(')
+          ..write('year: $year, ')
+          ..write('partnerHours: $partnerHours, ')
+          ..write('hasSoVerklaring: $hasSoVerklaring, ')
+          ..write('soStarter: $soStarter, ')
+          ..write('businessCeased: $businessCeased, ')
+          ..write('stakingsaftrekUsedBefore: $stakingsaftrekUsedBefore, ')
+          ..write('disabilityBenefit: $disabilityBenefit, ')
+          ..write('disabilityStartersUsed: $disabilityStartersUsed, ')
+          ..write(
+            'unrealisedZelfstandigenaftrek: $unrealisedZelfstandigenaftrek, ',
+          )
+          ..write('lossCarryForward: $lossCarryForward')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    year,
+    partnerHours,
+    hasSoVerklaring,
+    soStarter,
+    businessCeased,
+    stakingsaftrekUsedBefore,
+    disabilityBenefit,
+    disabilityStartersUsed,
+    unrealisedZelfstandigenaftrek,
+    lossCarryForward,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TaxYearInputsData &&
+          other.year == this.year &&
+          other.partnerHours == this.partnerHours &&
+          other.hasSoVerklaring == this.hasSoVerklaring &&
+          other.soStarter == this.soStarter &&
+          other.businessCeased == this.businessCeased &&
+          other.stakingsaftrekUsedBefore == this.stakingsaftrekUsedBefore &&
+          other.disabilityBenefit == this.disabilityBenefit &&
+          other.disabilityStartersUsed == this.disabilityStartersUsed &&
+          other.unrealisedZelfstandigenaftrek ==
+              this.unrealisedZelfstandigenaftrek &&
+          other.lossCarryForward == this.lossCarryForward);
+}
+
+class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInputsData> {
+  final Value<int> year;
+  final Value<int> partnerHours;
+  final Value<int> hasSoVerklaring;
+  final Value<int> soStarter;
+  final Value<int> businessCeased;
+  final Value<int> stakingsaftrekUsedBefore;
+  final Value<int> disabilityBenefit;
+  final Value<int> disabilityStartersUsed;
+  final Value<int> unrealisedZelfstandigenaftrek;
+  final Value<int> lossCarryForward;
+  const TaxYearInputsCompanion({
+    this.year = const Value.absent(),
+    this.partnerHours = const Value.absent(),
+    this.hasSoVerklaring = const Value.absent(),
+    this.soStarter = const Value.absent(),
+    this.businessCeased = const Value.absent(),
+    this.stakingsaftrekUsedBefore = const Value.absent(),
+    this.disabilityBenefit = const Value.absent(),
+    this.disabilityStartersUsed = const Value.absent(),
+    this.unrealisedZelfstandigenaftrek = const Value.absent(),
+    this.lossCarryForward = const Value.absent(),
+  });
+  TaxYearInputsCompanion.insert({
+    this.year = const Value.absent(),
+    this.partnerHours = const Value.absent(),
+    this.hasSoVerklaring = const Value.absent(),
+    this.soStarter = const Value.absent(),
+    this.businessCeased = const Value.absent(),
+    this.stakingsaftrekUsedBefore = const Value.absent(),
+    this.disabilityBenefit = const Value.absent(),
+    this.disabilityStartersUsed = const Value.absent(),
+    this.unrealisedZelfstandigenaftrek = const Value.absent(),
+    this.lossCarryForward = const Value.absent(),
+  });
+  static Insertable<TaxYearInputsData> custom({
+    Expression<int>? year,
+    Expression<int>? partnerHours,
+    Expression<int>? hasSoVerklaring,
+    Expression<int>? soStarter,
+    Expression<int>? businessCeased,
+    Expression<int>? stakingsaftrekUsedBefore,
+    Expression<int>? disabilityBenefit,
+    Expression<int>? disabilityStartersUsed,
+    Expression<int>? unrealisedZelfstandigenaftrek,
+    Expression<int>? lossCarryForward,
+  }) {
+    return RawValuesInsertable({
+      if (year != null) 'year': year,
+      if (partnerHours != null) 'partner_hours': partnerHours,
+      if (hasSoVerklaring != null) 'has_so_verklaring': hasSoVerklaring,
+      if (soStarter != null) 'so_starter': soStarter,
+      if (businessCeased != null) 'business_ceased': businessCeased,
+      if (stakingsaftrekUsedBefore != null)
+        'stakingsaftrek_used_before': stakingsaftrekUsedBefore,
+      if (disabilityBenefit != null) 'disability_benefit': disabilityBenefit,
+      if (disabilityStartersUsed != null)
+        'disability_starters_used': disabilityStartersUsed,
+      if (unrealisedZelfstandigenaftrek != null)
+        'unrealised_zelfstandigenaftrek': unrealisedZelfstandigenaftrek,
+      if (lossCarryForward != null) 'loss_carry_forward': lossCarryForward,
+    });
+  }
+
+  TaxYearInputsCompanion copyWith({
+    Value<int>? year,
+    Value<int>? partnerHours,
+    Value<int>? hasSoVerklaring,
+    Value<int>? soStarter,
+    Value<int>? businessCeased,
+    Value<int>? stakingsaftrekUsedBefore,
+    Value<int>? disabilityBenefit,
+    Value<int>? disabilityStartersUsed,
+    Value<int>? unrealisedZelfstandigenaftrek,
+    Value<int>? lossCarryForward,
+  }) {
+    return TaxYearInputsCompanion(
+      year: year ?? this.year,
+      partnerHours: partnerHours ?? this.partnerHours,
+      hasSoVerklaring: hasSoVerklaring ?? this.hasSoVerklaring,
+      soStarter: soStarter ?? this.soStarter,
+      businessCeased: businessCeased ?? this.businessCeased,
+      stakingsaftrekUsedBefore:
+          stakingsaftrekUsedBefore ?? this.stakingsaftrekUsedBefore,
+      disabilityBenefit: disabilityBenefit ?? this.disabilityBenefit,
+      disabilityStartersUsed:
+          disabilityStartersUsed ?? this.disabilityStartersUsed,
+      unrealisedZelfstandigenaftrek:
+          unrealisedZelfstandigenaftrek ?? this.unrealisedZelfstandigenaftrek,
+      lossCarryForward: lossCarryForward ?? this.lossCarryForward,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (year.present) {
+      map['year'] = Variable<int>(year.value);
+    }
+    if (partnerHours.present) {
+      map['partner_hours'] = Variable<int>(partnerHours.value);
+    }
+    if (hasSoVerklaring.present) {
+      map['has_so_verklaring'] = Variable<int>(hasSoVerklaring.value);
+    }
+    if (soStarter.present) {
+      map['so_starter'] = Variable<int>(soStarter.value);
+    }
+    if (businessCeased.present) {
+      map['business_ceased'] = Variable<int>(businessCeased.value);
+    }
+    if (stakingsaftrekUsedBefore.present) {
+      map['stakingsaftrek_used_before'] = Variable<int>(
+        stakingsaftrekUsedBefore.value,
+      );
+    }
+    if (disabilityBenefit.present) {
+      map['disability_benefit'] = Variable<int>(disabilityBenefit.value);
+    }
+    if (disabilityStartersUsed.present) {
+      map['disability_starters_used'] = Variable<int>(
+        disabilityStartersUsed.value,
+      );
+    }
+    if (unrealisedZelfstandigenaftrek.present) {
+      map['unrealised_zelfstandigenaftrek'] = Variable<int>(
+        unrealisedZelfstandigenaftrek.value,
+      );
+    }
+    if (lossCarryForward.present) {
+      map['loss_carry_forward'] = Variable<int>(lossCarryForward.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TaxYearInputsCompanion(')
+          ..write('year: $year, ')
+          ..write('partnerHours: $partnerHours, ')
+          ..write('hasSoVerklaring: $hasSoVerklaring, ')
+          ..write('soStarter: $soStarter, ')
+          ..write('businessCeased: $businessCeased, ')
+          ..write('stakingsaftrekUsedBefore: $stakingsaftrekUsedBefore, ')
+          ..write('disabilityBenefit: $disabilityBenefit, ')
+          ..write('disabilityStartersUsed: $disabilityStartersUsed, ')
+          ..write(
+            'unrealisedZelfstandigenaftrek: $unrealisedZelfstandigenaftrek, ',
+          )
+          ..write('lossCarryForward: $lossCarryForward')
+          ..write(')'))
+        .toString();
+  }
 }
 
 class DatabaseAtV1 extends GeneratedDatabase {

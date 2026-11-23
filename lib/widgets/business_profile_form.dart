@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'help.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../db/database.dart';
-import '../services/vat_service.dart';
+import '../services/formats.dart';
 import '../theme/app_spacing.dart';
+import 'date_field.dart';
 import 'form_row.dart';
+import 'validators.dart';
 
 /// The values behind [BusinessProfileForm].
 class BusinessProfileFields {
@@ -15,6 +17,8 @@ class BusinessProfileFields {
   final TextEditingController address;
   final TextEditingController iban;
   bool isStarter;
+  DateTime? korStart;
+  DateTime? korEnd;
 
   BusinessProfileFields([BusinessProfile? p])
     : name = TextEditingController(text: p?.name),
@@ -22,16 +26,20 @@ class BusinessProfileFields {
       kvkNumber = TextEditingController(text: p?.kvkNumber),
       address = TextEditingController(text: p?.address),
       iban = TextEditingController(text: p?.iban),
-      isStarter = p?.isStarter ?? false;
+      isStarter = p?.isStarter ?? false,
+      korStart = p?.korStart,
+      korEnd = p?.korEnd;
 
   BusinessProfilesCompanion toCompanion() => BusinessProfilesCompanion(
     id: const Value(1),
     name: Value(name.text.trim()),
-    vatNumber: Value(vatNumber.text.replaceAll(' ', '').toUpperCase()),
-    kvkNumber: Value(kvkNumber.text.replaceAll(' ', '')),
+    vatNumber: Value(normalizeId(vatNumber.text)),
+    kvkNumber: Value(normalizeId(kvkNumber.text)),
     address: Value(address.text.trim()),
-    iban: Value(iban.text.replaceAll(' ', '').toUpperCase()),
+    iban: Value(normalizeId(iban.text)),
     isStarter: Value(isStarter),
+    korStart: Value(korStart),
+    korEnd: Value(korStart == null ? null : korEnd),
   );
 
   void dispose() {
@@ -56,17 +64,6 @@ class _BusinessProfileFormState extends State<BusinessProfileForm> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
     final f = widget.fields;
-    String? check(
-      String? v,
-      String empty,
-      bool Function(String) valid,
-      String bad,
-    ) {
-      final s = (v ?? '').trim();
-      if (s.isEmpty) return empty;
-      return valid(s) ? null : bad;
-    }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -77,8 +74,7 @@ class _BusinessProfileFormState extends State<BusinessProfileForm> {
             help: l.settingsBusinessNameHelp,
             required: true,
           ),
-          validator: (v) =>
-              (v ?? '').trim().isEmpty ? l.settingsValidateName : null,
+          validator: (v) => Validate.required(v, l.settingsValidateName),
         ),
         const SizedBox(height: AppSpacing.field),
         FormRow(
@@ -90,11 +86,11 @@ class _BusinessProfileFormState extends State<BusinessProfileForm> {
                 help: l.settingsVatNumberHelp,
                 required: true,
               ),
-              validator: (v) => check(
+              validator: (v) => Validate.requiredFormat(
                 v,
-                l.settingsValidateVat,
-                isValidDutchVatNumber,
-                l.settingsValidateVatFormat,
+                empty: l.settingsValidateVat,
+                valid: isValidDutchVatNumber,
+                invalid: l.settingsValidateVatFormat,
               ),
             ),
             TextFormField(
@@ -104,11 +100,11 @@ class _BusinessProfileFormState extends State<BusinessProfileForm> {
                 help: l.settingsKvkNumberHelp,
                 required: true,
               ),
-              validator: (v) => check(
+              validator: (v) => Validate.requiredFormat(
                 v,
-                l.settingsValidateKvk,
-                isValidKvkNumber,
-                l.settingsValidateKvkFormat,
+                empty: l.settingsValidateKvk,
+                valid: isValidKvkNumber,
+                invalid: l.settingsValidateKvkFormat,
               ),
             ),
           ],
@@ -123,8 +119,7 @@ class _BusinessProfileFormState extends State<BusinessProfileForm> {
           ),
           minLines: 3,
           maxLines: 4,
-          validator: (v) =>
-              (v ?? '').trim().isEmpty ? l.settingsValidateAddress : null,
+          validator: (v) => Validate.required(v, l.settingsValidateAddress),
         ),
         const SizedBox(height: AppSpacing.field),
         TextFormField(
@@ -134,11 +129,11 @@ class _BusinessProfileFormState extends State<BusinessProfileForm> {
             help: l.settingsIbanHelp,
             required: true,
           ),
-          validator: (v) => check(
+          validator: (v) => Validate.requiredFormat(
             v,
-            l.settingsValidateIban,
-            isValidIban,
-            l.settingsValidateIbanFormat,
+            empty: l.settingsValidateIban,
+            valid: isValidIban,
+            invalid: l.settingsValidateIbanFormat,
           ),
         ),
         const SizedBox(height: AppSpacing.field),
@@ -149,6 +144,52 @@ class _BusinessProfileFormState extends State<BusinessProfileForm> {
           help: l.settingsStartersaftrekHelp,
           subtitle: l.firstLaunchStartersSubtitle,
         ),
+        const SizedBox(height: AppSpacing.field),
+        FormRow(
+          children: [
+            // The KOR may have started before the years Florin supports.
+            DateField(
+              label: l.settingsKorStart,
+              help: l.settingsKorStartHelp,
+              value: f.korStart,
+              firstDate: DateTime(2000),
+              onChanged: (d) => setState(() => f.korStart = d),
+              validator: (_) => f.korStart != null && f.korStart!.day != 1
+                  ? l.settingsValidateKorStart
+                  : null,
+            ),
+            DateField(
+              label: l.settingsKorEnd,
+              help: l.settingsKorEndHelp,
+              value: f.korEnd,
+              firstDate: DateTime(2000),
+              onChanged: (d) => setState(() => f.korEnd = d),
+              validator: (_) {
+                final end = f.korEnd;
+                if (end == null) return null;
+                if (f.korStart == null) return l.settingsValidateKorEndNoStart;
+                if (!end.isAfter(f.korStart!)) {
+                  return l.settingsValidateKorEndBeforeStart;
+                }
+                return end.day != 1 ? l.settingsValidateKorEndDay : null;
+              },
+            ),
+          ],
+        ),
+        if (f.korStart != null || f.korEnd != null) ...[
+          const SizedBox(height: AppSpacing.tight),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TextButton.icon(
+              onPressed: () => setState(() {
+                f.korStart = null;
+                f.korEnd = null;
+              }),
+              icon: const Icon(Icons.clear, size: 16),
+              label: Text(l.settingsKorClear),
+            ),
+          ),
+        ],
       ],
     );
   }

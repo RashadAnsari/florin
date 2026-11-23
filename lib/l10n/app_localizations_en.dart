@@ -108,7 +108,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardUrencriterium => 'Urencriterium';
 
   @override
-  String get dashboardBtwDeadlines => 'BTW-deadlines';
+  String get dashboardBtwDeadlines => 'VAT deadlines';
 
   @override
   String get dashboardMonthlyRevenue => 'Monthly revenue';
@@ -289,7 +289,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clientsValidateCountry =>
-      'Use a 2-letter country code (e.g. NL, DE, FR)';
+      'Use a 2-letter country code (e.g. NL, DE, FR): it decides which VAT treatments an invoice to this client can use.';
 
   @override
   String get clientsFieldVat => 'VAT number';
@@ -407,7 +407,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expensesFieldAmountExcl => 'Amount (excl. VAT)';
 
   @override
-  String get expensesValidateAmount => 'Enter the amount excluding VAT';
+  String get expensesValidateAmount =>
+      'Enter the amount excluding VAT, above zero: it is the cost Florin deducts from your profit.';
 
   @override
   String get expensesFieldVatRate => 'VAT rate';
@@ -708,7 +709,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assetsValidateName => 'Enter the asset name';
 
   @override
-  String get assetsValidateCost => 'Enter the cost excluding VAT';
+  String get assetsValidateCost =>
+      'Enter the cost excluding VAT, above zero: depreciation is calculated from it.';
 
   @override
   String get assetsFieldKia => 'KIA eligible';
@@ -881,11 +883,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String plTaxZelfstandigenaftrek(int year) {
-    return 'Self-employed deduction $year';
+    return 'Zelfstandigenaftrek $year';
   }
 
   @override
-  String get plTaxStartersaftrek => 'Starter deduction';
+  String get plTaxStartersaftrek => 'Startersaftrek';
 
   @override
   String plTaxMkb(String pct) {
@@ -979,7 +981,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsValidateVat =>
-      'Enter your BTW number, e.g. NL123456789B01.';
+      'Enter your VAT number, e.g. NL123456789B01.';
 
   @override
   String get settingsValidateVatFormat =>
@@ -1019,7 +1021,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String settingsExportDescription(int year) {
-    return 'Export all $year data to CSV files, with the BTW return of each quarter by rubriek in whole euros, the ICP list of each quarter and the estimated income tax of the year.';
+    return 'Export all $year data to CSV files, with the VAT return of each quarter by rubriek in whole euros, the ICP list of each quarter and the estimated income tax of the year.';
   }
 
   @override
@@ -1041,10 +1043,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get settingsTaxZelfs => 'Self-employed deduction';
+  String get settingsTaxZelfs => 'Zelfstandigenaftrek';
 
   @override
-  String get settingsTaxStarters => 'Starter deduction';
+  String get settingsTaxStarters => 'Startersaftrek';
 
   @override
   String get settingsTaxMkb => 'MKB-winstvrijstelling (%)';
@@ -1128,7 +1130,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoiceSaveAsDialog => 'Save invoice as';
 
   @override
-  String get amountNegativeError => 'Amount cannot be negative';
+  String get amountNegativeError =>
+      'Enter zero or more. A correction is its own record, such as a credit note.';
 
   @override
   String get vatTreatmentStandard => 'Dutch VAT';
@@ -1313,7 +1316,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clientsFieldCountryHelp =>
-      'The two-letter country code, such as NL or DE. It decides whether an EU reverse-charge invoice is possible.';
+      'The two-letter country code, such as NL or DE. It decides which VAT treatments an invoice to this client can use.';
 
   @override
   String get clientsFieldEmailHelp => 'The address you send invoices to.';
@@ -1448,7 +1451,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invoiceFieldVatTreatmentHelp =>
-      'How VAT applies. Dutch VAT for most clients. Reverse charge when the customer pays the VAT. EU goods and services to businesses also go on the ICP report.';
+      'How VAT applies. Dutch VAT for most Dutch clients, or Exempt under the KOR while you take part in it. Reverse charge when the customer pays the VAT. EU goods and services to businesses also go on the ICP report. Services to a business outside the EU are taxed there and stay out of the Dutch return.';
 
   @override
   String get labelCategoryHelp => 'Show only expenses of one category.';
@@ -1590,7 +1593,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assetsValidateCatalogueValue =>
-      'Enter the catalogue value, including VAT and BPM';
+      'Enter the catalogue value including VAT and BPM, above zero: the private-use addition is a percentage of it.';
 
   @override
   String get assetsFieldFirstRegistration => 'First registration';
@@ -2021,7 +2024,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'Revenue at 0% or where the VAT is reverse-charged to a Dutch business.';
 
   @override
-  String get vatRow3aHelp => 'Exports of goods to countries outside the EU.';
+  String get vatRow3aHelp =>
+      'Exports of goods to countries outside the EU. Services to businesses outside the EU are not reported.';
 
   @override
   String get vatRow3bHelp =>
@@ -2040,11 +2044,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoicesSearchHelp => 'Search by invoice number or client name.';
 
   @override
-  String get expensesFieldPurchaseVat => 'BTW on this purchase';
+  String get expensesFieldPurchaseVat => 'VAT on this purchase';
 
   @override
   String get expensesFieldPurchaseVatHelp =>
-      'Dutch BTW when the supplier charged it. Shifted when the invoice says the BTW is reverse-charged to you, or the supplier is abroad: you then report and deduct the BTW yourself.';
+      'Dutch VAT when the supplier charged it. Shifted when the invoice says the VAT is reverse-charged to you, or the supplier is abroad: you then report and deduct the VAT yourself.';
 
   @override
   String get purchaseVatDomestic => 'Charged by the supplier';
@@ -2061,18 +2065,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'Service from a supplier outside the EU (4a)';
 
   @override
-  String get vatReturnShiftedSection => 'BTW shifted to you';
+  String get vatReturnShiftedSection => 'VAT shifted to you';
 
   @override
   String get vatReturnShiftedSectionHelp =>
-      'Purchases where you report the BTW yourself. You deduct the same BTW in 5b, so on balance you usually pay nothing.';
+      'Purchases where you report the VAT yourself. You deduct the same VAT in 5b, so on balance you usually pay nothing.';
 
   @override
   String get vatRow2a => '2a  Domestic reverse charge';
 
   @override
   String get vatRow2aHelp =>
-      'Purchases from Dutch suppliers who shifted the BTW to you.';
+      'Purchases from Dutch suppliers who shifted the VAT to you.';
 
   @override
   String get vatRow4a => '4a  From countries outside the EU';
@@ -2089,14 +2093,269 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String vatBaseAndVat(String base, String vat) {
-    return '$base, BTW $vat';
+    return '$base, VAT $vat';
   }
 
   @override
   String get expensesBusinessUseHelp =>
-      'The share used for the business. Only that share of the cost and BTW is deductible.';
+      'The share used for the business. Only that share of the cost and VAT is deductible.';
 
   @override
   String get settingsLanguageSectionHelp =>
       'The language of the app. Invoices and CSV exports are always in Dutch.';
+
+  @override
+  String get vatTreatmentServicesOutsideEu =>
+      'Services to a business outside the EU (not in the VAT return)';
+
+  @override
+  String get invoiceValidateTreatmentCountry =>
+      'This VAT treatment does not fit the client\'s country. Domestic reverse charge is for Dutch clients, the EU treatments for other EU countries and the treatments outside the EU for countries outside it.';
+
+  @override
+  String get invoiceSelfBilled => 'Issued by the customer (self-billing)';
+
+  @override
+  String get invoiceSelfBilledHelp =>
+      'Tick this when the customer, such as a reseller, makes the invoice for what it owes you. The law allows this when you agreed on it beforehand and you accept each invoice. Florin records it with the customer\'s number and makes no PDF: the customer\'s document is the invoice.';
+
+  @override
+  String get invoiceFieldNumberSelfBilledHelp =>
+      'The number on the invoice the customer issued to you.';
+
+  @override
+  String get invoiceActionRecord => 'Record';
+
+  @override
+  String get invoiceRecordTitle => 'Record invoice';
+
+  @override
+  String get invoiceRecordMessage =>
+      'After recording, the invoice can no longer be changed or deleted. A correction is a credit note that names this invoice.';
+
+  @override
+  String get invoiceStatusSelfBilled => 'Issued by customer';
+
+  @override
+  String invoiceMerchantOfRecordNotice(String name) {
+    return '$name is a merchant of record: it sells your product to end customers and pays you. Invoice it for what it owes you for those sales. One invoice may cover several sales over at most one calendar month. Florin records amounts in euros: for a payout in another currency, enter the euro amounts and keep the reseller\'s statement.';
+  }
+
+  @override
+  String get invoicePaidDateTitle => 'Date paid';
+
+  @override
+  String get clientsMerchantOfRecord => 'Merchant of record (reseller)';
+
+  @override
+  String get clientsMerchantOfRecordHelp =>
+      'Tick this for a platform that sells your product to end customers in its own name and pays you, such as a merchant of record or an app store. It is the seller towards the end customers, so you invoice only the platform. The Wet DBA section is about working relationships and is hidden for a reseller.';
+
+  @override
+  String get clientsBadgeMerchantOfRecord => 'Merchant of record';
+
+  @override
+  String get vatRowOutsideReturn =>
+      'Services to businesses outside the EU (not in the return)';
+
+  @override
+  String get vatRowOutsideReturnHelp =>
+      'Revenue from services to businesses outside the EU. The Belastingdienst says these are not reported in the Dutch return when the service is taxed outside the EU. Shown so you can see where that revenue went.';
+
+  @override
+  String get vatShortReverseCharge => 'Reverse-charged';
+
+  @override
+  String get vatShortNotTaxedNl => 'Not taxed in NL';
+
+  @override
+  String get invoiceValidateNumberSelfBilled =>
+      'Enter the number on the invoice the customer issued, so it can be traced to that invoice.';
+
+  @override
+  String get amountInvalidError =>
+      'Enter an amount in euros, such as 1.234,50, with a comma before the cents and at most two decimals.';
+
+  @override
+  String get amountRequiredError =>
+      'Enter an amount above zero: a record without an amount has no effect on your figures.';
+
+  @override
+  String clientsValidateVatCountry(String prefix) {
+    return 'A VAT number of a client in this country starts with $prefix. Check the number or the country: the ICP report lists them together.';
+  }
+
+  @override
+  String hoursValidateDayTotal(String logged, String left) {
+    return 'This day already has $logged hours logged. A day has 24 hours, so enter at most $left.';
+  }
+
+  @override
+  String get assetsValidateDisposalBeforePurchase =>
+      'The sale date is before the purchase date. Change one of them: an asset is sold after it was bought.';
+
+  @override
+  String invoiceValidateCreditDate(String date) {
+    return 'A credit note is dated on or after the invoice it corrects, which is dated $date.';
+  }
+
+  @override
+  String invoiceValidateCreditAboveInvoice(String number, String amount) {
+    return 'This credit note is more than is left to correct on invoice $number: at most $amount excluding VAT. A credit note can only reverse what was invoiced.';
+  }
+
+  @override
+  String get vatTreatmentKor => 'Exempt under the KOR (no VAT on the invoice)';
+
+  @override
+  String get vatShortKor => 'KOR exempt';
+
+  @override
+  String get vatRowKorExempt => 'Exempt under the KOR (not in the return)';
+
+  @override
+  String get vatRowKorExemptHelp =>
+      'Revenue exempt under the kleineondernemersregeling. You charged no VAT on it and it is not reported in a return.';
+
+  @override
+  String get invoiceValidateKorNotActive =>
+      'The KOR does not apply on this date: you do not take part, or your turnover passed the limit. Choose the treatment that fits, usually Dutch VAT.';
+
+  @override
+  String get invoiceValidateKorTreatment =>
+      'You take part in the KOR on this date: you charge no VAT and the invoice may not mention it. Choose Exempt under the KOR.';
+
+  @override
+  String invoiceValidateKorExceeded(String limit) {
+    return 'This invoice takes your turnover for the KOR past $limit. The KOR ends with this supply, so it carries VAT: choose Dutch VAT, and deregister from the KOR in Mijn Belastingdienst Zakelijk.';
+  }
+
+  @override
+  String get expensesValidateKorReclaim =>
+      'You take part in the KOR on this date, so you cannot reclaim VAT on purchases. Untick Reclaim VAT: the VAT then counts as part of the cost.';
+
+  @override
+  String get expensesKorNotice =>
+      'You take part in the KOR on this date. VAT on purchases is not reclaimed; it counts as part of the cost for income tax.';
+
+  @override
+  String get settingsKorStart => 'KOR applies from';
+
+  @override
+  String get settingsKorStartHelp =>
+      'The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst\'s confirmation. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most € 20.000 a year. Leave empty when you do not take part.';
+
+  @override
+  String get settingsKorEnd => 'KOR ended on';
+
+  @override
+  String get settingsKorEndHelp =>
+      'The first day the KOR no longer applies after you deregistered yourself. Leave empty otherwise: when your turnover passes the limit, Florin ends the KOR from that invoice on.';
+
+  @override
+  String get settingsValidateKorStart =>
+      'The KOR starts on the first day of a return period, so enter a 1st of the month, as in the Belastingdienst\'s confirmation.';
+
+  @override
+  String get settingsValidateKorEndDay =>
+      'A deregistration takes effect on the first day of a return period, so enter a 1st of the month.';
+
+  @override
+  String get settingsValidateKorEndBeforeStart =>
+      'The end of the KOR comes after its start. Check both dates.';
+
+  @override
+  String get settingsValidateKorEndNoStart =>
+      'Enter when the KOR started first: an end date only applies to a KOR you took part in.';
+
+  @override
+  String get settingsKorClear => 'I do not take part in the KOR';
+
+  @override
+  String korProgress(String turnover, String limit) {
+    return '$turnover of $limit';
+  }
+
+  @override
+  String korExceededBadge(String date) {
+    return 'Limit passed on $date';
+  }
+
+  @override
+  String korLeftBadge(String left) {
+    return '$left below the limit';
+  }
+
+  @override
+  String get dashboardKor => 'KOR turnover';
+
+  @override
+  String get dashboardKorHelp =>
+      'Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above € 20.000 in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next.';
+
+  @override
+  String get deadlineStatusKor => 'no return (KOR)';
+
+  @override
+  String get deadlineBadgeKor => 'No return: KOR';
+
+  @override
+  String get vatReturnKorNotice =>
+      'You take part in the KOR for this whole quarter: you charge no VAT and file no regular return. When VAT was shifted to you (2a, 4a or 4b), you may still owe it in an incidental return: the Belastingdienst\'s Incidentele btw-aangifte tool says whether you do. Florin shows those amounts below.';
+
+  @override
+  String get vatReturnKorPartNotice =>
+      'The KOR applies for part of this quarter. Invoices exempt under the KOR are not in the return and VAT on purchases in that part is not reclaimed. File a return for the part outside the KOR.';
+
+  @override
+  String vatReturnKorExceeded(String date, String limit) {
+    return 'Your turnover for the KOR passed $limit on $date. The KOR ended with that supply: from then on you charge VAT and file returns. Deregister in Mijn Belastingdienst Zakelijk; you cannot take part again this year or next year.';
+  }
+
+  @override
+  String get errorDuplicate =>
+      'Another record already uses this value, such as the same invoice number. Use a value that is not taken yet.';
+
+  @override
+  String get errorInUse =>
+      'Other records refer to this one, such as invoices of a client. Remove or change those first, or mark this one inactive.';
+
+  @override
+  String get errorBusy =>
+      'The database is in use by another program. Close that program, or wait a moment, and try again.';
+
+  @override
+  String get errorReadOnly =>
+      'The database file cannot be written. Check that the folder is not read-only and that you have permission to change it.';
+
+  @override
+  String get errorCorrupt =>
+      'The database file is damaged and cannot be read. Restore it from a backup, such as your iCloud Drive, OneDrive or Dropbox history.';
+
+  @override
+  String get errorDiskFull => 'The disk is full. Free up space and try again.';
+
+  @override
+  String get errorCannotOpen =>
+      'The database file cannot be opened. Check that its folder still exists, or choose its location again in Settings.';
+
+  @override
+  String errorFile(String path, String reason) {
+    return 'Could not use $path: $reason';
+  }
+
+  @override
+  String genericUnhandledError(String error) {
+    return 'Something went wrong: $error';
+  }
+
+  @override
+  String get invoiceNoProfile =>
+      'Fill in your business details in Settings first: every invoice shows them.';
+
+  @override
+  String get invoiceTotal => 'Total';
+
+  @override
+  String get settingsTaxKor => 'KOR turnover limit';
 }

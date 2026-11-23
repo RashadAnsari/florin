@@ -12,6 +12,9 @@ class EnumDropdown<T extends Enum> extends StatelessWidget {
   final ValueChanged<T>? onChanged;
   final String? requiredMessage;
 
+  /// Extra check on the chosen value, after the required check.
+  final String? Function(T value)? validator;
+
   const EnumDropdown({
     super.key,
     required this.label,
@@ -22,6 +25,7 @@ class EnumDropdown<T extends Enum> extends StatelessWidget {
     required this.labelOf,
     required this.onChanged,
     this.requiredMessage,
+    this.validator,
   });
 
   @override
@@ -39,8 +43,9 @@ class EnumDropdown<T extends Enum> extends StatelessWidget {
         : (v) {
             if (v != null) onChanged!(v);
           },
-    validator: requiredMessage == null
-        ? null
-        : (v) => v == null ? requiredMessage : null,
+    validator: (v) {
+      if (v == null) return requiredMessage;
+      return validator?.call(v);
+    },
   );
 }

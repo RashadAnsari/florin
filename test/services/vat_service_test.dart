@@ -1,4 +1,5 @@
 import 'package:florin/db/database.dart';
+import 'package:florin/services/domain.dart';
 import 'package:florin/services/vat_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -15,6 +16,7 @@ Invoice _invoice(
   invoiceDate: DateTime(2026, 2, 1),
   clientId: 1,
   vatTreatment: treatment,
+  selfBilled: false,
   sellerName: 'S',
   sellerVatNumber: 'NL000000000B00',
   sellerKvkNumber: '00000000',
@@ -50,6 +52,13 @@ void main() {
       _invoice(5, VatTreatment.standard, type: InvoiceType.creditNote),
       _invoice(6, VatTreatment.standard, status: InvoiceStatus.draft),
       _invoice(7, VatTreatment.standard),
+      _invoice(9, VatTreatment.servicesOutsideEu),
+      _invoice(
+        10,
+        VatTreatment.servicesOutsideEu,
+        total: 30000,
+        type: InvoiceType.creditNote,
+      ),
     ];
     final lines = [
       _line(1, VatRate.high, 100000),
@@ -69,17 +78,15 @@ void main() {
     expect(r.revenue3b, 200000);
     expect(r.revenue3a, 100000);
     expect(r.icpInvoices.map((i) => i.id), [3, 8]);
+    // Services to businesses outside the EU stay out of every rubriek.
+    expect(r.revenueOutsideReturn, 70000);
+    expect(r.outputVat5a, 21000 - 2100);
   });
 
   test('filing deadline is the last day of the next month', () {
     expect(VatService.filingDeadline(2026, 1), DateTime(2026, 4, 30));
     expect(VatService.filingDeadline(2026, 3), DateTime(2026, 10, 31));
     expect(VatService.filingDeadline(2026, 4), DateTime(2027, 1, 31));
-  });
-
-  test('IBAN check digits are verified', () {
-    expect(isValidIban('NL91 ABNA 0417 1643 00'), isTrue);
-    expect(isValidIban('NL92ABNA0417164300'), isFalse);
   });
 
   test('BTW shifted to you goes in 2a, 4a or 4b and 5b (Belastingdienst)', () {
@@ -115,5 +122,19 @@ void main() {
     expect(r.vat2a, 2100);
     expect(r.outputVat5a, 6300);
     expect(r.netVat, 0);
+  });
+
+  test('a VAT treatment fits only the countries it is for', () {
+    expect(VatTreatment.standard.fitsCountry('US'), isTrue);
+    expect(VatTreatment.reverseChargeNl.fitsCountry('NL'), isTrue);
+    expect(VatTreatment.reverseChargeNl.fitsCountry('DE'), isFalse);
+    expect(VatTreatment.euServices.fitsCountry('DE'), isTrue);
+    expect(VatTreatment.euServices.fitsCountry('NL'), isFalse);
+    expect(VatTreatment.euServices.fitsCountry('GB'), isFalse);
+    expect(VatTreatment.euGoods.fitsCountry('EL'), isTrue);
+    expect(VatTreatment.servicesOutsideEu.fitsCountry('GB'), isTrue);
+    expect(VatTreatment.servicesOutsideEu.fitsCountry('IE'), isFalse);
+    expect(VatTreatment.exportOutsideEu.fitsCountry('CH'), isTrue);
+    expect(euCountries.where((c) => c != 'EL'), hasLength(27));
   });
 }

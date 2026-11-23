@@ -70,6 +70,7 @@ const taxYear2026 = TaxYearRules(
   btwPrivateCarRate: 0.027,
   btwPrivateCarReducedRate: 0.015,
   mileageCentsPerKm: 25,
+  korThreshold: 2000000,
   gemengdeKostenPct: 0.80,
   jaarruimtePct: 0.30,
   aowFranchise: 1917200,

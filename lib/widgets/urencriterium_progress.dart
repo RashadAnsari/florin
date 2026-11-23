@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:florin/l10n/app_localizations.dart';
-import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
-import 'tone_badge.dart';
-
-String formatHours(double h) => h.toStringAsFixed(1);
+import 'target_progress.dart';
 
 /// Hours logged against the urencriterium (Wet IB 2001 art. 3.6).
 class UrencriteriumProgress extends StatelessWidget {
@@ -32,43 +29,16 @@ class UrencriteriumProgress extends StatelessWidget {
         ? context.colors.danger
         : theme.colorScheme.primary;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              l.hoursProgress(formatHours(totalHours), '$target'),
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: color,
-              ),
-            ),
-            if (billableHours != null) ...[
-              const SizedBox(width: AppSpacing.group),
-              Text(
-                l.hoursBillable(formatHours(billableHours!)),
-                style: theme.textTheme.bodySmall,
-              ),
-            ],
-            const Spacer(),
-            ToneBadge(
-              label: ok
-                  ? l.hoursUrencriteriumOk
-                  : l.hoursUrencriteriumLeft(formatHours(target - totalHours)),
-              color: color,
-            ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.heading),
-        LinearProgressIndicator(
-          value: (totalHours / target).clamp(0.0, 1.0),
-          minHeight: 6,
-          borderRadius: BorderRadius.circular(4),
-          color: color,
-          backgroundColor: color.withValues(alpha: 0.15),
-        ),
-      ],
+    return TargetProgress(
+      value: l.hoursProgress(AppFormat.hours(totalHours), '$target'),
+      note: billableHours == null
+          ? null
+          : l.hoursBillable(AppFormat.hours(billableHours!)),
+      badge: ok
+          ? l.hoursUrencriteriumOk
+          : l.hoursUrencriteriumLeft(AppFormat.hours(target - totalHours)),
+      fraction: totalHours / target,
+      color: color,
     );
   }
 }

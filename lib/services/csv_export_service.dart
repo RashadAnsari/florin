@@ -40,13 +40,9 @@ class CsvExportService {
     VatTreatment.euServices => 'Diensten EU, btw verlegd',
     VatTreatment.euGoods => 'Intracommunautaire levering',
     VatTreatment.exportOutsideEu => 'Uitvoer buiten de EU',
-  };
-
-  static String _rate(VatRate r) => switch (r) {
-    VatRate.high => '21%',
-    VatRate.low => '9%',
-    VatRate.zero => '0%',
-    VatRate.exempt => 'Vrijgesteld',
+    VatTreatment.servicesOutsideEu =>
+      'Diensten buiten de EU, niet in NL belast',
+    VatTreatment.kor => 'Vrijgesteld, kleineondernemersregeling',
   };
 
   static String _category(ExpenseCategory c) => switch (c) {
@@ -163,10 +159,9 @@ class CsvExportService {
     for (final i in r.icpInvoices) {
       final c = clients[i.clientId];
       final key = c?.vatNumber ?? '';
-      final sign = i.invoiceType == InvoiceType.creditNote ? -1 : 1;
       final t =
           totals[key] ?? (country: c?.country ?? '', goods: 0, services: 0);
-      final amount = sign * i.totalExclVat;
+      final amount = i.signedExclVat;
       totals[key] = i.vatTreatment == VatTreatment.euGoods
           ? (country: t.country, goods: t.goods + amount, services: t.services)
           : (country: t.country, goods: t.goods, services: t.services + amount);
@@ -288,6 +283,7 @@ class CsvExportService {
         'Betaaldatum',
         'Klant',
         'Btw-behandeling',
+        'Uitgereikt door afnemer',
         'Excl. btw',
         'Btw',
         'Incl. btw',
@@ -305,6 +301,7 @@ class CsvExportService {
           _date(i.paidDate),
           clientNames[i.clientId] ?? '',
           _treatment(i.vatTreatment),
+          _yesNo(i.selfBilled),
           _euro(i.totalExclVat),
           _euro(i.totalVat),
           _euro(i.totalInclVat),
@@ -330,7 +327,7 @@ class CsvExportService {
           l.quantity,
           l.unit ?? '',
           _euro(l.unitPriceExclVat),
-          _rate(l.vatRate),
+          l.vatRate.dutchLabel,
           _euro(l.vatAmount),
           _euro(l.lineTotalExclVat),
         ],
@@ -359,7 +356,7 @@ class CsvExportService {
           e.supplier,
           e.description,
           _category(e.category),
-          _rate(e.vatRate),
+          e.vatRate.dutchLabel,
           switch (e.purchaseVat) {
             PurchaseVat.domestic => 'Nederlandse btw',
             PurchaseVat.reverseChargeNl => 'Btw verlegd binnenland',
@@ -472,6 +469,7 @@ class CsvExportService {
         'Contactpersoon',
         'E-mail',
         'Telefoon',
+        'Wederverkoper (merchant of record)',
         'Wet DBA-risico',
         'Contract getekend',
         'Contract vervaldatum',
@@ -487,8 +485,9 @@ class CsvExportService {
           c.contactPerson ?? '',
           c.email ?? '',
           c.phone ?? '',
-          _risk(c.wetDbaRisk),
-          _yesNo(c.contractSigned),
+          _yesNo(c.isMerchantOfRecord),
+          c.isMerchantOfRecord ? '' : _risk(c.wetDbaRisk),
+          c.isMerchantOfRecord ? '' : _yesNo(c.contractSigned),
           _date(c.contractExpiry),
           _yesNo(c.isActive),
         ],

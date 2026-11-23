@@ -59,6 +59,21 @@ class InvoiceDao extends DatabaseAccessor<AppDatabase>
     return invoiceId;
   });
 
+  /// The amount excl. VAT already credited on [invoiceId] by other credit
+  /// notes, drafts included, leaving out [excludingId].
+  Future<int> creditedExclVat(int invoiceId, {int? excludingId}) async {
+    final notes =
+        await (select(invoices)..where(
+              (i) =>
+                  i.correctedInvoiceId.equals(invoiceId) &
+                  i.invoiceType.equalsValue(InvoiceType.creditNote),
+            ))
+            .get();
+    return notes
+        .where((n) => n.id != excludingId)
+        .fold<int>(0, (s, n) => s + n.totalExclVat);
+  }
+
   Future<void> setStatus(int id, InvoiceStatus status, {DateTime? paidDate}) =>
       (update(invoices)..where((i) => i.id.equals(id))).write(
         InvoicesCompanion(status: Value(status), paidDate: Value(paidDate)),

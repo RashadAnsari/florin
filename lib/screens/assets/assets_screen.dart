@@ -1,5 +1,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
+import '../../widgets/validators.dart';
+import '../../services/formats.dart';
 import '../../widgets/help.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -169,7 +171,6 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    final notes = _notes.text.trim();
     final saved = await guardSave(
       context,
       () => ref
@@ -185,7 +186,7 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
               residualValue: Value(_residualValue),
               purchaseDate: Value(_purchaseDate),
               businessUsePct: Value(_businessUsePct),
-              usefulLifeYears: Value(int.parse(_usefulLife.text.trim())),
+              usefulLifeYears: Value(parseWholeNumber(_usefulLife.text)!),
               kiaEligible: Value(!_isCar && _kiaEligible),
               eiaEligible: Value(_eiaEligible),
               miaCategory: Value(_eiaEligible ? null : _miaCategory),
@@ -200,7 +201,7 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
               marketValue: Value(_isCar ? _marketValue : null),
               keepsTripLog: Value(_isCar && _keepsTripLog),
               vatDeductedOnPurchase: Value(_isCar ? _vatOnPurchase : 0),
-              notes: Value(notes.isEmpty ? null : notes),
+              notes: Value(optionalText(_notes.text)),
               disposalDate: Value(_disposalDate),
               disposalProceeds: Value(
                 _disposalDate == null ? null : _disposalProceeds,
@@ -258,8 +259,7 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                 help: l.assetsFieldNameHelp,
                 required: true,
               ),
-              validator: (v) =>
-                  (v ?? '').trim().isEmpty ? l.assetsValidateName : null,
+              validator: (v) => Validate.required(v, l.assetsValidateName),
             ),
             const SizedBox(height: AppSpacing.field),
             FormRow(
@@ -269,6 +269,7 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                   help: l.assetsFieldCostHelp,
                   initialValueCents: _costExclVat,
                   required: true,
+                  positive: true,
                   validatorMessage: l.assetsValidateCost,
                   onChanged: (v) => setState(() => _costExclVat = v),
                 ),
@@ -289,14 +290,11 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                     suffixText: l.assetsFieldUsefulLifeUnit,
                   ),
                   keyboardType: TextInputType.number,
-                  validator: (v) {
-                    final n = int.tryParse((v ?? '').trim());
-                    return n == null || n < AssetService.minUsefulLifeYears
-                        ? l.assetsFieldUsefulLifeMin(
-                            AssetService.minUsefulLifeYears,
-                          )
-                        : null;
-                  },
+                  validator: (v) => Validate.wholeNumber(
+                    v,
+                    l.assetsFieldUsefulLifeMin(AssetService.minUsefulLifeYears),
+                    min: AssetService.minUsefulLifeYears,
+                  ),
                 ),
               ],
             ),
@@ -334,6 +332,7 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                     help: l.assetsFieldCatalogueValueHelp,
                     initialValueCents: _catalogueValue,
                     required: true,
+                    positive: true,
                     validatorMessage: l.assetsValidateCatalogueValue,
                     onChanged: (v) => setState(() => _catalogueValue = v),
                   ),
@@ -476,7 +475,16 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                   label: l.assetsFieldDisposalDate,
                   help: l.assetsFieldDisposalDateHelp,
                   value: _disposalDate,
-                  firstDate: _purchaseDate,
+                  // A sale is booked in a supported year, after the purchase.
+                  firstDate:
+                      _purchaseDate.isAfter(DateTime(supportedYears.first))
+                      ? _purchaseDate
+                      : DateTime(supportedYears.first),
+                  validator: (_) =>
+                      _disposalDate != null &&
+                          _disposalDate!.isBefore(_purchaseDate)
+                      ? l.assetsValidateDisposalBeforePurchase
+                      : null,
                   onChanged: (d) => setState(() => _disposalDate = d),
                 ),
                 if (_disposalDate != null)

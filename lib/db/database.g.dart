@@ -85,6 +85,26 @@ class $BusinessProfilesTable extends BusinessProfiles
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _korStartMeta = const VerificationMeta(
+    'korStart',
+  );
+  @override
+  late final GeneratedColumn<DateTime> korStart = GeneratedColumn<DateTime>(
+    'kor_start',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _korEndMeta = const VerificationMeta('korEnd');
+  @override
+  late final GeneratedColumn<DateTime> korEnd = GeneratedColumn<DateTime>(
+    'kor_end',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -94,6 +114,8 @@ class $BusinessProfilesTable extends BusinessProfiles
     address,
     iban,
     isStarter,
+    korStart,
+    korEnd,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -156,6 +178,18 @@ class $BusinessProfilesTable extends BusinessProfiles
         isStarter.isAcceptableOrUnknown(data['is_starter']!, _isStarterMeta),
       );
     }
+    if (data.containsKey('kor_start')) {
+      context.handle(
+        _korStartMeta,
+        korStart.isAcceptableOrUnknown(data['kor_start']!, _korStartMeta),
+      );
+    }
+    if (data.containsKey('kor_end')) {
+      context.handle(
+        _korEndMeta,
+        korEnd.isAcceptableOrUnknown(data['kor_end']!, _korEndMeta),
+      );
+    }
     return context;
   }
 
@@ -193,6 +227,14 @@ class $BusinessProfilesTable extends BusinessProfiles
         DriftSqlType.bool,
         data['${effectivePrefix}is_starter'],
       )!,
+      korStart: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}kor_start'],
+      ),
+      korEnd: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}kor_end'],
+      ),
     );
   }
 
@@ -210,6 +252,14 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
   final String address;
   final String iban;
   final bool isStarter;
+
+  /// The first day the kleineondernemersregeling applies, as the
+  /// Belastingdienst confirmed it (Wet OB 1968 art. 25a lid 5).
+  final DateTime? korStart;
+
+  /// The first day it no longer applies after a voluntary deregistration
+  /// (art. 25a lid 7). Passing the turnover limit ends it without this.
+  final DateTime? korEnd;
   const BusinessProfile({
     required this.id,
     required this.name,
@@ -218,6 +268,8 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
     required this.address,
     required this.iban,
     required this.isStarter,
+    this.korStart,
+    this.korEnd,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -229,6 +281,12 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
     map['address'] = Variable<String>(address);
     map['iban'] = Variable<String>(iban);
     map['is_starter'] = Variable<bool>(isStarter);
+    if (!nullToAbsent || korStart != null) {
+      map['kor_start'] = Variable<DateTime>(korStart);
+    }
+    if (!nullToAbsent || korEnd != null) {
+      map['kor_end'] = Variable<DateTime>(korEnd);
+    }
     return map;
   }
 
@@ -241,6 +299,12 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
       address: Value(address),
       iban: Value(iban),
       isStarter: Value(isStarter),
+      korStart: korStart == null && nullToAbsent
+          ? const Value.absent()
+          : Value(korStart),
+      korEnd: korEnd == null && nullToAbsent
+          ? const Value.absent()
+          : Value(korEnd),
     );
   }
 
@@ -257,6 +321,8 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
       address: serializer.fromJson<String>(json['address']),
       iban: serializer.fromJson<String>(json['iban']),
       isStarter: serializer.fromJson<bool>(json['isStarter']),
+      korStart: serializer.fromJson<DateTime?>(json['korStart']),
+      korEnd: serializer.fromJson<DateTime?>(json['korEnd']),
     );
   }
   @override
@@ -270,6 +336,8 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
       'address': serializer.toJson<String>(address),
       'iban': serializer.toJson<String>(iban),
       'isStarter': serializer.toJson<bool>(isStarter),
+      'korStart': serializer.toJson<DateTime?>(korStart),
+      'korEnd': serializer.toJson<DateTime?>(korEnd),
     };
   }
 
@@ -281,6 +349,8 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
     String? address,
     String? iban,
     bool? isStarter,
+    Value<DateTime?> korStart = const Value.absent(),
+    Value<DateTime?> korEnd = const Value.absent(),
   }) => BusinessProfile(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -289,6 +359,8 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
     address: address ?? this.address,
     iban: iban ?? this.iban,
     isStarter: isStarter ?? this.isStarter,
+    korStart: korStart.present ? korStart.value : this.korStart,
+    korEnd: korEnd.present ? korEnd.value : this.korEnd,
   );
   BusinessProfile copyWithCompanion(BusinessProfilesCompanion data) {
     return BusinessProfile(
@@ -299,6 +371,8 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
       address: data.address.present ? data.address.value : this.address,
       iban: data.iban.present ? data.iban.value : this.iban,
       isStarter: data.isStarter.present ? data.isStarter.value : this.isStarter,
+      korStart: data.korStart.present ? data.korStart.value : this.korStart,
+      korEnd: data.korEnd.present ? data.korEnd.value : this.korEnd,
     );
   }
 
@@ -311,14 +385,25 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
           ..write('kvkNumber: $kvkNumber, ')
           ..write('address: $address, ')
           ..write('iban: $iban, ')
-          ..write('isStarter: $isStarter')
+          ..write('isStarter: $isStarter, ')
+          ..write('korStart: $korStart, ')
+          ..write('korEnd: $korEnd')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, name, vatNumber, kvkNumber, address, iban, isStarter);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    vatNumber,
+    kvkNumber,
+    address,
+    iban,
+    isStarter,
+    korStart,
+    korEnd,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -329,7 +414,9 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
           other.kvkNumber == this.kvkNumber &&
           other.address == this.address &&
           other.iban == this.iban &&
-          other.isStarter == this.isStarter);
+          other.isStarter == this.isStarter &&
+          other.korStart == this.korStart &&
+          other.korEnd == this.korEnd);
 }
 
 class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
@@ -340,6 +427,8 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
   final Value<String> address;
   final Value<String> iban;
   final Value<bool> isStarter;
+  final Value<DateTime?> korStart;
+  final Value<DateTime?> korEnd;
   const BusinessProfilesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -348,6 +437,8 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
     this.address = const Value.absent(),
     this.iban = const Value.absent(),
     this.isStarter = const Value.absent(),
+    this.korStart = const Value.absent(),
+    this.korEnd = const Value.absent(),
   });
   BusinessProfilesCompanion.insert({
     this.id = const Value.absent(),
@@ -357,6 +448,8 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
     required String address,
     required String iban,
     this.isStarter = const Value.absent(),
+    this.korStart = const Value.absent(),
+    this.korEnd = const Value.absent(),
   }) : name = Value(name),
        vatNumber = Value(vatNumber),
        kvkNumber = Value(kvkNumber),
@@ -370,6 +463,8 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
     Expression<String>? address,
     Expression<String>? iban,
     Expression<bool>? isStarter,
+    Expression<DateTime>? korStart,
+    Expression<DateTime>? korEnd,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -379,6 +474,8 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
       if (address != null) 'address': address,
       if (iban != null) 'iban': iban,
       if (isStarter != null) 'is_starter': isStarter,
+      if (korStart != null) 'kor_start': korStart,
+      if (korEnd != null) 'kor_end': korEnd,
     });
   }
 
@@ -390,6 +487,8 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
     Value<String>? address,
     Value<String>? iban,
     Value<bool>? isStarter,
+    Value<DateTime?>? korStart,
+    Value<DateTime?>? korEnd,
   }) {
     return BusinessProfilesCompanion(
       id: id ?? this.id,
@@ -399,6 +498,8 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
       address: address ?? this.address,
       iban: iban ?? this.iban,
       isStarter: isStarter ?? this.isStarter,
+      korStart: korStart ?? this.korStart,
+      korEnd: korEnd ?? this.korEnd,
     );
   }
 
@@ -426,6 +527,12 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
     if (isStarter.present) {
       map['is_starter'] = Variable<bool>(isStarter.value);
     }
+    if (korStart.present) {
+      map['kor_start'] = Variable<DateTime>(korStart.value);
+    }
+    if (korEnd.present) {
+      map['kor_end'] = Variable<DateTime>(korEnd.value);
+    }
     return map;
   }
 
@@ -438,7 +545,9 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
           ..write('kvkNumber: $kvkNumber, ')
           ..write('address: $address, ')
           ..write('iban: $iban, ')
-          ..write('isStarter: $isStarter')
+          ..write('isStarter: $isStarter, ')
+          ..write('korStart: $korStart, ')
+          ..write('korEnd: $korEnd')
           ..write(')'))
         .toString();
   }
@@ -605,6 +714,20 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
     ),
     defaultValue: const Constant(true),
   );
+  static const VerificationMeta _isMerchantOfRecordMeta =
+      const VerificationMeta('isMerchantOfRecord');
+  @override
+  late final GeneratedColumn<bool> isMerchantOfRecord = GeneratedColumn<bool>(
+    'is_merchant_of_record',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_merchant_of_record" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -621,6 +744,7 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
     contractExpiry,
     notes,
     isActive,
+    isMerchantOfRecord,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -722,6 +846,15 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
         isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
       );
     }
+    if (data.containsKey('is_merchant_of_record')) {
+      context.handle(
+        _isMerchantOfRecordMeta,
+        isMerchantOfRecord.isAcceptableOrUnknown(
+          data['is_merchant_of_record']!,
+          _isMerchantOfRecordMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -789,6 +922,10 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
         DriftSqlType.bool,
         data['${effectivePrefix}is_active'],
       )!,
+      isMerchantOfRecord: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_merchant_of_record'],
+      )!,
     );
   }
 
@@ -816,6 +953,10 @@ class Client extends DataClass implements Insertable<Client> {
   final DateTime? contractExpiry;
   final String? notes;
   final bool isActive;
+
+  /// A reseller that sells the user's product to end customers in its own
+  /// name and pays the user, such as a merchant of record or an app store.
+  final bool isMerchantOfRecord;
   const Client({
     required this.id,
     required this.name,
@@ -831,6 +972,7 @@ class Client extends DataClass implements Insertable<Client> {
     this.contractExpiry,
     this.notes,
     required this.isActive,
+    required this.isMerchantOfRecord,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -867,6 +1009,7 @@ class Client extends DataClass implements Insertable<Client> {
       map['notes'] = Variable<String>(notes);
     }
     map['is_active'] = Variable<bool>(isActive);
+    map['is_merchant_of_record'] = Variable<bool>(isMerchantOfRecord);
     return map;
   }
 
@@ -900,6 +1043,7 @@ class Client extends DataClass implements Insertable<Client> {
           ? const Value.absent()
           : Value(notes),
       isActive: Value(isActive),
+      isMerchantOfRecord: Value(isMerchantOfRecord),
     );
   }
 
@@ -925,6 +1069,7 @@ class Client extends DataClass implements Insertable<Client> {
       contractExpiry: serializer.fromJson<DateTime?>(json['contractExpiry']),
       notes: serializer.fromJson<String?>(json['notes']),
       isActive: serializer.fromJson<bool>(json['isActive']),
+      isMerchantOfRecord: serializer.fromJson<bool>(json['isMerchantOfRecord']),
     );
   }
   @override
@@ -947,6 +1092,7 @@ class Client extends DataClass implements Insertable<Client> {
       'contractExpiry': serializer.toJson<DateTime?>(contractExpiry),
       'notes': serializer.toJson<String?>(notes),
       'isActive': serializer.toJson<bool>(isActive),
+      'isMerchantOfRecord': serializer.toJson<bool>(isMerchantOfRecord),
     };
   }
 
@@ -965,6 +1111,7 @@ class Client extends DataClass implements Insertable<Client> {
     Value<DateTime?> contractExpiry = const Value.absent(),
     Value<String?> notes = const Value.absent(),
     bool? isActive,
+    bool? isMerchantOfRecord,
   }) => Client(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -984,6 +1131,7 @@ class Client extends DataClass implements Insertable<Client> {
         : this.contractExpiry,
     notes: notes.present ? notes.value : this.notes,
     isActive: isActive ?? this.isActive,
+    isMerchantOfRecord: isMerchantOfRecord ?? this.isMerchantOfRecord,
   );
   Client copyWithCompanion(ClientsCompanion data) {
     return Client(
@@ -1009,6 +1157,9 @@ class Client extends DataClass implements Insertable<Client> {
           : this.contractExpiry,
       notes: data.notes.present ? data.notes.value : this.notes,
       isActive: data.isActive.present ? data.isActive.value : this.isActive,
+      isMerchantOfRecord: data.isMerchantOfRecord.present
+          ? data.isMerchantOfRecord.value
+          : this.isMerchantOfRecord,
     );
   }
 
@@ -1028,7 +1179,8 @@ class Client extends DataClass implements Insertable<Client> {
           ..write('contractSigned: $contractSigned, ')
           ..write('contractExpiry: $contractExpiry, ')
           ..write('notes: $notes, ')
-          ..write('isActive: $isActive')
+          ..write('isActive: $isActive, ')
+          ..write('isMerchantOfRecord: $isMerchantOfRecord')
           ..write(')'))
         .toString();
   }
@@ -1049,6 +1201,7 @@ class Client extends DataClass implements Insertable<Client> {
     contractExpiry,
     notes,
     isActive,
+    isMerchantOfRecord,
   );
   @override
   bool operator ==(Object other) =>
@@ -1067,7 +1220,8 @@ class Client extends DataClass implements Insertable<Client> {
           other.contractSigned == this.contractSigned &&
           other.contractExpiry == this.contractExpiry &&
           other.notes == this.notes &&
-          other.isActive == this.isActive);
+          other.isActive == this.isActive &&
+          other.isMerchantOfRecord == this.isMerchantOfRecord);
 }
 
 class ClientsCompanion extends UpdateCompanion<Client> {
@@ -1085,6 +1239,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
   final Value<DateTime?> contractExpiry;
   final Value<String?> notes;
   final Value<bool> isActive;
+  final Value<bool> isMerchantOfRecord;
   const ClientsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -1100,6 +1255,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     this.contractExpiry = const Value.absent(),
     this.notes = const Value.absent(),
     this.isActive = const Value.absent(),
+    this.isMerchantOfRecord = const Value.absent(),
   });
   ClientsCompanion.insert({
     this.id = const Value.absent(),
@@ -1116,6 +1272,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     this.contractExpiry = const Value.absent(),
     this.notes = const Value.absent(),
     this.isActive = const Value.absent(),
+    this.isMerchantOfRecord = const Value.absent(),
   }) : name = Value(name),
        address = Value(address),
        wetDbaRisk = Value(wetDbaRisk);
@@ -1134,6 +1291,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     Expression<DateTime>? contractExpiry,
     Expression<String>? notes,
     Expression<bool>? isActive,
+    Expression<bool>? isMerchantOfRecord,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1150,6 +1308,8 @@ class ClientsCompanion extends UpdateCompanion<Client> {
       if (contractExpiry != null) 'contract_expiry': contractExpiry,
       if (notes != null) 'notes': notes,
       if (isActive != null) 'is_active': isActive,
+      if (isMerchantOfRecord != null)
+        'is_merchant_of_record': isMerchantOfRecord,
     });
   }
 
@@ -1168,6 +1328,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     Value<DateTime?>? contractExpiry,
     Value<String?>? notes,
     Value<bool>? isActive,
+    Value<bool>? isMerchantOfRecord,
   }) {
     return ClientsCompanion(
       id: id ?? this.id,
@@ -1184,6 +1345,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
       contractExpiry: contractExpiry ?? this.contractExpiry,
       notes: notes ?? this.notes,
       isActive: isActive ?? this.isActive,
+      isMerchantOfRecord: isMerchantOfRecord ?? this.isMerchantOfRecord,
     );
   }
 
@@ -1234,6 +1396,9 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     if (isActive.present) {
       map['is_active'] = Variable<bool>(isActive.value);
     }
+    if (isMerchantOfRecord.present) {
+      map['is_merchant_of_record'] = Variable<bool>(isMerchantOfRecord.value);
+    }
     return map;
   }
 
@@ -1253,7 +1418,8 @@ class ClientsCompanion extends UpdateCompanion<Client> {
           ..write('contractSigned: $contractSigned, ')
           ..write('contractExpiry: $contractExpiry, ')
           ..write('notes: $notes, ')
-          ..write('isActive: $isActive')
+          ..write('isActive: $isActive, ')
+          ..write('isMerchantOfRecord: $isMerchantOfRecord')
           ..write(')'))
         .toString();
   }
@@ -1356,6 +1522,21 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   ).withConverter<VatTreatment>($InvoicesTable.$convertervatTreatment);
+  static const VerificationMeta _selfBilledMeta = const VerificationMeta(
+    'selfBilled',
+  );
+  @override
+  late final GeneratedColumn<bool> selfBilled = GeneratedColumn<bool>(
+    'self_billed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("self_billed" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _sellerNameMeta = const VerificationMeta(
     'sellerName',
   );
@@ -1494,6 +1675,7 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     supplyDate,
     clientId,
     vatTreatment,
+    selfBilled,
     sellerName,
     sellerVatNumber,
     sellerKvkNumber,
@@ -1566,6 +1748,12 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
       );
     } else if (isInserting) {
       context.missing(_clientIdMeta);
+    }
+    if (data.containsKey('self_billed')) {
+      context.handle(
+        _selfBilledMeta,
+        selfBilled.isAcceptableOrUnknown(data['self_billed']!, _selfBilledMeta),
+      );
     }
     if (data.containsKey('seller_name')) {
       context.handle(
@@ -1714,6 +1902,10 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
           data['${effectivePrefix}vat_treatment'],
         )!,
       ),
+      selfBilled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}self_billed'],
+      )!,
       sellerName: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}seller_name'],
@@ -1793,6 +1985,10 @@ class Invoice extends DataClass implements Insertable<Invoice> {
   final DateTime? supplyDate;
   final int clientId;
   final VatTreatment vatTreatment;
+
+  /// Issued by the customer instead of the user (Wet OB 1968 art. 35 lid 2).
+  /// The number is the customer's and Florin makes no PDF.
+  final bool selfBilled;
   final String sellerName;
   final String sellerVatNumber;
   final String sellerKvkNumber;
@@ -1814,6 +2010,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     this.supplyDate,
     required this.clientId,
     required this.vatTreatment,
+    required this.selfBilled,
     required this.sellerName,
     required this.sellerVatNumber,
     required this.sellerKvkNumber,
@@ -1850,6 +2047,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
         $InvoicesTable.$convertervatTreatment.toSql(vatTreatment),
       );
     }
+    map['self_billed'] = Variable<bool>(selfBilled);
     map['seller_name'] = Variable<String>(sellerName);
     map['seller_vat_number'] = Variable<String>(sellerVatNumber);
     map['seller_kvk_number'] = Variable<String>(sellerKvkNumber);
@@ -1887,6 +2085,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
           : Value(supplyDate),
       clientId: Value(clientId),
       vatTreatment: Value(vatTreatment),
+      selfBilled: Value(selfBilled),
       sellerName: Value(sellerName),
       sellerVatNumber: Value(sellerVatNumber),
       sellerKvkNumber: Value(sellerKvkNumber),
@@ -1924,6 +2123,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       vatTreatment: $InvoicesTable.$convertervatTreatment.fromJson(
         serializer.fromJson<String>(json['vatTreatment']),
       ),
+      selfBilled: serializer.fromJson<bool>(json['selfBilled']),
       sellerName: serializer.fromJson<String>(json['sellerName']),
       sellerVatNumber: serializer.fromJson<String>(json['sellerVatNumber']),
       sellerKvkNumber: serializer.fromJson<String>(json['sellerKvkNumber']),
@@ -1956,6 +2156,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       'vatTreatment': serializer.toJson<String>(
         $InvoicesTable.$convertervatTreatment.toJson(vatTreatment),
       ),
+      'selfBilled': serializer.toJson<bool>(selfBilled),
       'sellerName': serializer.toJson<String>(sellerName),
       'sellerVatNumber': serializer.toJson<String>(sellerVatNumber),
       'sellerKvkNumber': serializer.toJson<String>(sellerKvkNumber),
@@ -1982,6 +2183,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     Value<DateTime?> supplyDate = const Value.absent(),
     int? clientId,
     VatTreatment? vatTreatment,
+    bool? selfBilled,
     String? sellerName,
     String? sellerVatNumber,
     String? sellerKvkNumber,
@@ -2005,6 +2207,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     supplyDate: supplyDate.present ? supplyDate.value : this.supplyDate,
     clientId: clientId ?? this.clientId,
     vatTreatment: vatTreatment ?? this.vatTreatment,
+    selfBilled: selfBilled ?? this.selfBilled,
     sellerName: sellerName ?? this.sellerName,
     sellerVatNumber: sellerVatNumber ?? this.sellerVatNumber,
     sellerKvkNumber: sellerKvkNumber ?? this.sellerKvkNumber,
@@ -2040,6 +2243,9 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       vatTreatment: data.vatTreatment.present
           ? data.vatTreatment.value
           : this.vatTreatment,
+      selfBilled: data.selfBilled.present
+          ? data.selfBilled.value
+          : this.selfBilled,
       sellerName: data.sellerName.present
           ? data.sellerName.value
           : this.sellerName,
@@ -2082,6 +2288,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
           ..write('supplyDate: $supplyDate, ')
           ..write('clientId: $clientId, ')
           ..write('vatTreatment: $vatTreatment, ')
+          ..write('selfBilled: $selfBilled, ')
           ..write('sellerName: $sellerName, ')
           ..write('sellerVatNumber: $sellerVatNumber, ')
           ..write('sellerKvkNumber: $sellerKvkNumber, ')
@@ -2099,7 +2306,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     invoiceNumber,
     invoiceType,
@@ -2108,6 +2315,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     supplyDate,
     clientId,
     vatTreatment,
+    selfBilled,
     sellerName,
     sellerVatNumber,
     sellerKvkNumber,
@@ -2120,7 +2328,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     totalExclVat,
     totalVat,
     totalInclVat,
-  );
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2133,6 +2341,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
           other.supplyDate == this.supplyDate &&
           other.clientId == this.clientId &&
           other.vatTreatment == this.vatTreatment &&
+          other.selfBilled == this.selfBilled &&
           other.sellerName == this.sellerName &&
           other.sellerVatNumber == this.sellerVatNumber &&
           other.sellerKvkNumber == this.sellerKvkNumber &&
@@ -2156,6 +2365,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
   final Value<DateTime?> supplyDate;
   final Value<int> clientId;
   final Value<VatTreatment> vatTreatment;
+  final Value<bool> selfBilled;
   final Value<String> sellerName;
   final Value<String> sellerVatNumber;
   final Value<String> sellerKvkNumber;
@@ -2177,6 +2387,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     this.supplyDate = const Value.absent(),
     this.clientId = const Value.absent(),
     this.vatTreatment = const Value.absent(),
+    this.selfBilled = const Value.absent(),
     this.sellerName = const Value.absent(),
     this.sellerVatNumber = const Value.absent(),
     this.sellerKvkNumber = const Value.absent(),
@@ -2199,6 +2410,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     this.supplyDate = const Value.absent(),
     required int clientId,
     required VatTreatment vatTreatment,
+    this.selfBilled = const Value.absent(),
     required String sellerName,
     required String sellerVatNumber,
     required String sellerKvkNumber,
@@ -2235,6 +2447,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     Expression<DateTime>? supplyDate,
     Expression<int>? clientId,
     Expression<String>? vatTreatment,
+    Expression<bool>? selfBilled,
     Expression<String>? sellerName,
     Expression<String>? sellerVatNumber,
     Expression<String>? sellerKvkNumber,
@@ -2258,6 +2471,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
       if (supplyDate != null) 'supply_date': supplyDate,
       if (clientId != null) 'client_id': clientId,
       if (vatTreatment != null) 'vat_treatment': vatTreatment,
+      if (selfBilled != null) 'self_billed': selfBilled,
       if (sellerName != null) 'seller_name': sellerName,
       if (sellerVatNumber != null) 'seller_vat_number': sellerVatNumber,
       if (sellerKvkNumber != null) 'seller_kvk_number': sellerKvkNumber,
@@ -2282,6 +2496,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     Value<DateTime?>? supplyDate,
     Value<int>? clientId,
     Value<VatTreatment>? vatTreatment,
+    Value<bool>? selfBilled,
     Value<String>? sellerName,
     Value<String>? sellerVatNumber,
     Value<String>? sellerKvkNumber,
@@ -2304,6 +2519,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
       supplyDate: supplyDate ?? this.supplyDate,
       clientId: clientId ?? this.clientId,
       vatTreatment: vatTreatment ?? this.vatTreatment,
+      selfBilled: selfBilled ?? this.selfBilled,
       sellerName: sellerName ?? this.sellerName,
       sellerVatNumber: sellerVatNumber ?? this.sellerVatNumber,
       sellerKvkNumber: sellerKvkNumber ?? this.sellerKvkNumber,
@@ -2349,6 +2565,9 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
       map['vat_treatment'] = Variable<String>(
         $InvoicesTable.$convertervatTreatment.toSql(vatTreatment.value),
       );
+    }
+    if (selfBilled.present) {
+      map['self_billed'] = Variable<bool>(selfBilled.value);
     }
     if (sellerName.present) {
       map['seller_name'] = Variable<String>(sellerName.value);
@@ -2402,6 +2621,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
           ..write('supplyDate: $supplyDate, ')
           ..write('clientId: $clientId, ')
           ..write('vatTreatment: $vatTreatment, ')
+          ..write('selfBilled: $selfBilled, ')
           ..write('sellerName: $sellerName, ')
           ..write('sellerVatNumber: $sellerVatNumber, ')
           ..write('sellerKvkNumber: $sellerKvkNumber, ')
@@ -8314,6 +8534,8 @@ typedef $$BusinessProfilesTableCreateCompanionBuilder =
       required String address,
       required String iban,
       Value<bool> isStarter,
+      Value<DateTime?> korStart,
+      Value<DateTime?> korEnd,
     });
 typedef $$BusinessProfilesTableUpdateCompanionBuilder =
     BusinessProfilesCompanion Function({
@@ -8324,6 +8546,8 @@ typedef $$BusinessProfilesTableUpdateCompanionBuilder =
       Value<String> address,
       Value<String> iban,
       Value<bool> isStarter,
+      Value<DateTime?> korStart,
+      Value<DateTime?> korEnd,
     });
 
 class $$BusinessProfilesTableFilterComposer
@@ -8367,6 +8591,16 @@ class $$BusinessProfilesTableFilterComposer
 
   ColumnFilters<bool> get isStarter => $composableBuilder(
     column: $table.isStarter,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get korStart => $composableBuilder(
+    column: $table.korStart,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get korEnd => $composableBuilder(
+    column: $table.korEnd,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -8414,6 +8648,16 @@ class $$BusinessProfilesTableOrderingComposer
     column: $table.isStarter,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<DateTime> get korStart => $composableBuilder(
+    column: $table.korStart,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get korEnd => $composableBuilder(
+    column: $table.korEnd,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$BusinessProfilesTableAnnotationComposer
@@ -8445,6 +8689,12 @@ class $$BusinessProfilesTableAnnotationComposer
 
   GeneratedColumn<bool> get isStarter =>
       $composableBuilder(column: $table.isStarter, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get korStart =>
+      $composableBuilder(column: $table.korStart, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get korEnd =>
+      $composableBuilder(column: $table.korEnd, builder: (column) => column);
 }
 
 class $$BusinessProfilesTableTableManager
@@ -8491,6 +8741,8 @@ class $$BusinessProfilesTableTableManager
                 Value<String> address = const Value.absent(),
                 Value<String> iban = const Value.absent(),
                 Value<bool> isStarter = const Value.absent(),
+                Value<DateTime?> korStart = const Value.absent(),
+                Value<DateTime?> korEnd = const Value.absent(),
               }) => BusinessProfilesCompanion(
                 id: id,
                 name: name,
@@ -8499,6 +8751,8 @@ class $$BusinessProfilesTableTableManager
                 address: address,
                 iban: iban,
                 isStarter: isStarter,
+                korStart: korStart,
+                korEnd: korEnd,
               ),
           createCompanionCallback:
               ({
@@ -8509,6 +8763,8 @@ class $$BusinessProfilesTableTableManager
                 required String address,
                 required String iban,
                 Value<bool> isStarter = const Value.absent(),
+                Value<DateTime?> korStart = const Value.absent(),
+                Value<DateTime?> korEnd = const Value.absent(),
               }) => BusinessProfilesCompanion.insert(
                 id: id,
                 name: name,
@@ -8517,6 +8773,8 @@ class $$BusinessProfilesTableTableManager
                 address: address,
                 iban: iban,
                 isStarter: isStarter,
+                korStart: korStart,
+                korEnd: korEnd,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -8568,6 +8826,7 @@ typedef $$ClientsTableCreateCompanionBuilder =
       Value<DateTime?> contractExpiry,
       Value<String?> notes,
       Value<bool> isActive,
+      Value<bool> isMerchantOfRecord,
     });
 typedef $$ClientsTableUpdateCompanionBuilder =
     ClientsCompanion Function({
@@ -8585,6 +8844,7 @@ typedef $$ClientsTableUpdateCompanionBuilder =
       Value<DateTime?> contractExpiry,
       Value<String?> notes,
       Value<bool> isActive,
+      Value<bool> isMerchantOfRecord,
     });
 
 final class $$ClientsTableReferences
@@ -8688,6 +8948,11 @@ class $$ClientsTableFilterComposer
 
   ColumnFilters<bool> get isActive => $composableBuilder(
     column: $table.isActive,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isMerchantOfRecord => $composableBuilder(
+    column: $table.isMerchantOfRecord,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -8795,6 +9060,11 @@ class $$ClientsTableOrderingComposer
     column: $table.isActive,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get isMerchantOfRecord => $composableBuilder(
+    column: $table.isMerchantOfRecord,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ClientsTableAnnotationComposer
@@ -8856,6 +9126,11 @@ class $$ClientsTableAnnotationComposer
 
   GeneratedColumn<bool> get isActive =>
       $composableBuilder(column: $table.isActive, builder: (column) => column);
+
+  GeneratedColumn<bool> get isMerchantOfRecord => $composableBuilder(
+    column: $table.isMerchantOfRecord,
+    builder: (column) => column,
+  );
 
   Expression<T> invoicesRefs<T extends Object>(
     Expression<T> Function($$InvoicesTableAnnotationComposer a) f,
@@ -8925,6 +9200,7 @@ class $$ClientsTableTableManager
                 Value<DateTime?> contractExpiry = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
+                Value<bool> isMerchantOfRecord = const Value.absent(),
               }) => ClientsCompanion(
                 id: id,
                 name: name,
@@ -8940,6 +9216,7 @@ class $$ClientsTableTableManager
                 contractExpiry: contractExpiry,
                 notes: notes,
                 isActive: isActive,
+                isMerchantOfRecord: isMerchantOfRecord,
               ),
           createCompanionCallback:
               ({
@@ -8957,6 +9234,7 @@ class $$ClientsTableTableManager
                 Value<DateTime?> contractExpiry = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
+                Value<bool> isMerchantOfRecord = const Value.absent(),
               }) => ClientsCompanion.insert(
                 id: id,
                 name: name,
@@ -8972,6 +9250,7 @@ class $$ClientsTableTableManager
                 contractExpiry: contractExpiry,
                 notes: notes,
                 isActive: isActive,
+                isMerchantOfRecord: isMerchantOfRecord,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -9036,6 +9315,7 @@ typedef $$InvoicesTableCreateCompanionBuilder =
       Value<DateTime?> supplyDate,
       required int clientId,
       required VatTreatment vatTreatment,
+      Value<bool> selfBilled,
       required String sellerName,
       required String sellerVatNumber,
       required String sellerKvkNumber,
@@ -9059,6 +9339,7 @@ typedef $$InvoicesTableUpdateCompanionBuilder =
       Value<DateTime?> supplyDate,
       Value<int> clientId,
       Value<VatTreatment> vatTreatment,
+      Value<bool> selfBilled,
       Value<String> sellerName,
       Value<String> sellerVatNumber,
       Value<String> sellerKvkNumber,
@@ -9169,6 +9450,11 @@ class $$InvoicesTableFilterComposer
   get vatTreatment => $composableBuilder(
     column: $table.vatTreatment,
     builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<bool> get selfBilled => $composableBuilder(
+    column: $table.selfBilled,
+    builder: (column) => ColumnFilters(column),
   );
 
   ColumnFilters<String> get sellerName => $composableBuilder(
@@ -9343,6 +9629,11 @@ class $$InvoicesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get selfBilled => $composableBuilder(
+    column: $table.selfBilled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get sellerName => $composableBuilder(
     column: $table.sellerName,
     builder: (column) => ColumnOrderings(column),
@@ -9488,6 +9779,11 @@ class $$InvoicesTableAnnotationComposer
         column: $table.vatTreatment,
         builder: (column) => column,
       );
+
+  GeneratedColumn<bool> get selfBilled => $composableBuilder(
+    column: $table.selfBilled,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get sellerName => $composableBuilder(
     column: $table.sellerName,
@@ -9653,6 +9949,7 @@ class $$InvoicesTableTableManager
                 Value<DateTime?> supplyDate = const Value.absent(),
                 Value<int> clientId = const Value.absent(),
                 Value<VatTreatment> vatTreatment = const Value.absent(),
+                Value<bool> selfBilled = const Value.absent(),
                 Value<String> sellerName = const Value.absent(),
                 Value<String> sellerVatNumber = const Value.absent(),
                 Value<String> sellerKvkNumber = const Value.absent(),
@@ -9674,6 +9971,7 @@ class $$InvoicesTableTableManager
                 supplyDate: supplyDate,
                 clientId: clientId,
                 vatTreatment: vatTreatment,
+                selfBilled: selfBilled,
                 sellerName: sellerName,
                 sellerVatNumber: sellerVatNumber,
                 sellerKvkNumber: sellerKvkNumber,
@@ -9697,6 +9995,7 @@ class $$InvoicesTableTableManager
                 Value<DateTime?> supplyDate = const Value.absent(),
                 required int clientId,
                 required VatTreatment vatTreatment,
+                Value<bool> selfBilled = const Value.absent(),
                 required String sellerName,
                 required String sellerVatNumber,
                 required String sellerKvkNumber,
@@ -9718,6 +10017,7 @@ class $$InvoicesTableTableManager
                 supplyDate: supplyDate,
                 clientId: clientId,
                 vatTreatment: vatTreatment,
+                selfBilled: selfBilled,
                 sellerName: sellerName,
                 sellerVatNumber: sellerVatNumber,
                 sellerKvkNumber: sellerKvkNumber,

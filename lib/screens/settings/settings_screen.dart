@@ -81,11 +81,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final dbPath = ref.watch(dbPathNotifierProvider).path;
     final year = ref.watch(fiscalYearProvider);
     final rules = ref.watch(taxRulesProvider(year));
-    // Keeps the figures the export writes loaded.
-    for (var q = 1; q <= 4; q++) {
-      ref.watch(vatQuarterProvider((year: year, quarter: q)));
-    }
-    ref.watch(taxEstimateProvider(year));
+    // Keeps the figures the export writes loaded; the button waits for them.
+    final figures = [
+      for (var q = 1; q <= 4; q++)
+        ref.watch(vatQuarterProvider((year: year, quarter: q))),
+      ref.watch(taxEstimateProvider(year)),
+    ];
+    final figuresReady = figures.every((f) => f.hasValue);
     final locale = ref.watch(localeProvider);
     final sectionTitle = theme.textTheme.titleLarge;
 
@@ -145,7 +147,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Text(l.settingsExportDescription(year)),
             const SizedBox(height: AppSpacing.field),
             OutlinedButton.icon(
-              onPressed: _exportRunning ? null : _exportCsv,
+              onPressed: _exportRunning || !figuresReady ? null : _exportCsv,
               icon: const Icon(Icons.download_outlined),
               label: Text(
                 _exportRunning
@@ -217,7 +219,6 @@ class _RulesSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
-    String pct(double r) => '${(r * 100).toStringAsFixed(2)}%';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -225,7 +226,10 @@ class _RulesSummary extends StatelessWidget {
         const SizedBox(height: AppSpacing.field),
         for (var i = 0; i < rules.box1Brackets.length; i++)
           ValueRow(
-            label: l.plTaxBracket(i + 1, pct(rules.box1Brackets[i].rate)),
+            label: l.plTaxBracket(
+              i + 1,
+              AppFormat.percent(rules.box1Brackets[i].rate),
+            ),
             value: rules.box1Brackets[i].upTo == null
                 ? ''
                 : l.settingsTaxUpTo(
@@ -242,16 +246,23 @@ class _RulesSummary extends StatelessWidget {
         ),
         ValueRow(
           label: l.settingsTaxMkb,
-          value: pct(rules.mkbWinstvrijstelling),
+          value: AppFormat.percent(rules.mkbWinstvrijstelling),
         ),
         ValueRow(
           label: l.settingsTaxUrencriterium,
           value: '${rules.urencriterium}',
         ),
-        ValueRow(label: l.settingsTaxZvwRate, value: pct(rules.zvwRate)),
+        ValueRow(
+          label: l.settingsTaxZvwRate,
+          value: AppFormat.percent(rules.zvwRate),
+        ),
         ValueRow(
           label: l.settingsTaxMileage,
           value: AppFormat.cents(rules.mileageCentsPerKm),
+        ),
+        ValueRow(
+          label: l.settingsTaxKor,
+          value: AppFormat.cents(rules.korThreshold),
         ),
       ],
     );

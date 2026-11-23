@@ -52,7 +52,7 @@
     }
   },
   "dashboardUrencriterium": "Urencriterium",
-  "dashboardBtwDeadlines": "BTW-deadlines",
+  "dashboardBtwDeadlines": "VAT deadlines",
   "dashboardMonthlyRevenue": "Monthly revenue",
   "deadlineStatusFiled": "filed",
   "deadlineStatusOverdue": "overdue",
@@ -130,7 +130,7 @@
   "clientsFieldName": "Name",
   "clientsValidateName": "Enter the client's name",
   "clientsFieldCountry": "Country",
-  "clientsValidateCountry": "Use a 2-letter country code (e.g. NL, DE, FR)",
+  "clientsValidateCountry": "Use a 2-letter country code (e.g. NL, DE, FR): it decides which VAT treatments an invoice to this client can use.",
   "clientsFieldVat": "VAT number",
   "clientsValidateVat": "Enter a valid EU VAT number, e.g. NL123456789B01 or DE123456789",
   "clientsFieldKvk": "KVK number",
@@ -174,7 +174,7 @@
   "expensesFieldDescription": "Description",
   "expensesValidateDescription": "Enter a description for this expense",
   "expensesFieldAmountExcl": "Amount (excl. VAT)",
-  "expensesValidateAmount": "Enter the amount excluding VAT",
+  "expensesValidateAmount": "Enter the amount excluding VAT, above zero: it is the cost Florin deducts from your profit.",
   "expensesFieldVatRate": "VAT rate",
   "expensesFieldVat": "VAT",
   "expensesFieldTotalIncl": "Total (incl. VAT)",
@@ -320,7 +320,7 @@
   "assetsFieldUsefulLifeUnit": "yrs",
   "assetsFieldUsefulLifeMin": "Enter at least {years} years: depreciation is limited to 20% of the cost a year",
   "assetsValidateName": "Enter the asset name",
-  "assetsValidateCost": "Enter the cost excluding VAT",
+  "assetsValidateCost": "Enter the cost excluding VAT, above zero: depreciation is calculated from it.",
   "assetsFieldKia": "KIA eligible",
   "assetsKiaBadge": "KIA",
   "assetsFieldNotes": "Notes",
@@ -412,7 +412,7 @@
   "plTaxTotalCosts": "Total costs",
   "plTaxGrossProfit": "Gross profit",
   "plTaxDeductionsSection": "Entrepreneur deductions",
-  "plTaxZelfstandigenaftrek": "Self-employed deduction {year}",
+  "plTaxZelfstandigenaftrek": "Zelfstandigenaftrek {year}",
   "@plTaxZelfstandigenaftrek": {
     "placeholders": {
       "year": {
@@ -420,7 +420,7 @@
       }
     }
   },
-  "plTaxStartersaftrek": "Starter deduction",
+  "plTaxStartersaftrek": "Startersaftrek",
   "plTaxMkb": "SME profit exemption ({pct}%)",
   "@plTaxMkb": {
     "placeholders": {
@@ -482,7 +482,7 @@
   "settingsIban": "IBAN",
   "settingsStartersaftrek": "Eligible for startersaftrek",
   "settingsValidateName": "Enter your business name",
-  "settingsValidateVat": "Enter your BTW number, e.g. NL123456789B01.",
+  "settingsValidateVat": "Enter your VAT number, e.g. NL123456789B01.",
   "settingsValidateVatFormat": "Invalid VAT number. Format: NL + 9 digits + B + 2 digits, e.g. NL123456789B01.",
   "settingsValidateKvk": "Enter your KVK number.",
   "settingsValidateKvkFormat": "KVK number must be exactly 8 digits.",
@@ -500,7 +500,7 @@
   },
   "settingsMoveDatabase": "Copy database to another folder",
   "settingsExportSection": "Export",
-  "settingsExportDescription": "Export all {year} data to CSV files, with the BTW return of each quarter by rubriek in whole euros, the ICP list of each quarter and the estimated income tax of the year.",
+  "settingsExportDescription": "Export all {year} data to CSV files, with the VAT return of each quarter by rubriek in whole euros, the ICP list of each quarter and the estimated income tax of the year.",
   "@settingsExportDescription": {
     "placeholders": {
       "year": {
@@ -533,8 +533,8 @@
       }
     }
   },
-  "settingsTaxZelfs": "Self-employed deduction",
-  "settingsTaxStarters": "Starter deduction",
+  "settingsTaxZelfs": "Zelfstandigenaftrek",
+  "settingsTaxStarters": "Startersaftrek",
   "settingsTaxMkb": "MKB-winstvrijstelling (%)",
   "settingsTaxMileage": "Mileage allowance per km",
   "settingsTaxZvwRate": "ZVW rate (%)",
@@ -580,7 +580,7 @@
   "dbLocationChooseFolderDialog": "Choose folder to store Florin database",
   "csvExportChooseFolderDialog": "Choose export folder",
   "invoiceSaveAsDialog": "Save invoice as",
-  "amountNegativeError": "Amount cannot be negative",
+  "amountNegativeError": "Enter zero or more. A correction is its own record, such as a credit note.",
   "vatTreatmentStandard": "Dutch VAT",
   "vatTreatmentReverseChargeNl": "VAT reverse-charged to a Dutch business",
   "vatTreatmentExportOutsideEu": "Export of goods outside the EU (0%)",
@@ -683,7 +683,7 @@
   "clientsFieldActiveHelp": "Inactive clients stay in your records but are not offered on new invoices.",
   "clientsFieldAddressHelp": "The client's full business address. It is printed on every invoice.",
   "clientsFieldContactHelp": "The person you deal with at this client.",
-  "clientsFieldCountryHelp": "The two-letter country code, such as NL or DE. It decides whether an EU reverse-charge invoice is possible.",
+  "clientsFieldCountryHelp": "The two-letter country code, such as NL or DE. It decides which VAT treatments an invoice to this client can use.",
   "clientsFieldEmailHelp": "The address you send invoices to.",
   "clientsFieldKvkHelp": "The client's 8-digit Chamber of Commerce number, if they have one.",
   "clientsFieldNameHelp": "The client's legal or registered trade name, as it should appear on invoices.",
@@ -718,7 +718,7 @@
   "invoiceFieldSupplyDateHelp": "When you delivered, if that differs from the invoice date. The law requires it on the invoice in that case.",
   "invoiceFieldUnitHelp": "The unit of the quantity, such as hours or pieces.",
   "invoiceFieldVatHelp": "The VAT rate for this line.",
-  "invoiceFieldVatTreatmentHelp": "How VAT applies. Dutch VAT for most clients. Reverse charge when the customer pays the VAT. EU goods and services to businesses also go on the ICP report.",
+  "invoiceFieldVatTreatmentHelp": "How VAT applies. Dutch VAT for most Dutch clients, or Exempt under the KOR while you take part in it. Reverse charge when the customer pays the VAT. EU goods and services to businesses also go on the ICP report. Services to a business outside the EU are taxed there and stay out of the Dutch return.",
   "labelCategoryHelp": "Show only expenses of one category.",
   "labelDateHelp": "The date on the receipt. It decides the year and quarter of the expense.",
   "labelNotesHelp": "Anything you want to remember. Not used in calculations.",
@@ -756,7 +756,7 @@
   "assetsCarSectionHelp": "These details decide the addition for private use (bijtelling) and the VAT on private use.",
   "assetsFieldCatalogueValue": "Catalogue value",
   "assetsFieldCatalogueValueHelp": "The original list price including VAT and BPM, as on the registration certificate or the RDW website.",
-  "assetsValidateCatalogueValue": "Enter the catalogue value, including VAT and BPM",
+  "assetsValidateCatalogueValue": "Enter the catalogue value including VAT and BPM, above zero: the private-use addition is a percentage of it.",
   "assetsFieldFirstRegistration": "First registration",
   "assetsFieldFirstRegistrationHelp": "The date the car was first registered, on the registration certificate. It decides which bijtelling percentage applies.",
   "assetsValidateFirstRegistration": "Enter the date of first registration from the registration certificate",
@@ -905,27 +905,27 @@
   "vatRow1d": "1d  Private use",
   "vatRow1dHelp": "VAT on private use of business cars: 2,7% or 1,5% of the catalogue value, or the actual private share with a trip log. In the last return of the year only.",
   "vatRow1eHelp": "Revenue at 0% or where the VAT is reverse-charged to a Dutch business.",
-  "vatRow3aHelp": "Exports of goods to countries outside the EU.",
+  "vatRow3aHelp": "Exports of goods to countries outside the EU. Services to businesses outside the EU are not reported.",
   "vatRow3bHelp": "Goods and services to businesses in other EU countries.",
   "vatRow5aHelp": "The VAT you owe on your revenue and private use.",
   "vatRow5bHelp": "The VAT on business costs you may deduct.",
   "clientsSearchHelp": "Search clients by name.",
   "invoicesSearchHelp": "Search by invoice number or client name.",
-  "expensesFieldPurchaseVat": "BTW on this purchase",
-  "expensesFieldPurchaseVatHelp": "Dutch BTW when the supplier charged it. Shifted when the invoice says the BTW is reverse-charged to you, or the supplier is abroad: you then report and deduct the BTW yourself.",
+  "expensesFieldPurchaseVat": "VAT on this purchase",
+  "expensesFieldPurchaseVatHelp": "Dutch VAT when the supplier charged it. Shifted when the invoice says the VAT is reverse-charged to you, or the supplier is abroad: you then report and deduct the VAT yourself.",
   "purchaseVatDomestic": "Charged by the supplier",
   "purchaseVatReverseChargeNl": "Shifted to me by a Dutch supplier (2a)",
   "purchaseVatFromEu": "From a supplier in another EU country (4b)",
   "purchaseVatFromOutsideEu": "Service from a supplier outside the EU (4a)",
-  "vatReturnShiftedSection": "BTW shifted to you",
-  "vatReturnShiftedSectionHelp": "Purchases where you report the BTW yourself. You deduct the same BTW in 5b, so on balance you usually pay nothing.",
+  "vatReturnShiftedSection": "VAT shifted to you",
+  "vatReturnShiftedSectionHelp": "Purchases where you report the VAT yourself. You deduct the same VAT in 5b, so on balance you usually pay nothing.",
   "vatRow2a": "2a  Domestic reverse charge",
-  "vatRow2aHelp": "Purchases from Dutch suppliers who shifted the BTW to you.",
+  "vatRow2aHelp": "Purchases from Dutch suppliers who shifted the VAT to you.",
   "vatRow4a": "4a  From countries outside the EU",
   "vatRow4aHelp": "Services from suppliers outside the EU.",
   "vatRow4b": "4b  From EU countries",
   "vatRow4bHelp": "Goods and services from suppliers in other EU countries.",
-  "vatBaseAndVat": "{base}, BTW {vat}",
+  "vatBaseAndVat": "{base}, VAT {vat}",
   "@vatBaseAndVat": {
     "placeholders": {
       "base": {
@@ -936,6 +936,171 @@
       }
     }
   },
-  "expensesBusinessUseHelp": "The share used for the business. Only that share of the cost and BTW is deductible.",
-  "settingsLanguageSectionHelp": "The language of the app. Invoices and CSV exports are always in Dutch."
+  "expensesBusinessUseHelp": "The share used for the business. Only that share of the cost and VAT is deductible.",
+  "settingsLanguageSectionHelp": "The language of the app. Invoices and CSV exports are always in Dutch.",
+  "vatTreatmentServicesOutsideEu": "Services to a business outside the EU (not in the VAT return)",
+  "invoiceValidateTreatmentCountry": "This VAT treatment does not fit the client's country. Domestic reverse charge is for Dutch clients, the EU treatments for other EU countries and the treatments outside the EU for countries outside it.",
+  "invoiceSelfBilled": "Issued by the customer (self-billing)",
+  "invoiceSelfBilledHelp": "Tick this when the customer, such as a reseller, makes the invoice for what it owes you. The law allows this when you agreed on it beforehand and you accept each invoice. Florin records it with the customer's number and makes no PDF: the customer's document is the invoice.",
+  "invoiceFieldNumberSelfBilledHelp": "The number on the invoice the customer issued to you.",
+  "invoiceActionRecord": "Record",
+  "invoiceRecordTitle": "Record invoice",
+  "invoiceRecordMessage": "After recording, the invoice can no longer be changed or deleted. A correction is a credit note that names this invoice.",
+  "invoiceStatusSelfBilled": "Issued by customer",
+  "invoiceMerchantOfRecordNotice": "{name} is a merchant of record: it sells your product to end customers and pays you. Invoice it for what it owes you for those sales. One invoice may cover several sales over at most one calendar month. Florin records amounts in euros: for a payout in another currency, enter the euro amounts and keep the reseller's statement.",
+  "invoicePaidDateTitle": "Date paid",
+  "clientsMerchantOfRecord": "Merchant of record (reseller)",
+  "clientsMerchantOfRecordHelp": "Tick this for a platform that sells your product to end customers in its own name and pays you, such as a merchant of record or an app store. It is the seller towards the end customers, so you invoice only the platform. The Wet DBA section is about working relationships and is hidden for a reseller.",
+  "clientsBadgeMerchantOfRecord": "Merchant of record",
+  "vatRowOutsideReturn": "Services to businesses outside the EU (not in the return)",
+  "vatRowOutsideReturnHelp": "Revenue from services to businesses outside the EU. The Belastingdienst says these are not reported in the Dutch return when the service is taxed outside the EU. Shown so you can see where that revenue went.",
+  "@invoiceMerchantOfRecordNotice": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "vatShortReverseCharge": "Reverse-charged",
+  "vatShortNotTaxedNl": "Not taxed in NL",
+  "invoiceValidateNumberSelfBilled": "Enter the number on the invoice the customer issued, so it can be traced to that invoice.",
+  "amountInvalidError": "Enter an amount in euros, such as 1.234,50, with a comma before the cents and at most two decimals.",
+  "amountRequiredError": "Enter an amount above zero: a record without an amount has no effect on your figures.",
+  "clientsValidateVatCountry": "A VAT number of a client in this country starts with {prefix}. Check the number or the country: the ICP report lists them together.",
+  "@clientsValidateVatCountry": {
+    "placeholders": {
+      "prefix": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursValidateDayTotal": "This day already has {logged} hours logged. A day has 24 hours, so enter at most {left}.",
+  "@hoursValidateDayTotal": {
+    "placeholders": {
+      "logged": {
+        "type": "String"
+      },
+      "left": {
+        "type": "String"
+      }
+    }
+  },
+  "assetsValidateDisposalBeforePurchase": "The sale date is before the purchase date. Change one of them: an asset is sold after it was bought.",
+  "invoiceValidateCreditDate": "A credit note is dated on or after the invoice it corrects, which is dated {date}.",
+  "invoiceValidateCreditAboveInvoice": "This credit note is more than is left to correct on invoice {number}: at most {amount} excluding VAT. A credit note can only reverse what was invoiced.",
+  "@invoiceValidateCreditDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@invoiceValidateCreditAboveInvoice": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "vatTreatmentKor": "Exempt under the KOR (no VAT on the invoice)",
+  "vatShortKor": "KOR exempt",
+  "vatRowKorExempt": "Exempt under the KOR (not in the return)",
+  "vatRowKorExemptHelp": "Revenue exempt under the kleineondernemersregeling. You charged no VAT on it and it is not reported in a return.",
+  "invoiceValidateKorNotActive": "The KOR does not apply on this date: you do not take part, or your turnover passed the limit. Choose the treatment that fits, usually Dutch VAT.",
+  "invoiceValidateKorTreatment": "You take part in the KOR on this date: you charge no VAT and the invoice may not mention it. Choose Exempt under the KOR.",
+  "invoiceValidateKorExceeded": "This invoice takes your turnover for the KOR past {limit}. The KOR ends with this supply, so it carries VAT: choose Dutch VAT, and deregister from the KOR in Mijn Belastingdienst Zakelijk.",
+  "@invoiceValidateKorExceeded": {
+    "placeholders": {
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "expensesValidateKorReclaim": "You take part in the KOR on this date, so you cannot reclaim VAT on purchases. Untick Reclaim VAT: the VAT then counts as part of the cost.",
+  "expensesKorNotice": "You take part in the KOR on this date. VAT on purchases is not reclaimed; it counts as part of the cost for income tax.",
+  "settingsKorStart": "KOR applies from",
+  "settingsKorStartHelp": "The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst's confirmation. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most € 20.000 a year. Leave empty when you do not take part.",
+  "settingsKorEnd": "KOR ended on",
+  "settingsKorEndHelp": "The first day the KOR no longer applies after you deregistered yourself. Leave empty otherwise: when your turnover passes the limit, Florin ends the KOR from that invoice on.",
+  "settingsValidateKorStart": "The KOR starts on the first day of a return period, so enter a 1st of the month, as in the Belastingdienst's confirmation.",
+  "settingsValidateKorEndDay": "A deregistration takes effect on the first day of a return period, so enter a 1st of the month.",
+  "settingsValidateKorEndBeforeStart": "The end of the KOR comes after its start. Check both dates.",
+  "settingsValidateKorEndNoStart": "Enter when the KOR started first: an end date only applies to a KOR you took part in.",
+  "settingsKorClear": "I do not take part in the KOR",
+  "korProgress": "{turnover} of {limit}",
+  "korExceededBadge": "Limit passed on {date}",
+  "korLeftBadge": "{left} below the limit",
+  "dashboardKor": "KOR turnover",
+  "dashboardKorHelp": "Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above € 20.000 in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next.",
+  "@korProgress": {
+    "placeholders": {
+      "turnover": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "@korExceededBadge": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@korLeftBadge": {
+    "placeholders": {
+      "left": {
+        "type": "String"
+      }
+    }
+  },
+  "deadlineStatusKor": "no return (KOR)",
+  "deadlineBadgeKor": "No return: KOR",
+  "vatReturnKorNotice": "You take part in the KOR for this whole quarter: you charge no VAT and file no regular return. When VAT was shifted to you (2a, 4a or 4b), you may still owe it in an incidental return: the Belastingdienst's Incidentele btw-aangifte tool says whether you do. Florin shows those amounts below.",
+  "vatReturnKorPartNotice": "The KOR applies for part of this quarter. Invoices exempt under the KOR are not in the return and VAT on purchases in that part is not reclaimed. File a return for the part outside the KOR.",
+  "vatReturnKorExceeded": "Your turnover for the KOR passed {limit} on {date}. The KOR ended with that supply: from then on you charge VAT and file returns. Deregister in Mijn Belastingdienst Zakelijk; you cannot take part again this year or next year.",
+  "@vatReturnKorExceeded": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "errorDuplicate": "Another record already uses this value, such as the same invoice number. Use a value that is not taken yet.",
+  "errorInUse": "Other records refer to this one, such as invoices of a client. Remove or change those first, or mark this one inactive.",
+  "errorBusy": "The database is in use by another program. Close that program, or wait a moment, and try again.",
+  "errorReadOnly": "The database file cannot be written. Check that the folder is not read-only and that you have permission to change it.",
+  "errorCorrupt": "The database file is damaged and cannot be read. Restore it from a backup, such as your iCloud Drive, OneDrive or Dropbox history.",
+  "errorDiskFull": "The disk is full. Free up space and try again.",
+  "errorCannotOpen": "The database file cannot be opened. Check that its folder still exists, or choose its location again in Settings.",
+  "errorFile": "Could not use {path}: {reason}",
+  "genericUnhandledError": "Something went wrong: {error}",
+  "@errorFile": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "@genericUnhandledError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "invoiceNoProfile": "Fill in your business details in Settings first: every invoice shows them.",
+  "invoiceTotal": "Total",
+  "settingsTaxKor": "KOR turnover limit"
 }

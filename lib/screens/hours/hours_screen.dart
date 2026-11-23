@@ -16,10 +16,10 @@ import '../../widgets/detail_scaffold.dart';
 import '../../widgets/enum_dropdown.dart';
 import '../../widgets/feedback.dart';
 import '../../widgets/form_row.dart';
+import '../../widgets/validators.dart';
+import '../../services/formats.dart';
 import '../../widgets/list_scaffold.dart';
 import '../../widgets/urencriterium_progress.dart';
-
-double? _parseHours(String s) => double.tryParse(s.replaceAll(',', '.'));
 
 class HoursScreen extends ConsumerWidget {
   const HoursScreen({super.key});
@@ -62,7 +62,7 @@ class HoursScreen extends ConsumerWidget {
           ].join('  '),
         ),
         trailing: Text(
-          '${formatHours(e.hours)} ${l.hoursUnitShort}',
+          '${AppFormat.hours(e.hours)} ${l.hoursUnitShort}',
           style: TextStyle(
             fontWeight: FontWeight.w600,
             color: e.billable ? context.colors.income : null,
@@ -92,9 +92,7 @@ class _HourDetailPageState extends ConsumerState<HourDetailPage> {
     text: widget.entry?.description,
   );
   late final _hoursField = TextEditingController(
-    text: widget.entry == null
-        ? ''
-        : formatHours(widget.entry!.hours).replaceAll('.', ','),
+    text: widget.entry == null ? '' : AppFormat.hours(widget.entry!.hours),
   );
   late final _clientProject = TextEditingController(
     text: widget.entry?.clientProject,
@@ -111,7 +109,6 @@ class _HourDetailPageState extends ConsumerState<HourDetailPage> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    String? n(String s) => s.trim().isEmpty ? null : s.trim();
     final saved = await guardSave(
       context,
       () => ref
@@ -124,13 +121,36 @@ class _HourDetailPageState extends ConsumerState<HourDetailPage> {
               date: Value(_date),
               description: Value(_description.text.trim()),
               workType: Value(_workType),
-              hours: Value(_parseHours(_hoursField.text)!),
-              clientProject: Value(n(_clientProject.text)),
-              notes: Value(n(_notes.text)),
+              hours: Value(parseDecimal(_hoursField.text)!),
+              clientProject: Value(optionalText(_clientProject.text)),
+              notes: Value(optionalText(_notes.text)),
             ),
           ),
     );
     if (saved && mounted) context.pop();
+  }
+
+  /// Hours already logged on the chosen day in other entries.
+  double get _loggedThatDay =>
+      (ref.read(hourEntriesProvider(_date.year)).valueOrNull ??
+              const <HourEntry>[])
+          .where(
+            (e) =>
+                e.id != widget.entry?.id &&
+                e.date.year == _date.year &&
+                e.date.month == _date.month &&
+                e.date.day == _date.day,
+          )
+          .fold(0.0, (s, e) => s + e.hours);
+
+  String? _dayTotalError(String? v, AppLocalizations l) {
+    final logged = _loggedThatDay;
+    final left = 24 - logged;
+    return Validate.decimal(
+      v,
+      l.hoursValidateDayTotal(AppFormat.hours(logged), AppFormat.hours(left)),
+      max: left,
+    );
   }
 
   Future<void> _delete() async {
@@ -181,12 +201,9 @@ class _HourDetailPageState extends ConsumerState<HourDetailPage> {
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  validator: (v) {
-                    final h = _parseHours(v ?? '');
-                    return h == null || h <= 0 || h > 24
-                        ? l.hoursValidateHours
-                        : null;
-                  },
+                  validator: (v) =>
+                      Validate.decimal(v, l.hoursValidateHours, max: 24) ??
+                      _dayTotalError(v, l),
                 ),
               ],
             ),
@@ -199,7 +216,7 @@ class _HourDetailPageState extends ConsumerState<HourDetailPage> {
                 required: true,
               ),
               validator: (v) =>
-                  (v ?? '').trim().isEmpty ? l.hoursValidateDescription : null,
+                  Validate.required(v, l.hoursValidateDescription),
             ),
             const SizedBox(height: AppSpacing.field),
             EnumDropdown(

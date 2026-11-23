@@ -8,7 +8,9 @@ import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../l10n/labels.dart';
 import '../../providers/providers.dart';
-import '../../services/vat_service.dart';
+import '../../services/domain.dart';
+import '../../services/formats.dart';
+import '../../widgets/validators.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/buttons.dart';
@@ -122,10 +124,15 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
               ),
               const SizedBox(width: AppSpacing.tight),
             ],
-            ToneBadge(
-              label: c.wetDbaRisk.label(l),
-              color: _riskColor(context, c.wetDbaRisk),
-            ),
+            c.isMerchantOfRecord
+                ? ToneBadge(
+                    label: l.clientsBadgeMerchantOfRecord,
+                    color: Theme.of(context).colorScheme.primary,
+                  )
+                : ToneBadge(
+                    label: c.wetDbaRisk.label(l),
+                    color: _riskColor(context, c.wetDbaRisk),
+                  ),
           ],
         ),
         onTap: () => context.push('/clients/${c.id}', extra: c),
@@ -162,6 +169,7 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
   late DateTime? _contractExpiry = widget.client?.contractExpiry;
   late bool _contractSigned = widget.client?.contractSigned ?? false;
   late bool _isActive = widget.client?.isActive ?? true;
+  late bool _isMerchantOfRecord = widget.client?.isMerchantOfRecord ?? false;
   bool _hasInvoices = false;
 
   @override
@@ -169,9 +177,18 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
     super.initState();
     final c = widget.client;
     if (c != null) {
-      ref.read(clientDaoProvider).hasInvoices(c.id).then((has) {
-        if (mounted) setState(() => _hasInvoices = has);
-      });
+      // When the check fails, deleting stays blocked: the cautious answer.
+      ref
+          .read(clientDaoProvider)
+          .hasInvoices(c.id)
+          .then(
+            (has) {
+              if (mounted) setState(() => _hasInvoices = has);
+            },
+            onError: (Object _) {
+              if (mounted) setState(() => _hasInvoices = true);
+            },
+          );
     }
   }
 
@@ -195,7 +212,6 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    String? n(String s) => s.trim().isEmpty ? null : s.trim();
     final saved = await guardSave(
       context,
       () => ref
@@ -206,17 +222,29 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
                   ? const Value.absent()
                   : Value(widget.client!.id),
               name: Value(_name.text.trim()),
-              country: Value(_country.text.trim().toUpperCase()),
-              vatNumber: Value(n(_vatNumber.text)?.toUpperCase()),
-              kvkNumber: Value(n(_kvkNumber.text)),
+              country: Value(normalizeId(_country.text)),
+              vatNumber: Value(
+                optionalText(_vatNumber.text) == null
+                    ? null
+                    : normalizeId(_vatNumber.text),
+              ),
+              kvkNumber: Value(
+                optionalText(_kvkNumber.text) == null
+                    ? null
+                    : normalizeId(_kvkNumber.text),
+              ),
               address: Value(_address.text.trim()),
-              contactPerson: Value(n(_contactPerson.text)),
-              email: Value(n(_email.text)),
-              phone: Value(n(_phone.text)),
-              wetDbaRisk: Value(_risk),
-              contractSigned: Value(_contractSigned),
-              contractExpiry: Value(_contractExpiry),
-              notes: Value(n(_notes.text)),
+              contactPerson: Value(optionalText(_contactPerson.text)),
+              email: Value(optionalText(_email.text)),
+              phone: Value(optionalText(_phone.text)),
+              // A reseller has no working relationship to assess.
+              wetDbaRisk: Value(_isMerchantOfRecord ? WetDbaRisk.low : _risk),
+              contractSigned: Value(!_isMerchantOfRecord && _contractSigned),
+              contractExpiry: Value(
+                _isMerchantOfRecord ? null : _contractExpiry,
+              ),
+              isMerchantOfRecord: Value(_isMerchantOfRecord),
+              notes: Value(optionalText(_notes.text)),
               isActive: Value(_isActive),
             ),
           ),
@@ -240,9 +268,16 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
     if (deleted && mounted) context.pop();
   }
 
-  String? _optional(String? v, bool Function(String) valid, String message) {
-    final s = (v ?? '').trim();
-    return s.isEmpty || valid(s) ? null : message;
+  /// A VAT number of a client in another member state starts with that
+  /// state's code; Greece uses EL.
+  String? _vatNumberError(String? v, AppLocalizations l) {
+    final format = Validate.optional(v, isValidVatId, l.clientsValidateVat);
+    if (format != null) return format;
+    final vat = normalizeId(v ?? '');
+    final country = normalizeId(_country.text);
+    if (vat.isEmpty || !isEuCountry(country)) return null;
+    final prefix = country == 'GR' ? 'EL' : country;
+    return vat.startsWith(prefix) ? null : l.clientsValidateVatCountry(prefix);
   }
 
   @override
@@ -266,7 +301,7 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (_risk == WetDbaRisk.high) ...[
+            if (!_isMerchantOfRecord && _risk == WetDbaRisk.high) ...[
               NoticeBanner(l.clientsHighRiskWarning, tone: NoticeTone.error),
               const SizedBox(height: AppSpacing.group),
             ],
@@ -277,8 +312,7 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
                 help: l.clientsFieldNameHelp,
                 required: true,
               ),
-              validator: (v) =>
-                  (v ?? '').trim().isEmpty ? l.clientsValidateName : null,
+              validator: (v) => Validate.required(v, l.clientsValidateName),
             ),
             const SizedBox(height: AppSpacing.field),
             FormRow(
@@ -300,9 +334,13 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
                           next.copyWith(text: next.text.toUpperCase()),
                     ),
                   ],
-                  validator: (v) => RegExp(r'^[A-Z]{2}$').hasMatch(v ?? '')
-                      ? null
-                      : l.clientsValidateCountry,
+                  onChanged: (_) => setState(() {}),
+                  validator: (v) => Validate.requiredFormat(
+                    v,
+                    empty: l.clientsValidateCountry,
+                    valid: isValidCountryCode,
+                    invalid: l.clientsValidateCountry,
+                  ),
                 ),
                 TextFormField(
                   controller: _vatNumber,
@@ -310,13 +348,7 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
                     label: l.clientsFieldVat,
                     help: l.clientsFieldVatHelp,
                   ),
-                  validator: (v) => _optional(
-                    v,
-                    (s) => RegExp(
-                      r'^[A-Z]{2}[A-Z0-9]{2,13}$',
-                    ).hasMatch(s.toUpperCase().replaceAll(' ', '')),
-                    l.clientsValidateVat,
-                  ),
+                  validator: (v) => _vatNumberError(v, l),
                 ),
                 TextFormField(
                   controller: _kvkNumber,
@@ -325,8 +357,11 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
                     help: l.clientsFieldKvkHelp,
                   ),
                   keyboardType: TextInputType.number,
-                  validator: (v) =>
-                      _optional(v, isValidKvkNumber, l.clientsValidateKvk),
+                  validator: (v) => Validate.optional(
+                    v,
+                    isValidKvkNumber,
+                    l.clientsValidateKvk,
+                  ),
                 ),
               ],
             ),
@@ -340,8 +375,7 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
               ),
               minLines: 3,
               maxLines: 4,
-              validator: (v) =>
-                  (v ?? '').trim().isEmpty ? l.clientsValidateAddress : null,
+              validator: (v) => Validate.required(v, l.clientsValidateAddress),
             ),
             const SizedBox(height: AppSpacing.field),
             FormRow(
@@ -360,9 +394,9 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
                     help: l.clientsFieldEmailHelp,
                   ),
                   keyboardType: TextInputType.emailAddress,
-                  validator: (v) => _optional(
+                  validator: (v) => Validate.optional(
                     v,
-                    (s) => RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(s),
+                    isValidEmail,
                     l.clientsValidateEmail,
                   ),
                 ),
@@ -373,45 +407,54 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
                     help: l.clientsFieldPhoneHelp,
                   ),
                   keyboardType: TextInputType.phone,
-                  validator: (v) => _optional(
+                  validator: (v) => Validate.optional(
                     v,
-                    (s) => RegExp(r'^[+\d][\d\s\-().]{4,}$').hasMatch(s),
+                    isValidPhone,
                     l.clientsValidatePhone,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: AppSpacing.section),
-            Text(l.clientsWetDba, style: theme.textTheme.titleSmall),
-            const SizedBox(height: AppSpacing.heading),
-            FormRow(
-              children: [
-                EnumDropdown(
-                  label: l.clientsRiskLevel,
-                  help: l.clientsRiskLevelHelp,
-                  value: _risk,
-                  values: WetDbaRisk.values,
-                  labelOf: (r) => r.label(l),
-                  onChanged: (r) => setState(() => _risk = r),
-                  required: true,
-                ),
-                DateField(
-                  label: l.clientsContractExpiry,
-                  help: l.clientsContractExpiryHelp,
-                  value: _contractExpiry,
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2100),
-                  onChanged: (d) => setState(() => _contractExpiry = d),
-                ),
-              ],
-            ),
             const SizedBox(height: AppSpacing.field),
             HelpCheckbox(
-              value: _contractSigned,
-              onChanged: (v) => setState(() => _contractSigned = v),
-              title: l.clientsContractSigned,
-              help: l.clientsContractSignedHelp,
+              value: _isMerchantOfRecord,
+              onChanged: (v) => setState(() => _isMerchantOfRecord = v),
+              title: l.clientsMerchantOfRecord,
+              help: l.clientsMerchantOfRecordHelp,
             ),
+            if (!_isMerchantOfRecord) ...[
+              const SizedBox(height: AppSpacing.section),
+              Text(l.clientsWetDba, style: theme.textTheme.titleSmall),
+              const SizedBox(height: AppSpacing.heading),
+              FormRow(
+                children: [
+                  EnumDropdown(
+                    label: l.clientsRiskLevel,
+                    help: l.clientsRiskLevelHelp,
+                    value: _risk,
+                    values: WetDbaRisk.values,
+                    labelOf: (r) => r.label(l),
+                    onChanged: (r) => setState(() => _risk = r),
+                    required: true,
+                  ),
+                  DateField(
+                    label: l.clientsContractExpiry,
+                    help: l.clientsContractExpiryHelp,
+                    value: _contractExpiry,
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                    onChanged: (d) => setState(() => _contractExpiry = d),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.field),
+              HelpCheckbox(
+                value: _contractSigned,
+                onChanged: (v) => setState(() => _contractSigned = v),
+                title: l.clientsContractSigned,
+                help: l.clientsContractSignedHelp,
+              ),
+            ],
             HelpCheckbox(
               value: _isActive,
               onChanged: (v) => setState(() => _isActive = v),

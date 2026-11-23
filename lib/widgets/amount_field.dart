@@ -3,6 +3,8 @@ import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import 'help.dart';
 
+/// A money field in euros. It reports every valid amount as the user types,
+/// so a save pressed while the field has focus stores what is shown.
 class AmountField extends StatefulWidget {
   final int? initialValueCents;
   final ValueChanged<int> onChanged;
@@ -11,6 +13,9 @@ class AmountField extends StatefulWidget {
   final String? helperText;
   final bool readOnly;
   final bool required;
+
+  /// The amount must be above zero, for a cost or price that cannot be free.
+  final bool positive;
   final String? validatorMessage;
 
   /// An extra check on the parsed amount; returns an error message or null.
@@ -25,6 +30,7 @@ class AmountField extends StatefulWidget {
     this.helperText,
     this.readOnly = false,
     this.required = false,
+    this.positive = false,
     this.validatorMessage,
     this.check,
   });
@@ -76,6 +82,29 @@ class _AmountFieldState extends State<AmountField> {
 
   int? _parse(String text) => AppFormat.parseCents(text);
 
+  /// The error for [text], or null when it is a valid amount.
+  String? _error(String text) {
+    final l = AppLocalizations.of(context)!;
+    final s = text.trim();
+    if (s.isEmpty) {
+      return widget.required || widget.positive
+          ? widget.validatorMessage ?? l.amountRequiredError
+          : null;
+    }
+    final parsed = _parse(s);
+    if (parsed == null) return l.amountInvalidError;
+    if (parsed < 0) return l.amountNegativeError;
+    if (widget.positive && parsed == 0) {
+      return widget.validatorMessage ?? l.amountRequiredError;
+    }
+    return widget.check?.call(parsed);
+  }
+
+  void _report(String text) {
+    final parsed = _parse(text);
+    if (parsed != null && _error(text) == null) widget.onChanged(parsed);
+  }
+
   void _onFocusChange() {
     if (_focusNode.hasFocus) {
       final cents = _parse(_controller.text);
@@ -86,10 +115,8 @@ class _AmountFieldState extends State<AmountField> {
       );
     } else {
       final cents = _parse(_controller.text);
-      if (cents != null) {
-        widget.onChanged(cents);
-        _controller.text = _display(cents);
-      }
+      _report(_controller.text);
+      if (cents != null) _controller.text = _display(cents);
     }
   }
 
@@ -100,6 +127,8 @@ class _AmountFieldState extends State<AmountField> {
       controller: _controller,
       focusNode: _focusNode,
       readOnly: widget.readOnly,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      onChanged: _report,
       textAlign: TextAlign.left,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       decoration: InputDecoration(
@@ -116,19 +145,7 @@ class _AmountFieldState extends State<AmountField> {
         ),
         prefixIconConstraints: const BoxConstraints(minWidth: 32),
       ),
-      validator: (v) {
-        if (widget.required && (v == null || v.isEmpty)) {
-          return widget.validatorMessage;
-        }
-        final parsed = _parse(v ?? '');
-        if (parsed != null && parsed < 0) {
-          return AppLocalizations.of(context)!.amountNegativeError;
-        }
-        if (parsed != null && widget.check != null) {
-          return widget.check!(parsed);
-        }
-        return null;
-      },
+      validator: (v) => _error(v ?? ''),
     );
   }
 }

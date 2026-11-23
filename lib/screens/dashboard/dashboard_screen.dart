@@ -9,6 +9,9 @@ import '../../services/tax_service.dart';
 import '../../services/vat_service.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_theme.dart';
+import '../../services/kor_service.dart';
+import '../../widgets/help.dart';
+import '../../widgets/kor_progress.dart';
 import '../../widgets/stat_card.dart';
 import '../../widgets/urencriterium_progress.dart';
 
@@ -24,6 +27,10 @@ class DashboardScreen extends ConsumerWidget {
     final hours = ref.watch(hourEntriesProvider(year)).valueOrNull ?? [];
     final rules = ref.watch(taxRulesProvider(year));
     final estimate = ref.watch(taxEstimateProvider(year)).valueOrNull;
+    final kor = ref.watch(korStatusProvider).valueOrNull ?? KorStatus.none;
+    final korTurnover = kor.turnover[year] ?? 0;
+    // Shown to those who take part, and to those whose turnover allows it.
+    final showKor = kor.participates || korTurnover <= rules.korThreshold;
     final filed = {
       for (final v in ref.watch(vatReturnsProvider(year)).valueOrNull ?? [])
         if (v.filed) v.quarter,
@@ -37,8 +44,7 @@ class DashboardScreen extends ConsumerWidget {
     final monthly = List.filled(12, 0);
     for (final i in invoices) {
       if (!i.isIssued) continue;
-      final sign = i.invoiceType == InvoiceType.creditNote ? -1 : 1;
-      monthly[i.invoiceDate.month - 1] += sign * i.totalExclVat;
+      monthly[i.invoiceDate.month - 1] += i.signedExclVat;
     }
     final r = estimate?.result;
 
@@ -67,7 +73,7 @@ class DashboardScreen extends ConsumerWidget {
             help: l.dashboardEstimatedTaxHelp,
             value: AppFormat.cents(r.totalTax),
             delta: l.dashboardEffectiveRate(
-              (r.effectiveTaxRate / 100).toStringAsFixed(1),
+              AppFormat.percent(r.effectiveTaxRate / 10000, 1),
             ),
           ),
         ),
@@ -118,6 +124,20 @@ class DashboardScreen extends ConsumerWidget {
               target: rules.urencriterium,
               yearOver: year < DateTime.now().year,
             ),
+            if (showKor) ...[
+              const SizedBox(height: AppSpacing.dashboardSection),
+              LabelWithHelp(
+                l.dashboardKor,
+                help: l.dashboardKorHelp,
+                style: theme.textTheme.titleMedium,
+              ),
+              const SizedBox(height: AppSpacing.heading),
+              KorProgress(
+                turnover: korTurnover,
+                limit: rules.korThreshold,
+                exceededOn: kor.exceededOn[year],
+              ),
+            ],
             const SizedBox(height: AppSpacing.dashboardSection),
             Text(l.dashboardBtwDeadlines, style: theme.textTheme.titleMedium),
             const SizedBox(height: AppSpacing.heading),
@@ -130,6 +150,7 @@ class DashboardScreen extends ConsumerWidget {
                     quarter: q,
                     deadline: VatService.filingDeadline(year, q),
                     filed: filed.contains(q),
+                    korCovered: kor.coversQuarter(year, q),
                     isCurrent:
                         year == DateTime.now().year &&
                         q == quarterOf(DateTime.now()),
@@ -153,11 +174,15 @@ class _DeadlineTile extends StatelessWidget {
   final bool filed;
   final bool isCurrent;
 
+  /// The KOR covers the whole quarter, so no regular return is due.
+  final bool korCovered;
+
   const _DeadlineTile({
     required this.quarter,
     required this.deadline,
     required this.filed,
     required this.isCurrent,
+    required this.korCovered,
   });
 
   @override
@@ -165,8 +190,8 @@ class _DeadlineTile extends StatelessWidget {
     final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final daysLeft = deadline.difference(DateTime.now()).inDays;
-    final overdue = daysLeft < 0 && !filed;
-    final color = filed
+    final overdue = daysLeft < 0 && !filed && !korCovered;
+    final color = filed || korCovered
         ? context.colors.income
         : overdue
         ? context.colors.danger
@@ -195,7 +220,9 @@ class _DeadlineTile extends StatelessWidget {
           ),
           Text(AppFormat.date(deadline), style: theme.textTheme.bodySmall),
           Text(
-            filed
+            korCovered
+                ? l.deadlineStatusKor
+                : filed
                 ? l.deadlineStatusFiled
                 : overdue
                 ? l.deadlineStatusOverdue

@@ -23,6 +23,7 @@ import 'screens/assets/assets_screen.dart';
 import 'screens/pension/pension_screen.dart';
 import 'screens/settings/settings_screen.dart';
 import 'constants/prefs_keys.dart';
+import 'widgets/feedback.dart';
 
 /// Supported locales.
 const kSupportedLocales = [Locale('nl'), Locale('en')];
@@ -31,12 +32,11 @@ const kSupportedLocales = [Locale('nl'), Locale('en')];
 final localeProvider = StateProvider<Locale>((ref) {
   final prefs = ref.read(sharedPreferencesProvider);
   final tag = prefs.getString(PrefsKeys.appLocale);
-  if (tag != null) {
-    try {
-      return kSupportedLocales.firstWhere((l) => l.languageCode == tag);
-    } catch (_) {}
-  }
-  return const Locale('nl'); // default Dutch
+  // An unknown stored tag falls back to Dutch.
+  return kSupportedLocales.firstWhere(
+    (l) => l.languageCode == tag,
+    orElse: () => const Locale('nl'),
+  );
 });
 
 class FlorinApp extends ConsumerStatefulWidget {
@@ -192,6 +192,7 @@ class _FlorinAppState extends ConsumerState<FlorinApp> {
   Widget build(BuildContext context) {
     final locale = ref.watch(localeProvider);
     return MaterialApp.router(
+      scaffoldMessengerKey: rootMessengerKey,
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,

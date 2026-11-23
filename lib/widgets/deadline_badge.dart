@@ -8,11 +8,22 @@ class DeadlineBadge extends StatelessWidget {
   final DateTime deadline;
   final bool filed;
 
-  const DeadlineBadge({super.key, required this.deadline, this.filed = false});
+  /// The KOR covers the whole period, so no regular return is due.
+  final bool korCovered;
+
+  const DeadlineBadge({
+    super.key,
+    required this.deadline,
+    this.filed = false,
+    this.korCovered = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
+    if (korCovered) {
+      return ToneBadge(label: l.deadlineBadgeKor, color: context.colors.income);
+    }
     if (filed) {
       return ToneBadge(
         label: l.deadlineBadgeFiled,

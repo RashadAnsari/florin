@@ -36,6 +36,130 @@ Where Florin implements it: `VatTreatment.euGoods` and `VatTreatment.euServices`
 and the treatment note in `InvoicePdfService`. Both require the customer's BTW
 number before the invoice can be saved.
 
+## Services to businesses outside the EU
+
+> De plaats van een dienst, verricht voor een als zodanig handelende ondernemer, is de plaats waar die ondernemer de zetel van zijn bedrijfsuitoefening heeft gevestigd.
+
+[Wet op de omzetbelasting 1968, artikel 6 lid 1](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-23
+
+> Levert u diensten aan een ondernemer die is gevestigd in een land buiten de EU? Dan hoeft u deze dienst niet aan te geven in uw btw-aangifte, als de dienst is belast in het land buiten de EU. […] Ook omzet die u hebt gemaakt en belast is in het land buiten de EU is belaste omzet.
+
+[Belastingdienst, Btw-aangifte doen als u diensten levert aan afnemers in landen buiten de EU](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/zakendoen_met_het_buitenland/zakendoen_buiten_de_eu/aangifte_doen_als_u_zakendoet_buiten_de_eu/aangifte_doen_als_u_diensten_levert_aan_afnemers_in_niet_eu_landen), read 2026-11-23
+
+> In afwijking van het eerste lid gelden voor facturering: a. de regels die van toepassing zijn in de lidstaat waar de leverancier of dienstverrichter de zetel van zijn bedrijfsuitoefening […] heeft gevestigd […], wanneer: […] 2°. de goederenlevering of de dienst overeenkomstig het bepaalde in hoofdstuk II van deze wet, niet geacht wordt in de Unie te zijn verricht
+
+[Wet op de omzetbelasting 1968, artikel 34b lid 2](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-23
+
+Where Florin implements it: `VatTreatment.servicesOutsideEu`. The invoice
+follows the Dutch invoice rules above and carries no BTW. `VatService` leaves
+it out of every rubriek and the ICP list, and the BTW return screen shows the
+amount apart so the revenue stays visible. BTW on purchases stays deductible,
+as the quote says. The specific place-of-supply rules of artikel 6a and later
+(for example property, passenger transport and events) are not modelled: for
+such a service the user picks the treatment that applies.
+
+## Treatment and client country
+
+> Click on the map and filters below to explore the countries of the European Union. […] Pages (27)
+
+[European Union, EU countries](https://european-union.europa.eu/principles-countries-history/eu-countries_en), read 2026-11-23: Austria, Belgium, Bulgaria, Croatia, Cyprus, Czechia, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Romania, Slovakia, Slovenia, Spain, Sweden.
+
+Where Florin implements it: `euCountries` and `VatTreatment.fitsCountry` in
+`lib/services/domain.dart`. An invoice is only saved when its treatment fits
+the client's country: btw verlegd binnenland for a Dutch client (rubriek 1e
+above), the EU treatments for a client in another member state (rubriek 3b
+and the ICP-opgaaf), and export or services outside the EU for a client
+outside it. Dutch BTW fits every country. Greece's BTW prefix EL is accepted
+next to its country code GR.
+
+## Merchant of record and self-billing
+
+> 1 Voor verscheidene afzonderlijke leveringen of diensten kan een periodieke factuur worden opgemaakt, mits de periode waarop de factuur betrekking heeft niet langer is dan een kalendermaand. 2 Facturen mogen door de afnemer worden opgemaakt voor goederenleveringen of diensten die door een ondernemer voor hem worden verricht, indien beide partijen dat vooraf onderling zijn overeengekomen en op voorwaarde dat iedere factuur het voorwerp uitmaakt van een procedure van aanvaarding door de ondernemer die de goederenleveringen of de diensten verricht.
+
+[Wet op de omzetbelasting 1968, artikel 35](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-23
+
+> k. wanneer de afnemer die een prestatie afneemt de factuur uitreikt in plaats van degene die de prestatie verricht, de vermelding «factuur uitgereikt door afnemer»;
+
+> 4 Op een factuur kunnen bedragen in willekeurig welke munteenheid voorkomen, mits het te betalen of te herziene bedrag van de belasting is uitgedrukt in euro’s en daarbij gebruik wordt gemaakt van het in artikel 91 van de BTW-richtlijn 2006 bedoelde wisselkoersmechanisme.
+
+[Wet op de omzetbelasting 1968, artikel 35a leden 1 en 4](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-23
+
+> 1 Iedere ondernemer zorgt ervoor dat door hemzelf dan wel, in zijn naam en voor zijn rekening, door zijn afnemer of een derde, in de volgende gevallen een factuur wordt uitgereikt ter zake van: a. de goederenleveringen of diensten die hij heeft verricht voor een andere ondernemer of een rechtspersoon, andere dan ondernemer;
+
+[Wet op de omzetbelasting 1968, artikel 34c lid 1](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-23
+
+A merchant of record is a reseller that sells the user's product to end
+customers in its own name and pays the user. The user then supplies the
+reseller, a business, and an invoice is required for that supply, made by the
+user or by the reseller.
+
+Where Florin implements it: `Clients.isMerchantOfRecord` marks the reseller;
+the client form hides the Wet DBA fields for it, and new invoices to it start
+with the treatment that fits its country. The invoice form explains the
+one-month limit for an invoice that covers several sales.
+`Invoices.selfBilled` records an invoice the customer issued: it keeps the
+customer's number, is recorded instead of sent, and gets no PDF from Florin,
+because the customer's document is the invoice and carries «factuur
+uitgereikt door afnemer». Florin keeps amounts in euros. For a payout in
+another currency the user enters the euro amounts; Florin does not convert.
+
+## Kleineondernemersregeling
+
+> 4 De ondernemer die de vrijstelling toepast, heeft geen recht op aftrek van belasting en mag op de factuur op geen enkele wijze melding maken van omzetbelasting. 5 De vrijstelling geldt voor de ondernemer die in Nederland is gevestigd, na een melding aan de inspecteur, vanaf het eerstvolgende belastingtijdvak dat minimaal vier weken na ontvangst van de melding aanvangt. […] 7 […] De beëindiging van de vrijstelling wordt van kracht op de eerste dag van het eerstvolgende kalenderkwartaal dat minimaal vier weken na ontvangst van de wederopzegging aanvangt. De ondernemer kan na de beëindiging door wederopzegging pas na het verstrijken van het kalenderjaar waarin de vrijstelling is beëindigd en het daaropvolgende kalenderjaar opnieuw de vrijstelling toepassen. […] 9 Een ondernemer komt niet in aanmerking voor de vrijstelling of mag deze niet langer toepassen indien de jaaromzet in Nederland het bedrag, genoemd in het eerste lid, overschrijdt. […] In de hiervoor bedoelde gevallen komt de ondernemer ook niet in aanmerking voor de vrijstelling in het daaropvolgende kalenderjaar of is de vrijstelling niet langer van toepassing voor de levering van het goed of de dienst waardoor die overschrijding tot stand komt, gedurende het resterende kalenderjaar en het daaropvolgende kalenderjaar.
+
+[Wet op de omzetbelasting 1968, artikel 25a](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-23. The limit of lid 1 is in [`tax-years/2026.md`](tax-years/2026.md).
+
+> 2 In afwijking van het eerste lid, onderdeel a, wordt bij de vaststelling van de jaaromzet in Nederland niet in aanmerking genomen de vergoeding voor de levering van door de ondernemer in zijn bedrijf gebruikte: a. onroerende zaken […]; en b. roerende zaken waarop de ondernemer voor de inkomstenbelasting […] afschrijft
+
+[Wet op de omzetbelasting 1968, artikel 25 lid 2](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-23
+
+> Dit zijn leveringen belast met 21%, 9% en 0% btw (uitvoer en intracommunautaire leveringen) en leveringen belast met Nederlandse btw die u verlegt naar een andere Nederlandse ondernemer (nationale verlegging). […] Ook telt btw-vrijgestelde omzet mee van leveringen van goederen en diensten die betrekking hebben op onroerende zaken, betaalmiddelen en effecten, financiële diensten en verzekeringsdiensten in Nederland (overige vrijgestelde omzet telt niet mee voor de omzetgrens). […] prestaties die belast zijn in een ander land […] De hiermee behaalde omzet telt niet mee voor de omzetgrens van de KOR.
+
+[Belastingdienst, Voorwaarden voor deelname aan de KOR](https://www.belastingdienst.nl/wps/wcm/connect/nl/btw/content/kor-voorwaarden), read 2026-11-23
+
+> U berekent geen btw aan uw klanten. […] Als u zelf facturen wilt versturen, of als uw klanten daarom vragen, kunt u dat wel doen. U vermeldt dan op de factuur dat een vrijstelling van toepassing is. U doet geen btw-aangifte meer. Behalve in een aantal gevallen, dan moet u toch incidentele aangifte doen. U trekt de btw over uw zakelijke kosten en investeringen niet af.
+
+[Belastingdienst, Wat betekent meedoen met de KOR?](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/hoe_werkt_de_btw/kleineondernemersregeling/wat-betekent-meedoen-met-de-kleineondernemersregeling/wat-betekent-meedoen-met-de-kleineondernemersregeling), read 2026-11-23
+
+> Zodra uw omzet boven de € 20.000 in 1 kalenderjaar komt, mag u namelijk geen gebruik meer maken van de KOR. U moet zich op dat moment direct afmelden. Ook de omzetoverschrijdende handeling zelf valt niet meer onder de btw-vrijstelling.
+
+[Belastingdienst, Afmelden voor de KOR](https://www.belastingdienst.nl/wps/wcm/connect/nl/btw/content/afmelden-kor), read 2026-11-23
+
+> Koopt of verkoopt u goederen en/of diensten binnen de EU én maakt u gebruik van de KOR? Dan gelden er aangepaste regels en is het soms lastig om te bepalen wat u met de btw moet doen. Vaak moet u dan incidenteel btw-aangifte doen.
+
+[Belastingdienst, Kleineondernemersregeling (KOR)](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/hoe_werkt_de_btw/kleineondernemersregeling/kleineondernemersregeling), read 2026-11-23
+
+Where Florin implements it: `KorService` and `KorStatus` in
+`lib/services/kor_service.dart`, the KOR dates on the business profile, and
+`VatTreatment.kor`.
+
+- The KOR applies from the start date the user enters, which must be the
+  first of a month as a return period starts then, until a voluntary end
+  date (also the first of a month) or the invoice that takes the year's
+  turnover past the limit, whichever comes first. After passing the limit it
+  does not apply for the rest of that year and the next year.
+- Turnover counts issued invoices with Dutch BTW, domestic reverse charge,
+  export and intra-Community supplies, and KOR-exempt invoices; credit notes
+  reduce it. Services taxed in another country (`euServices`,
+  `servicesOutsideEu`) do not count. Florin cannot tell which exemption an
+  exempt line has, so it counts every exempt line: the cautious reading.
+  A sale recorded on an asset does not count (art. 25 lid 2); an invoice for
+  it does, as Florin cannot tell it apart: the cautious reading.
+- While the KOR applies, an invoice for a supply in the Netherlands must use
+  `VatTreatment.kor`; services taxed abroad keep their treatment. The invoice
+  that passes the limit must carry BTW. The KOR PDF shows no BTW column, no
+  BTW totals and no seller BTW number, following lid 4, and states that the
+  exemption applies, as the Belastingdienst asks.
+- No BTW on purchases is reclaimed on KOR dates: the expense form blocks it,
+  and the calculations treat that BTW as cost even for expenses saved before
+  the KOR dates were entered.
+- BTW shifted to the user (2a, 4a, 4b) is still shown as owed in KOR
+  quarters, with a note that an incidental return may be due. The pages read
+  do not say exactly when; Florin shows the amount rather than leave it out.
+- The EU-KOR (art. 25c and further) and the eligibility test on the previous
+  year's turnover before the first year Florin holds are not modelled; the
+  user's start date stands for the Belastingdienst's confirmation.
+
 ## ICP-opgaaf
 
 > De opgaaf ICP over goederen mag u per maand, per kwartaal of per jaar doen. Als u per kwartaal opgaaf ICP wilt doen, mag u niet meer dan € 50.000 aan goederen leveren per kwartaal.
@@ -78,7 +202,8 @@ are not reported in the return.
 Where Florin implements it: `VatService.calculateQuarter` fills 1a, 1b, 1d,
 1e, 2a, 3a, 3b, 4a, 4b, 5a and 5b. `PurchaseVat` on an expense decides 2a, 4a
 or 4b. Rubriek 1c (other rates) and 3c (installation and distance sales) do
-not occur in the supplies Florin records.
+not occur in the supplies Florin records. Services to businesses outside the
+EU are in no rubriek; see Services to businesses outside the EU above.
 
 ## BTW return rounding
 

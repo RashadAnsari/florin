@@ -28,6 +28,13 @@ class VatQuarterResult {
   /// Supplies to EU businesses for the ICP-opgaaf.
   final List<Invoice> icpInvoices;
 
+  /// Services to businesses outside the EU. Not part of the return; shown
+  /// so the user sees where that revenue went.
+  final int revenueOutsideReturn;
+
+  /// Supplies exempt under the KOR. Not part of the return either.
+  final int revenueKorExempt;
+
   const VatQuarterResult({
     required this.revenue1a,
     required this.vat1a,
@@ -45,6 +52,8 @@ class VatQuarterResult {
     required this.vat4b,
     required this.inputVat5b,
     required this.icpInvoices,
+    this.revenueOutsideReturn = 0,
+    this.revenueKorExempt = 0,
   });
 
   int get outputVat5a => vat1a + vat1b + vat1d + vat2a + vat4a + vat4b;
@@ -58,7 +67,8 @@ abstract final class VatService {
   static const urgentDeadlineDays = 14;
 
   /// Rubrieken per the Belastingdienst guidance in `docs/legal.md`. Exempt
-  /// supplies are not reported.
+  /// supplies, supplies exempt under the KOR and services to businesses
+  /// outside the EU are not reported.
   static VatQuarterResult calculateQuarter({
     required List<Invoice> invoices,
     required List<InvoiceLine> lines,
@@ -72,19 +82,24 @@ abstract final class VatService {
     }
 
     var r1a = 0, v1a = 0, r1b = 0, v1b = 0, r1e = 0, r3a = 0, r3b = 0;
+    var outside = 0, korExempt = 0;
     final icp = <Invoice>[];
     for (final inv in invoices) {
       if (!inv.isIssued || quarterOf(inv.invoiceDate) != quarter) continue;
-      final sign = inv.invoiceType == InvoiceType.creditNote ? -1 : 1;
+      final sign = inv.sign;
       switch (inv.vatTreatment) {
         case VatTreatment.reverseChargeNl:
-          r1e += sign * inv.totalExclVat;
+          r1e += inv.signedExclVat;
         case VatTreatment.euServices:
         case VatTreatment.euGoods:
-          r3b += sign * inv.totalExclVat;
+          r3b += inv.signedExclVat;
           icp.add(inv);
         case VatTreatment.exportOutsideEu:
-          r3a += sign * inv.totalExclVat;
+          r3a += inv.signedExclVat;
+        case VatTreatment.servicesOutsideEu:
+          outside += inv.signedExclVat;
+        case VatTreatment.kor:
+          korExempt += inv.signedExclVat;
         case VatTreatment.standard:
           for (final line in linesByInvoice[inv.id] ?? const <InvoiceLine>[]) {
             final base = sign * line.lineTotalExclVat;
@@ -131,36 +146,12 @@ abstract final class VatService {
       vat4b: vat(PurchaseVat.fromEu),
       inputVat5b: inputVat,
       icpInvoices: icp,
+      revenueOutsideReturn: outside,
+      revenueKorExempt: korExempt,
     );
   }
 
   /// Last day of the month after the quarter.
   static DateTime filingDeadline(int year, int quarter) =>
       DateTime(year, quarter * 3 + 2, 0);
-}
-
-final _btwRegex = RegExp(r'^NL\d{9}B\d{2}$', caseSensitive: false);
-
-/// Dutch btw-identificatienummer: NL, 9 digits, B, 2 digits.
-bool isValidDutchVatNumber(String value) =>
-    _btwRegex.hasMatch(value.replaceAll(' ', ''));
-
-final _kvkRegex = RegExp(r'^\d{8}$');
-
-bool isValidKvkNumber(String value) =>
-    _kvkRegex.hasMatch(value.replaceAll(' ', ''));
-
-/// IBAN structure plus the ISO 13616 mod-97 check.
-bool isValidIban(String value) {
-  final iban = value.replaceAll(' ', '').toUpperCase();
-  if (!RegExp(r'^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$').hasMatch(iban)) return false;
-  final rearranged = iban.substring(4) + iban.substring(0, 4);
-  var remainder = 0;
-  for (final c in rearranged.codeUnits) {
-    final digits = c >= 65 ? '${c - 55}' : String.fromCharCode(c);
-    for (final d in digits.codeUnits) {
-      remainder = (remainder * 10 + d - 48) % 97;
-    }
-  }
-  return remainder == 1;
 }
