@@ -67,31 +67,30 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
       onAdd: () => context.push('/expenses/new'),
       items: expenses,
       emptyText: l.expensesNone,
-      controls: Padding(
-        padding: const EdgeInsets.all(AppSpacing.heading),
-        child: Column(
-          children: [
-            DropdownButtonFormField<ExpenseCategory?>(
-              initialValue: _category,
-              isExpanded: true,
-              decoration: fieldDecoration(
-                label: l.labelCategory,
-                help: l.labelCategoryHelp,
-              ),
-              items: [
-                DropdownMenuItem(value: null, child: Text(l.labelAll)),
-                for (final c in ExpenseCategory.values)
-                  DropdownMenuItem(value: c, child: Text(c.label(l))),
-              ],
-              onChanged: (c) => setState(() => _category = c),
+      controls: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          DropdownButtonFormField<ExpenseCategory?>(
+            style: fieldTextStyle(context),
+            initialValue: _category,
+            isExpanded: true,
+            decoration: fieldDecoration(
+              label: l.labelCategory,
+              help: l.labelCategoryHelp,
             ),
-            const SizedBox(height: AppSpacing.tight),
-            QuarterChips(
-              selected: _quarter,
-              onSelected: (q) => setState(() => _quarter = q),
-            ),
-          ],
-        ),
+            items: [
+              DropdownMenuItem(value: null, child: Text(l.labelAll)),
+              for (final c in ExpenseCategory.values)
+                DropdownMenuItem(value: c, child: Text(c.label(l))),
+            ],
+            onChanged: (c) => setState(() => _category = c),
+          ),
+          const SizedBox(height: AppSpacing.heading),
+          QuarterChips(
+            selected: _quarter,
+            onSelected: (q) => setState(() => _quarter = q),
+          ),
+        ],
       ),
       itemBuilder: (context, e) => _ExpenseTile(
         expense: e,
@@ -118,19 +117,11 @@ class _ExpenseTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final muted = theme.textTheme.bodySmall?.copyWith(
-      color: theme.colorScheme.onSurfaceVariant,
-    );
     return ListTile(
       onTap: onTap,
-      title: EllipsisText(
-        expense.supplier,
-        style: const TextStyle(fontWeight: FontWeight.w600),
-      ),
+      title: EllipsisText(expense.supplier),
       subtitle: EllipsisText(
         '${AppFormat.date(expense.date)}  ${expense.category.label(l)}',
-        style: muted,
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -139,14 +130,14 @@ class _ExpenseTile extends StatelessWidget {
           if (hasFiles)
             Tooltip(
               message: l.expensesHasFiles,
-              child: Icon(Icons.attach_file, size: 14, color: muted?.color),
+              child: const Icon(Icons.attach_file, size: 16),
             )
           else if (expense.paperOriginalKept)
             Tooltip(
               message: l.expensesPaperOnly,
-              child: Icon(Icons.receipt_long, size: 14, color: muted?.color),
+              child: const Icon(Icons.receipt_long, size: 16),
             ),
-          const SizedBox(width: AppSpacing.tight),
+          const SizedBox(width: AppSpacing.heading),
           Text(AppFormat.cents(expense.totalInclVat)),
         ],
       ),
@@ -261,6 +252,7 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
       title: l.expensesDeleteTitle,
       message: l.expensesDeleteMessage,
       isDestructive: true,
+      confirmLabel: l.actionDelete,
     );
     if (!confirmed || !mounted) return;
     final deleted = await guardSave(context, () async {

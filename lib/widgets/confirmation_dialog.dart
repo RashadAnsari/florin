@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:florin/l10n/app_localizations.dart';
 
+/// Asks before an action that cannot be undone. The confirm button is named
+/// after the action, such as Delete or Send.
 Future<bool> showConfirmationDialog(
   BuildContext context, {
   required String title,
   required String message,
-  String? confirmLabel,
+  required String confirmLabel,
   String? cancelLabel,
   bool isDestructive = false,
 }) async {
@@ -28,7 +30,7 @@ Future<bool> showConfirmationDialog(
                       )
                     : null,
                 onPressed: () => Navigator.of(ctx).pop(true),
-                child: Text(confirmLabel ?? l.actionConfirm),
+                child: Text(confirmLabel),
               ),
             ],
           );

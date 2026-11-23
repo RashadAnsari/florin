@@ -7,21 +7,19 @@ import 'tone_badge.dart';
 class DeadlineBadge extends StatelessWidget {
   final DateTime deadline;
   final bool filed;
-
-  /// The KOR covers the whole period, so no regular return is due.
-  final bool korCovered;
+  final ReturnDuty duty;
 
   const DeadlineBadge({
     super.key,
     required this.deadline,
     this.filed = false,
-    this.korCovered = false,
+    this.duty = ReturnDuty.regular,
   });
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
-    if (korCovered) {
+    if (duty == ReturnDuty.none) {
       return ToneBadge(label: l.deadlineBadgeKor, color: context.colors.income);
     }
     if (filed) {
@@ -35,6 +33,12 @@ class DeadlineBadge extends StatelessWidget {
       return ToneBadge(
         label: l.deadlineBadgeOverdue,
         color: context.colors.danger,
+      );
+    }
+    if (duty == ReturnDuty.incidental) {
+      return ToneBadge(
+        label: l.deadlineBadgeIncidental,
+        color: context.colors.vat,
       );
     }
     return ToneBadge(

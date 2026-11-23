@@ -73,6 +73,14 @@ extension VatTreatmentLabel on VatTreatment {
   };
 }
 
+extension ReceiptOwnerKindLabel on ReceiptOwnerKind {
+  String label(AppLocalizations l) => switch (this) {
+    ReceiptOwnerKind.expense => l.receiptOwnerExpense,
+    ReceiptOwnerKind.asset => l.receiptOwnerAsset,
+    ReceiptOwnerKind.invoice => l.receiptOwnerInvoice,
+  };
+}
+
 extension ReceiptTypeLabel on ReceiptType {
   String label(AppLocalizations l) => switch (this) {
     ReceiptType.pdf => 'PDF',

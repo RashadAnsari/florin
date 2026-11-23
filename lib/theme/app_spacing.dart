@@ -26,6 +26,7 @@ abstract final class AppSpacing {
   /// Between top-level sections in Settings.
   static const settingsSection = 40.0;
 
+  /// Around the content of every screen, so all screens share one left
+  /// edge with the title and the list rows.
   static const screenPadding = EdgeInsets.all(section);
-  static const settingsPadding = EdgeInsets.all(dashboardSection);
 }

@@ -52,17 +52,50 @@ class ReceiptDao extends DatabaseAccessor<AppDatabase>
 
   SimpleSelectStatement<$ReceiptsTable, Receipt> _of(ReceiptOwner owner) =>
       select(receipts)
-        ..where((r) => owner._matches(r))
+        // In use only; removed receipts are listed apart.
+        ..where((r) => owner._matches(r) & r.removedAt.isNull())
         ..orderBy([(r) => OrderingTerm.asc(r.addedAt)]);
 
   Stream<List<Receipt>> watchFor(ReceiptOwner owner) => _of(owner).watch();
 
   Future<List<Receipt>> forOwner(ReceiptOwner owner) => _of(owner).get();
 
+  /// Every receipt, removed ones included.
   Future<List<Receipt>> all() =>
       (select(receipts)..orderBy([(r) => OrderingTerm.asc(r.addedAt)])).get();
 
-  Stream<List<Receipt>> watchAll() => select(receipts).watch();
+  /// The receipts in use, for the lists that mark records with files.
+  Stream<List<Receipt>> watchInUse() =>
+      (select(receipts)..where((r) => r.removedAt.isNull())).watch();
+
+  /// The removed receipts, newest removal first.
+  Stream<List<Receipt>> watchRemoved() =>
+      (select(receipts)
+            ..where((r) => r.removedAt.isNotNull())
+            ..orderBy([(r) => OrderingTerm.desc(r.removedAt)]))
+          .watch();
+
+  /// What [r] belongs to, to remember when it is removed: the kind, the date
+  /// and the name a person knows it by.
+  Future<(ReceiptOwnerKind, DateTime, String)> describeOwner(Receipt r) async {
+    final db = attachedDatabase;
+    if (r.expenseId != null) {
+      final e = await (db.select(
+        db.expenses,
+      )..where((x) => x.id.equals(r.expenseId!))).getSingle();
+      return (ReceiptOwnerKind.expense, e.date, e.supplier);
+    }
+    if (r.assetId != null) {
+      final a = await (db.select(
+        db.fixedAssets,
+      )..where((x) => x.id.equals(r.assetId!))).getSingle();
+      return (ReceiptOwnerKind.asset, a.purchaseDate, a.assetName);
+    }
+    final i = await (db.select(
+      db.invoices,
+    )..where((x) => x.id.equals(r.invoiceId!))).getSingle();
+    return (ReceiptOwnerKind.invoice, i.invoiceDate, i.invoiceNumber);
+  }
 
   /// A receipt already stored with the same content, if any.
   Future<Receipt?> findByHash(String sha256) =>

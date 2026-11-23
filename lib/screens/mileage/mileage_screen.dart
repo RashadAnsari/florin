@@ -55,21 +55,15 @@ class MileageScreen extends ConsumerWidget {
       ]),
       itemBuilder: (context, t) => ListTile(
         title: EllipsisText(
-          '${t.departureAddress.split('\n').first}, '
-          '${t.arrivalAddress.split('\n').first}',
+          l.mileageRoute(
+            t.departureAddress.split('\n').first,
+            t.arrivalAddress.split('\n').first,
+          ),
         ),
         subtitle: EllipsisText(
           '${AppFormat.date(t.date)}  ${t.tripType.label(l)}  ${t.purpose}',
         ),
-        trailing: Text(
-          '${t.distanceKm} ${l.mileageUnitKm}',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: t.tripType == TripType.business
-                ? context.colors.income
-                : null,
-          ),
-        ),
+        trailing: Text('${t.distanceKm} ${l.mileageUnitKm}'),
         onTap: () => context.push('/mileage/${t.id}', extra: t),
       ),
     );
@@ -168,6 +162,7 @@ class _MileageDetailPageState extends ConsumerState<MileageDetailPage> {
         '${AppFormat.date(t.date)}, ${t.distanceKm} ${l.mileageUnitKm}',
       ),
       isDestructive: true,
+      confirmLabel: l.actionDelete,
     );
     if (!confirmed || !mounted) return;
     final deleted = await guardSave(
@@ -311,12 +306,10 @@ class _MileageDetailPageState extends ConsumerState<MileageDetailPage> {
                         min: (start ?? -1) + 1,
                       ),
                 ),
-                InputDecorator(
-                  decoration: fieldDecoration(
-                    label: l.mileageFieldDistance,
-                    help: l.mileageFieldDistanceHelp,
-                  ),
-                  child: Text('$distance ${l.mileageUnitKm}'),
+                ReadOnlyField(
+                  label: l.mileageFieldDistance,
+                  help: l.mileageFieldDistanceHelp,
+                  value: '$distance ${l.mileageUnitKm}',
                 ),
               ],
             ),

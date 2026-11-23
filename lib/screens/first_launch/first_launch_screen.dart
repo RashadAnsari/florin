@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
 import '../../widgets/feedback.dart';
 import '../../widgets/help.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,8 +26,24 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
   final _formKey = GlobalKey<FormState>();
   final _fields = BusinessProfileFields();
   String? _directory;
+
+  /// The folder used when the user picks none, shown once known.
+  String? _defaultDirectory;
   bool _saving = false;
   String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    DbLocationService.defaultPath().then(
+      (path) {
+        if (mounted) setState(() => _defaultDirectory = p.dirname(path));
+      },
+      // Without the path the screen names the folder in words instead; the
+      // database still goes there when the user starts.
+      onError: (Object _) {},
+    );
+  }
 
   @override
   void dispose() {
@@ -120,7 +137,12 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
                       children: [
                         Expanded(
                           child: EllipsisText(
-                            _directory ?? l.firstLaunchDbDefault,
+                            _directory ??
+                                (_defaultDirectory == null
+                                    ? l.firstLaunchDbDefaultFolder
+                                    : l.firstLaunchDbDefault(
+                                        _defaultDirectory!,
+                                      )),
                             style: muted,
                           ),
                         ),

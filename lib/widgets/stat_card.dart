@@ -23,6 +23,11 @@ class StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final labelStyle = theme.textTheme.bodySmall?.copyWith(
+      color: theme.colorScheme.onSurfaceVariant,
+    );
+    final labelLine =
+        (labelStyle?.fontSize ?? 12) * (labelStyle?.height ?? 1.4);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.section),
@@ -30,21 +35,27 @@ class StatCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: LabelWithHelp(
-                    label,
-                    help: help,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
+            // Two lines are kept for every label, so the figures of cards
+            // side by side line up when one label wraps.
+            ConstrainedBox(
+              constraints: BoxConstraints(minHeight: 2 * labelLine),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    // A card is narrow; its label may wrap once.
+                    child: LabelWithHelp(
+                      label,
+                      help: help,
+                      maxLines: 2,
+                      style: labelStyle,
                     ),
                   ),
-                ),
-                // ignore: use_null_aware_elements
-                if (trailing != null) trailing!,
-              ],
+                  // ignore: use_null_aware_elements
+                  if (trailing != null) trailing!,
+                ],
+              ),
             ),
             const SizedBox(height: AppSpacing.heading),
             // An amount stays on one line; it shrinks rather than wraps.

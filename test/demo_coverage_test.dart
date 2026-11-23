@@ -88,6 +88,7 @@ void main() {
     );
     expect(receipts.any((r) => r.assetId != null), isTrue);
     expect(receipts.any((r) => r.invoiceId != null), isTrue);
+    expect(receipts.any((r) => r.removedAt != null), isTrue);
     expect(assets.any((a) => a.reserveGain), isTrue);
     expect(assets.any((a) => a.reinvestmentReserveApplied > 0), isTrue);
     expect(assets.any((a) => a.investmentDeductionReceived != null), isTrue);

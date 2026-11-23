@@ -38,19 +38,13 @@ class HoursScreen extends ConsumerWidget {
       onAdd: () => context.push('/hours/new'),
       items: entries,
       emptyText: l.hoursNone,
-      controls: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.section,
-          vertical: AppSpacing.field,
-        ),
-        child: UrencriteriumProgress(
-          totalHours: list.fold(0.0, (s, e) => s + e.hours),
-          billableHours: list
-              .where((e) => e.billable)
-              .fold<double>(0.0, (s, e) => s + e.hours),
-          target: rules.urencriterium,
-          yearOver: year < DateTime.now().year,
-        ),
+      controls: UrencriteriumProgress(
+        totalHours: list.fold(0.0, (s, e) => s + e.hours),
+        billableHours: list
+            .where((e) => e.billable)
+            .fold<double>(0.0, (s, e) => s + e.hours),
+        target: rules.urencriterium,
+        yearOver: year < DateTime.now().year,
       ),
       itemBuilder: (context, e) => ListTile(
         title: EllipsisText(e.description),
@@ -61,13 +55,7 @@ class HoursScreen extends ConsumerWidget {
             if (e.clientProject != null) e.clientProject!,
           ].join('  '),
         ),
-        trailing: Text(
-          '${AppFormat.hours(e.hours)} ${l.hoursUnitShort}',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: e.billable ? context.colors.income : null,
-          ),
-        ),
+        trailing: Text('${AppFormat.hours(e.hours)} ${l.hoursUnitShort}'),
         onTap: () => context.push('/hours/${e.id}', extra: e),
       ),
     );
@@ -160,6 +148,7 @@ class _HourDetailPageState extends ConsumerState<HourDetailPage> {
       title: l.hoursDeleteTitle,
       message: l.hoursDeleteMessage(widget.entry!.description),
       isDestructive: true,
+      confirmLabel: l.actionDelete,
     );
     if (!confirmed || !mounted) return;
     final deleted = await guardSave(

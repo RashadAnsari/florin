@@ -1879,9 +1879,9 @@
             "moor_type": "int",
             "nullable": true,
             "customConstraints": null,
-            "defaultConstraints": "REFERENCES expenses (id) ON DELETE RESTRICT",
+            "defaultConstraints": "REFERENCES expenses (id) ON DELETE SET NULL",
             "dialectAwareDefaultConstraints": {
-              "sqlite": "REFERENCES expenses (id) ON DELETE RESTRICT"
+              "sqlite": "REFERENCES expenses (id) ON DELETE SET NULL"
             },
             "default_dart": null,
             "default_client_dart": null,
@@ -1894,7 +1894,7 @@
                   },
                   "initially_deferred": false,
                   "on_update": null,
-                  "on_delete": "restrict"
+                  "on_delete": "setNull"
                 }
               }
             ]
@@ -1905,9 +1905,9 @@
             "moor_type": "int",
             "nullable": true,
             "customConstraints": null,
-            "defaultConstraints": "REFERENCES fixed_assets (id) ON DELETE RESTRICT",
+            "defaultConstraints": "REFERENCES fixed_assets (id) ON DELETE SET NULL",
             "dialectAwareDefaultConstraints": {
-              "sqlite": "REFERENCES fixed_assets (id) ON DELETE RESTRICT"
+              "sqlite": "REFERENCES fixed_assets (id) ON DELETE SET NULL"
             },
             "default_dart": null,
             "default_client_dart": null,
@@ -1920,7 +1920,7 @@
                   },
                   "initially_deferred": false,
                   "on_update": null,
-                  "on_delete": "restrict"
+                  "on_delete": "setNull"
                 }
               }
             ]
@@ -1931,9 +1931,9 @@
             "moor_type": "int",
             "nullable": true,
             "customConstraints": null,
-            "defaultConstraints": "REFERENCES invoices (id) ON DELETE RESTRICT",
+            "defaultConstraints": "REFERENCES invoices (id) ON DELETE SET NULL",
             "dialectAwareDefaultConstraints": {
-              "sqlite": "REFERENCES invoices (id) ON DELETE RESTRICT"
+              "sqlite": "REFERENCES invoices (id) ON DELETE SET NULL"
             },
             "default_dart": null,
             "default_client_dart": null,
@@ -1946,7 +1946,7 @@
                   },
                   "initially_deferred": false,
                   "on_update": null,
-                  "on_delete": "restrict"
+                  "on_delete": "setNull"
                 }
               }
             ]
@@ -2014,12 +2014,58 @@
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
+          },
+          {
+            "name": "removed_at",
+            "getter_name": "removedAt",
+            "moor_type": "dateTime",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "removed_from_kind",
+            "getter_name": "removedFromKind",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [],
+            "type_converter": {
+              "dart_expr": "const EnumNameConverter<ReceiptOwnerKind>(ReceiptOwnerKind.values)",
+              "dart_type_name": "ReceiptOwnerKind"
+            }
+          },
+          {
+            "name": "removed_from_date",
+            "getter_name": "removedFromDate",
+            "moor_type": "dateTime",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "removed_from_name",
+            "getter_name": "removedFromName",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
           }
         ],
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "CHECK ((expense_id IS NOT NULL) + (asset_id IS NOT NULL) + (invoice_id IS NOT NULL) = 1)"
+          "CHECK ((expense_id IS NOT NULL) + (asset_id IS NOT NULL) + (invoice_id IS NOT NULL) <= 1)",
+          "CHECK (removed_at IS NOT NULL OR (expense_id IS NOT NULL) + (asset_id IS NOT NULL) + (invoice_id IS NOT NULL) = 1)",
+          "CHECK (removed_at IS NULL OR (removed_from_kind IS NOT NULL AND removed_from_date IS NOT NULL AND removed_from_name IS NOT NULL))"
         ],
         "explicit_pk": [
           "id"
@@ -2208,7 +2254,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"receipts\" (\"id\" TEXT NOT NULL, \"expense_id\" INTEGER NULL REFERENCES expenses (id) ON DELETE RESTRICT, \"asset_id\" INTEGER NULL REFERENCES fixed_assets (id) ON DELETE RESTRICT, \"invoice_id\" INTEGER NULL REFERENCES invoices (id) ON DELETE RESTRICT, \"year\" INTEGER NOT NULL, \"type\" TEXT NOT NULL, \"original_name\" TEXT NOT NULL, \"size_bytes\" INTEGER NOT NULL, \"sha256\" TEXT NOT NULL, \"added_at\" INTEGER NOT NULL, PRIMARY KEY (\"id\"), CHECK ((expense_id IS NOT NULL) + (asset_id IS NOT NULL) + (invoice_id IS NOT NULL) = 1));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"receipts\" (\"id\" TEXT NOT NULL, \"expense_id\" INTEGER NULL REFERENCES expenses (id) ON DELETE SET NULL, \"asset_id\" INTEGER NULL REFERENCES fixed_assets (id) ON DELETE SET NULL, \"invoice_id\" INTEGER NULL REFERENCES invoices (id) ON DELETE SET NULL, \"year\" INTEGER NOT NULL, \"type\" TEXT NOT NULL, \"original_name\" TEXT NOT NULL, \"size_bytes\" INTEGER NOT NULL, \"sha256\" TEXT NOT NULL, \"added_at\" INTEGER NOT NULL, \"removed_at\" INTEGER NULL, \"removed_from_kind\" TEXT NULL, \"removed_from_date\" INTEGER NULL, \"removed_from_name\" TEXT NULL, PRIMARY KEY (\"id\"), CHECK ((expense_id IS NOT NULL) + (asset_id IS NOT NULL) + (invoice_id IS NOT NULL) <= 1), CHECK (removed_at IS NOT NULL OR (expense_id IS NOT NULL) + (asset_id IS NOT NULL) + (invoice_id IS NOT NULL) = 1), CHECK (removed_at IS NULL OR (removed_from_kind IS NOT NULL AND removed_from_date IS NOT NULL AND removed_from_name IS NOT NULL)));"
         }
       ]
     },

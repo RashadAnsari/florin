@@ -280,6 +280,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
     final confirmed = await showConfirmationDialog(
       context,
       title: _selfBilled ? l.invoiceRecordTitle : l.invoiceIssueTitle,
+      confirmLabel: _selfBilled ? l.invoiceActionRecord : l.invoiceActionSend,
       message: _selfBilled ? l.invoiceRecordMessage : l.invoiceIssueMessage,
     );
     if (!confirmed || !mounted) return;
@@ -448,6 +449,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
       title: l.invoiceDeleteTitle,
       message: l.invoiceDeleteMessage(_original!.invoiceNumber),
       isDestructive: true,
+      confirmLabel: l.actionDelete,
     );
     if (!confirmed || !mounted) return;
     final deleted = await guardSave(context, () async {
@@ -478,7 +480,6 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     final l = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
     final allClients = ref.watch(clientsProvider).valueOrNull ?? <Client>[];
     // Loaded here so the KOR checks in the validators have their data.
     ref.watch(korStatusProvider);
@@ -540,6 +541,14 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (!_isEditable) ...[
+                    NoticeBanner(
+                      isCredit
+                          ? l.invoiceLockedCreditNotice
+                          : l.invoiceLockedNotice,
+                    ),
+                    const SizedBox(height: AppSpacing.group),
+                  ],
                   if (_corrected != null) ...[
                     NoticeBanner(l.invoiceCorrects(_corrected!.invoiceNumber)),
                     const SizedBox(height: AppSpacing.group),
@@ -552,6 +561,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                     flex: const [3, 2],
                     children: [
                       DropdownButtonFormField<int>(
+                        style: fieldTextStyle(context),
                         initialValue: _clientId,
                         isExpanded: true,
                         decoration: fieldDecoration(
@@ -629,17 +639,13 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                           l.invoiceValidatePaymentTerm,
                         ),
                       ),
-                      InputDecorator(
-                        decoration: fieldDecoration(
-                          label: l.invoiceFieldDueDate,
-                          help: l.invoiceFieldDueDateHelp,
-                        ),
-                        child: Text(
-                          AppFormat.date(
-                            _invoiceDate.add(
-                              Duration(
-                                days: parseWholeNumber(_paymentTerm.text) ?? 0,
-                              ),
+                      ReadOnlyField(
+                        label: l.invoiceFieldDueDate,
+                        help: l.invoiceFieldDueDateHelp,
+                        value: AppFormat.date(
+                          _invoiceDate.add(
+                            Duration(
+                              days: parseWholeNumber(_paymentTerm.text) ?? 0,
                             ),
                           ),
                         ),
@@ -674,15 +680,18 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                     ),
                   ],
                   const SizedBox(height: AppSpacing.section),
-                  Text(l.invoiceFieldLines, style: theme.textTheme.titleSmall),
+                  SectionLabel(l.invoiceFieldLines),
                   const SizedBox(height: AppSpacing.heading),
                   for (var i = 0; i < _lines.length; i++) _lineRow(i, l),
-                  const SizedBox(height: AppSpacing.heading),
-                  TextButton.icon(
-                    icon: const Icon(Icons.add, size: 16),
-                    label: Text(l.invoiceFieldAddLine),
-                    onPressed: () => setState(() => _lines.add(_LineItem())),
-                  ),
+                  // An issued invoice keeps its lines.
+                  if (_isEditable) ...[
+                    const SizedBox(height: AppSpacing.heading),
+                    TextButton.icon(
+                      icon: const Icon(Icons.add, size: 16),
+                      label: Text(l.invoiceFieldAddLine),
+                      onPressed: () => setState(() => _lines.add(_LineItem())),
+                    ),
+                  ],
                   const SizedBox(height: AppSpacing.section),
                   Align(
                     alignment: Alignment.centerRight,
@@ -808,12 +817,10 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                   onChanged: (r) => setState(() => line.vatRate = r),
                   required: true,
                 )
-              : InputDecorator(
-                  decoration: fieldDecoration(
-                    label: l.invoiceFieldVat,
-                    help: l.invoiceFieldVatHelp,
-                  ),
-                  child: EllipsisText(_treatment.lineLabel(l)),
+              : ReadOnlyField(
+                  label: l.invoiceFieldVat,
+                  help: l.invoiceFieldVatHelp,
+                  value: _treatment.lineLabel(l),
                 ),
           Row(
             children: [
@@ -825,13 +832,17 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                   child: Text(AppFormat.cents(line.total), maxLines: 1),
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.close, size: 16),
-                tooltip: l.invoiceRemoveLine,
-                color: Theme.of(context).colorScheme.error,
-                onPressed: _lines.length > 1
-                    ? () => setState(() => _lines.removeAt(i).dispose())
-                    : null,
+              // Kept in place when hidden, so amounts line up with the fields.
+              Visibility.maintain(
+                visible: _isEditable,
+                child: IconButton(
+                  icon: const Icon(Icons.close, size: 16),
+                  tooltip: l.invoiceRemoveLine,
+                  color: Theme.of(context).colorScheme.error,
+                  onPressed: _lines.length > 1
+                      ? () => setState(() => _lines.removeAt(i).dispose())
+                      : null,
+                ),
               ),
             ],
           ),

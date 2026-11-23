@@ -66,35 +66,29 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
       onAdd: () => context.push('/invoices/new'),
       items: invoices,
       emptyText: l.invoicesNone,
-      controls: Padding(
-        padding: const EdgeInsets.all(AppSpacing.heading),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SearchField(
-              controller: _search,
-              hint: l.labelSearch,
-              help: l.invoicesSearchHelp,
-              onChanged: () => setState(() {}),
-            ),
-            const SizedBox(height: AppSpacing.tight),
-            ChoiceChips<_Filter>(
-              selected: _filter,
-              onSelected: (f) => setState(() => _filter = f),
-              options: [
-                (null, l.invoicesFilterAll),
-                for (final s in InvoiceStatus.values) (s, s.label(l)),
-                (_overdue, l.invoicesFilterOverdue),
-              ],
-            ),
-          ],
-        ),
+      controls: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SearchField(
+            controller: _search,
+            hint: l.labelSearch,
+            help: l.invoicesSearchHelp,
+            onChanged: () => setState(() {}),
+          ),
+          const SizedBox(height: AppSpacing.heading),
+          ChoiceChips<_Filter>(
+            selected: _filter,
+            onSelected: (f) => setState(() => _filter = f),
+            options: [
+              (null, l.invoicesFilterAll),
+              for (final s in InvoiceStatus.values) (s, s.label(l)),
+              (_overdue, l.invoicesFilterOverdue),
+            ],
+          ),
+        ],
       ),
       itemBuilder: (context, inv) => ListTile(
-        title: EllipsisText(
-          clients[inv.clientId] ?? '',
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
+        title: EllipsisText(clients[inv.clientId] ?? ''),
         subtitle: EllipsisText(
           '${inv.invoiceNumber}  ${AppFormat.date(inv.invoiceDate)}'
           '${inv.isCreditNote ? '  ${inv.invoiceType.label(l)}' : ''}',
@@ -104,10 +98,7 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
           children: [
             InvoiceStatusBadge(inv),
             const SizedBox(width: AppSpacing.field),
-            Text(
-              AppFormat.cents(inv.signedInclVat),
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
+            Text(AppFormat.cents(inv.signedInclVat)),
           ],
         ),
         onTap: () => context.push('/invoices/${inv.id}'),

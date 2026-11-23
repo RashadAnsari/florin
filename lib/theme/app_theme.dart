@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'app_spacing.dart';
 import 'package:intl/intl.dart';
 
 /// Semantic colours. Values follow Apple's system colours (Human Interface
@@ -215,6 +217,9 @@ abstract final class AppTheme {
       // No fontFamily: the platform's own font, San Francisco on macOS and
       // Segoe UI on Windows. Nothing is downloaded.
     );
+    // ThemeData's text theme has no sizes until MaterialApp localizes it, so
+    // styles set here take theirs from the same geometry.
+    final sizes = Typography.englishLike2021;
     final controlShape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(controlRadius),
     );
@@ -233,10 +238,11 @@ abstract final class AppTheme {
         backgroundColor: content,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
-        titleTextStyle: base.textTheme.titleLarge?.copyWith(
+        titleSpacing: AppSpacing.section,
+        titleTextStyle: sizes.titleMedium?.copyWith(
           color: label,
           fontWeight: FontWeight.w600,
-          letterSpacing: -0.3,
+          letterSpacing: -0.2,
         ),
       ),
       cardTheme: CardThemeData(
@@ -281,10 +287,24 @@ abstract final class AppTheme {
       chipTheme: base.chipTheme.copyWith(
         shape: StadiumBorder(side: BorderSide(color: colors.separator)),
       ),
+      // One style for every list row: the name, its details, and a figure
+      // in tabular digits so amounts line up.
       listTileTheme: ListTileThemeData(
         shape: controlShape,
-        subtitleTextStyle: base.textTheme.bodySmall?.copyWith(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.section,
+        ),
+        iconColor: colors.secondaryLabel,
+        titleTextStyle: sizes.bodyLarge?.copyWith(
+          color: label,
+          fontWeight: FontWeight.w500,
+        ),
+        subtitleTextStyle: sizes.bodyMedium?.copyWith(
           color: colors.secondaryLabel,
+        ),
+        leadingAndTrailingTextStyle: sizes.bodyMedium?.copyWith(
+          color: label,
+          fontFeatures: const [FontFeature.tabularFigures()],
         ),
       ),
       tooltipTheme: TooltipThemeData(

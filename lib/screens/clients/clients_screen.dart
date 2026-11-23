@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
+import '../../widgets/value_row.dart';
 import '../../widgets/help.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -84,36 +85,32 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
       onAdd: () => context.push('/clients/new'),
       items: clients,
       emptyText: l.clientsNone,
-      controls: Padding(
-        padding: const EdgeInsets.all(AppSpacing.heading),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SearchField(
-              controller: _search,
-              hint: l.labelSearch,
-              help: l.clientsSearchHelp,
-              onChanged: () => setState(() {}),
-            ),
-            const SizedBox(height: AppSpacing.tight),
-            ChoiceChips(
-              selected: _filter,
-              onSelected: (f) => setState(() => _filter = f),
-              options: [
-                (_ClientFilter.all, l.clientsFilterAll),
-                (_ClientFilter.active, l.clientsFilterActive),
-                (_ClientFilter.inactive, l.clientsFilterInactive),
-              ],
-            ),
-          ],
-        ),
+      controls: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SearchField(
+            controller: _search,
+            hint: l.labelSearch,
+            help: l.clientsSearchHelp,
+            onChanged: () => setState(() {}),
+          ),
+          const SizedBox(height: AppSpacing.heading),
+          ChoiceChips(
+            selected: _filter,
+            onSelected: (f) => setState(() => _filter = f),
+            options: [
+              (_ClientFilter.all, l.clientsFilterAll),
+              (_ClientFilter.active, l.clientsFilterActive),
+              (_ClientFilter.inactive, l.clientsFilterInactive),
+            ],
+          ),
+        ],
       ),
       itemBuilder: (context, c) => ListTile(
-        title: EllipsisText(
-          c.name,
-          style: const TextStyle(fontWeight: FontWeight.w600),
+        title: EllipsisText(c.name),
+        subtitle: EllipsisText(
+          l.clientsPaidInYear(year, AppFormat.cents(paid[c.id] ?? 0)),
         ),
-        subtitle: Text(AppFormat.cents(paid[c.id] ?? 0)),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -130,7 +127,7 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
                     color: Theme.of(context).colorScheme.primary,
                   )
                 : ToneBadge(
-                    label: c.wetDbaRisk.label(l),
+                    label: l.clientsDbaBadge(c.wetDbaRisk.label(l)),
                     color: _riskColor(context, c.wetDbaRisk),
                   ),
           ],
@@ -259,6 +256,7 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
       title: l.clientsDeleteTitle,
       message: l.clientsDeleteMessage(widget.client!.name),
       isDestructive: true,
+      confirmLabel: l.actionDelete,
     );
     if (!confirmed || !mounted) return;
     final deleted = await guardSave(
@@ -283,7 +281,6 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
     return DetailScaffold(
       title: widget.client == null ? l.clientsNewHeader : widget.client!.name,
       onBack: () => context.pop(),
@@ -424,7 +421,7 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
             ),
             if (!_isMerchantOfRecord) ...[
               const SizedBox(height: AppSpacing.section),
-              Text(l.clientsWetDba, style: theme.textTheme.titleSmall),
+              SectionLabel(l.clientsWetDba, help: l.clientsWetDbaHelp),
               const SizedBox(height: AppSpacing.heading),
               FormRow(
                 children: [

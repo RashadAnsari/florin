@@ -70,6 +70,7 @@ void main() {
       invoices: invoices,
       lines: lines,
       expenses: const [],
+      year: 2026,
       quarter: 1,
     );
     expect(r.revenue1a, 90000);
@@ -115,6 +116,7 @@ void main() {
         purchase(2, PurchaseVat.fromOutsideEu),
         purchase(3, PurchaseVat.reverseChargeNl),
       ],
+      year: 2026,
       quarter: 1,
     );
     expect(r.vat4b, 2100);

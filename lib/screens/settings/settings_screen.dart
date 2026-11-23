@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import '../../widgets/confirmation_dialog.dart';
 import '../../services/receipt_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../../app.dart' show localeProvider, kSupportedLocales;
@@ -104,7 +104,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l.settingsTitle)),
       body: SingleChildScrollView(
-        padding: AppSpacing.settingsPadding,
+        padding: AppSpacing.screenPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -193,33 +193,11 @@ class _ReceiptsSettings extends ConsumerStatefulWidget {
 }
 
 class _ReceiptsSettingsState extends ConsumerState<_ReceiptsSettings> {
-  int? _trashed;
   bool _checking = false;
 
   /// The outcome of the last check, shown under the buttons.
   String? _result;
   bool _resultIsProblem = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _countTrash();
-  }
-
-  Future<void> _countTrash() async {
-    try {
-      final files = await ref.read(receiptServiceProvider).store.trashed();
-      if (mounted) setState(() => _trashed = files.length);
-    } catch (e) {
-      // The count is information only; the error shows where it would be.
-      if (mounted) {
-        setState(() {
-          _result = describeError(e, AppLocalizations.of(context)!);
-          _resultIsProblem = true;
-        });
-      }
-    }
-  }
 
   Future<void> _check() async {
     final l = AppLocalizations.of(context)!;
@@ -251,22 +229,6 @@ class _ReceiptsSettingsState extends ConsumerState<_ReceiptsSettings> {
     }
   }
 
-  Future<void> _emptyTrash() async {
-    final l = AppLocalizations.of(context)!;
-    final confirmed = await showConfirmationDialog(
-      context,
-      title: l.settingsEmptyTrashTitle,
-      message: l.settingsEmptyTrashMessage(_trashed ?? 0),
-      isDestructive: true,
-    );
-    if (!confirmed || !mounted) return;
-    await guardSave(
-      context,
-      () => ref.read(receiptServiceProvider).store.emptyTrash(),
-    );
-    await _countTrash();
-  }
-
   Future<void> _showFolder() async {
     final l = AppLocalizations.of(context)!;
     final folder = Directory(ref.read(receiptServiceProvider).store.folder);
@@ -284,6 +246,8 @@ class _ReceiptsSettingsState extends ConsumerState<_ReceiptsSettings> {
     final theme = Theme.of(context);
     final store = ref.watch(receiptServiceProvider).store;
     final receipts = ref.watch(allReceiptsProvider).valueOrNull ?? const [];
+    final removed =
+        (ref.watch(removedReceiptsProvider).valueOrNull ?? const []).length;
     final size = receipts.fold(0, (s, r) => s + r.sizeBytes);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,9 +281,9 @@ class _ReceiptsSettingsState extends ConsumerState<_ReceiptsSettings> {
               ),
             ),
             OutlinedButton.icon(
-              onPressed: (_trashed ?? 0) == 0 ? null : _emptyTrash,
-              icon: const Icon(Icons.delete_outline, size: 16),
-              label: Text(l.settingsEmptyTrash(_trashed ?? 0)),
+              onPressed: () => context.push('/settings/removed-receipts'),
+              icon: const Icon(Icons.inventory_2_outlined, size: 16),
+              label: Text(l.settingsRemovedReceipts(removed)),
             ),
           ],
         ),

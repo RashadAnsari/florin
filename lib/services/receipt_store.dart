@@ -25,32 +25,36 @@ class ReceiptRejected implements Exception {
 /// Whether a stored file is still what was added.
 enum ReceiptHealth { ok, missing, changed }
 
-/// A file checked and copied into the receipts folder, ready for its row.
+/// A file checked and copied into the receipts folder under a temporary
+/// name, ready for its row.
 class StoredFile {
   final String id;
   final ReceiptType type;
+  final int year;
   final int sizeBytes;
   final String sha256;
 
   const StoredFile({
     required this.id,
     required this.type,
+    required this.year,
     required this.sizeBytes,
     required this.sha256,
   });
 }
 
 /// The receipt files in the Florin folder, next to the database:
-/// `receipts/<year>/<uuid>.<extension>`, with removed files in
-/// `receipts/.trash/` until the user empties it. Files are copied as they
-/// are, never converted, as the Belastingdienst asks invoices to be kept in
-/// the form they were received (`docs/legal.md`, Receipts).
+/// `receipts/<year>/<uuid>.<extension>`, and `receipts/removed/` for files
+/// the user removed from their record. Florin never deletes a receipt file.
+/// Files are copied as they are, never converted, as the Belastingdienst
+/// asks invoices to be kept in the form they were received (`docs/legal.md`,
+/// Receipts).
 class ReceiptStore {
   /// A size that holds any multi-page scan and keeps a synced folder light.
   static const maxBytes = 25 * 1024 * 1024;
 
   static const folderName = 'receipts';
-  static const trashName = '.trash';
+  static const removedName = 'removed';
 
   /// The folder that holds the database and the receipts folder.
   final String root;
@@ -62,15 +66,20 @@ class ReceiptStore {
       ReceiptStore(p.dirname(dbPath));
 
   String get folder => p.join(root, folderName);
-  String get trashFolder => p.join(folder, trashName);
+  String get removedFolder => p.join(folder, removedName);
 
   String _name(String id, ReceiptType type) => '$id.${type.extension}';
 
-  /// Where the file of [r] lives.
-  File fileOf(Receipt r) =>
-      File(p.join(folder, '${r.year}', _name(r.id, r.type)));
+  File _inYear(String id, ReceiptType type, int year) =>
+      File(p.join(folder, '$year', _name(id, type)));
 
-  File _trashed(Receipt r) => File(p.join(trashFolder, _name(r.id, r.type)));
+  File _removed(String id, ReceiptType type) =>
+      File(p.join(removedFolder, _name(id, type)));
+
+  /// Where the file of [r] lives: its year folder, or the removed folder.
+  File fileOf(Receipt r) => r.removedAt == null
+      ? _inYear(r.id, r.type, r.year)
+      : _removed(r.id, r.type);
 
   /// The kind of file [head] starts with, or null when Florin does not keep
   /// that kind. Content decides, never the extension.
@@ -100,7 +109,7 @@ class ReceiptStore {
     }
     // A UBL invoice or credit note, the format of Dutch e-invoices.
     final text = utf8.decode(head, allowMalformed: true).trimLeft();
-    final body = text.startsWith('﻿') ? text.substring(1) : text;
+    final body = text.startsWith('\uFEFF') ? text.substring(1) : text;
     if (body.startsWith('<') &&
         RegExp(
           r'urn:oasis:names:specification:ubl:schema:xsd:(Invoice|CreditNote)-2',
@@ -132,74 +141,70 @@ class ReceiptStore {
     return _typeOf(name, await file.readAsBytes());
   }
 
-  /// Checks [source] and copies it into the folder of [year] under a new
-  /// UUID. The copy is written next to its place and then renamed, so a
-  /// failure never leaves half a file. [source] itself is not touched.
-  Future<StoredFile> add(File source, int year) async {
-    final bytes = await source.readAsBytes();
-    final type = _typeOf(p.basename(source.path), bytes);
+  /// The SHA-256 of [file], as stored for each receipt.
+  static Future<String> fingerprint(File file) async =>
+      sha256.convert(await file.readAsBytes()).toString();
+
+  /// Checks [source] and writes a copy under a new UUID with a `.part` name
+  /// in the folder of [year]. It becomes the receipt with [commit] once its
+  /// row is saved. [source] itself is not touched.
+  Future<StoredFile> add(File source, int year) async =>
+      addBytes(await source.readAsBytes(), p.basename(source.path), year);
+
+  /// The same for generated [bytes], such as an issued invoice PDF.
+  Future<StoredFile> addBytes(Uint8List bytes, String name, int year) async {
+    final type = _typeOf(name, bytes);
     final id = newUuid();
-    final dir = Directory(p.join(folder, '$year'));
-    await dir.create(recursive: true);
-    final target = File(p.join(dir.path, _name(id, type)));
-    final temp = File(p.join(dir.path, '.$id.part'));
-    await temp.writeAsBytes(bytes, flush: true);
-    await temp.rename(target.path);
+    final part = _part(id, year);
+    await part.parent.create(recursive: true);
+    await part.writeAsBytes(bytes, flush: true);
     return StoredFile(
       id: id,
       type: type,
+      year: year,
       sizeBytes: bytes.length,
       sha256: sha256.convert(bytes).toString(),
     );
   }
 
-  /// Stores generated [bytes], such as an issued invoice PDF, the same way.
-  Future<StoredFile> addBytes(
-    Uint8List bytes,
-    String fileName,
-    int year,
-  ) async {
-    final dir = await Directory.systemTemp.createTemp('florin_receipt');
-    try {
-      final file = File(p.join(dir.path, fileName));
-      await file.writeAsBytes(bytes, flush: true);
-      return await add(file, year);
-    } finally {
-      await dir.delete(recursive: true);
-    }
+  File _part(String id, int year) => File(p.join(folder, '$year', '.$id.part'));
+
+  /// Gives a copy from [add] its receipt name, after its row was saved.
+  Future<void> commit(StoredFile stored) => _part(
+    stored.id,
+    stored.year,
+  ).rename(_inYear(stored.id, stored.type, stored.year).path);
+
+  /// Drops a copy from [add] whose row could not be saved. It was never a
+  /// receipt, and the user's own file is untouched, so only this temporary
+  /// copy goes.
+  Future<void> discard(StoredFile stored) async {
+    final part = _part(stored.id, stored.year);
+    if (await part.exists()) await part.delete();
   }
 
-  /// The SHA-256 of [file], as stored for each receipt.
-  static Future<String> fingerprint(File file) async =>
-      sha256.convert(await file.readAsBytes()).toString();
-
-  /// Deletes a file [add] stored, when its row could not be saved.
-  Future<void> deleteStored(StoredFile stored, int year) async {
-    final file = File(p.join(folder, '$year', _name(stored.id, stored.type)));
-    if (await file.exists()) await file.delete();
-  }
-
-  /// Moves the file of [r] to the trash. A missing file is already gone.
-  Future<void> moveToTrash(Receipt r) async {
-    final file = fileOf(r);
+  /// Moves the file of [r], a receipt in use, to the removed folder.
+  Future<void> moveToRemoved(Receipt r) async {
+    final file = _inYear(r.id, r.type, r.year);
     if (!await file.exists()) return;
-    await Directory(trashFolder).create(recursive: true);
-    await file.rename(_trashed(r).path);
+    await Directory(removedFolder).create(recursive: true);
+    await file.rename(_removed(r.id, r.type).path);
   }
 
-  /// Brings the file of [r] back from the trash, for an undo.
-  Future<void> restoreFromTrash(Receipt r) async {
-    final file = _trashed(r);
+  /// Moves the file of [r], a removed receipt, back to its year folder.
+  Future<void> moveBack(Receipt r) async {
+    final file = _removed(r.id, r.type);
     if (!await file.exists()) return;
-    await fileOf(r).parent.create(recursive: true);
-    await file.rename(fileOf(r).path);
+    final target = _inYear(r.id, r.type, r.year);
+    await target.parent.create(recursive: true);
+    await file.rename(target.path);
   }
 
   /// Moves the file of [r] to the folder of [year], when its owner moved to
   /// another bookkeeping year.
   Future<void> relocate(Receipt r, int year) async {
     if (r.year == year) return;
-    final target = File(p.join(folder, '$year', _name(r.id, r.type)));
+    final target = _inYear(r.id, r.type, year);
     await target.parent.create(recursive: true);
     await fileOf(r).rename(target.path);
   }
@@ -212,21 +217,7 @@ class ReceiptStore {
     return hash == r.sha256 ? ReceiptHealth.ok : ReceiptHealth.changed;
   }
 
-  /// The files in the trash.
-  Future<List<File>> trashed() async {
-    final dir = Directory(trashFolder);
-    if (!await dir.exists()) return const [];
-    return dir.list().where((e) => e is File).cast<File>().toList();
-  }
-
-  /// Deletes the files in the trash for good.
-  Future<void> emptyTrash() async {
-    for (final f in await trashed()) {
-      await f.delete();
-    }
-  }
-
-  /// Copies every receipt file, the trash included, into the store at
+  /// Copies every receipt file, removed ones included, into the store at
   /// [targetRoot], for when the database moves there. Refuses to merge into
   /// an existing receipts folder.
   Future<void> copyTo(String targetRoot) async {
@@ -240,7 +231,7 @@ class ReceiptStore {
       );
     }
     await for (final entity in source.list(recursive: true)) {
-      if (entity is! File) continue;
+      if (entity is! File || entity.path.endsWith('.part')) continue;
       final relative = p.relative(entity.path, from: source.path);
       final copy = File(p.join(target.path, relative));
       await copy.parent.create(recursive: true);

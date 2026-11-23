@@ -33,6 +33,7 @@ class EnumDropdown<T extends Enum> extends StatelessWidget {
     key: ValueKey(value),
     initialValue: value,
     isExpanded: true,
+    style: fieldTextStyle(context),
     decoration: fieldDecoration(label: label, help: help, required: required),
     items: [
       for (final v in values)

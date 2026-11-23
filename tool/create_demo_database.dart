@@ -644,6 +644,19 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     'Papier en pennen',
     ExpenseCategory.office,
     4200,
+    files: [
+      (
+        'verkeerde-bon.pdf',
+        await _demoPdf('Lunchroom Voorbeeld', ['Kassabon 08-01-2026']),
+      ),
+    ],
+    paper: true,
+  );
+  // A receipt added to the wrong expense and removed again: Florin keeps it.
+  await receipts.remove(
+    (await receipts.dao.all()).firstWhere(
+      (r) => r.originalName == 'verkeerde-bon.pdf',
+    ),
   );
   await expense(
     DateTime(_year, 2, 9),

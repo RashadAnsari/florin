@@ -24,10 +24,13 @@ figures in [`docs/tax-years/<year>.md`](docs/tax-years/).
 Two skills hold the procedures:
 
 - `legal-review` (`.claude/skills/legal-review/`): run it before merging any
-  change to invoices, BTW, income tax, depreciation, pension, Wet DBA or legal
-  copy.
+  change to invoices, BTW, the KOR, the ICP-opgaaf, income tax, depreciation,
+  pension, receipts retention, Wet DBA or legal copy.
 - `new-tax-year` (`.claude/skills/new-tax-year/`): the only way a tax year is
   added.
+- `ui-review` (`.claude/skills/ui-review/`): run the app headless, click
+  through the screens a change touches in both languages and themes, and
+  check them against the Design and UI rules below.
 
 ## Non-negotiables
 
@@ -87,7 +90,7 @@ docs/
   tax-years/<year>.md    Yearly figures with sources
 drift_schemas/           Exported schema snapshot per schema version
 test/                    Service, DAO, schema and theme contrast tests
-.claude/skills/          legal-review, new-tax-year
+.claude/skills/          legal-review, new-tax-year, ui-review
 ```
 
 Layers depend downwards only: screens use widgets, providers and services;
@@ -132,10 +135,12 @@ Data rules:
 - **Receipt files live next to the database**, in
   `receipts/<year>/<uuid>.<extension>`, with a row in `receipts` for each.
   Go through `ReceiptService`, which keeps the two in step: a file is copied
-  byte for byte and only kept with its row, follows its record to another
-  year folder, and goes to `receipts/.trash/` when removed. Only the user
-  empties the trash. Anything that moves or exports the database takes the
-  receipts folder with it.
+  byte for byte and only kept with its row, and follows its record to
+  another year folder. **Florin never deletes a receipt**, its row or its
+  file: removing one, or deleting its record, marks the row removed with
+  what it belonged to and moves the file to `receipts/removed/`. Nothing
+  empties that folder. Anything that moves or exports the database takes the
+  receipts folder with it, removed receipts included.
 - Each DAO mixes in `Crud` for `save` (insert or update by primary key) and
   `remove`. Add a query method to the DAO, not SQL in a screen.
 
@@ -163,13 +168,15 @@ find, older ones included. These are shared:
 | KOR status, turnover and its effect on expenses | `KorService`, `KorStatus`, `korStatusProvider`, `effectiveExpensesProvider` |
 | Combining several provider streams | `waitForAll` in `lib/providers/providers.dart` |
 | Showing money, dates and rates | `AppFormat.cents`, `date`, `number`, `percent`, `hours`, `fileSize` in `lib/theme/app_theme.dart` |
-| Storing, checking, trashing and exporting receipt files | `ReceiptService`, `ReceiptStore`, `receiptsProvider`; `CsvExportService.receiptExportPath` for names in an export |
+| Storing, checking, removing and exporting receipt files | `ReceiptService`, `ReceiptStore`, `receiptsProvider`; `CsvExportService.receiptExportPath` for names in an export |
 
 The component library in `lib/widgets/`:
 
 | Need | Use |
 | --- | --- |
 | Field label with required marker and help | `fieldDecoration`, `LabelWithHelp` |
+| The text inside a field, for dropdowns | `fieldTextStyle` |
+| A value Florin works out, shown as a field | `ReadOnlyField` |
 | Help icon for a term | `HelpIcon` |
 | Text that may be cut off | `EllipsisText` |
 | Checkbox | `HelpCheckbox` |
@@ -193,9 +200,9 @@ The component library in `lib/widgets/`:
 | Primary and delete actions | `PrimaryButton`, `DeleteIconButton` |
 | Save or delete with error reporting | `guardSave` |
 | An error in words the user can act on | `describeError`, `showSaveError` |
-| Confirmation | `showConfirmationDialog` |
+| Confirmation, with the button named after the action | `showConfirmationDialog` |
 | Business profile fields | `BusinessProfileForm` |
-| Receipts of an expense, asset or invoice | `ReceiptsSection` with a `ReceiptDraft` for unsaved records (`lib/screens/receipts/`) |
+| Receipts of an expense, asset or invoice | `ReceiptsSection` with a `ReceiptDraft` for unsaved records, `ReceiptTile` for one file, `RemovedReceiptsPage` (`lib/screens/receipts/`) |
 | Hours against the urencriterium | `UrencriteriumProgress` |
 | Dashboard figure | `StatCard` |
 
@@ -240,13 +247,20 @@ apply most:
   screen closes or shows the result), warning (`NoticeBanner` before a
   problem) and error (inline, never only on submit).
 - **Confirm only what cannot be undone**, such as issuing an invoice or
-  deleting a record. Everything else saves or reverts without a dialog.
+  deleting a record. Everything else saves or reverts without a dialog. The
+  confirm button names the action ("Delete", "Send"), never "Confirm".
+- **Show what cannot change.** A record that is locked, such as an issued
+  invoice, says so in a `NoticeBanner` at the top, names the way to correct
+  it, and hides its edit controls.
 - **Specific labels over safe ones.** Name an action after its result ("I do
   not take part in the KOR", "Record"), and a section after its contents.
 - **Wayfinding.** Every page has a title saying where the user is and a back
   action; nothing traps the user in a state they cannot leave.
 - **Numbers keep one shape.** Amounts, hours and rates use `AppFormat`, stay
   on one line and shrink rather than wrap.
+- **A professional tool, not a gallery.** Files show as an icon for their
+  kind with name, type, size and date; Open shows them in the system viewer.
+  No thumbnails or image previews.
 
 ## UI rules
 
@@ -270,10 +284,24 @@ apply most:
   inline nudge, `heading` after a section heading, `field` between fields
   (both directions), `group` between sub-groups and cards, `section` between
   sections, `dashboardSection` on the dashboard, `settingsSection` in
-  Settings. Screen padding is `screenPadding`, Settings uses
-  `settingsPadding`.
+  Settings. Every screen, Settings included, uses `screenPadding`.
+- **One left edge.** The page title, a list's controls, its rows and a
+  page's content all start `AppSpacing.section` from the sidebar. The theme
+  sets this for app bars and list rows; `ListScaffold` and `DetailScaffold`
+  set it for the rest. Do not pad controls or rows in a screen.
 - **List screens** use `ListScaffold`: controls, `Divider(height: 1)`, then
   the list.
+- **List rows are plain `ListTile`s.** The theme gives every row the same
+  name, details and figure styles, with tabular digits so amounts line up.
+  Do not set a weight, size or colour on a row's title, subtitle or trailing
+  figure in a screen. A status is a `ToneBadge` with a word, never only a
+  colour or a strikethrough; a figure that is not obvious gets a tooltip.
+- **Headings inside a page or form are `SectionLabel`s.** Only the
+  dashboard's sections and the top-level sections of Settings and the first
+  launch screen use title styles.
+- **Fields share one size.** Dropdowns set `style: fieldTextStyle(context)`;
+  a value Florin computes is a `ReadOnlyField`, never a bare
+  `InputDecorator`.
 - **Forms fill the available width.** No fixed-width wrappers unless the
   layout needs one.
 - **Checkboxes**: `CheckboxListTile` with

@@ -39,8 +39,18 @@ class ListScaffold<T> extends StatelessWidget {
       ],
     ),
     body: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ?controls,
+        if (controls != null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.section,
+              AppSpacing.heading,
+              AppSpacing.section,
+              AppSpacing.field,
+            ),
+            child: controls,
+          ),
         const Divider(height: 1),
         Expanded(
           child: AsyncBody(

@@ -79,19 +79,29 @@ class LabelWithHelp extends StatelessWidget {
   final bool required;
   final TextStyle? style;
 
+  /// Lines the label may take before it is cut off with a tooltip.
+  final int maxLines;
+
   const LabelWithHelp(
     this.text, {
     super.key,
     this.help,
     this.required = false,
     this.style,
+    this.maxLines = 1,
   });
 
   @override
   Widget build(BuildContext context) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Flexible(child: EllipsisText(required ? '$text *' : text, style: style)),
+      Flexible(
+        child: EllipsisText(
+          required ? '$text *' : text,
+          style: style,
+          maxLines: maxLines,
+        ),
+      ),
       if (help != null) ...[
         const SizedBox(width: AppSpacing.tight),
         HelpIcon(help!),
@@ -112,6 +122,32 @@ Widget fieldSuffix(String help, [Widget? other]) => Padding(
     ],
   ),
 );
+
+/// The text style of a value inside a field: what a text field shows, so
+/// dropdowns and read-only fields match it.
+TextStyle? fieldTextStyle(BuildContext context) =>
+    Theme.of(context).textTheme.bodyLarge;
+
+/// A value Florin works out from other fields, in the shape and size of a
+/// field so it lines up with the inputs beside it.
+class ReadOnlyField extends StatelessWidget {
+  final String label;
+  final String help;
+  final String value;
+
+  const ReadOnlyField({
+    super.key,
+    required this.label,
+    required this.help,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) => InputDecorator(
+    decoration: fieldDecoration(label: label, help: help),
+    child: EllipsisText(value, style: fieldTextStyle(context)),
+  );
+}
 
 /// The standard field decoration: label with required marker, and a help
 /// icon at the end of the field.
@@ -158,7 +194,11 @@ class HelpCheckbox extends StatelessWidget {
   Widget build(BuildContext context) => CheckboxListTile(
     value: value,
     onChanged: onChanged == null ? null : (v) => onChanged!(v ?? false),
-    title: LabelWithHelp(title, help: help),
+    // A form choice reads like the fields around it, not like a list row.
+    title: DefaultTextStyle.merge(
+      style: const TextStyle(fontWeight: FontWeight.w400),
+      child: LabelWithHelp(title, help: help),
+    ),
     subtitle: subtitle == null ? null : Text(subtitle!),
     controlAffinity: ListTileControlAffinity.leading,
     contentPadding: EdgeInsets.zero,

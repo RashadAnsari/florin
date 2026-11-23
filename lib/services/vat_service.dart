@@ -1,5 +1,19 @@
 import '../db/database.dart';
 import 'domain.dart';
+import 'kor_service.dart';
+
+/// Which return a quarter needs (`docs/legal.md`, Filing a return).
+enum ReturnDuty {
+  /// The regular return, also when there is nothing to report.
+  regular,
+
+  /// The KOR covers the quarter but BTW is owed in it, such as BTW shifted
+  /// to the user. The user asks the Belastingdienst for this return.
+  incidental,
+
+  /// The KOR covers the quarter and no BTW is owed in it.
+  none,
+}
 
 /// One quarter of the BTW return, by rubriek. Amounts are in cents, signed
 /// so that credit notes reduce them.
@@ -25,7 +39,8 @@ class VatQuarterResult {
   final int vat4b;
   final int inputVat5b;
 
-  /// Supplies to EU businesses for the ICP-opgaaf.
+  /// Supplies to EU businesses for the ICP-opgaaf, leaving out those made
+  /// while the KOR applies (Wet OB 1968 art. 37a lid 1).
   final List<Invoice> icpInvoices;
 
   /// Services to businesses outside the EU. Not part of the return; shown
@@ -34,6 +49,8 @@ class VatQuarterResult {
 
   /// Supplies exempt under the KOR. Not part of the return either.
   final int revenueKorExempt;
+
+  final ReturnDuty duty;
 
   const VatQuarterResult({
     required this.revenue1a,
@@ -54,7 +71,21 @@ class VatQuarterResult {
     required this.icpInvoices,
     this.revenueOutsideReturn = 0,
     this.revenueKorExempt = 0,
+    this.duty = ReturnDuty.regular,
   });
+
+  /// Nothing to report in any rubriek: the return is a nil return.
+  bool get isEmpty =>
+      revenue1a == 0 &&
+      revenue1b == 0 &&
+      revenue1e == 0 &&
+      vat1d == 0 &&
+      revenue3a == 0 &&
+      revenue3b == 0 &&
+      base2a == 0 &&
+      base4a == 0 &&
+      base4b == 0 &&
+      inputVat5b == 0;
 
   int get outputVat5a => vat1a + vat1b + vat1d + vat2a + vat4a + vat4b;
 
@@ -73,8 +104,10 @@ abstract final class VatService {
     required List<Invoice> invoices,
     required List<InvoiceLine> lines,
     required List<Expense> expenses,
+    required int year,
     required int quarter,
     int privateUseVat = 0,
+    KorStatus kor = KorStatus.none,
   }) {
     final linesByInvoice = <int, List<InvoiceLine>>{};
     for (final line in lines) {
@@ -93,7 +126,8 @@ abstract final class VatService {
         case VatTreatment.euServices:
         case VatTreatment.euGoods:
           r3b += inv.signedExclVat;
-          icp.add(inv);
+          // A KOR participant files no ICP-opgaaf (art. 37a lid 1).
+          if (!kor.appliesOn(inv.invoiceDate)) icp.add(inv);
         case VatTreatment.exportOutsideEu:
           r3a += inv.signedExclVat;
         case VatTreatment.servicesOutsideEu:
@@ -129,6 +163,21 @@ abstract final class VatService {
         .where((e) => e.purchaseVat == p)
         .fold(0, (s, e) => s + e.vatAmount);
 
+    // BTW owed in a period is paid on a return (art. 14 lid 1), so a KOR
+    // quarter with BTW owed, such as BTW shifted to the user, needs one.
+    final owed =
+        v1a +
+        v1b +
+        privateUseVat +
+        vat(PurchaseVat.reverseChargeNl) +
+        vat(PurchaseVat.fromOutsideEu) +
+        vat(PurchaseVat.fromEu);
+    final duty = !kor.coversQuarter(year, quarter)
+        ? ReturnDuty.regular
+        : owed != 0
+        ? ReturnDuty.incidental
+        : ReturnDuty.none;
+
     return VatQuarterResult(
       revenue1a: r1a,
       vat1a: v1a,
@@ -148,6 +197,7 @@ abstract final class VatService {
       icpInvoices: icp,
       revenueOutsideReturn: outside,
       revenueKorExempt: korExempt,
+      duty: duty,
     );
   }
 

@@ -194,12 +194,6 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get actionCancel;
 
-  /// No description provided for @actionConfirm.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm'**
-  String get actionConfirm;
-
   /// No description provided for @labelDate.
   ///
   /// In en, this message translates to:
@@ -283,6 +277,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Urencriterium'**
   String get dashboardUrencriterium;
+
+  /// No description provided for @dashboardUrencriteriumHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The hours you worked for the business this year against the urencriterium. The zelfstandigenaftrek and most other deductions for business owners require it (Wet IB 2001 art. 3.76). All business hours count, not only billable ones.'**
+  String get dashboardUrencriteriumHelp;
 
   /// No description provided for @dashboardBtwDeadlines.
   ///
@@ -608,6 +608,18 @@ abstract class AppLocalizations {
   /// **'Inactive'**
   String get clientsInactive;
 
+  /// No description provided for @clientsPaidInYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid in {year}: {amount}'**
+  String clientsPaidInYear(int year, String amount);
+
+  /// No description provided for @clientsDbaBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Wet DBA: {risk}'**
+  String clientsDbaBadge(String risk);
+
   /// No description provided for @clientsFieldName.
   ///
   /// In en, this message translates to:
@@ -715,6 +727,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Wet DBA'**
   String get clientsWetDba;
+
+  /// No description provided for @clientsWetDbaHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'How you judge this working relationship under the Wet DBA (Wet deregulering beoordeling arbeidsrelaties), with the contract that goes with it. Florin keeps your judgement and the contract date; it does not assess the relationship.'**
+  String get clientsWetDbaHelp;
 
   /// No description provided for @clientsRiskLevel.
   ///
@@ -1172,6 +1190,12 @@ abstract class AppLocalizations {
   /// **'km'**
   String get mileageUnitKm;
 
+  /// No description provided for @mileageRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} to {to}'**
+  String mileageRoute(String from, String to);
+
   /// No description provided for @mileageAllowance.
   ///
   /// In en, this message translates to:
@@ -1423,6 +1447,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'KIA'**
   String get assetsKiaBadge;
+
+  /// No description provided for @assetsSoldBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold'**
+  String get assetsSoldBadge;
+
+  /// No description provided for @assetsBookValueTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Book value at the end of {year}'**
+  String assetsBookValueTooltip(int year);
 
   /// No description provided for @assetsFieldNotes.
   ///
@@ -2063,8 +2099,14 @@ abstract class AppLocalizations {
   /// No description provided for @firstLaunchDbDefault.
   ///
   /// In en, this message translates to:
-  /// **'Application Support (default)'**
-  String get firstLaunchDbDefault;
+  /// **'{path} (default)'**
+  String firstLaunchDbDefault(String path);
+
+  /// No description provided for @firstLaunchDbDefaultFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'The app\'s own data folder (default)'**
+  String get firstLaunchDbDefaultFolder;
 
   /// No description provided for @firstLaunchChooseFolder.
   ///
@@ -2233,6 +2275,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remove line'**
   String get invoiceRemoveLine;
+
+  /// No description provided for @invoiceLockedNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'This invoice is issued, so it cannot be changed. To correct it, make a credit note that refers to it.'**
+  String get invoiceLockedNotice;
+
+  /// No description provided for @invoiceLockedCreditNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'This credit note is issued, so it cannot be changed.'**
+  String get invoiceLockedCreditNotice;
 
   /// No description provided for @expensesFoodNotice.
   ///
@@ -3551,7 +3605,7 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnIcpSectionHelp.
   ///
   /// In en, this message translates to:
-  /// **'Supplies to businesses in other EU countries, reported separately in the ICP report.'**
+  /// **'Supplies to businesses in other EU countries, reported separately in the ICP report. While you take part in the KOR you file no ICP report, so invoices from those dates are not listed.'**
   String get vatReturnIcpSectionHelp;
 
   /// No description provided for @vatRow1aHelp.
@@ -3941,7 +3995,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsKorStartHelp.
   ///
   /// In en, this message translates to:
-  /// **'The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst\'s confirmation. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most € 20.000 a year. Leave empty when you do not take part.'**
+  /// **'The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst\'s confirmation. Until that date you file every return as usual. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most € 20.000 a year. Leave empty when you do not take part.'**
   String get settingsKorStartHelp;
 
   /// No description provided for @settingsKorEnd.
@@ -4007,7 +4061,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardKorHelp.
   ///
   /// In en, this message translates to:
-  /// **'Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above € 20.000 in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next.'**
+  /// **'Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above € 20.000 in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next. The KOR is not automatic: it applies only after you register and the Belastingdienst confirms the start date. Until then you file a return every quarter, however low your turnover.'**
   String get dashboardKorHelp;
 
   /// No description provided for @deadlineStatusKor.
@@ -4016,16 +4070,28 @@ abstract class AppLocalizations {
   /// **'no return (KOR)'**
   String get deadlineStatusKor;
 
+  /// No description provided for @deadlineStatusIncidental.
+  ///
+  /// In en, this message translates to:
+  /// **'incidental return'**
+  String get deadlineStatusIncidental;
+
   /// No description provided for @deadlineBadgeKor.
   ///
   /// In en, this message translates to:
   /// **'No return: KOR'**
   String get deadlineBadgeKor;
 
+  /// No description provided for @deadlineBadgeIncidental.
+  ///
+  /// In en, this message translates to:
+  /// **'Incidental return due'**
+  String get deadlineBadgeIncidental;
+
   /// No description provided for @vatReturnKorNotice.
   ///
   /// In en, this message translates to:
-  /// **'You take part in the KOR for this whole quarter: you charge no VAT and file no regular return. When VAT was shifted to you (2a, 4a or 4b), you may still owe it in an incidental return: the Belastingdienst\'s Incidentele btw-aangifte tool says whether you do. Florin shows those amounts below.'**
+  /// **'You take part in the KOR for this whole quarter and owe no VAT in it, so no return is due. If the Belastingdienst sends you one anyway, file it.'**
   String get vatReturnKorNotice;
 
   /// No description provided for @vatReturnKorPartNotice.
@@ -4033,6 +4099,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The KOR applies for part of this quarter. Invoices exempt under the KOR are not in the return and VAT on purchases in that part is not reclaimed. File a return for the part outside the KOR.'**
   String get vatReturnKorPartNotice;
+
+  /// No description provided for @vatReturnKorIncidentalNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'You take part in the KOR for this whole quarter, but you owe VAT in it, such as VAT shifted to you (2a, 4a or 4b), which you cannot deduct. So you file a return for this quarter. The Belastingdienst does not send it: ask your belastingkantoor for it in writing once the quarter is over. Florin shows the usual deadline as the date to aim for.'**
+  String get vatReturnKorIncidentalNotice;
+
+  /// No description provided for @vatReturnNilNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to report this quarter. You still file a return by the deadline: a nil return (0-aangifte). Without it the Belastingdienst sends an additional assessment and a fine.'**
+  String get vatReturnNilNotice;
 
   /// No description provided for @vatReturnKorExceeded.
   ///
@@ -4121,7 +4199,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsKorSectionHelp.
   ///
   /// In en, this message translates to:
-  /// **'A BTW exemption for businesses with at most € 20.000 turnover in the Netherlands a year. You join and leave it with the Belastingdienst; enter its dates here so Florin follows it.'**
+  /// **'A VAT exemption for businesses with at most € 20.000 turnover in the Netherlands a year. It is not automatic: you register for it and deregister with the Belastingdienst, and without it you file a return every quarter. Enter its dates here so Florin follows it.'**
   String get settingsKorSectionHelp;
 
   /// No description provided for @receiptTypeEInvoice.
@@ -4193,7 +4271,7 @@ abstract class AppLocalizations {
   /// No description provided for @receiptsRemove.
   ///
   /// In en, this message translates to:
-  /// **'Move to the trash'**
+  /// **'Remove from this record'**
   String get receiptsRemove;
 
   /// No description provided for @receiptsUnstage.
@@ -4205,7 +4283,7 @@ abstract class AppLocalizations {
   /// No description provided for @receiptsRemoved.
   ///
   /// In en, this message translates to:
-  /// **'Moved to the receipts trash'**
+  /// **'Removed. Florin keeps the file under Removed receipts in Settings.'**
   String get receiptsRemoved;
 
   /// No description provided for @receiptsUndo.
@@ -4241,7 +4319,7 @@ abstract class AppLocalizations {
   /// No description provided for @receiptsKeepUntilHelp.
   ///
   /// In en, this message translates to:
-  /// **'The Belastingdienst asks you to keep invoices and receipts for 7 years. Florin counts them from the end of the year they belong to and never deletes them itself.'**
+  /// **'The Belastingdienst asks you to keep invoices and receipts for 7 years. Florin counts them from the end of the year they belong to and never deletes them.'**
   String get receiptsKeepUntilHelp;
 
   /// No description provided for @receiptsKeepWhileInUse.
@@ -4319,7 +4397,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsReceiptsSectionHelp.
   ///
   /// In en, this message translates to:
-  /// **'Florin keeps the receipt files of expenses and assets, and the PDFs of issued invoices, in a receipts folder next to the database. It moves with the database and belongs in the same backup.'**
+  /// **'Florin keeps the receipt files of expenses and assets, and the PDFs of issued invoices, in a receipts folder next to the database. It never deletes them: a removed receipt stays under Removed receipts. The folder moves with the database and belongs in the same backup.'**
   String get settingsReceiptsSectionHelp;
 
   /// No description provided for @settingsReceiptsLocation.
@@ -4376,29 +4454,70 @@ abstract class AppLocalizations {
   /// **'changed since it was added'**
   String get settingsReceiptChanged;
 
-  /// No description provided for @settingsEmptyTrash.
-  ///
-  /// In en, this message translates to:
-  /// **'Empty trash ({count})'**
-  String settingsEmptyTrash(int count);
-
-  /// No description provided for @settingsEmptyTrashTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Empty the receipts trash'**
-  String get settingsEmptyTrashTitle;
-
-  /// No description provided for @settingsEmptyTrashMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{1 removed file is deleted for good.} other{{count} removed files are deleted for good.}} Keep receipts for 7 years: only empty the trash when you are sure none of them is still needed.'**
-  String settingsEmptyTrashMessage(int count);
-
   /// No description provided for @settingsReceiptsOpenFailed.
   ///
   /// In en, this message translates to:
   /// **'The folder could not be opened'**
   String get settingsReceiptsOpenFailed;
+
+  /// No description provided for @receiptOwnerExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get receiptOwnerExpense;
+
+  /// No description provided for @receiptOwnerAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset'**
+  String get receiptOwnerAsset;
+
+  /// No description provided for @receiptOwnerInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice'**
+  String get receiptOwnerInvoice;
+
+  /// No description provided for @removedReceiptsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed receipts'**
+  String get removedReceiptsTitle;
+
+  /// No description provided for @removedReceiptsNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipts you removed from a record, or whose record was deleted. Florin never deletes a receipt: the files stay in {path}. Put one back while its record exists.'**
+  String removedReceiptsNotice(String path);
+
+  /// No description provided for @removedReceiptsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No removed receipts.'**
+  String get removedReceiptsNone;
+
+  /// No description provided for @removedReceiptsFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'from {kind} {date} {name}, removed {removed}'**
+  String removedReceiptsFrom(
+    String kind,
+    String date,
+    String name,
+    String removed,
+  );
+
+  /// No description provided for @removedReceiptsPutBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Put back on its record'**
+  String get removedReceiptsPutBack;
+
+  /// No description provided for @settingsRemovedReceipts.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed receipts ({count})'**
+  String settingsRemovedReceipts(int count);
 }
 
 class _AppLocalizationsDelegate
