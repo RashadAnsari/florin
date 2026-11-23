@@ -213,6 +213,29 @@ elements and primary actions.
 - **Motion is short and interruptible**, and respects the platform's reduce
   motion setting.
 
+The [apple-design skill](https://github.com/emilkowalski/skills/blob/main/skills/apple-design/SKILL.md)
+holds the principles behind these rules. For a desktop bookkeeping app these
+apply most:
+
+- **The common path first, the rest one level deeper.** Show an option where
+  it is relevant, not on every form: self-billing appears for a merchant of
+  record, the KOR end date only matters once a start date exists. An option
+  that is hidden may not stay set.
+- **Group a control with what it affects.** A field's error sits under that
+  field; a rule across fields sits under the part it limits. Related fields
+  share a section with a heading that names them.
+- **Four kinds of feedback**: status (badges, progress), completion (the saved
+  screen closes or shows the result), warning (`NoticeBanner` before a
+  problem) and error (inline, never only on submit).
+- **Confirm only what cannot be undone**, such as issuing an invoice or
+  deleting a record. Everything else saves or reverts without a dialog.
+- **Specific labels over safe ones.** Name an action after its result ("I do
+  not take part in the KOR", "Record"), and a section after its contents.
+- **Wayfinding.** Every page has a title saying where the user is and a back
+  action; nothing traps the user in a state they cannot leave.
+- **Numbers keep one shape.** Amounts, hours and rates use `AppFormat`, stay
+  on one line and shrink rather than wrap.
+
 ## UI rules
 
 - **Help on everything a user fills in or must understand.** Every input,

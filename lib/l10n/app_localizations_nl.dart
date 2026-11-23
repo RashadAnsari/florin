@@ -101,7 +101,13 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String dashboardInvoiceCount(int count) {
-    return '$count factuur/facturen';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count facturen',
+      one: '1 factuur',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1025,7 +1031,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String settingsExportDescription(int year) {
-    return 'Exporteer alle gegevens van $year naar CSV-bestanden, met per kwartaal de btw-aangifte per rubriek in hele euro\'s, het ICP-overzicht en de geschatte inkomstenbelasting van het jaar.';
+    return 'Exporteer alle gegevens van $year naar CSV-bestanden, met per kwartaal de btw-aangifte per rubriek in hele euro\'s, het ICP-overzicht en de geschatte inkomstenbelasting van het jaar. Florin zet ze in een nieuwe map met de exportdatum in de naam, in de map die je kiest.';
   }
 
   @override
@@ -2275,10 +2281,6 @@ class AppLocalizationsNl extends AppLocalizations {
       'Het einde van de KOR ligt na het begin. Controleer beide datums.';
 
   @override
-  String get settingsValidateKorEndNoStart =>
-      'Vul eerst in wanneer de KOR begon: een einddatum hoort bij een KOR waaraan je meedeed.';
-
-  @override
   String get settingsKorClear => 'Ik doe niet mee aan de KOR';
 
   @override
@@ -2369,4 +2371,11 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get settingsTaxKor => 'Omzetgrens KOR';
+
+  @override
+  String get settingsKorSection => 'Kleineondernemersregeling (KOR)';
+
+  @override
+  String get settingsKorSectionHelp =>
+      'Een btw-vrijstelling voor ondernemers met hoogstens € 20.000 omzet in Nederland per jaar. Je meldt je aan en af bij de Belastingdienst; vul hier de datums in zodat Florin hem volgt.';
 }

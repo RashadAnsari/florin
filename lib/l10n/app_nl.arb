@@ -43,7 +43,7 @@
   },
   "dashboardNetProfitAfterTax": "Geschatte nettowinst na belasting",
   "dashboardOutstandingInvoices": "Openstaande facturen",
-  "dashboardInvoiceCount": "{count} factuur/facturen",
+  "dashboardInvoiceCount": "{count, plural, =1{1 factuur} other{{count} facturen}}",
   "@dashboardInvoiceCount": {
     "placeholders": {
       "count": {
@@ -497,7 +497,7 @@
   },
   "settingsMoveDatabase": "Database naar andere map kopiëren",
   "settingsExportSection": "Exporteren",
-  "settingsExportDescription": "Exporteer alle gegevens van {year} naar CSV-bestanden, met per kwartaal de btw-aangifte per rubriek in hele euro's, het ICP-overzicht en de geschatte inkomstenbelasting van het jaar.",
+  "settingsExportDescription": "Exporteer alle gegevens van {year} naar CSV-bestanden, met per kwartaal de btw-aangifte per rubriek in hele euro's, het ICP-overzicht en de geschatte inkomstenbelasting van het jaar. Florin zet ze in een nieuwe map met de exportdatum in de naam, in de map die je kiest.",
   "@settingsExportDescription": {
     "placeholders": {
       "year": {
@@ -881,7 +881,6 @@
   "settingsValidateKorStart": "De KOR begint op de eerste dag van een aangiftetijdvak, dus vul de 1e van een maand in, zoals in de bevestiging van de Belastingdienst.",
   "settingsValidateKorEndDay": "Een afmelding gaat in op de eerste dag van een aangiftetijdvak, dus vul de 1e van een maand in.",
   "settingsValidateKorEndBeforeStart": "Het einde van de KOR ligt na het begin. Controleer beide datums.",
-  "settingsValidateKorEndNoStart": "Vul eerst in wanneer de KOR begon: een einddatum hoort bij een KOR waaraan je meedeed.",
   "settingsKorClear": "Ik doe niet mee aan de KOR",
   "korProgress": "{turnover} van {limit}",
   "korExceededBadge": "Grens overschreden op {date}",
@@ -904,5 +903,7 @@
   "genericUnhandledError": "Er ging iets mis: {error}",
   "invoiceNoProfile": "Vul eerst je bedrijfsgegevens in bij Instellingen: elke factuur toont ze.",
   "invoiceTotal": "Totaal",
-  "settingsTaxKor": "Omzetgrens KOR"
+  "settingsTaxKor": "Omzetgrens KOR",
+  "settingsKorSection": "Kleineondernemersregeling (KOR)",
+  "settingsKorSectionHelp": "Een btw-vrijstelling voor ondernemers met hoogstens € 20.000 omzet in Nederland per jaar. Je meldt je aan en af bij de Belastingdienst; vul hier de datums in zodat Florin hem volgt."
 }

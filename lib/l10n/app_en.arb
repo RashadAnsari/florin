@@ -43,7 +43,7 @@
   },
   "dashboardNetProfitAfterTax": "Estimated net profit after tax",
   "dashboardOutstandingInvoices": "Outstanding invoices",
-  "dashboardInvoiceCount": "{count} invoice(s)",
+  "dashboardInvoiceCount": "{count, plural, =1{1 invoice} other{{count} invoices}}",
   "@dashboardInvoiceCount": {
     "placeholders": {
       "count": {
@@ -500,7 +500,7 @@
   },
   "settingsMoveDatabase": "Copy database to another folder",
   "settingsExportSection": "Export",
-  "settingsExportDescription": "Export all {year} data to CSV files, with the VAT return of each quarter by rubriek in whole euros, the ICP list of each quarter and the estimated income tax of the year.",
+  "settingsExportDescription": "Export all {year} data to CSV files, with the VAT return of each quarter by rubriek in whole euros, the ICP list of each quarter and the estimated income tax of the year. Florin puts them in a new folder named after the export date, inside the folder you choose.",
   "@settingsExportDescription": {
     "placeholders": {
       "year": {
@@ -1028,7 +1028,6 @@
   "settingsValidateKorStart": "The KOR starts on the first day of a return period, so enter a 1st of the month, as in the Belastingdienst's confirmation.",
   "settingsValidateKorEndDay": "A deregistration takes effect on the first day of a return period, so enter a 1st of the month.",
   "settingsValidateKorEndBeforeStart": "The end of the KOR comes after its start. Check both dates.",
-  "settingsValidateKorEndNoStart": "Enter when the KOR started first: an end date only applies to a KOR you took part in.",
   "settingsKorClear": "I do not take part in the KOR",
   "korProgress": "{turnover} of {limit}",
   "korExceededBadge": "Limit passed on {date}",
@@ -1102,5 +1101,7 @@
   },
   "invoiceNoProfile": "Fill in your business details in Settings first: every invoice shows them.",
   "invoiceTotal": "Total",
-  "settingsTaxKor": "KOR turnover limit"
+  "settingsTaxKor": "KOR turnover limit",
+  "settingsKorSection": "Kleineondernemersregeling (KOR)",
+  "settingsKorSectionHelp": "A BTW exemption for businesses with at most € 20.000 turnover in the Netherlands a year. You join and leave it with the Belastingdienst; enter its dates here so Florin follows it."
 }

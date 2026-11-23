@@ -220,7 +220,8 @@ EU are in no rubriek; see Services to businesses outside the EU above.
 [Belastingdienst, Ik moet btw-aangifte doen: hoe vul ik die in?](https://www.belastingdienst.nl/wps/wcm/connect/nl/btw/content/ik-moet-btw-aangifte-doen-hoe-vul-ik-die-in), read 2026-11-22
 
 Where Florin implements it: `CsvExportService.btwReturnRows` writes one file
-per quarter, `florin_<year>_btw_Q1.csv` to `Q4`, with every rubriek of the form
+per quarter, `florin_<year>_btw_Q1.csv` to `Q4`, inside a new folder
+`florin_<year>_export_<date>_<time>` for each export, with every rubriek of the form
 in whole euros. Amounts owed and their bases round down, voorbelasting (5b)
 rounds up, and 5a is the sum of the rounded BTW amounts, as the form adds
 them. Negative amounts keep their minus sign. The ICP list per quarter,

@@ -275,7 +275,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardInvoiceCount.
   ///
   /// In en, this message translates to:
-  /// **'{count} invoice(s)'**
+  /// **'{count, plural, =1{1 invoice} other{{count} invoices}}'**
   String dashboardInvoiceCount(int count);
 
   /// No description provided for @dashboardUrencriterium.
@@ -1979,7 +1979,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsExportDescription.
   ///
   /// In en, this message translates to:
-  /// **'Export all {year} data to CSV files, with the VAT return of each quarter by rubriek in whole euros, the ICP list of each quarter and the estimated income tax of the year.'**
+  /// **'Export all {year} data to CSV files, with the VAT return of each quarter by rubriek in whole euros, the ICP list of each quarter and the estimated income tax of the year. Florin puts them in a new folder named after the export date, inside the folder you choose.'**
   String settingsExportDescription(int year);
 
   /// No description provided for @settingsExportButton.
@@ -3986,12 +3986,6 @@ abstract class AppLocalizations {
   /// **'The end of the KOR comes after its start. Check both dates.'**
   String get settingsValidateKorEndBeforeStart;
 
-  /// No description provided for @settingsValidateKorEndNoStart.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter when the KOR started first: an end date only applies to a KOR you took part in.'**
-  String get settingsValidateKorEndNoStart;
-
   /// No description provided for @settingsKorClear.
   ///
   /// In en, this message translates to:
@@ -4129,6 +4123,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'KOR turnover limit'**
   String get settingsTaxKor;
+
+  /// No description provided for @settingsKorSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Kleineondernemersregeling (KOR)'**
+  String get settingsKorSection;
+
+  /// No description provided for @settingsKorSectionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'A BTW exemption for businesses with at most € 20.000 turnover in the Netherlands a year. You join and leave it with the Belastingdienst; enter its dates here so Florin follows it.'**
+  String get settingsKorSectionHelp;
 }
 
 class _AppLocalizationsDelegate
