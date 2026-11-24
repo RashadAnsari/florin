@@ -1,6 +1,6 @@
 cask "florin" do
-  version "1.2.0"
-  sha256 "844cb3381e782a947e549df781382cfad5ca64557abe32a390fe567802589704"
+  version "1.3.0"
+  sha256 "c13f9cc2d8fb42fe8b9429edc154cf1dbad2fb85cbcbe611cf0ac2df34117c9e"
 
   url "https://github.com/RashadAnsari/florin/releases/download/v#{version}/florin-macos.zip"
   name "Florin"
