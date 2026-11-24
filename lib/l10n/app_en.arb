@@ -171,7 +171,7 @@
   "clientsRiskHigh": "High",
   "clientsContractSigned": "Contract signed",
   "clientsContractExpiry": "Contract expiry date",
-  "clientsHighRiskWarning": "High Wet DBA risk: the Belastingdienst may treat this work as employment. Review the working relationship with an adviser.",
+  "clientsHighRiskWarning": "High Wet DBA risk in your own assessment: if the work is employment in law, the Belastingdienst treats it as such.",
   "clientsDeleteTitle": "Delete client",
   "clientsDeleteMessage": "Are you sure you want to delete \"{name}\"?",
   "@clientsDeleteMessage": {
@@ -218,7 +218,7 @@
   "expensesDeleteMessage": "Are you sure you want to delete this expense?",
   "expenseCatOffice": "Office & supplies",
   "expenseCatTravel": "Travel & accommodation",
-  "expenseCatMeals": "Meals & entertainment",
+  "expenseCatMeals": "Food, drinks, representation and congresses",
   "expenseCatSoftware": "Software & subscriptions",
   "expenseCatHardware": "Hardware & equipment",
   "expenseCatMarketing": "Marketing & advertising",
@@ -474,6 +474,8 @@
   "plTaxBox1Section": "Income tax box 1, estimated",
   "plTaxAlgHeffing": "General tax credit",
   "plTaxArbeidskorting": "Labour tax credit",
+  "plTaxTariefaanpassing": "Tariefaanpassing",
+  "plTaxTariefaanpassingHelp": "The ondernemersaftrek and the mkb-winstvrijstelling lower your tax at most at the rate below the top bracket. For the part of them that falls in the top bracket, the difference is added back (Wet IB 2001 art. 2.10 lid 2).",
   "plTaxInkomsten": "Income tax",
   "plTaxZvw": "ZVW contribution ({pct}%)",
   "@plTaxZvw": {
@@ -508,7 +510,7 @@
     }
   },
   "plTaxUrenBannerSuffixDone": ", so no zelfstandigenaftrek",
-  "plTaxUrenBannerSuffixPending": ". The estimate assumes you reach it this year",
+  "plTaxUrenBannerSuffixPending": ". Until you reach it, the estimate leaves out the zelfstandigenaftrek and the other deductions that need it",
   "settingsLanguageSection": "Language",
   "settingsLanguageNl": "Dutch",
   "settingsLanguageEn": "English",
@@ -635,6 +637,25 @@
   "invoiceValidateClientVat": "This client has no VAT number. Add it to the client: this invoice must show it.",
   "invoiceIssueTitle": "Send invoice",
   "invoiceIssueMessage": "After sending, the invoice can no longer be changed or deleted. Corrections are made with a credit note.",
+  "invoiceIssueRenumber": "{number} does not follow the last invoice you issued in this series, so it is sent as {next}: invoice numbers follow on without gaps (Wet OB 1968 art. 35a lid 1 b).",
+  "@invoiceIssueRenumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "next": {
+        "type": "String"
+      }
+    }
+  },
+  "invoiceActionSendAs": "Send as {number}",
+  "@invoiceActionSendAs": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
   "invoiceActionCreditNote": "Credit note",
   "invoiceNewCreditNoteHeader": "New credit note",
   "invoiceCorrects": "This credit note corrects invoice {number}.",
@@ -649,7 +670,7 @@
   "invoiceRemoveLine": "Remove line",
   "invoiceLockedNotice": "This invoice is issued, so it cannot be changed. To correct it, make a credit note that refers to it.",
   "invoiceLockedCreditNotice": "This credit note is issued, so it cannot be changed.",
-  "expensesFoodNotice": "Food, drinks and representation are 80% deductible for income tax (Wet IB 2001 art. 3.15). VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed (Wet OB 1968 art. 15).",
+  "expensesFoodNotice": "Food, drinks, representation, congresses, seminars and study trips are deductible for income tax at 80%, or as far as they exceed a yearly threshold if that is more (Wet IB 2001 art. 3.15). VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed (Wet OB 1968 art. 15).",
   "plTaxFoodLimited": "{category} ({amount})",
   "@plTaxFoodLimited": {
     "placeholders": {
@@ -741,13 +762,13 @@
   "clientsFieldVatHelp": "The client's VAT identification number. Required on invoices where the VAT is reverse-charged or that go to an EU business.",
   "clientsRiskLevelHelp": "Your own assessment of whether the work could be seen as employment under the Wet DBA. Used only to remind you.",
   "expensesFieldAmountExclHelp": "The amount on the receipt without VAT.",
-  "expensesFieldCategoryHelp": "What kind of cost this is. Food, drinks and representation are only partly deductible.",
+  "expensesFieldCategoryHelp": "What kind of cost this is. Food, drinks, representation, congresses, seminars, excursions and study trips are only partly deductible (Wet IB 2001 art. 3.15), so they belong in their own category.",
   "expensesFieldDescriptionHelp": "What you bought, so you and the Belastingdienst can see the business purpose.",
   "expensesFieldPaidFromHelp": "The account or card you paid with, to match the expense with your bank statement.",
   "expensesFieldPaymentRefHelp": "The reference of the payment or invoice, to find it back later.",
   "expensesFieldSupplierHelp": "The business you bought from, as on the receipt.",
   "expensesFieldVatRateHelp": "The VAT rate on the receipt: 21%, 9%, 0% or exempt.",
-  "expensesReclaimVatHelp": "Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, or for private use.",
+  "expensesReclaimVatHelp": "Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, for private use, or for gifts to someone who cannot deduct VAT when they total more than € 227 for that person in a year (Besluit uitsluiting aftrek omzetbelasting 1968).",
   "hoursFieldClientProjectHelp": "The client or project the hours were for.",
   "hoursFieldDateHelp": "The day you worked.",
   "hoursFieldDescriptionHelp": "What you did. All hours spent on the business count towards the urencriterium, not only billable ones.",
@@ -764,8 +785,18 @@
   "invoiceFieldQuantityHelp": "How many units, such as hours or pieces.",
   "invoiceFieldRemarksHelp": "Extra text printed at the bottom of the invoice.",
   "invoiceFieldSupplyDateHelp": "When you delivered, if that differs from the invoice date. The law requires it on the invoice in that case.",
+  "invoiceLateNotice": "An invoice is due by the 15th of the month after the supply (Wet OB 1968 art. 34g): for this supply by {date}.",
+  "@invoiceLateNotice": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "invoiceFieldUnitHelp": "The unit of the quantity, such as hours or pieces.",
   "invoiceFieldVatHelp": "The VAT rate for this line.",
+  "invoiceFieldVatReverseHelp": "The VAT rate that would apply without reverse charge. The invoice states it with the amount per rate, and your customer pays the VAT.",
+  "invoiceValidateLineRate": "Choose the VAT rate for this line: the invoice states it, also when the VAT is reverse-charged.",
   "invoiceFieldVatTreatmentHelp": "How VAT applies. Dutch VAT for most Dutch clients, or Exempt under the KOR while you take part in it. Reverse charge when the customer pays the VAT. EU goods and services to businesses also go on the ICP report. Services to a business outside the EU are taxed there and stay out of the Dutch return.",
   "labelCategoryHelp": "Show only expenses of one category.",
   "labelDateHelp": "The date on the receipt. It decides the year and quarter of the expense.",
@@ -783,7 +814,7 @@
   "mileageFieldToHelp": "Where the trip ended.",
   "mileageFieldTripTypeHelp": "Business and commuting trips in a private vehicle are deductible per km for income tax. Private trips are not.",
   "pensionAovInsuredHelp": "Tick when you have a private disability insurance (AOV). Its premiums are deductible.",
-  "pensionFactorAHelp": "The pension you built up with an employer last year, from the factor A on your UPO. Leave 0 if you had none.",
+  "pensionFactorAHelp": "The pension you built up with an employer last year, from the factor A on your UPO. Leave 0 if you had none. If your pension scheme follows the Wet toekomst pensioenen, your UPO shows premiums instead: the law then lowers the jaarruimte by those premiums, which Florin does not calculate.",
   "pensionLijfrenteHelp": "What you pay or plan to pay into a lijfrente this year. Deducted up to the room you have.",
   "pensionMonthlyPremiumHelp": "The monthly premium of your disability insurance.",
   "pensionPriorYearIncomeHelp": "Your profit from business and wages last year, from that year's tax return. The jaarruimte is based on it.",
@@ -901,7 +932,7 @@
   "plTaxDisposalResultHelp": "Sale price minus book value of assets sold this year. A gain adds to profit, a loss lowers it.",
   "plTaxEia": "Energie-investeringsaftrek (EIA)",
   "plTaxEiaHelp": "An extra deduction for investments on the RVO Energy List.",
-  "plTaxFoodLimitedHelp": "Food, drinks and representation are deductible for {pct}%, or above the first {drempel}. Florin uses whichever gives the larger deduction.",
+  "plTaxFoodLimitedHelp": "Food, drinks, representation, congresses, seminars and study trips are deductible for {pct}%, or above the first {drempel} (Wet IB 2001 art. 3.15). Florin uses whichever gives the larger deduction.",
   "@plTaxFoodLimitedHelp": {
     "placeholders": {
       "pct": {
@@ -1158,7 +1189,7 @@
   "settingsKorSectionHelp": "A VAT exemption for businesses with at most € 20.000 turnover in the Netherlands a year. It is not automatic: you register for it and deregister with the Belastingdienst, and without it you file a return every quarter. Enter its dates here so Florin follows it.",
   "receiptTypeEInvoice": "E-invoice (UBL)",
   "receiptsTitle": "Receipts",
-  "receiptsHelp": "The receipt or invoice for this expense, as a PDF, photo or scan. Florin copies it into the receipts folder next to your database and leaves your file as it is. The Belastingdienst asks you to keep receipts and invoices for 7 years in the form you received them; a scan or photo must show the whole document, front and back.",
+  "receiptsHelp": "The receipt or invoice for this expense, as a PDF, photo or scan. Florin copies it into the receipts folder next to your database and leaves your file as it is. The Belastingdienst asks you to keep receipts and invoices for 7 years in the form you received them; a scan or photo must be a correct and complete copy of the original, with its marks of authenticity.",
   "receiptsAssetTitle": "Purchase invoice and receipts",
   "receiptsAssetHelp": "The purchase invoice of this asset and any other proof, as a PDF, photo or scan. It belongs in your records while the asset is in use, and 7 years after that.",
   "receiptsInvoiceTitle": "Documents",

@@ -50,7 +50,8 @@ class CsvExportService {
   static String _category(ExpenseCategory c) => switch (c) {
     ExpenseCategory.office => 'Kantoor en benodigdheden',
     ExpenseCategory.travel => 'Reizen en verblijf',
-    ExpenseCategory.foodAndRepresentation => 'Voedsel, drank en representatie',
+    ExpenseCategory.foodAndRepresentation =>
+      'Voedsel, drank, representatie en congressen',
     ExpenseCategory.software => 'Software en abonnementen',
     ExpenseCategory.hardware => 'Hardware en apparatuur',
     ExpenseCategory.marketing => 'Marketing en reclame',
@@ -210,6 +211,7 @@ class CsvExportService {
     ['Verrekende verliezen', _euro(-t.lossOffset)],
     ['Belastbaar inkomen box 1', _euro(t.taxableIncome)],
     ['Belasting box 1 vóór heffingskortingen', _euro(t.grossBox1Tax)],
+    ['Tariefaanpassing', _euro(t.tariefaanpassing)],
     ['Algemene heffingskorting', _euro(-t.algemeneHeffingskorting)],
     ['Arbeidskorting', _euro(-t.arbeidskorting)],
     ['Inkomstenbelasting box 1', _euro(t.box1Tax)],

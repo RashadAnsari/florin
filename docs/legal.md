@@ -22,6 +22,34 @@ bent bij de KvK").
 
 [Belastingdienst, Factuureisen](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/administratie_bijhouden/facturen_maken/factuureisen/factuureisen)
 
+> Gebruik opeenvolgende nummers voor uw facturen, met 1 of meer reeksen. Elk factuurnummer mag maar 1 keer voorkomen.
+
+[Belastingdienst, Factuureisen](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/administratie_bijhouden/facturen_maken/factuureisen/factuureisen), read 2026-11-24
+
+Where Florin implements it: invoice numbers are unique in the database. A
+draft gets a number in the series `F-<year>-<nnn>` when it is made; when it is
+sent, Florin checks it follows the last number issued in that series and
+otherwise sends it as that next number (`InvoiceDao.nextIssuedNumber`,
+`renumberDraft`), swapping numbers with the draft that held it. A series with
+nothing issued yet keeps the number the user gave, so a series carried over
+from other software continues.
+
+> De factuur wordt uitgereikt uiterlijk op de vijftiende dag van de maand volgende op die waarin de goederenlevering of de dienst is verricht.
+
+[Wet op de omzetbelasting 1968, artikel 34g](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-24
+
+Where Florin implements it: `latestInvoiceDate`; the invoice form warns when
+the invoice date is after that day for the supply date entered.
+
+> Verlegt u btw naar een andere ondernemer? Dan brengt u geen btw in rekening, maar zet u op de factuur 'btw verlegd'. Daarnaast vermeldt u het btw-identificatienummer van de afnemer op de factuur. […] Op de factuur vermeldt u de vergoeding per btw-tarief, zoals deze zou gelden als de btw niet zou zijn verlegd.
+
+[Belastingdienst, Hoe werkt btw verleggen?](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/btw_berekenen_aan_uw_klanten/waarover_btw_berekenen/verleggingsregeling/hoe_werkt_btw_verleggen), read 2026-11-24
+
+Where Florin implements it: `VatTreatment.lineRates`. A line of a domestic
+reverse charge invoice takes 21% or 9%, and the PDF shows the rate per line
+and the amount per rate marked verlegd (`InvoicePdfService.rateCell`,
+`vatRows`).
+
 ## Invoices to EU businesses
 
 > Op uw facturen aan klanten die btw-aangifte doen in andere EU-landen moeten de btw-identificatienummers van u én uw klant staan. […] U factureert met 0% btw. Daarom moet op uw factuur een aanduiding staan waaruit blijkt dat het een intracommunautaire levering is. Vermeld op de factuur in elke gewenste taal: 'tabel II, onderdeel a, post 6, Wet OB '68' of 'artikel 138, lid 1, Richtlijn 2006/112'
@@ -172,6 +200,10 @@ Where Florin implements it: `KorService` and `KorStatus` in
 
 [Belastingdienst, Hoelang moet u gegevens bewaren?](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/ondernemen/administratie/hoelang-moet-u-gegevens-bewaren), read 2026-11-23
 
+> 4 Voorzover bij of krachtens de belastingwet niet anders is bepaald, zijn administratieplichtigen verplicht de in de voorgaande leden bedoelde gegevensdragers gedurende zeven jaar te bewaren.
+
+[Algemene wet inzake rijksbelastingen, artikel 52 lid 4](https://wetten.overheid.nl/BWBR0002320/2026-10-01), read 2026-11-24 from the official XML of the version in force from 1 October 2026
+
 Where Florin implements it: `ReceiptStore` and `ReceiptService`.
 
 - Receipt files are copied into `receipts/<year>/<uuid>.<extension>` next to
@@ -231,7 +263,9 @@ are not reported in the return.
 
 [Belastingdienst, Invullen rubrieken](https://stichtingenvereniging.belastingdienst.nl/aangifte/aangifte-omzetbelasting/invullen-rubrieken/)
 
-> Hebt u de btw verlegd naar een Nederlandse afnemer? […] Er is btw naar u verlegd. In uw btw-aangifte vult u in hoeveel btw er naar u is verlegd. […] U vult de vergoeding en het btw-bedrag in bij rubriek 2 ('Verleggingsregelingen binnenland') of rubriek 4 ('Prestaties vanuit het buitenland aan u verricht').
+> Er is btw naar u verlegd. In uw btw-aangifte vult u in hoeveel btw er naar u is verlegd. […] U vult de vergoeding en het btw-bedrag in bij rubriek 2 ('Verleggingsregelingen binnenland') of rubriek 4 ('Prestaties vanuit het buitenland aan u verricht').
+
+[Belastingdienst, Hoe werkt btw verleggen?](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/btw_berekenen_aan_uw_klanten/waarover_btw_berekenen/verleggingsregeling/hoe_werkt_btw_verleggen), read 2026-11-23
 
 > U geeft het totaal aan geleverde goederen en diensten aan in uw btw-aangifte. Dat doet u bij rubriek 4b. U berekent zelf de btw die u hierover in Nederland moet betalen. […] De btw kunt u in uw btw-aangifte weer aftrekken als voorbelasting […]. Dat doet u bij rubriek 5b.
 
@@ -294,7 +328,7 @@ month after the quarter.
 
 [Wet op de omzetbelasting 1968, artikel 14](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-23
 
-> Ja, als ondernemer voor de btw moet u altijd btw-aangifte doen, ook als u in de periode van de aangifte geen btw in rekening hebt gebracht of aan u geen btw is berekend. Dit heet een 0-aangifte of nihilaangifte. Doet u de btw-aangifte niet of niet op tijd? Dan ontvangt u van ons een naheffingsaanslag en een boete. […] Over vrijgestelde omzet doet u normaal gesproken geen btw-aangifte. Hiervan is sprake als u uitsluitend vrijgestelde goederen of diensten levert. Of als u deelneemt aan de kleineondernemersregeling (KOR). Maar ook dan kan het voorkomen dat u toch een keer btw-aangifte moet doen. […] Hebt u al een btw-aangifte gekregen, dien hem dan altijd in.
+> Ja, als ondernemer voor de btw moet u altijd btw-aangifte doen, ook als u in de periode van de aangifte geen btw in rekening hebt gebracht of aan u geen btw is berekend. Dit heet een 0-aangifte of nihilaangifte. Doet u de btw-aangifte niet of niet op tijd? Dan ontvangt u van ons een naheffingsaanslag en een boete. […] Over vrijgestelde omzet doet u normaal gesproken geen btw-aangifte […] Hiervan is sprake als u uitsluitend vrijgestelde goederen of diensten levert. Of als u deelneemt aan de kleineondernemersregeling (KOR). Maar ook dan kan het voorkomen dat u toch een keer btw-aangifte moet doen. […] Hebt u al een btw-aangifte gekregen, dien hem dan altijd in.
 
 [Belastingdienst, Moet ik altijd btw-aangifte doen?](https://www.belastingdienst.nl/wps/wcm/connect/nl/btw/content/moet-ik-altijd-btw-aangifte-doen), read 2026-11-23
 
@@ -338,9 +372,24 @@ BTW deadlines and the notices on the BTW return screen.
 
 [Wet op de omzetbelasting 1968, artikel 15 lid 5](https://wetten.overheid.nl/BWBR0002629/2026-01-01)
 
-Where Florin implements it: choosing the food, drinks and representation
-category turns BTW reclaim off by default and shows this rule. Non-reclaimable
+Where Florin implements it: choosing the category for food, drinks,
+representation and congresses turns BTW reclaim off by default and shows
+this rule. Non-reclaimable
 BTW counts as a cost for income tax.
+
+## BTW on gifts
+
+> 1 De in artikel 15, eerste lid, van de Wet op de omzetbelasting 1968 bedoelde aftrek wordt uitgesloten in de gevallen waarin en voor zover de goederen en diensten worden gebezigd voor: […] b. het geven van relatiegeschenken of het doen van andere giften aan degenen bij wie, indien aan hen ter zake omzetbelasting in rekening is of zou zijn gebracht, deze in het geheel niet of hoofdzakelijk niet voor aftrek in aanmerking komt of zou komen;
+
+[Besluit uitsluiting aftrek omzetbelasting 1968, artikel 1](https://wetten.overheid.nl/BWBR0002636/2019-01-01), read 2026-11-24
+
+> 1 Indien het totaal van de aanschaffings- of voortbrengingskosten dan wel de kostprijs, de omzetbelasting niet daaronder begrepen, van alle door de ondernemer in een boekjaar ten behoeve van eenzelfde belanghebbende verrichte prestaties als zijn bedoeld in artikel 1, eerste lid, letters b en c, en het op die belanghebbende betrekking hebbende deel van het in artikel 3, eerste lid, bedoelde verschil niet meer bedraagt dan € 227, blijven die prestaties en dat deel van bedoeld verschil voor de toepassing van dit besluit buiten aanmerking.
+
+[Besluit uitsluiting aftrek omzetbelasting 1968, artikel 4](https://wetten.overheid.nl/BWBR0002636/2019-01-01), read 2026-11-24
+
+Not modelled: Florin cannot tell who received a gift or what that person
+received in the year. The help of Reclaim VAT on the expense form states the
+rule, so the user leaves it unticked for such gifts.
 
 ## Depreciation
 
@@ -364,9 +413,7 @@ buildings are not recorded as assets in Florin.
 
 ## Selling an asset
 
-> U mag boekwinst op bedrijfsmiddelen opnemen in de herinvesteringsreserve. U neemt dan de boekwinst van het verkochte bedrijfsmiddel niet op in de fiscale winst
-
-[Belastingdienst, Fiscale informatie 2026, Winst uit onderneming](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2026/winst_uit_onderneming)
+> U mag boekwinst op bedrijfsmiddelen opnemen in de herinvesteringsreserve. De voorwaarde hiervoor is dat u op de balansdatum een voornemen hebt om te herinvesteren in een bedrijfsmiddel. U neemt dan de boekwinst van het verkochte bedrijfsmiddel niet op in de fiscale winst, maar voegt deze toe aan de herinvesteringsreserve.
 
 > Gaat u vervolgens herinvesteren? U moet dan de gereserveerde boekwinst meteen afboeken op de aanschafprijs van het aangeschafte bedrijfsmiddel. […] De afboeking verlaagt de afschrijving van het nieuwe bedrijfsmiddel.
 
@@ -392,7 +439,14 @@ or depreciated over more than 10 years, are left to the user.
 
 [Belastingdienst, Fiscale informatie 2026, Ondernemersaftrek en investeringsaftrek, 8.2](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2026/ondernemersaftrek_en_investeringsaftrek)
 
-Where Florin implements it: `AssetService`. A car never counts for the KIA.
+> 1 Voor de investeringsaftrek behoren niet tot de bedrijfsmiddelen: […] d. personenauto's als bedoeld in artikel 3 van de Wet op de belasting van personenauto's en motorrijwielen 1992, die niet zijn bestemd voor het beroepsvervoer over de weg; […] 3 Voor de milieu-investeringsaftrek is het eerste lid, onderdelen c en d, niet van toepassing.
+
+[Wet inkomstenbelasting 2001, artikel 3.45](https://wetten.overheid.nl/BWBR0011353/2026-01-01), read 2026-11-24
+
+Where Florin implements it: `AssetService`. A car never counts for the KIA
+or the EIA, and the asset form hides those options for a car: Florin cannot
+tell a passenger car from a van, so it takes the cautious reading. The MIA
+applies to a car, as lid 3 allows.
 The deduction received for an asset is computed when Florin has the rules of
 its purchase year, and entered by the user otherwise. The other events the
 Belastingdienst treats as a sale (renting out, gifting, moving to private
@@ -438,7 +492,11 @@ annualised, and only when the user keeps a complete trip log for it.
 
 Where Florin implements it: `CarService.btwPrivateUse`, reported in rubriek 1d
 of the fourth quarter. Without a trip log Florin applies 2,7% or 1,5% by whole
-months, capped as quoted. With a trip log it takes the private and commuting
+months, capped as quoted: in the 4 years after the year of purchase at the
+upkeep BTW plus one fifth of the purchase BTW, later or without purchase BTW
+at the upkeep BTW alone. In the year of purchase the page names no cap below
+the BTW deducted that year, so the cap is the upkeep BTW plus all purchase
+BTW. With a trip log it takes the private and commuting
 share of the BTW deducted that year, counting the purchase BTW as one fifth a
 year for the year of purchase and the four years after, the same spread the
 Belastingdienst uses for the cap.
@@ -446,9 +504,24 @@ Belastingdienst uses for the cap.
 ## Urencriterium
 
 The zelfstandigenaftrek requires the urencriterium (Wet IB 2001 artikel 3.76
-lid 1). The hours threshold is a yearly figure in `TaxYearRules`. For the
-current year Florin assumes the user reaches it and warns until the hours are
-logged; for a past year it applies only what is logged.
+lid 1). The hours threshold is a yearly figure in `TaxYearRules`. Florin
+counts only the hours logged, in every year: until they reach the threshold
+the estimate leaves out the zelfstandigenaftrek and the other deductions that
+need it, and the P&L screen says so (AGENTS.md rule 5). The startersaftrek bij
+arbeidsongeschiktheid (artikel 3.78a) needs the urencriterium not to be met,
+so Florin applies it only once the year is over.
+
+## Tariefaanpassing
+
+> 2 Indien bij het bepalen van het belastbare inkomen uit werk en woning een of meer bedragen ter zake van grondslagverminderende posten als bedoeld in het derde lid in aftrek zijn gebracht, bedraagt de belasting op het belastbare inkomen uit werk en woning het op basis van het eerste lid bepaalde bedrag vermeerderd met 11,94% van het bedrag waarmee de som van het belastbare inkomen uit werk en woning en de in aftrek gebrachte bedragen ter zake van grondslagverminderende posten als bedoeld in het derde lid, het in de eerste kolom van de in het eerste lid opgenomen tabel laatstvermelde bedrag te boven gaat, doch ten hoogste met 11,94% van de in aftrek gebrachte bedragen ter zake van grondslagverminderende posten als bedoeld in het derde lid. 3 De grondslagverminderende posten, bedoeld in het tweede lid, zijn: a. de ondernemersaftrek, bedoeld in artikel 3.74; b. de MKB-winstvrijstelling, bedoeld in artikel 3.79a, mits het gezamenlijke bedrag van de met de ondernemersaftrek verminderde winst, bedoeld in artikel 3.79a, positief is;
+
+[Wet inkomstenbelasting 2001, artikel 2.10 lid 2 en 3](https://wetten.overheid.nl/BWBR0011353/2026-01-01), read 2026-11-24
+
+Where Florin implements it: `TaxService.calculate` adds the tariefaanpassing
+to box 1 tax before the heffingskortingen, shown on the P&L screen and in the
+income tax export. The rate is a yearly figure (`tariefaanpassingRate`); the
+threshold is where the top bracket starts. Florin has no eigen woning or
+persoonsgebonden aftrek (lid 3 d and e), so only a and b apply.
 
 ## Income tax estimate scope
 

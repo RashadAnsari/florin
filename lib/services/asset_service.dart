@@ -116,8 +116,13 @@ abstract final class AssetService {
       .where((a) => a.purchaseDate.year == year && _countsForKia(a, rules))
       .fold(0, (s, a) => s + a.costExclVat);
 
+  /// Art. 3.45 lid 1 d excludes passenger cars from the EIA. Florin cannot
+  /// tell a passenger car from a van, so no car gets it: the cautious reading.
+  /// The MIA does apply to cars (lid 3).
   static int _eia(FixedAsset a, TaxYearRules rules) =>
-      a.eiaEligible && a.costExclVat >= rules.eiaMiaMinAssetCost
+      a.eiaEligible &&
+          a.kind != AssetKind.car &&
+          a.costExclVat >= rules.eiaMiaMinAssetCost
       ? (a.costExclVat * rules.eiaRate).round()
       : 0;
 

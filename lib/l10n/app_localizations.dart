@@ -773,7 +773,7 @@ abstract class AppLocalizations {
   /// No description provided for @clientsHighRiskWarning.
   ///
   /// In en, this message translates to:
-  /// **'High Wet DBA risk: the Belastingdienst may treat this work as employment. Review the working relationship with an adviser.'**
+  /// **'High Wet DBA risk in your own assessment: if the work is employment in law, the Belastingdienst treats it as such.'**
   String get clientsHighRiskWarning;
 
   /// No description provided for @clientsDeleteTitle.
@@ -971,7 +971,7 @@ abstract class AppLocalizations {
   /// No description provided for @expenseCatMeals.
   ///
   /// In en, this message translates to:
-  /// **'Meals & entertainment'**
+  /// **'Food, drinks, representation and congresses'**
   String get expenseCatMeals;
 
   /// No description provided for @expenseCatSoftware.
@@ -1820,6 +1820,18 @@ abstract class AppLocalizations {
   /// **'Labour tax credit'**
   String get plTaxArbeidskorting;
 
+  /// No description provided for @plTaxTariefaanpassing.
+  ///
+  /// In en, this message translates to:
+  /// **'Tariefaanpassing'**
+  String get plTaxTariefaanpassing;
+
+  /// No description provided for @plTaxTariefaanpassingHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The ondernemersaftrek and the mkb-winstvrijstelling lower your tax at most at the rate below the top bracket. For the part of them that falls in the top bracket, the difference is added back (Wet IB 2001 art. 2.10 lid 2).'**
+  String get plTaxTariefaanpassingHelp;
+
   /// No description provided for @plTaxInkomsten.
   ///
   /// In en, this message translates to:
@@ -1865,7 +1877,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxUrenBannerSuffixPending.
   ///
   /// In en, this message translates to:
-  /// **'. The estimate assumes you reach it this year'**
+  /// **'. Until you reach it, the estimate leaves out the zelfstandigenaftrek and the other deductions that need it'**
   String get plTaxUrenBannerSuffixPending;
 
   /// No description provided for @settingsLanguageSection.
@@ -2246,6 +2258,18 @@ abstract class AppLocalizations {
   /// **'After sending, the invoice can no longer be changed or deleted. Corrections are made with a credit note.'**
   String get invoiceIssueMessage;
 
+  /// No description provided for @invoiceIssueRenumber.
+  ///
+  /// In en, this message translates to:
+  /// **'{number} does not follow the last invoice you issued in this series, so it is sent as {next}: invoice numbers follow on without gaps (Wet OB 1968 art. 35a lid 1 b).'**
+  String invoiceIssueRenumber(String number, String next);
+
+  /// No description provided for @invoiceActionSendAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Send as {number}'**
+  String invoiceActionSendAs(String number);
+
   /// No description provided for @invoiceActionCreditNote.
   ///
   /// In en, this message translates to:
@@ -2291,7 +2315,7 @@ abstract class AppLocalizations {
   /// No description provided for @expensesFoodNotice.
   ///
   /// In en, this message translates to:
-  /// **'Food, drinks and representation are 80% deductible for income tax (Wet IB 2001 art. 3.15). VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed (Wet OB 1968 art. 15).'**
+  /// **'Food, drinks, representation, congresses, seminars and study trips are deductible for income tax at 80%, or as far as they exceed a yearly threshold if that is more (Wet IB 2001 art. 3.15). VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed (Wet OB 1968 art. 15).'**
   String get expensesFoodNotice;
 
   /// No description provided for @plTaxFoodLimited.
@@ -2555,7 +2579,7 @@ abstract class AppLocalizations {
   /// No description provided for @expensesFieldCategoryHelp.
   ///
   /// In en, this message translates to:
-  /// **'What kind of cost this is. Food, drinks and representation are only partly deductible.'**
+  /// **'What kind of cost this is. Food, drinks, representation, congresses, seminars, excursions and study trips are only partly deductible (Wet IB 2001 art. 3.15), so they belong in their own category.'**
   String get expensesFieldCategoryHelp;
 
   /// No description provided for @expensesFieldDescriptionHelp.
@@ -2591,7 +2615,7 @@ abstract class AppLocalizations {
   /// No description provided for @expensesReclaimVatHelp.
   ///
   /// In en, this message translates to:
-  /// **'Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, or for private use.'**
+  /// **'Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, for private use, or for gifts to someone who cannot deduct VAT when they total more than € 227 for that person in a year (Besluit uitsluiting aftrek omzetbelasting 1968).'**
   String get expensesReclaimVatHelp;
 
   /// No description provided for @hoursFieldClientProjectHelp.
@@ -2690,6 +2714,12 @@ abstract class AppLocalizations {
   /// **'When you delivered, if that differs from the invoice date. The law requires it on the invoice in that case.'**
   String get invoiceFieldSupplyDateHelp;
 
+  /// No description provided for @invoiceLateNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'An invoice is due by the 15th of the month after the supply (Wet OB 1968 art. 34g): for this supply by {date}.'**
+  String invoiceLateNotice(String date);
+
   /// No description provided for @invoiceFieldUnitHelp.
   ///
   /// In en, this message translates to:
@@ -2701,6 +2731,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The VAT rate for this line.'**
   String get invoiceFieldVatHelp;
+
+  /// No description provided for @invoiceFieldVatReverseHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The VAT rate that would apply without reverse charge. The invoice states it with the amount per rate, and your customer pays the VAT.'**
+  String get invoiceFieldVatReverseHelp;
+
+  /// No description provided for @invoiceValidateLineRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the VAT rate for this line: the invoice states it, also when the VAT is reverse-charged.'**
+  String get invoiceValidateLineRate;
 
   /// No description provided for @invoiceFieldVatTreatmentHelp.
   ///
@@ -2807,7 +2849,7 @@ abstract class AppLocalizations {
   /// No description provided for @pensionFactorAHelp.
   ///
   /// In en, this message translates to:
-  /// **'The pension you built up with an employer last year, from the factor A on your UPO. Leave 0 if you had none.'**
+  /// **'The pension you built up with an employer last year, from the factor A on your UPO. Leave 0 if you had none. If your pension scheme follows the Wet toekomst pensioenen, your UPO shows premiums instead: the law then lowers the jaarruimte by those premiums, which Florin does not calculate.'**
   String get pensionFactorAHelp;
 
   /// No description provided for @pensionLijfrenteHelp.
@@ -3431,7 +3473,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxFoodLimitedHelp.
   ///
   /// In en, this message translates to:
-  /// **'Food, drinks and representation are deductible for {pct}%, or above the first {drempel}. Florin uses whichever gives the larger deduction.'**
+  /// **'Food, drinks, representation, congresses, seminars and study trips are deductible for {pct}%, or above the first {drempel} (Wet IB 2001 art. 3.15). Florin uses whichever gives the larger deduction.'**
   String plTaxFoodLimitedHelp(String pct, String drempel);
 
   /// No description provided for @plTaxInputsSection.
@@ -4217,7 +4259,7 @@ abstract class AppLocalizations {
   /// No description provided for @receiptsHelp.
   ///
   /// In en, this message translates to:
-  /// **'The receipt or invoice for this expense, as a PDF, photo or scan. Florin copies it into the receipts folder next to your database and leaves your file as it is. The Belastingdienst asks you to keep receipts and invoices for 7 years in the form you received them; a scan or photo must show the whole document, front and back.'**
+  /// **'The receipt or invoice for this expense, as a PDF, photo or scan. Florin copies it into the receipts folder next to your database and leaves your file as it is. The Belastingdienst asks you to keep receipts and invoices for 7 years in the form you received them; a scan or photo must be a correct and complete copy of the original, with its marks of authenticity.'**
   String get receiptsHelp;
 
   /// No description provided for @receiptsAssetTitle.

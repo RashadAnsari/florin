@@ -239,7 +239,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
           unit: Value(optionalText(_lines[i].unit.text)),
           unitPriceExclVat: Value(_lines[i].price),
           vatRate: Value(
-            _treatment == VatTreatment.standard
+            _treatment.lineRates.contains(_lines[i].vatRate)
                 ? _lines[i].vatRate
                 : VatRate.zero,
           ),
@@ -277,13 +277,46 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
 
   Future<void> _issue() async {
     final l = AppLocalizations.of(context)!;
+    final dao = ref.read(invoiceDaoProvider);
+    final inv = _original!;
+    // Issued numbers follow on without gaps (art. 35a lid 1 b): a draft in
+    // Florin's series is sent as the next number after the last one issued.
+    String? next;
+    if (!_selfBilled) {
+      final read = await guardSave(context, () async {
+        next = await dao.nextIssuedNumber(inv.invoiceDate.year, _numberPrefix);
+      });
+      if (!read || !mounted) return;
+    }
+    final renumber = next != null && next != inv.invoiceNumber;
     final confirmed = await showConfirmationDialog(
       context,
       title: _selfBilled ? l.invoiceRecordTitle : l.invoiceIssueTitle,
-      confirmLabel: _selfBilled ? l.invoiceActionRecord : l.invoiceActionSend,
-      message: _selfBilled ? l.invoiceRecordMessage : l.invoiceIssueMessage,
+      confirmLabel: _selfBilled
+          ? l.invoiceActionRecord
+          : renumber
+          ? l.invoiceActionSendAs(next!)
+          : l.invoiceActionSend,
+      message: _selfBilled
+          ? l.invoiceRecordMessage
+          : renumber
+          ? '${l.invoiceIssueMessage}\n\n'
+                '${l.invoiceIssueRenumber(inv.invoiceNumber, next!)}'
+          : l.invoiceIssueMessage,
     );
     if (!confirmed || !mounted) return;
+    if (renumber) {
+      Invoice? renamed;
+      final done = await guardSave(context, () async {
+        await dao.renumberDraft(inv.id, next!);
+        renamed = await dao.getById(inv.id);
+      });
+      if (!done || !mounted || renamed == null) return;
+      setState(() {
+        _original = renamed;
+        _number.text = renamed!.invoiceNumber;
+      });
+    }
     // The PDF is kept as it is sent; a customer's own document is added by
     // the user instead.
     if (!_selfBilled) {
@@ -652,6 +685,19 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                       ),
                     ],
                   ),
+                  if (_isEditable &&
+                      _supplyDate != null &&
+                      _invoiceDate.isAfter(
+                        latestInvoiceDate(_supplyDate!),
+                      )) ...[
+                    const SizedBox(height: AppSpacing.field),
+                    NoticeBanner(
+                      l.invoiceLateNotice(
+                        AppFormat.date(latestInvoiceDate(_supplyDate!)),
+                      ),
+                      tone: NoticeTone.warning,
+                    ),
+                  ],
                   const SizedBox(height: AppSpacing.field),
                   EnumDropdown<VatTreatment>(
                     label: l.invoiceFieldVatTreatment,
@@ -807,12 +853,19 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
             initialValueCents: line.price,
             onChanged: (v) => setState(() => line.price = v),
           ),
-          _treatment == VatTreatment.standard
+          _treatment.lineRates.isNotEmpty
               ? EnumDropdown(
                   label: l.invoiceFieldVat,
-                  help: l.invoiceFieldVatHelp,
-                  value: line.vatRate,
-                  values: VatRate.values,
+                  help: _treatment == VatTreatment.reverseChargeNl
+                      ? l.invoiceFieldVatReverseHelp
+                      : l.invoiceFieldVatHelp,
+                  // A rate that does not fit the treatment must be chosen
+                  // again, so nothing hidden stays set.
+                  value: _treatment.lineRates.contains(line.vatRate)
+                      ? line.vatRate
+                      : null,
+                  values: _treatment.lineRates,
+                  requiredMessage: l.invoiceValidateLineRate,
                   labelOf: (r) => r.label(l),
                   onChanged: (r) => setState(() => line.vatRate = r),
                   required: true,

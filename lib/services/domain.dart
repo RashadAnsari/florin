@@ -32,6 +32,11 @@ extension InvoiceDomain on Invoice {
       status == InvoiceStatus.sent && dueDate.isBefore(DateTime.now());
 }
 
+/// The last day to issue the invoice for a supply on [supply]: the 15th of
+/// the next month (Wet OB 1968 art. 34g).
+DateTime latestInvoiceDate(DateTime supply) =>
+    DateTime(supply.year, supply.month + 1, 15);
+
 /// The 27 EU member states by ISO 3166 code, as listed by the EU
 /// (`docs/legal.md`, EU member states). Greece's BTW prefix EL counts too.
 const euCountries = {
@@ -77,6 +82,16 @@ extension VatTreatmentDomain on VatTreatment {
       VatTreatment.servicesOutsideEu => !isEuCountry(c),
     };
   }
+
+  /// The rates a line can state under this treatment: any rate with Dutch
+  /// BTW; with domestic reverse charge the rate that would apply without it,
+  /// as the invoice must show (`docs/legal.md`, Invoice contents); none for
+  /// the other treatments.
+  List<VatRate> get lineRates => switch (this) {
+    VatTreatment.standard => VatRate.values,
+    VatTreatment.reverseChargeNl => const [VatRate.high, VatRate.low],
+    _ => const [],
+  };
 
   /// Supplies left out of the Dutch BTW return, per the Belastingdienst
   /// (`docs/legal.md`, Services to businesses outside the EU).

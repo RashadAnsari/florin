@@ -106,6 +106,20 @@ void main() {
       ];
       expect(AssetService.kiaInvestments(assets, 2026, rules), 1000000);
     });
+
+    test('no EIA on a car (Wet IB 2001 art. 3.45 lid 1 d), MIA is allowed '
+        '(lid 3)', () {
+      final d = AssetService.investmentDeduction(
+        [
+          asset(1, kind: AssetKind.car, eia: true, cost: 3000000),
+          asset(2, kind: AssetKind.car, mia: MiaCategory.three, cost: 3000000),
+        ],
+        2026,
+        rules,
+      );
+      expect(d.eia, 0);
+      expect(d.mia, 810000);
+    });
   });
 
   group('desinvesteringsbijtelling (Fiscale informatie 2026, 8.2.4)', () {
@@ -302,6 +316,30 @@ void main() {
         ),
         121500,
       );
+    });
+
+    test('BTW cap: all purchase BTW in the year of purchase, one fifth in '
+        'the 4 years after (Belastingdienst, Btw en privégebruik auto)', () {
+      // The Belastingdienst's example: bought for € 18.150 with € 3.150
+      // BTW, catalogue value € 75.000, € 735 BTW on upkeep and use.
+      final car = asset(
+        1,
+        kind: AssetKind.car,
+        catalogue: 7500000,
+        registered: DateTime(2020, 1, 1),
+        vatOnPurchase: 315000,
+      );
+      int owed(int year) => CarService.btwPrivateUse(
+        assets: [car],
+        trips: const [],
+        expenses: [
+          carExpense(1, 350000, 73500).copyWith(date: DateTime(year, 6, 1)),
+        ],
+        year: year,
+        rules: rules,
+      );
+      expect(owed(2026), 202500);
+      expect(owed(2027), 73500 + 63000);
     });
 
     test('BTW with a trip log: private and commuting share', () {

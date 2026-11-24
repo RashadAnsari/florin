@@ -266,7 +266,7 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
         : 0,
     totalHours: totalHours,
     soHours: soHours,
-    assumeUrencriterium: !yearOver,
+    hoursFinal: yearOver,
     isStarter: profile.requireValue?.isStarter ?? false,
     inputs: yearInputs,
     lijfrentePremium: PensionService.deductiblePremium(

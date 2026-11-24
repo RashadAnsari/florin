@@ -67,6 +67,10 @@ class TaxYearRules {
   final int zelfstandigenaftrek;
   final int startersaftrek;
   final double mkbWinstvrijstelling;
+
+  /// The rate at which the ondernemersaftrek and mkb-winstvrijstelling are
+  /// taxed back above the start of the top bracket (art. 2.10 lid 2).
+  final double tariefaanpassingRate;
   final int urencriterium;
   final double zvwRate;
   final int zvwMaxIncome;
@@ -116,6 +120,7 @@ class TaxYearRules {
     required this.zelfstandigenaftrek,
     required this.startersaftrek,
     required this.mkbWinstvrijstelling,
+    required this.tariefaanpassingRate,
     required this.urencriterium,
     required this.zvwRate,
     required this.zvwMaxIncome,
@@ -147,6 +152,10 @@ class TaxYearRules {
     required this.reserveringsruimteMax,
     required this.factorAMultiplier,
   });
+
+  /// Where the top bracket starts: "het in de eerste kolom van de in het
+  /// eerste lid opgenomen tabel laatstvermelde bedrag" (art. 2.10 lid 2).
+  int get topBracketStart => box1Brackets[box1Brackets.length - 2].upTo!;
 
   /// Box 1 tax per bracket on [income], in bracket order.
   List<int> box1TaxPerBracket(int income) {
