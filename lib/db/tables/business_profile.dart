@@ -9,7 +9,6 @@ class BusinessProfiles extends Table {
   TextColumn get kvkNumber => text()();
   TextColumn get address => text()();
   TextColumn get iban => text()();
-  BoolColumn get isStarter => boolean().withDefault(const Constant(false))();
 
   /// The first day the kleineondernemersregeling applies, as the
   /// Belastingdienst confirmed it (Wet OB 1968 art. 25a lid 5).

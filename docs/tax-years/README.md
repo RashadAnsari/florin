@@ -32,7 +32,7 @@ These are indexed or set again every year. Expect a new value.
 | `gemengdeKostenDrempel` | Threshold for food, drinks, representation and congresses | Wet IB 2001 art. 3.15 lid 1 | Fiscale informatie, Winst-en-verliesrekening; Drempel beperkt aftrekbare kosten `<year>` |
 | `mileageCentsPerKm` | Deduction per business kilometre in a private vehicle | Wet IB 2001 art. 3.17 lid 1 b and any Staatscourant goedkeuring | Belastingdienst, Zakelijk gebruik privévervoermiddel `<year>`; search the Staatscourant when it differs from the statute |
 | `aowFranchise` | AOW-franchise for the jaarruimte | Wet IB 2001 art. 3.127 lid 3 | Belastingdienst, Overzicht cijfers leven `<year>` |
-| `jaarruimteMax` | Most jaarruimte | Wet IB 2001 art. 3.127 lid 1 and 3 | Same overview |
+| `premiegrondslagMaxIncome` | Most income of the previous year that counts for the premiegrondslag; the most jaarruimte follows from it | Wet IB 2001 art. 3.127 lid 3 | Statute; same overview |
 | `reserveringsruimteMax` | Most reserveringsruimte | Wet IB 2001 art. 3.127 lid 2 | Same overview |
 
 ## What changes when the law changes
@@ -83,6 +83,8 @@ the statute version of 1 January of the new year, its transitional articles
 | `btwPrivateCarPurchaseYears` | Years the purchase BTW counts over in the cap | Same | That page |
 | `korThreshold` | Most turnover in the Netherlands for the KOR | Wet OB 1968 art. 25a lid 1 | Statute; Belastingdienst, KOR |
 | `icpQuarterlyGoodsMax` | Goods a quarter above which the ICP-opgaaf is monthly | Wet OB 1968 art. 37a lid 3, ministeriële regeling | Belastingdienst, Tijdvak opgaaf ICP |
+| `icpGoodsLookbackQuarters` | Previous quarters that must also stay at or below `icpQuarterlyGoodsMax` for a quarterly opgaaf | Wet OB 1968 art. 37a lid 3 | Statute; Belastingdienst, Tijdvak opgaaf ICP |
+| `icpDueMonths` | Months after its period in which the ICP-opgaaf is due | Wet OB 1968 art. 37a lid 1 | Statute |
 | `buaGiftThreshold` | Gifts to one person a year at or below which their BTW stays deductible | Besluit uitsluiting aftrek omzetbelasting 1968 art. 4 | Statute |
 | `invoiceDueDay` | Day of the next month by which an invoice is due | Wet OB 1968 art. 34g | Statute |
 | `vatReturnDueMonths` | Months after a quarter in which its return and payment are due | AWR art. 19 lid 1 | Statute; Belastingdienst, Uiterste aangifte- en betaaldatums |

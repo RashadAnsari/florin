@@ -24,6 +24,16 @@ extension InvoiceDomain on Invoice {
 
   bool get isCreditNote => invoiceType == InvoiceType.creditNote;
 
+  /// The date that puts the invoice in a BTW return and an ICP-opgaaf. A
+  /// service to an EU business counts in the period it was supplied, the
+  /// invoice date when no supply date is given; everything else, and a
+  /// correction, which goes in the next opgaaf, by invoice date
+  /// (`docs/legal.md`, ICP-opgaaf).
+  DateTime get vatDate =>
+      vatTreatment == VatTreatment.euServices && !isCreditNote
+      ? supplyDate ?? invoiceDate
+      : invoiceDate;
+
   /// +1 for an invoice, -1 for a credit note, which reduces every total.
   int get sign => isCreditNote ? -1 : 1;
 

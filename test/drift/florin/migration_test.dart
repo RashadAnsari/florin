@@ -10,6 +10,7 @@ import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
+import 'generated/schema_v5.dart' as v5;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -369,6 +370,93 @@ void main() {
         batch.insert(oldDb.taxYearInputs, oldInputs);
       },
       validateItems: (newDb) async {
+        expect(await newDb.select(newDb.taxYearInputs).get(), [newInputs]);
+      },
+    );
+  });
+
+  test('migration from v4 to v5 makes a starter profile a starter in every '
+      'year with records, and keeps the profile', () async {
+    const oldProfile = v4.BusinessProfilesData(
+      id: 1,
+      name: 'Studio',
+      vatNumber: 'NL000099998B57',
+      kvkNumber: '12345678',
+      address: 'Straat 2',
+      iban: 'NL91ABNA0417164300',
+      isStarter: 1,
+    );
+    const newProfile = v5.BusinessProfilesData(
+      id: 1,
+      name: 'Studio',
+      vatNumber: 'NL000099998B57',
+      kvkNumber: '12345678',
+      address: 'Straat 2',
+      iban: 'NL91ABNA0417164300',
+    );
+    const client = v4.ClientsData(
+      id: 1,
+      name: 'Voorbeeld BV',
+      country: 'NL',
+      address: 'Straat 1',
+      wetDbaRisk: 'low',
+      contractSigned: 1,
+      isActive: 1,
+      isMerchantOfRecord: 0,
+    );
+    // 15 June 2026, 12:00 UTC: in 2026 in every time zone.
+    const invoice = v4.InvoicesData(
+      id: 1,
+      invoiceNumber: 'F-2026-001',
+      invoiceType: 'invoice',
+      invoiceDate: 1781524800,
+      clientId: 1,
+      vatTreatment: 'standard',
+      selfBilled: 0,
+      sellerName: 'Studio',
+      sellerVatNumber: 'NL000099998B57',
+      sellerKvkNumber: '12345678',
+      sellerAddress: 'Straat 2',
+      sellerIban: 'NL91ABNA0417164300',
+      paymentTermDays: 14,
+      status: 'sent',
+      totalExclVat: 10000,
+      totalVat: 2100,
+      totalInclVat: 12100,
+    );
+    const newInputs = v5.TaxYearInputsData(
+      year: 2026,
+      partnerHours: 0,
+      hasSoVerklaring: 0,
+      soStarter: 0,
+      businessCeased: 0,
+      stakingsaftrekUsedBefore: 0,
+      disabilityBenefit: 0,
+      disabilityStartersUsed: 0,
+      unrealisedZelfstandigenaftrek: 0,
+      lossCarryForward: 0,
+      employed: 0,
+      wages: 0,
+      wageTaxWithheld: 0,
+      zvwWages: 0,
+      employmentHours: 0,
+      notOndernemerBefore: 1,
+      isStarter: 1,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 4,
+      newVersion: 5,
+      createOld: v4.DatabaseAtV4.new,
+      createNew: v5.DatabaseAtV5.new,
+      openTestedDatabase: AppDatabase.new,
+      createItems: (batch, oldDb) {
+        batch.insert(oldDb.businessProfiles, oldProfile);
+        batch.insert(oldDb.clients, client);
+        batch.insert(oldDb.invoices, invoice);
+      },
+      validateItems: (newDb) async {
+        expect(await newDb.select(newDb.businessProfiles).get(), [newProfile]);
         expect(await newDb.select(newDb.taxYearInputs).get(), [newInputs]);
       },
     );

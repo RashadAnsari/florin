@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:florin/db/database.dart';
 import 'package:florin/services/asset_service.dart';
 import 'package:florin/services/car_service.dart';
@@ -502,6 +503,30 @@ void main() {
         0,
       );
     });
+
+    test(
+      '35% of the market value only once the car is more than 16 and 15 '
+      'years old: not on the anniversary itself (art. 3.20 lid 1 b, 5 b)',
+      () {
+        // First registered on 1 July 2010: exactly 16 years on 1 July 2026,
+        // more than 16 from 2 July.
+        final car = asset(
+          1,
+          kind: AssetKind.car,
+          catalogue: 3000000,
+          registered: DateTime(2010, 7, 1),
+        ).copyWith(marketValue: const Value(1000000));
+        final addition = CarService.privateUseAddition(
+          assets: [car],
+          trips: const [],
+          expenses: [carExpense(1, 9000000, 0)],
+          year: 2026,
+          rules: rules,
+        );
+        // 22% of the market value (more than 15 years) to 1 July, 35% after.
+        expect(addition, closeTo((220000 * 182 + 350000 * 183) / 365, 2));
+      },
+    );
 
     test('zero emission: 4% off, at most € 1.200, or the frozen 2025 rule', () {
       final car2026 = asset(

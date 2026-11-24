@@ -75,7 +75,7 @@ const taxYear2026 = TaxYearRules(
   gemengdeKostenPct: 0.80,
   jaarruimtePct: 0.30,
   aowFranchise: 1917200,
-  jaarruimteMax: 3558900,
+  premiegrondslagMaxIncome: 13780000,
   reserveringsruimteMax: 4275300,
   factorAMultiplier: 6.27,
   vatRates: {
@@ -88,6 +88,8 @@ const taxYear2026 = TaxYearRules(
   invoiceDueDay: 15,
   retentionYears: 7,
   icpQuarterlyGoodsMax: 5000000,
+  icpGoodsLookbackQuarters: 4,
+  icpDueMonths: 1,
   buaGiftThreshold: 22700,
   maxDepreciationRate: 0.20,
   reinvestmentReserveYears: 3,

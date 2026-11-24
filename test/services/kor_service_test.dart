@@ -38,7 +38,6 @@ BusinessProfile _profile({DateTime? start, DateTime? end}) => BusinessProfile(
   kvkNumber: '00000000',
   address: 'A',
   iban: 'NL91ABNA0417164300',
-  isStarter: false,
   korStart: start,
   korEnd: end,
 );

@@ -1047,9 +1047,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsIban => 'IBAN';
 
   @override
-  String get settingsStartersaftrek => 'Eligible for startersaftrek';
-
-  @override
   String get settingsValidateName => 'Enter your business name';
 
   @override
@@ -1158,11 +1155,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get firstLaunchChooseFolder => 'Choose folder';
-
-  @override
-  String firstLaunchStartersSubtitle(int years, int max) {
-    return 'For business owners who were not a business owner in one or more of the $years previous years, and used the zelfstandigenaftrek at most $max times in that period';
-  }
 
   @override
   String get firstLaunchGetStarted => 'Get started';
@@ -1328,8 +1320,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'Goods to an EU business (intra-Community supply, 0%)';
 
   @override
-  String vatReturnIcpNote(String amount) {
-    return 'Report these supplies in the ICP report. Goods to EU businesses above $amount in a quarter must be reported per month.';
+  String vatReturnIcpNote(String date, String amount, int quarters) {
+    return 'Report these supplies in the ICP report over this quarter by $date. If you supplied goods to EU businesses for more than $amount in this quarter or in one of the $quarters quarters before it, you report goods per month instead (Wet OB 1968 art. 37a).';
   }
 
   @override
@@ -1630,8 +1622,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'When you delivered, if that differs from the invoice date. The law requires it on the invoice in that case.';
 
   @override
-  String invoiceLateNotice(String date) {
-    return 'An invoice is due by the 15th of the month after the supply (Wet OB 1968 art. 34g): for this supply by $date.';
+  String invoiceLateNotice(int day, String date) {
+    return 'An invoice is due by day $day of the month after the supply (Wet OB 1968 art. 34g): for this supply by $date.';
   }
 
   @override
@@ -1726,7 +1718,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pensionPriorYearIncomeHelp =>
-      'Your profit from business and wages last year, from that year\'s tax return. The jaarruimte is based on it.';
+      'Last year\'s profit from business before the ondernemersaftrek, plus taxable wages, taxable result from other work and taxable periodic benefits, from that year\'s tax return (Wet IB 2001 art. 3.127 lid 3). The jaarruimte is based on it.';
+
+  @override
+  String pensionCountedIncomeHelp(String max) {
+    return 'The income as it counts for the premiegrondslag: at most $max (Wet IB 2001 art. 3.127 lid 3).';
+  }
 
   @override
   String get pensionReserveringsruimteLabelHelp =>
@@ -1747,11 +1744,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsKvkNumberHelp =>
       'Your 8-digit KvK number. It is printed on every invoice.';
-
-  @override
-  String settingsStartersaftrekHelp(int years, int max) {
-    return 'You get the startersaftrek if you were not a business owner in at least one of the $years previous years and used the zelfstandigenaftrek at most $max times in that period.';
-  }
 
   @override
   String get settingsVatNumberHelp =>
@@ -2024,7 +2016,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get inputNotOndernemerBeforeHelp =>
-      'Then the urencriterium does not require more time in the business than in your job. It already applies when you are eligible for the startersaftrek.';
+      'Then this year counts as a starting year: the urencriterium does not require more time in the business than in a job (Wet IB 2001 art. 3.6 lid 1 b), and the startersaftrek bij arbeidsongeschiktheid can apply (art. 3.78a). Answer it again for every year.';
+
+  @override
+  String inputStarter(int max) {
+    return 'I had the zelfstandigenaftrek at most $max times in those years';
+  }
+
+  @override
+  String inputStarterHelp(String amount) {
+    return 'Then you get the startersaftrek of $amount on top of the zelfstandigenaftrek, if you meet the urencriterium (Wet IB 2001 art. 3.76 lid 3). It stops once you have had the zelfstandigenaftrek more often, so check it for every year.';
+  }
 
   @override
   String get inputSoVerklaring => 'I have an S&O-verklaring for this year';
@@ -2066,7 +2068,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get inputDisabilityUsed => 'Years used in the previous 5';
+  String inputDisabilityUsed(int years) {
+    return 'Years used in the previous $years';
+  }
 
   @override
   String inputDisabilityUsedHelp(int years, int max) {
@@ -2169,7 +2173,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String plTaxFoodLimitedHelp(String pct, String drempel) {
-    return 'Food, drinks, representation, congresses, seminars and study trips are deductible for $pct%, or above the first $drempel (Wet IB 2001 art. 3.15). Florin uses whichever gives the larger deduction.';
+    return 'Food, drinks, representation, congresses, seminars and study trips are deductible for $pct, or above the first $drempel (Wet IB 2001 art. 3.15). Florin uses whichever gives the larger deduction.';
   }
 
   @override

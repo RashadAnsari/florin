@@ -17,19 +17,25 @@ class JaarruimteResult {
 }
 
 abstract final class PensionService {
-  static JaarruimteResult calculate(TaxYearRules rules, PensionEntry? entry) {
+  /// The income of the previous year as it counts: at most
+  /// [TaxYearRules.premiegrondslagMaxIncome] (art. 3.127 lid 3).
+  static int countedIncome(TaxYearRules rules, PensionEntry? entry) {
     final income = entry?.priorYearIncome ?? 0;
-    final grondslag = (income - rules.aowFranchise).clamp(
-      0,
-      (rules.jaarruimteMax / rules.jaarruimtePct).round(),
-    );
+    return income < rules.premiegrondslagMaxIncome
+        ? income
+        : rules.premiegrondslagMaxIncome;
+  }
+
+  static JaarruimteResult calculate(TaxYearRules rules, PensionEntry? entry) {
+    final above = countedIncome(rules, entry) - rules.aowFranchise;
+    final grondslag = above < 0 ? 0 : above;
     final raw =
         (grondslag * rules.jaarruimtePct -
                 rules.factorAMultiplier * (entry?.factorA ?? 0))
             .round();
     return JaarruimteResult(
       premiegrondslag: grondslag,
-      jaarruimte: raw.clamp(0, rules.jaarruimteMax),
+      jaarruimte: raw < 0 ? 0 : raw,
       reserveringsruimte: (entry?.reserveringsruimte ?? 0).clamp(
         0,
         rules.reserveringsruimteMax,

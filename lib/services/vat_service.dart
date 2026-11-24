@@ -138,7 +138,7 @@ abstract final class VatService {
 
     final icp = <Invoice>[];
     for (final inv in invoices) {
-      if (!inv.isIssued || !inQuarter(inv.invoiceDate)) continue;
+      if (!inv.isIssued || !inQuarter(inv.vatDate)) continue;
       final sign = inv.sign;
       switch (inv.vatTreatment) {
         case VatTreatment.reverseChargeNl:
@@ -147,7 +147,7 @@ abstract final class VatService {
         case VatTreatment.euGoods:
           r3b += inv.signedExclVat;
           // A KOR participant files no ICP-opgaaf (art. 37a lid 1).
-          if (!kor.appliesOn(inv.invoiceDate)) icp.add(inv);
+          if (!kor.appliesOn(inv.vatDate)) icp.add(inv);
         case VatTreatment.exportOutsideEu:
           r3a += inv.signedExclVat;
         case VatTreatment.servicesOutsideEu:
@@ -235,4 +235,9 @@ abstract final class VatService {
     quarter * 3 + taxRulesFor(year)!.vatReturnDueMonths + 1,
     0,
   );
+
+  /// The last day of the ICP-opgaaf over a quarter: the last day of the
+  /// month after it (Wet OB 1968 art. 37a lid 1 and 3).
+  static DateTime icpDeadline(int year, int quarter) =>
+      DateTime(year, quarter * 3 + taxRulesFor(year)!.icpDueMonths + 1, 0);
 }

@@ -49,7 +49,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump with every schema change and run `make migration`; see AGENTS.md.
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -129,6 +129,25 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(inputs, inputs.zvwWages);
             await m.addColumn(inputs, inputs.employmentHours);
             await m.addColumn(inputs, inputs.notOndernemerBefore);
+          },
+          from4To5: (m, schema) async {
+            final inputs = schema.taxYearInputs;
+            await m.addColumn(inputs, inputs.isStarter);
+            // The startersaftrek is decided per year (Wet IB 2001 art. 3.76
+            // lid 3). A profile marked as a starter marks every year with
+            // records; eligibility includes not having been an ondernemer.
+            await customStatement('''
+              INSERT INTO tax_year_inputs (year, not_ondernemer_before, is_starter)
+              SELECT y, 1, 1 FROM (
+                SELECT CAST(strftime('%Y', invoice_date, 'unixepoch', 'localtime') AS INTEGER) AS y FROM invoices
+                UNION SELECT CAST(strftime('%Y', date, 'unixepoch', 'localtime') AS INTEGER) FROM expenses
+                UNION SELECT CAST(strftime('%Y', date, 'unixepoch', 'localtime') AS INTEGER) FROM hour_entries
+                UNION SELECT year FROM tax_year_inputs
+              )
+              WHERE EXISTS (SELECT 1 FROM business_profiles WHERE is_starter = 1)
+              ON CONFLICT (year) DO UPDATE SET not_ondernemer_before = 1, is_starter = 1
+            ''');
+            await m.alterTable(TableMigration(schema.businessProfiles));
           },
         )(m, from, to),
       );

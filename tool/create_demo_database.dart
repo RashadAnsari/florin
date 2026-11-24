@@ -62,7 +62,6 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
       kvkNumber: const Value('12345678'),
       address: const Value('Voorbeeldstraat 1\n1234 AB Utrecht'),
       iban: const Value('NL91ABNA0417164300'),
-      isStarter: const Value(false),
       korStart: Value(_korStart),
     ),
   );
@@ -282,6 +281,16 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     date: DateTime(_year, 7, 3),
     lines: [('Drukwerk posters', 200, 450, VatRate.high)],
     treatment: VatTreatment.euGoods,
+  );
+  // A service supplied in September and invoiced in October: rubriek 3b and
+  // the ICP-opgaaf of the third quarter (Belastingdienst, Opgaaf ICP).
+  await invoice(
+    clientId: german,
+    date: DateTime(_year, 10, 6),
+    supplyDate: DateTime(_year, 9, 30),
+    lines: [('Brand design review', 6, 9500, VatRate.high)],
+    treatment: VatTreatment.euServices,
+    status: InvoiceStatus.sent,
   );
   await invoice(
     clientId: swiss,

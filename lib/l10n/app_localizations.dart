@@ -1988,12 +1988,6 @@ abstract class AppLocalizations {
   /// **'IBAN'**
   String get settingsIban;
 
-  /// No description provided for @settingsStartersaftrek.
-  ///
-  /// In en, this message translates to:
-  /// **'Eligible for startersaftrek'**
-  String get settingsStartersaftrek;
-
   /// No description provided for @settingsValidateName.
   ///
   /// In en, this message translates to:
@@ -2173,12 +2167,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose folder'**
   String get firstLaunchChooseFolder;
-
-  /// No description provided for @firstLaunchStartersSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'For business owners who were not a business owner in one or more of the {years} previous years, and used the zelfstandigenaftrek at most {max} times in that period'**
-  String firstLaunchStartersSubtitle(int years, int max);
 
   /// No description provided for @firstLaunchGetStarted.
   ///
@@ -2435,8 +2423,8 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnIcpNote.
   ///
   /// In en, this message translates to:
-  /// **'Report these supplies in the ICP report. Goods to EU businesses above {amount} in a quarter must be reported per month.'**
-  String vatReturnIcpNote(String amount);
+  /// **'Report these supplies in the ICP report over this quarter by {date}. If you supplied goods to EU businesses for more than {amount} in this quarter or in one of the {quarters} quarters before it, you report goods per month instead (Wet OB 1968 art. 37a).'**
+  String vatReturnIcpNote(String date, String amount, int quarters);
 
   /// No description provided for @assetsFieldResidualValue.
   ///
@@ -2903,8 +2891,8 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceLateNotice.
   ///
   /// In en, this message translates to:
-  /// **'An invoice is due by the 15th of the month after the supply (Wet OB 1968 art. 34g): for this supply by {date}.'**
-  String invoiceLateNotice(String date);
+  /// **'An invoice is due by day {day} of the month after the supply (Wet OB 1968 art. 34g): for this supply by {date}.'**
+  String invoiceLateNotice(int day, String date);
 
   /// No description provided for @invoiceFieldUnitHelp.
   ///
@@ -3053,8 +3041,14 @@ abstract class AppLocalizations {
   /// No description provided for @pensionPriorYearIncomeHelp.
   ///
   /// In en, this message translates to:
-  /// **'Your profit from business and wages last year, from that year\'s tax return. The jaarruimte is based on it.'**
+  /// **'Last year\'s profit from business before the ondernemersaftrek, plus taxable wages, taxable result from other work and taxable periodic benefits, from that year\'s tax return (Wet IB 2001 art. 3.127 lid 3). The jaarruimte is based on it.'**
   String get pensionPriorYearIncomeHelp;
+
+  /// No description provided for @pensionCountedIncomeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The income as it counts for the premiegrondslag: at most {max} (Wet IB 2001 art. 3.127 lid 3).'**
+  String pensionCountedIncomeHelp(String max);
 
   /// No description provided for @pensionReserveringsruimteLabelHelp.
   ///
@@ -3085,12 +3079,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your 8-digit KvK number. It is printed on every invoice.'**
   String get settingsKvkNumberHelp;
-
-  /// No description provided for @settingsStartersaftrekHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'You get the startersaftrek if you were not a business owner in at least one of the {years} previous years and used the zelfstandigenaftrek at most {max} times in that period.'**
-  String settingsStartersaftrekHelp(int years, int max);
 
   /// No description provided for @settingsVatNumberHelp.
   ///
@@ -3533,8 +3521,20 @@ abstract class AppLocalizations {
   /// No description provided for @inputNotOndernemerBeforeHelp.
   ///
   /// In en, this message translates to:
-  /// **'Then the urencriterium does not require more time in the business than in your job. It already applies when you are eligible for the startersaftrek.'**
+  /// **'Then this year counts as a starting year: the urencriterium does not require more time in the business than in a job (Wet IB 2001 art. 3.6 lid 1 b), and the startersaftrek bij arbeidsongeschiktheid can apply (art. 3.78a). Answer it again for every year.'**
   String get inputNotOndernemerBeforeHelp;
+
+  /// No description provided for @inputStarter.
+  ///
+  /// In en, this message translates to:
+  /// **'I had the zelfstandigenaftrek at most {max} times in those years'**
+  String inputStarter(int max);
+
+  /// No description provided for @inputStarterHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Then you get the startersaftrek of {amount} on top of the zelfstandigenaftrek, if you meet the urencriterium (Wet IB 2001 art. 3.76 lid 3). It stops once you have had the zelfstandigenaftrek more often, so check it for every year.'**
+  String inputStarterHelp(String amount);
 
   /// No description provided for @inputSoVerklaring.
   ///
@@ -3599,8 +3599,8 @@ abstract class AppLocalizations {
   /// No description provided for @inputDisabilityUsed.
   ///
   /// In en, this message translates to:
-  /// **'Years used in the previous 5'**
-  String get inputDisabilityUsed;
+  /// **'Years used in the previous {years}'**
+  String inputDisabilityUsed(int years);
 
   /// No description provided for @inputDisabilityUsedHelp.
   ///
@@ -3749,7 +3749,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxFoodLimitedHelp.
   ///
   /// In en, this message translates to:
-  /// **'Food, drinks, representation, congresses, seminars and study trips are deductible for {pct}%, or above the first {drempel} (Wet IB 2001 art. 3.15). Florin uses whichever gives the larger deduction.'**
+  /// **'Food, drinks, representation, congresses, seminars and study trips are deductible for {pct}, or above the first {drempel} (Wet IB 2001 art. 3.15). Florin uses whichever gives the larger deduction.'**
   String plTaxFoodLimitedHelp(String pct, String drempel);
 
   /// No description provided for @plTaxInputsSection.

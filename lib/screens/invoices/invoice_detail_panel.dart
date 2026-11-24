@@ -701,6 +701,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                     const SizedBox(height: AppSpacing.field),
                     NoticeBanner(
                       l.invoiceLateNotice(
+                        _rulesOf(_supplyDate!).invoiceDueDay,
                         AppFormat.date(
                           _rulesOf(
                             _supplyDate!,
