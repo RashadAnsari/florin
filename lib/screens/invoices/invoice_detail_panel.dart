@@ -54,8 +54,8 @@ class _LineItem {
 
   double get qty => parseDecimal(quantity.text) ?? 0;
   int get total => (qty * price).round();
-  int vat(VatTreatment t) =>
-      t == VatTreatment.standard ? vatRate.vatOn(total) : 0;
+  int vat(VatTreatment t, TaxYearRules rules) =>
+      t == VatTreatment.standard ? rules.vatOn(vatRate, total) : 0;
 
   void dispose() {
     for (final c in [description, quantity, unit]) {
@@ -181,7 +181,11 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
   bool get _isEditable => _isNew || _original!.status == InvoiceStatus.draft;
 
   int get _totalExclVat => _lines.fold(0, (s, l) => s + l.total);
-  int get _totalVat => _lines.fold(0, (s, l) => s + l.vat(_treatment));
+  // The rules of the invoice's own year; its dates lie in supported years.
+  TaxYearRules get _rules => _rulesOf(_invoiceDate);
+  TaxYearRules _rulesOf(DateTime d) => ref.watch(taxRulesProvider(d.year));
+
+  int get _totalVat => _lines.fold(0, (s, l) => s + l.vat(_treatment, _rules));
 
   Client? _client(List<Client> clients) =>
       clients.where((c) => c.id == _clientId).firstOrNull;
@@ -243,7 +247,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                 ? _lines[i].vatRate
                 : VatRate.zero,
           ),
-          vatAmount: Value(_lines[i].vat(_treatment)),
+          vatAmount: Value(_lines[i].vat(_treatment, _rules)),
           lineTotalExclVat: Value(_lines[i].total),
           sortOrder: Value(i),
         ),
@@ -688,12 +692,16 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                   if (_isEditable &&
                       _supplyDate != null &&
                       _invoiceDate.isAfter(
-                        latestInvoiceDate(_supplyDate!),
+                        _rulesOf(_supplyDate!).latestInvoiceDate(_supplyDate!),
                       )) ...[
                     const SizedBox(height: AppSpacing.field),
                     NoticeBanner(
                       l.invoiceLateNotice(
-                        AppFormat.date(latestInvoiceDate(_supplyDate!)),
+                        AppFormat.date(
+                          _rulesOf(
+                            _supplyDate!,
+                          ).latestInvoiceDate(_supplyDate!),
+                        ),
                       ),
                       tone: NoticeTone.warning,
                     ),
@@ -795,9 +803,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
               year: _invoiceDate.year,
               title: l.receiptsInvoiceTitle,
               help: l.receiptsInvoiceHelp,
-              keepUntil: AppFormat.date(
-                ReceiptService.keepUntil(_invoiceDate.year),
-              ),
+              keepUntil: AppFormat.date(_rules.keepUntil(_invoiceDate.year)),
               editable: _selfBilled,
             ),
           ],
@@ -866,7 +872,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                       : null,
                   values: _treatment.lineRates,
                   requiredMessage: l.invoiceValidateLineRate,
-                  labelOf: (r) => r.label(l),
+                  labelOf: (r) => r.label(l, _rules),
                   onChanged: (r) => setState(() => line.vatRate = r),
                   required: true,
                 )

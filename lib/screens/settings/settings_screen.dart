@@ -336,7 +336,10 @@ class _ProfileEditorState extends ConsumerState<_ProfileEditor> {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        BusinessProfileForm(fields: _fields),
+        BusinessProfileForm(
+          fields: _fields,
+          rules: ref.watch(taxRulesProvider(ref.watch(fiscalYearProvider))),
+        ),
         const SizedBox(height: AppSpacing.group),
         PrimaryButton(
           label: AppLocalizations.of(context)!.actionSave,

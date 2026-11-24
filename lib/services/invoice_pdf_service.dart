@@ -1,3 +1,4 @@
+import 'tax_rules/tax_year_rules.dart';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -34,7 +35,7 @@ abstract final class InvoicePdfService {
   /// reverse charge the rate that would apply without it (art. 35a lid 1 i).
   static String rateCell(Invoice invoice, InvoiceLine line) =>
       invoice.vatTreatment.lineRates.contains(line.vatRate)
-      ? line.vatRate.dutchLabel
+      ? line.vatRate.dutchLabel(taxRulesFor(invoice.invoiceDate.year)!)
       : '-';
 
   /// The BTW rows under the subtotal: per rate or exemption the base and the
@@ -54,12 +55,14 @@ abstract final class InvoicePdfService {
     }
     if (byRate.isEmpty) return [('Btw', money(0))];
     final reverse = invoice.vatTreatment == VatTreatment.reverseChargeNl;
+    // An invoice is dated in a supported year.
+    final rules = taxRulesFor(invoice.invoiceDate.year)!;
     return [
       for (final MapEntry(key: rate, value: (base, vat)) in byRate.entries)
         rate == VatRate.exempt
             ? ('Vrijgesteld van btw over ${money(base)}', '-')
             : (
-                'Btw ${rate.dutchLabel} over ${money(base)}',
+                'Btw ${rate.dutchLabel(rules)} over ${money(base)}',
                 reverse ? 'verlegd' : money(vat),
               ),
     ];

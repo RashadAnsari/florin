@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart' show Value;
+import '../../services/tax_rules/tax_year_rules.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/help.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -76,6 +77,9 @@ class _HourDetailPageState extends ConsumerState<HourDetailPage> {
   late DateTime _date =
       widget.entry?.date ?? todayIn(ref.read(fiscalYearProvider));
   late WorkType _workType = widget.entry?.workType ?? WorkType.billable;
+
+  /// The rules of the entry's year; its date lies in a supported year.
+  TaxYearRules get _rules => ref.read(taxRulesProvider(_date.year));
   late final _description = TextEditingController(
     text: widget.entry?.description,
   );
@@ -210,7 +214,7 @@ class _HourDetailPageState extends ConsumerState<HourDetailPage> {
             const SizedBox(height: AppSpacing.field),
             EnumDropdown(
               label: l.hoursFieldWorkType,
-              help: l.hoursFieldWorkTypeHelp,
+              help: l.hoursFieldWorkTypeHelp(_rules.soMinHours),
               value: _workType,
               values: WorkType.values,
               labelOf: (t) => t.label(l),

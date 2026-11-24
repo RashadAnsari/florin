@@ -32,17 +32,6 @@ class ReserveYear {
 /// Depreciation, investeringsaftrek, desinvesteringsbijtelling and the
 /// herinvesteringsreserve. Sources: `docs/legal.md`.
 abstract final class AssetService {
-  /// Wet IB 2001 art. 3.30 lid 2: at most 20% of the cost a year.
-  static const minUsefulLifeYears = 5;
-
-  /// Years after the year of formation in which the herinvesteringsreserve
-  /// must be used, after which it is added to the profit.
-  static const reserveTermYears = 3;
-
-  /// Years after the start of the purchase year in which a sale leads to a
-  /// desinvesteringsbijtelling.
-  static const desinvesteringYears = 5;
-
   // Depreciation
 
   /// The business share of cost above the residual value, after any
@@ -170,7 +159,7 @@ abstract final class AssetService {
     final proceeds = sold.fold(0, (s, a) => s + (a.disposalProceeds ?? 0));
     if (proceeds <= rules.desinvesteringDrempel) return 0;
     return sold.fold(0, (s, a) {
-      if (year >= a.purchaseDate.year + desinvesteringYears) return s;
+      if (year >= a.purchaseDate.year + rules.desinvesteringYears) return s;
       final received = deductionReceived(a, assets);
       if (received <= 0 || a.costExclVat <= 0) return s;
       final addBack = ((a.disposalProceeds ?? 0) * received / a.costExclVat)
@@ -183,7 +172,7 @@ abstract final class AssetService {
 
   /// The reserve per year, from the first year with a reserved gain to
   /// [untilYear]. Applications use the oldest reserve first. A reserve not
-  /// used within [reserveTermYears] after its year is released, and all of
+  /// used within the term of the rules of its year is released, and all of
   /// it is released in [ceasedYear].
   static Map<int, ReserveYear> reserveLedger(
     List<FixedAsset> assets,
@@ -225,7 +214,9 @@ abstract final class AssetService {
       }
       var released = 0;
       for (var i = 0; i < pools.length; i++) {
-        if (y == ceasedYear || pools[i].$1 + reserveTermYears <= y) {
+        // A reserve is formed at a sale, which lies in a supported year.
+        final term = taxRulesFor(pools[i].$1)!.reinvestmentReserveYears;
+        if (y == ceasedYear || pools[i].$1 + term <= y) {
           released += pools[i].$2;
           pools[i] = (pools[i].$1, 0);
         }

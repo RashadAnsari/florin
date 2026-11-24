@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:florin/services/tax_rules/tax_year_rules.dart';
 import 'dart:io';
 
 import 'package:drift/drift.dart' show Value;
@@ -231,6 +232,6 @@ void main() {
 
   test('receipts are kept until the end of the seventh year after their '
       'year (Belastingdienst, bewaarplicht)', () {
-    expect(ReceiptService.keepUntil(2026), DateTime(2033, 12, 31));
+    expect(taxRulesFor(2026)!.keepUntil(2026), DateTime(2033, 12, 31));
   });
 }

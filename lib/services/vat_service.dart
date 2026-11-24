@@ -1,6 +1,7 @@
 import '../db/database.dart';
 import 'domain.dart';
 import 'kor_service.dart';
+import 'tax_rules/tax_year_rules.dart';
 
 /// Which return a quarter needs (`docs/legal.md`, Filing a return).
 enum ReturnDuty {
@@ -201,7 +202,11 @@ abstract final class VatService {
     );
   }
 
-  /// Last day of the month after the quarter.
-  static DateTime filingDeadline(int year, int quarter) =>
-      DateTime(year, quarter * 3 + 2, 0);
+  /// The last day of the term after the quarter that the rules of [year]
+  /// give: the last day of the month after it.
+  static DateTime filingDeadline(int year, int quarter) => DateTime(
+    year,
+    quarter * 3 + taxRulesFor(year)!.vatReturnDueMonths + 1,
+    0,
+  );
 }

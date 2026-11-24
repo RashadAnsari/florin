@@ -273,7 +273,9 @@ class _ReceiptsSectionState extends ConsumerState<ReceiptsSection> {
           const SizedBox(height: AppSpacing.heading),
           ValueRow(
             label: l.receiptsKeepUntil,
-            help: l.receiptsKeepUntilHelp,
+            help: l.receiptsKeepUntilHelp(
+              ref.watch(taxRulesProvider(widget.year)).retentionYears,
+            ),
             value: widget.keepUntil,
           ),
         ],

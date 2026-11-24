@@ -132,7 +132,7 @@ class DashboardScreen extends ConsumerWidget {
               const SizedBox(height: AppSpacing.dashboardSection),
               LabelWithHelp(
                 l.dashboardKor,
-                help: l.dashboardKorHelp,
+                help: l.dashboardKorHelp(AppFormat.euros(rules.korThreshold)),
                 style: theme.textTheme.titleMedium,
               ),
               const SizedBox(height: AppSpacing.heading),

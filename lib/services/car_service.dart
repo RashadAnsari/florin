@@ -7,27 +7,6 @@ import 'tax_rules/tax_year_rules.dart';
 /// Private use of business cars: the income tax addition (Wet IB 2001
 /// art. 3.20) and the BTW correction in rubriek 1d. Sources: `docs/legal.md`.
 abstract final class CarService {
-  /// Private kilometres a year at or below which no addition applies.
-  static const maxPrivateKm = 500;
-
-  /// Months for which the zero-emission reduction of the registration year
-  /// stays in force (art. 3.20 lid 11).
-  static const reductionFreezeMonths = 60;
-
-  /// After this many years the market value replaces the catalogue value
-  /// (art. 3.20 lid 5 b).
-  static const marketValueAfterYears = 15;
-
-  /// After this many years the higher rate applies (art. 3.20 lid 1 b).
-  static const oldCarAfterYears = 16;
-
-  /// BTW: the reduced rate applies from this many years after the year the
-  /// car came into use.
-  static const btwReducedAfterYears = 4;
-
-  /// The purchase BTW counts for one fifth a year.
-  static const btwPurchaseYears = 5;
-
   static Iterable<FixedAsset> _cars(List<FixedAsset> assets) =>
       assets.where((a) => a.kind == AssetKind.car);
 
@@ -61,12 +40,13 @@ abstract final class CarService {
           .fold(0, (s, e) => s + e.deductibleAmount) +
       AssetService.depreciation(car, year);
 
-  /// Whether a complete trip log shows at most [maxPrivateKm] private
-  /// kilometres a year over all business cars.
+  /// Whether a complete trip log shows at most the private kilometres the
+  /// rules allow a year, over all business cars.
   static bool _underPrivateLimit(
     List<FixedAsset> cars,
     List<MileageTrip> trips,
     int year,
+    TaxYearRules rules,
   ) {
     var annualised = 0.0;
     for (final car in cars) {
@@ -78,7 +58,7 @@ abstract final class CarService {
           .fold(0, (s, t) => s + t.distanceKm);
       annualised += privateKm * _yearDays(year) / _days(period.$1, period.$2);
     }
-    return annualised <= maxPrivateKm;
+    return annualised <= rules.carPrivateKmLimit;
   }
 
   /// The yearly addition for [car] on [day], before proration.
@@ -89,10 +69,10 @@ abstract final class CarService {
   ) {
     final reg = car.firstRegistration ?? car.purchaseDate;
     final ageYears = _fullYears(reg, day);
-    final value = ageYears >= marketValueAfterYears
+    final value = ageYears >= rules.carMarketValueAfterYears
         ? (car.marketValue ?? car.catalogueValue ?? 0)
         : (car.catalogueValue ?? 0);
-    final rate = ageYears >= oldCarAfterYears
+    final rate = ageYears >= rules.carOldAfterYears
         ? rules.carOldBijtellingRate
         : rules.carBijtellingRate;
     var addition = value * rate;
@@ -100,9 +80,13 @@ abstract final class CarService {
       final freezeStart = DateTime(reg.year, reg.month + 1);
       final freezeEnd = DateTime(
         freezeStart.year,
-        freezeStart.month + reductionFreezeMonths,
+        freezeStart.month + rules.carReductionFreezeMonths,
       );
-      final frozen = carReductionByRegistrationYear[reg.year];
+      // The reduction of the registration year: from that year's rules, or
+      // for years before Florin's first one from the statute versions.
+      final frozen =
+          taxRulesFor(reg.year)?.carZeroEmissionReduction ??
+          carReductionByRegistrationYear[reg.year];
       final reduction = frozen != null && day.isBefore(freezeEnd)
           ? frozen
           : rules.carZeroEmissionReduction;
@@ -133,7 +117,9 @@ abstract final class CarService {
     required TaxYearRules rules,
   }) {
     final cars = _cars(assets).where((c) => _period(c, year) != null).toList();
-    if (cars.isEmpty || _underPrivateLimit(cars, trips, year)) return 0;
+    if (cars.isEmpty || _underPrivateLimit(cars, trips, year, rules)) {
+      return 0;
+    }
     final yearDays = _yearDays(year);
     var total = 0;
     for (final car in cars) {
@@ -171,8 +157,8 @@ abstract final class CarService {
       final purchaseYear = car.purchaseDate.year;
       final purchaseShare =
           car.vatDeductedOnPurchase > 0 &&
-              year < purchaseYear + btwPurchaseYears
-          ? car.vatDeductedOnPurchase / btwPurchaseYears
+              year < purchaseYear + rules.btwPrivateCarPurchaseYears
+          ? car.vatDeductedOnPurchase / rules.btwPrivateCarPurchaseYears
           : 0.0;
       if (costVat == 0 && purchaseShare == 0) continue;
       final deductedThisYear = costVat + purchaseShare;
@@ -191,7 +177,7 @@ abstract final class CarService {
       } else {
         final reduced =
             car.vatDeductedOnPurchase == 0 ||
-            year > purchaseYear + btwReducedAfterYears;
+            year > purchaseYear + rules.btwPrivateCarReducedAfterYears;
         final rate = reduced
             ? rules.btwPrivateCarReducedRate
             : rules.btwPrivateCarRate;

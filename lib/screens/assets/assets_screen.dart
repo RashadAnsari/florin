@@ -115,7 +115,7 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
   late final _name = TextEditingController(text: widget.asset?.assetName);
   late final _notes = TextEditingController(text: widget.asset?.notes);
   late final _usefulLife = TextEditingController(
-    text: '${widget.asset?.usefulLifeYears ?? AssetService.minUsefulLifeYears}',
+    text: '${widget.asset?.usefulLifeYears ?? _rules.minUsefulLifeYears}',
   );
   late DateTime _purchaseDate = widget.asset?.purchaseDate ?? DateTime.now();
   late int _costExclVat = widget.asset?.costExclVat ?? 0;
@@ -139,6 +139,10 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
   late int _vatOnPurchase = widget.asset?.vatDeductedOnPurchase ?? 0;
 
   bool get _isCar => _kind == AssetKind.car;
+
+  /// The rules of the selected year, which set the depreciation limits.
+  TaxYearRules get _rules =>
+      ref.read(taxRulesProvider(ref.read(fiscalYearProvider)));
 
   /// The purchase year has no rules in Florin, so the deduction received
   /// there is entered rather than computed.
@@ -295,15 +299,21 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                   controller: _usefulLife,
                   decoration: fieldDecoration(
                     label: l.assetsFieldUsefulLife,
-                    help: l.assetsFieldUsefulLifeHelp,
+                    help: l.assetsFieldUsefulLifeHelp(
+                      _rules.minUsefulLifeYears,
+                      AppFormat.percentLabel(_rules.maxDepreciationRate),
+                    ),
                     required: true,
                     suffixText: l.assetsFieldUsefulLifeUnit,
                   ),
                   keyboardType: TextInputType.number,
                   validator: (v) => Validate.wholeNumber(
                     v,
-                    l.assetsFieldUsefulLifeMin(AssetService.minUsefulLifeYears),
-                    min: AssetService.minUsefulLifeYears,
+                    l.assetsFieldUsefulLifeMin(
+                      _rules.minUsefulLifeYears,
+                      AppFormat.percentLabel(_rules.maxDepreciationRate),
+                    ),
+                    min: _rules.minUsefulLifeYears,
                   ),
                 ),
               ],
@@ -379,7 +389,9 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                   ),
                   AmountField(
                     label: l.assetsFieldMarketValue,
-                    help: l.assetsFieldMarketValueHelp,
+                    help: l.assetsFieldMarketValueHelp(
+                      _rules.carMarketValueAfterYears,
+                    ),
                     initialValueCents: _marketValue,
                     onChanged: (v) => setState(() => _marketValue = v),
                   ),
@@ -390,13 +402,13 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                 value: _keepsTripLog,
                 onChanged: (v) => setState(() => _keepsTripLog = v),
                 title: l.assetsFieldTripLog,
-                help: l.assetsFieldTripLogHelp,
+                help: l.assetsFieldTripLogHelp(_rules.carPrivateKmLimit),
               ),
             ],
             const SizedBox(height: AppSpacing.section),
             SectionLabel(
               l.assetsInvestmentSection,
-              help: l.assetsInvestmentSectionHelp,
+              help: l.assetsInvestmentSectionHelp(_rules.desinvesteringYears),
             ),
             const SizedBox(height: AppSpacing.heading),
             if (!_isCar)
@@ -404,7 +416,9 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                 value: _kiaEligible,
                 onChanged: (v) => setState(() => _kiaEligible = v),
                 title: l.assetsFieldKia,
-                help: l.assetsFieldKiaHelp,
+                help: l.assetsFieldKiaHelp(
+                  AppFormat.euros(_rules.kiaMinAssetCost),
+                ),
               ),
             // No EIA on a car (art. 3.45 lid 1 d); the MIA is allowed.
             if (!_isCar) ...[
@@ -415,7 +429,10 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                   if (v) _miaCategory = null;
                 }),
                 title: l.assetsFieldEia,
-                help: l.assetsFieldEiaHelp,
+                help: l.assetsFieldEiaHelp(
+                  _rules.eiaMiaReportMonths,
+                  AppFormat.euros(_rules.eiaMiaMinAssetCost),
+                ),
               ),
               const SizedBox(height: AppSpacing.field),
             ],
@@ -425,7 +442,10 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
               isExpanded: true,
               decoration: fieldDecoration(
                 label: l.assetsFieldMia,
-                help: l.assetsFieldMiaHelp,
+                help: l.assetsFieldMiaHelp(
+                  _rules.eiaMiaReportMonths,
+                  AppFormat.euros(_rules.eiaMiaMinAssetCost),
+                ),
               ),
               items: [
                 DropdownMenuItem(value: null, child: Text(l.assetsMiaNone)),
@@ -440,7 +460,9 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
               const SizedBox(height: AppSpacing.field),
               AmountField(
                 label: l.assetsFieldDeductionReceived,
-                help: l.assetsFieldDeductionReceivedHelp,
+                help: l.assetsFieldDeductionReceivedHelp(
+                  _rules.desinvesteringYears,
+                ),
                 initialValueCents: _deductionReceived,
                 required: true,
                 validatorMessage: l.assetsValidateDeductionReceived,
@@ -518,7 +540,9 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                 value: _reserveGain,
                 onChanged: (v) => setState(() => _reserveGain = v),
                 title: l.assetsFieldReserveGain,
-                help: l.assetsFieldReserveGainHelp,
+                help: l.assetsFieldReserveGainHelp(
+                  _rules.reinvestmentReserveYears,
+                ),
               ),
             ],
             if (_disposalDate != null) ...[
@@ -537,12 +561,14 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
               draft: _receiptDraft,
               year: _purchaseDate.year,
               title: l.receiptsAssetTitle,
-              help: l.receiptsAssetHelp,
+              help: l.receiptsAssetHelp(_rules.retentionYears),
               // The purchase invoice stays current while the asset is used.
               keepUntil: _disposalDate == null
-                  ? l.receiptsKeepWhileInUse
+                  ? l.receiptsKeepWhileInUse(_rules.retentionYears)
                   : AppFormat.date(
-                      ReceiptService.keepUntil(_disposalDate!.year),
+                      ref
+                          .watch(taxRulesProvider(_disposalDate!.year))
+                          .keepUntil(_disposalDate!.year),
                     ),
             ),
           ],

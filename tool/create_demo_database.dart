@@ -4,6 +4,7 @@
 //
 // Every name, number and address here is made up.
 
+import 'package:florin/services/tax_rules/tax_year_2026.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -173,7 +174,7 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
       final (text, qty, price, rate) = lines[i];
       final total = (qty * price).round();
       final lineVat = treatment == VatTreatment.standard
-          ? rate.vatOn(total)
+          ? taxYear2026.vatOn(rate, total)
           : 0;
       excl += total;
       vat += lineVat;
@@ -533,7 +534,7 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     List<(String, Uint8List)> files = const [],
     bool? paper,
   }) async {
-    final vat = rate.vatOn(amount);
+    final vat = taxYear2026.vatOn(rate, amount);
     // Under the KOR no BTW is reclaimed.
     final reclaimed = reclaim && !date.isBefore(_korEndedOn);
     return expenses

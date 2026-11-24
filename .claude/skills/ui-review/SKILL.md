@@ -17,7 +17,7 @@ flutter build linux --release
 .claude/skills/ui-review/scripts/shot.sh invoices 80 143   # clicks, then saves
 ```
 
-`start.sh` copies `demo/` to a work folder (`UI_REVIEW_DIR`, default `/tmp/florin-ui-review`), so clicks never change the demo, sets the language and the GTK colour scheme, and opens a 1440 x 900 window at the left top of display `:99`. Read each screenshot with the Read tool. Use `xdotool key Escape` to close a dialog and `xdotool click 5` over a page to scroll it. At 1440 x 900 the sidebar items sit at x 80 and y 101 (Dashboard) to 479 (Pension) in steps of 42, Settings at y 866, a page's back button at (257, 28) and its add button at (1411, 28).
+`start.sh` opens the demo's year, or `UI_REVIEW_YEAR` when set. It copies `demo/` to a work folder (`UI_REVIEW_DIR`, default `/tmp/florin-ui-review`), so clicks never change the demo, sets the language and the GTK colour scheme, and opens a 1440 x 900 window at the left top of display `:99`. Read each screenshot with the Read tool. Use `xdotool key Escape` to close a dialog and `xdotool click 5` over a page to scroll it. At 1440 x 900 the sidebar items sit at x 80 and y 101 (Dashboard) to 479 (Pension) in steps of 42, Settings at y 866, a page's back button at (257, 28) and its add button at (1411, 28).
 
 ## What to open
 

@@ -31,19 +31,9 @@ enum VatTreatment {
   kor,
 }
 
-/// BTW rate on an invoice line or expense (Wet OB 1968 art. 9 and 11).
-enum VatRate {
-  high(0.21),
-  low(0.09),
-  zero(0),
-  exempt(0);
-
-  final double rate;
-
-  const VatRate(this.rate);
-
-  int vatOn(int amountExclVat) => (amountExclVat * rate).round();
-}
+/// BTW rate category of an invoice line or expense (Wet OB 1968 art. 9 and
+/// 11). The percentage of each is a yearly rule: `TaxYearRules.vatRates`.
+enum VatRate { high, low, zero, exempt }
 
 enum ExpenseCategory {
   office,

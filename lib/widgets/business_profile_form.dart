@@ -1,4 +1,6 @@
 import 'package:drift/drift.dart' show Value;
+import '../theme/app_theme.dart';
+import '../services/tax_rules/tax_year_rules.dart';
 import 'package:flutter/material.dart';
 import 'help.dart';
 import 'package:florin/l10n/app_localizations.dart';
@@ -54,7 +56,14 @@ class BusinessProfileFields {
 class BusinessProfileForm extends StatefulWidget {
   final BusinessProfileFields fields;
 
-  const BusinessProfileForm({super.key, required this.fields});
+  /// The rules of the selected year, for the figures the help texts name.
+  final TaxYearRules rules;
+
+  const BusinessProfileForm({
+    super.key,
+    required this.fields,
+    required this.rules,
+  });
 
   @override
   State<BusinessProfileForm> createState() => _BusinessProfileFormState();
@@ -142,18 +151,31 @@ class _BusinessProfileFormState extends State<BusinessProfileForm> {
           value: f.isStarter,
           onChanged: (v) => setState(() => f.isStarter = v),
           title: l.settingsStartersaftrek,
-          help: l.settingsStartersaftrekHelp,
-          subtitle: l.firstLaunchStartersSubtitle,
+          help: l.settingsStartersaftrekHelp(
+            widget.rules.starterLookbackYears,
+            widget.rules.starterMaxZelfstandigenaftrek,
+          ),
+          subtitle: l.firstLaunchStartersSubtitle(
+            widget.rules.starterLookbackYears,
+            widget.rules.starterMaxZelfstandigenaftrek,
+          ),
         ),
         const SizedBox(height: AppSpacing.group),
-        SectionLabel(l.settingsKorSection, help: l.settingsKorSectionHelp),
+        SectionLabel(
+          l.settingsKorSection,
+          help: l.settingsKorSectionHelp(
+            AppFormat.euros(widget.rules.korThreshold),
+          ),
+        ),
         const SizedBox(height: AppSpacing.heading),
         FormRow(
           children: [
             // The KOR may have started before the years Florin supports.
             DateField(
               label: l.settingsKorStart,
-              help: l.settingsKorStartHelp,
+              help: l.settingsKorStartHelp(
+                AppFormat.euros(widget.rules.korThreshold),
+              ),
               value: f.korStart,
               firstDate: DateTime(2000),
               onChanged: (d) => setState(() => f.korStart = d),

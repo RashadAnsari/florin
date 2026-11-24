@@ -160,7 +160,12 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
                       style: theme.textTheme.titleSmall,
                     ),
                     const SizedBox(height: AppSpacing.field),
-                    BusinessProfileForm(fields: _fields),
+                    BusinessProfileForm(
+                      fields: _fields,
+                      rules: ref.watch(
+                        taxRulesProvider(ref.watch(fiscalYearProvider)),
+                      ),
+                    ),
                     if (_error != null) ...[
                       const SizedBox(height: AppSpacing.field),
                       Text(

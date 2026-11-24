@@ -119,19 +119,21 @@ class PlTaxScreen extends ConsumerWidget {
                   ValueRow.cents(
                     l.plTaxDesinvestering,
                     r.desinvesteringsbijtelling,
-                    help: l.plTaxDesinvesteringHelp,
+                    help: l.plTaxDesinvesteringHelp(rules.desinvesteringYears),
                   ),
                 if (r.carPrivateUse > 0)
                   ValueRow.cents(
                     l.plTaxCarPrivateUse,
                     r.carPrivateUse,
-                    help: l.plTaxCarPrivateUseHelp,
+                    help: l.plTaxCarPrivateUseHelp(rules.carPrivateKmLimit),
                   ),
                 if (r.reserveReleased > 0)
                   ValueRow.cents(
                     l.plTaxReserveReleased,
                     r.reserveReleased,
-                    help: l.plTaxReserveReleasedHelp,
+                    help: l.plTaxReserveReleasedHelp(
+                      rules.reinvestmentReserveYears,
+                    ),
                   ),
                 const SizedBox(height: AppSpacing.field),
                 ValueRow.cents(l.plTaxGrossProfit, r.grossProfit, bold: true),
@@ -154,7 +156,7 @@ class PlTaxScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.field),
                 SectionLabel(
                   l.plTaxDeductionsSection,
-                  help: l.plTaxDeductionsSectionHelp,
+                  help: l.plTaxDeductionsSectionHelp(rules.urencriterium),
                 ),
                 ValueRow.cents(
                   l.plTaxZelfstandigenaftrek(year),
@@ -175,24 +177,32 @@ class PlTaxScreen extends ConsumerWidget {
                     help: l.plTaxUnrealisedZelfsHelp,
                   ),
                 if (r.soAftrek > 0)
-                  ValueRow.cents(l.plTaxSo, -r.soAftrek, help: l.plTaxSoHelp),
+                  ValueRow.cents(
+                    l.plTaxSo,
+                    -r.soAftrek,
+                    help: l.plTaxSoHelp(rules.soMinHours),
+                  ),
                 if (r.meewerkaftrek > 0)
                   ValueRow.cents(
                     l.plTaxMeewerk,
                     -r.meewerkaftrek,
-                    help: l.plTaxMeewerkHelp,
+                    help: l.plTaxMeewerkHelp(rules.meewerkaftrek.first.$1),
                   ),
                 if (r.disabilityStartersaftrek > 0)
                   ValueRow.cents(
                     l.plTaxDisabilityStarters,
                     -r.disabilityStartersaftrek,
-                    help: l.plTaxDisabilityStartersHelp,
+                    help: l.plTaxDisabilityStartersHelp(
+                      rules.reducedUrencriterium,
+                    ),
                   ),
                 if (r.stakingsaftrek > 0)
                   ValueRow.cents(
                     l.plTaxStakings,
                     -r.stakingsaftrek,
-                    help: l.plTaxStakingsHelp,
+                    help: l.plTaxStakingsHelp(
+                      AppFormat.euros(rules.stakingsaftrekMax),
+                    ),
                   ),
                 ValueRow.cents(
                   l.plTaxMkb(AppFormat.percent(rules.mkbWinstvrijstelling, 1)),
@@ -296,6 +306,7 @@ class _YearInputs extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context)!;
+    final rules = ref.watch(taxRulesProvider(year));
     return AsyncBody(
       value: ref.watch(taxYearInputsProvider(year)),
       builder: (i) {
@@ -318,7 +329,10 @@ class _YearInputs extends ConsumerWidget {
                 _WholeNumberField(
                   key: ValueKey('partner_$year'),
                   label: l.inputPartnerHours,
-                  help: l.inputPartnerHoursHelp,
+                  help: l.inputPartnerHoursHelp(
+                    AppFormat.euros(rules.meewerkMaxPartnerPay),
+                    rules.meewerkaftrek.first.$1,
+                  ),
                   value: i?.partnerHours ?? 0,
                   onChanged: (v) =>
                       save(TaxYearInputsCompanion(partnerHours: Value(v))),
@@ -326,7 +340,9 @@ class _YearInputs extends ConsumerWidget {
                 AmountField(
                   key: ValueKey('unrealised_$year'),
                   label: l.inputUnrealisedZelfs,
-                  help: l.inputUnrealisedZelfsHelp,
+                  help: l.inputUnrealisedZelfsHelp(
+                    rules.unrealisedZelfstandigenaftrekYears,
+                  ),
                   initialValueCents: i?.unrealisedZelfstandigenaftrek ?? 0,
                   onChanged: (v) => save(
                     TaxYearInputsCompanion(
@@ -350,7 +366,7 @@ class _YearInputs extends ConsumerWidget {
               onChanged: (v) =>
                   save(TaxYearInputsCompanion(hasSoVerklaring: Value(v))),
               title: l.inputSoVerklaring,
-              help: l.inputSoVerklaringHelp,
+              help: l.inputSoVerklaringHelp(rules.soMinHours),
             ),
             if (i?.hasSoVerklaring ?? false)
               HelpCheckbox(
@@ -358,7 +374,10 @@ class _YearInputs extends ConsumerWidget {
                 onChanged: (v) =>
                     save(TaxYearInputsCompanion(soStarter: Value(v))),
                 title: l.inputSoStarter,
-                help: l.inputSoStarterHelp,
+                help: l.inputSoStarterHelp(
+                  rules.starterLookbackYears,
+                  rules.soStarterMaxYears,
+                ),
               ),
             HelpCheckbox(
               value: i?.businessCeased ?? false,
@@ -372,7 +391,9 @@ class _YearInputs extends ConsumerWidget {
               AmountField(
                 key: ValueKey('stakings_$year'),
                 label: l.inputStakingsUsedBefore,
-                help: l.inputStakingsUsedBeforeHelp,
+                help: l.inputStakingsUsedBeforeHelp(
+                  AppFormat.euros(rules.stakingsaftrekMax),
+                ),
                 initialValueCents: i?.stakingsaftrekUsedBefore ?? 0,
                 onChanged: (v) => save(
                   TaxYearInputsCompanion(stakingsaftrekUsedBefore: Value(v)),
@@ -385,14 +406,20 @@ class _YearInputs extends ConsumerWidget {
               onChanged: (v) =>
                   save(TaxYearInputsCompanion(disabilityBenefit: Value(v))),
               title: l.inputDisabilityBenefit,
-              help: l.inputDisabilityBenefitHelp,
+              help: l.inputDisabilityBenefitHelp(
+                rules.reducedUrencriterium,
+                rules.urencriterium,
+              ),
             ),
             if (i?.disabilityBenefit ?? false) ...[
               const SizedBox(height: AppSpacing.field),
               _WholeNumberField(
                 key: ValueKey('disability_$year'),
                 label: l.inputDisabilityUsed,
-                help: l.inputDisabilityUsedHelp,
+                help: l.inputDisabilityUsedHelp(
+                  rules.starterLookbackYears,
+                  rules.disabilityStartersaftrek.length,
+                ),
                 value: i?.disabilityStartersUsed ?? 0,
                 max: 3,
                 onChanged: (v) => save(

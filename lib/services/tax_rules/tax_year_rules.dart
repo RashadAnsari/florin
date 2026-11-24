@@ -112,6 +112,90 @@ class TaxYearRules {
   final int reserveringsruimteMax;
   final double factorAMultiplier;
 
+  // Rules the law sets without a yearly figure. They are here so that a
+  // change in the law is a change in a year's rules, not in the code. The
+  // reference of every field is in `docs/tax-years/README.md`.
+
+  /// BTW rate per category (Wet OB 1968 art. 9).
+  final Map<VatRate, double> vatRates;
+
+  /// Months after the end of a quarter in which its BTW return and payment
+  /// are due (AWR art. 19 lid 1).
+  final int vatReturnDueMonths;
+
+  /// Day of the month after the supply by which the invoice is due
+  /// (Wet OB 1968 art. 34g).
+  final int invoiceDueDay;
+
+  /// Years invoices and receipts are kept (AWR art. 52 lid 4).
+  final int retentionYears;
+
+  /// Goods to EU businesses in a quarter above which the ICP-opgaaf is due
+  /// per month.
+  final int icpQuarterlyGoodsMax;
+
+  /// Gifts to one person in a year at or below which their BTW stays
+  /// deductible (Besluit uitsluiting aftrek omzetbelasting 1968 art. 4).
+  final int buaGiftThreshold;
+
+  /// Most depreciation a year as a share of the cost (Wet IB 2001 art. 3.30
+  /// lid 2), which sets the shortest useful life.
+  final double maxDepreciationRate;
+
+  /// Years after the year it was formed in which the herinvesteringsreserve
+  /// must be used (art. 3.54 lid 5).
+  final int reinvestmentReserveYears;
+
+  /// Years from the start of the purchase year in which a sale leads to a
+  /// desinvesteringsbijtelling (art. 3.47 lid 2).
+  final int desinvesteringYears;
+
+  /// Months within which an EIA or MIA investment is reported to RVO.
+  final int eiaMiaReportMonths;
+
+  /// Years unrealised zelfstandigenaftrek is carried forward (art. 3.76
+  /// lid 7).
+  final int unrealisedZelfstandigenaftrekYears;
+
+  /// A starter was not an ondernemer in one or more of this many previous
+  /// years (art. 3.76 lid 3, 3.77 lid 2, 3.78a lid 1).
+  final int starterLookbackYears;
+
+  /// ... and had the zelfstandigenaftrek at most this many times in them
+  /// (art. 3.76 lid 3).
+  final int starterMaxZelfstandigenaftrek;
+
+  /// ... and an S&O-verklaring for at most this many years in them, for the
+  /// S&O starter increase (art. 3.77 lid 2).
+  final int soStarterMaxYears;
+
+  /// Pay to the partner below this counts as unpaid for the meewerkaftrek.
+  final int meewerkMaxPartnerPay;
+
+  /// Private kilometres a year at or below which no car addition applies
+  /// (art. 3.20 lid 1 and 3).
+  final int carPrivateKmLimit;
+
+  /// A car older than this many years counts at its market value (art. 3.20
+  /// lid 5 b).
+  final int carMarketValueAfterYears;
+
+  /// A car older than this many years gets [carOldBijtellingRate] (art. 3.20
+  /// lid 1 b).
+  final int carOldAfterYears;
+
+  /// Months the zero-emission reduction of the registration year holds
+  /// (art. 3.20 lid 11).
+  final int carReductionFreezeMonths;
+
+  /// BTW on private use: the reduced rate from this many years after the
+  /// year the car came into use (Belastingdienst).
+  final int btwPrivateCarReducedAfterYears;
+
+  /// BTW on private use: the purchase BTW counts as one share of this many
+  /// years in the cap (Belastingdienst).
+  final int btwPrivateCarPurchaseYears;
+
   const TaxYearRules({
     required this.year,
     required this.box1Brackets,
@@ -151,7 +235,44 @@ class TaxYearRules {
     required this.jaarruimteMax,
     required this.reserveringsruimteMax,
     required this.factorAMultiplier,
+    required this.vatRates,
+    required this.vatReturnDueMonths,
+    required this.invoiceDueDay,
+    required this.retentionYears,
+    required this.icpQuarterlyGoodsMax,
+    required this.buaGiftThreshold,
+    required this.maxDepreciationRate,
+    required this.reinvestmentReserveYears,
+    required this.desinvesteringYears,
+    required this.eiaMiaReportMonths,
+    required this.unrealisedZelfstandigenaftrekYears,
+    required this.starterLookbackYears,
+    required this.starterMaxZelfstandigenaftrek,
+    required this.soStarterMaxYears,
+    required this.meewerkMaxPartnerPay,
+    required this.carPrivateKmLimit,
+    required this.carMarketValueAfterYears,
+    required this.carOldAfterYears,
+    required this.carReductionFreezeMonths,
+    required this.btwPrivateCarReducedAfterYears,
+    required this.btwPrivateCarPurchaseYears,
   });
+
+  /// The BTW on [amountExclVat] at [rate].
+  int vatOn(VatRate rate, int amountExclVat) =>
+      (amountExclVat * vatRates[rate]!).round();
+
+  /// The shortest useful life the depreciation limit allows.
+  int get minUsefulLifeYears => (1 / maxDepreciationRate).ceil();
+
+  /// The last day to issue the invoice for a supply on [supply].
+  DateTime latestInvoiceDate(DateTime supply) =>
+      DateTime(supply.year, supply.month + 1, invoiceDueDay);
+
+  /// The last day records of the bookkeeping [year] must be kept: the end
+  /// of the retention term after that year, the cautious reading of when
+  /// the term starts.
+  DateTime keepUntil(int year) => DateTime(year + retentionYears, 12, 31);
 
   /// Where the top bracket starts: "het in de eerste kolom van de in het
   /// eerste lid opgenomen tabel laatstvermelde bedrag" (art. 2.10 lid 2).
