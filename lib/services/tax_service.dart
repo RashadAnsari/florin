@@ -25,6 +25,9 @@ class TaxResult {
   final int lijfrenteDeduction;
   final int aovDeduction;
   final int lossOffset;
+
+  /// Loon from employment, added to box 1 income (art. 3.1 lid 2).
+  final int wages;
   final int taxableIncome;
   final List<int> bracketTax;
 
@@ -34,6 +37,13 @@ class TaxResult {
   final int arbeidskorting;
   final int box1Tax;
   final int zvwContribution;
+
+  /// Loonheffing withheld on the wages, settled in the return (art. 9.2).
+  final int wageTaxWithheld;
+
+  /// Box 1 tax on the wages alone, with their own heffingskortingen: what
+  /// the year would cost without the business.
+  final int wageOnlyTax;
 
   const TaxResult({
     required this.grossRevenue,
@@ -56,6 +66,7 @@ class TaxResult {
     required this.lijfrenteDeduction,
     required this.aovDeduction,
     required this.lossOffset,
+    this.wages = 0,
     required this.taxableIncome,
     required this.bracketTax,
     required this.tariefaanpassing,
@@ -63,6 +74,8 @@ class TaxResult {
     required this.arbeidskorting,
     required this.box1Tax,
     required this.zvwContribution,
+    this.wageTaxWithheld = 0,
+    this.wageOnlyTax = 0,
   });
 
   int get netRevenue => grossRevenue - creditNotes;
@@ -77,12 +90,21 @@ class TaxResult {
       reserveReleased;
   int get profit => grossProfit - investmentDeduction.total;
   int get grossBox1Tax => bracketTax.fold(0, (s, t) => s + t);
-  int get totalTax => box1Tax + zvwContribution;
-  int get netProfitAfterTax => grossProfit - totalTax;
 
-  /// Total tax as a share of gross profit, in basis points.
+  /// Box 1 tax and Zvw contribution on all box 1 income, wages included.
+  int get totalTax => box1Tax + zvwContribution;
+
+  /// What the return leaves to pay after the loonheffing withheld; below
+  /// zero it is a refund.
+  int get taxToPay => totalTax - wageTaxWithheld;
+
+  /// The tax the business adds on top of the tax on the wages alone.
+  int get businessTax => totalTax - wageOnlyTax;
+  int get netProfitAfterTax => grossProfit - businessTax;
+
+  /// The business's tax as a share of gross profit, in basis points.
   int get effectiveTaxRate =>
-      grossProfit > 0 ? totalTax * 10000 ~/ grossProfit : 0;
+      grossProfit > 0 ? businessTax * 10000 ~/ grossProfit : 0;
 }
 
 abstract final class TaxService {
@@ -156,6 +178,46 @@ abstract final class TaxService {
     return rate;
   }
 
+  /// The urencriterium (art. 3.6 lid 1): at least the yearly hours in the
+  /// business and, with a job, more time in the business than in the job.
+  /// Only logged hours count: assuming the hours would understate the tax
+  /// (AGENTS.md rule 5).
+  static bool meetsUrencriterium({
+    required TaxYearRules rules,
+    required double totalHours,
+    required bool isStarter,
+    required TaxYearInput? inputs,
+  }) {
+    final job = timeTestHours(isStarter: isStarter, inputs: inputs);
+    return totalHours >= rules.urencriterium &&
+        (job == null || totalHours > job);
+  }
+
+  /// The hours in employment the business hours must exceed (art. 3.6 lid 1
+  /// a), or null without a job or when the user was not an ondernemer in
+  /// one of the previous years (lid 1 b). A startersaftrek starter was not
+  /// (art. 3.76 lid 3), so the condition does not apply to them either.
+  static int? timeTestHours({
+    required bool isStarter,
+    required TaxYearInput? inputs,
+  }) {
+    final i = inputs;
+    if (i == null || !i.employed || isStarter || i.notOndernemerBefore) {
+      return null;
+    }
+    return i.employmentHours;
+  }
+
+  /// Box 1 tax on [wages] alone, after the heffingskortingen.
+  static int wageOnlyTax(int wages, TaxYearRules rules) {
+    if (wages <= 0) return 0;
+    final gross = rules.box1Tax(wages);
+    final credits =
+        rules.algemeneHeffingskorting.valueFor(wages) +
+        rules.arbeidskorting.valueFor(wages);
+    return (gross - credits).clamp(0, gross);
+  }
+
   static TaxResult calculate({
     required TaxYearRules rules,
     required int grossRevenue,
@@ -191,9 +253,14 @@ abstract final class TaxService {
         totalCosts +
         additions -
         investmentDeduction.total;
-    // Only logged hours count: assuming the urencriterium would understate
-    // the tax (AGENTS.md rule 5).
-    final uren = totalHours >= rules.urencriterium;
+    final uren = meetsUrencriterium(
+      rules: rules,
+      totalHours: totalHours,
+      isStarter: isStarter,
+      inputs: i,
+    );
+    final employed = i?.employed ?? false;
+    final wages = employed ? i!.wages : 0;
 
     // Ondernemersaftrek (art. 3.74), in the order of the return.
     var zelfstandigenaftrek = 0;
@@ -253,7 +320,9 @@ abstract final class TaxService {
     final afterOndernemersaftrek = profit - ondernemersaftrek;
     final mkb = (afterOndernemersaftrek * rules.mkbWinstvrijstelling).round();
     final belastbareWinst = afterOndernemersaftrek - mkb;
-    final beforeLosses = belastbareWinst - lijfrentePremium - aovPremium;
+    // Wages and profit are both inkomen uit werk en woning (art. 3.1 lid 2).
+    final beforeLosses =
+        belastbareWinst + wages - lijfrentePremium - aovPremium;
     final carry = i?.lossCarryForward ?? 0;
     final lossOffset = beforeLosses <= 0
         ? 0
@@ -277,10 +346,14 @@ abstract final class TaxService {
               .round();
     final grossBox1 = bracketTax.fold(0, (s, t) => s + t) + tariefaanpassing;
     final ahk = rules.algemeneHeffingskorting.valueFor(taxableIncome);
-    final ak = rules.arbeidskorting.valueFor(profit);
+    // Arbeidsinkomen is profit and loon together (art. 8.1 lid 1 e).
+    final ak = rules.arbeidskorting.valueFor(profit + wages);
     final box1 = (grossBox1 - ahk - ak).clamp(0, grossBox1);
 
-    final zvwBase = belastbareWinst.clamp(0, rules.zvwMaxIncome);
+    // The loon Zvw the employers paid the werkgeversheffing on lowers the
+    // maximum for the profit (Zvw art. 43 lid 5).
+    final zvwMax = rules.zvwMaxIncome - (employed ? i!.zvwWages : 0);
+    final zvwBase = zvwMax <= 0 ? 0 : belastbareWinst.clamp(0, zvwMax);
     final zvw = (zvwBase * rules.zvwRate).round();
 
     return TaxResult(
@@ -304,6 +377,7 @@ abstract final class TaxService {
       lijfrenteDeduction: lijfrentePremium,
       aovDeduction: aovPremium,
       lossOffset: lossOffset,
+      wages: wages,
       taxableIncome: taxableIncome,
       bracketTax: bracketTax,
       tariefaanpassing: tariefaanpassing,
@@ -311,6 +385,8 @@ abstract final class TaxService {
       arbeidskorting: ak,
       box1Tax: box1,
       zvwContribution: zvw,
+      wageTaxWithheld: employed ? i!.wageTaxWithheld : 0,
+      wageOnlyTax: wageOnlyTax(wages, rules),
     );
   }
 }

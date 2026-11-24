@@ -112,7 +112,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get dashboardUrencriteriumHelp =>
-      'De uren die je dit jaar voor je onderneming werkte, tegenover het urencriterium. De zelfstandigenaftrek en de meeste andere ondernemersaftrekken vereisen het (Wet IB 2001 art. 3.76). Alle uren voor je onderneming tellen, niet alleen declarabele.';
+      'De uren die je dit jaar voor je onderneming werkte, tegenover het urencriterium. De zelfstandigenaftrek en de meeste andere ondernemersaftrekken vereisen het (Wet IB 2001 art. 3.76). Alle uren voor je onderneming tellen, niet alleen declarabele. Met een baan moet de onderneming ook meer van je tijd vragen dan de baan (art. 3.6).';
 
   @override
   String get dashboardBtwDeadlines => 'BTW-deadlines';
@@ -536,6 +536,11 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String hoursUrencriteriumLeft(String left) {
     return '$left uur te gaan';
+  }
+
+  @override
+  String hoursUrencriteriumJob(int hours) {
+    return 'Niet meer dan $hours uur in loondienst';
   }
 
   @override
@@ -970,11 +975,32 @@ class AppLocalizationsNl extends AppLocalizations {
   String get plTaxTotalTax => 'Geschatte totale belasting';
 
   @override
+  String get plTaxWageTaxWithheld => 'Ingehouden loonheffing';
+
+  @override
+  String get plTaxWageTaxWithheldHelp =>
+      'De loonbelasting en premie volksverzekeringen die je werkgevers inhielden, zoals je hieronder invulde. De aangifte verrekent die met de belasting hierboven.';
+
+  @override
+  String get plTaxToPay => 'Geschatte belasting te betalen';
+
+  @override
+  String get plTaxRefund => 'Geschatte teruggave';
+
+  @override
+  String get plTaxToPayHelp =>
+      'Geschat: de totale belasting min de ingehouden loonheffing. Betalingen op een voorlopige aanslag zijn niet afgetrokken.';
+
+  @override
   String get plTaxNetProfit => 'Geschatte nettowinst na belasting';
 
   @override
+  String get plTaxNetProfitHelp =>
+      'Geschat: brutowinst min de belasting die de onderneming toevoegt. Met loon is dat de totale belasting min de belasting over alleen het loon.';
+
+  @override
   String plTaxEffectiveRate(String rate) {
-    return 'Effectief tarief: $rate%';
+    return 'Effectief tarief over de winst: $rate%';
   }
 
   @override
@@ -988,6 +1014,11 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get plTaxUrenBannerSuffixPending =>
       '. Tot je het haalt, laat de schatting de zelfstandigenaftrek en de andere aftrekposten die het vereisen weg';
+
+  @override
+  String plTaxUrenJobBanner(String hours, int jobHours) {
+    return 'Urencriterium: $hours uur gelogd voor de onderneming, niet meer dan de $jobHours uur in loondienst. Het urencriterium vraagt meer tijd in de onderneming dan in ander werk, dus de schatting laat de zelfstandigenaftrek en de andere aftrekposten die het vereisen weg.';
+  }
 
   @override
   String get settingsLanguageSection => 'Taal';
@@ -1260,7 +1291,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get plTaxEstimateNotice =>
-      'Dit is een schatting voor een ondernemer onder de AOW-leeftijd zonder ander inkomen. Inkomen uit loondienst, van een partner, box 2 of box 3 telt niet mee.';
+      'Dit is een schatting voor een ondernemer onder de AOW-leeftijd. Loon uit dienstbetrekking telt mee als je het hieronder invult. Inkomen van een partner, uit overig werk, box 2 of box 3 telt niet mee.';
 
   @override
   String settingsMoved(String path) {
@@ -1899,8 +1930,18 @@ class AppLocalizationsNl extends AppLocalizations {
       'Geschatte inkomstenbelasting en Zvw-bijdrage over je winst tot nu toe. Geen aanslag.';
 
   @override
+  String get dashboardEstimatedTaxToPay => 'Geschatte belasting te betalen';
+
+  @override
+  String get dashboardEstimatedRefund => 'Geschatte teruggave';
+
+  @override
+  String get dashboardEstimatedTaxToPayHelp =>
+      'Geschatte inkomstenbelasting en Zvw-bijdrage over je winst tot nu toe en je loon, min de ingehouden loonheffing. Geen aanslag.';
+
+  @override
   String get dashboardNetProfitAfterTaxHelp =>
-      'Winst min de geschatte belasting. Een schatting, geen definitief bedrag.';
+      'Winst min de geschatte belasting die de onderneming toevoegt. Een schatting, geen definitief bedrag.';
 
   @override
   String get expensesFieldCar => 'Auto van de zaak';
@@ -1944,6 +1985,51 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get inputLossCarryForwardHelp =>
       'Verliezen in box 1 uit eerdere jaren die je nog mag verrekenen, zoals vastgesteld door de Belastingdienst. Verrekend met het inkomen van dit jaar.';
+
+  @override
+  String get inputEmployed => 'Ik werk dit jaar ook in loondienst';
+
+  @override
+  String get inputEmployedHelp =>
+      'Loon telt in box 1 mee met je winst, en het urencriterium vergelijkt dan ook je uren in de onderneming met je uren in loondienst.';
+
+  @override
+  String get inputWages => 'Loon';
+
+  @override
+  String get inputWagesHelp =>
+      'Het loon op je jaaropgaven: het belaste loon, niet het brutosalaris. Het telt in box 1 op bij je winst.';
+
+  @override
+  String get inputWageTaxWithheld => 'Ingehouden loonheffing';
+
+  @override
+  String get inputWageTaxWithheldHelp =>
+      'De loonheffing op je jaaropgaven: de loonbelasting en premie volksverzekeringen die je werkgevers inhielden. De aangifte trekt die af van de belasting.';
+
+  @override
+  String get inputZvwWages => 'Loon Zvw';
+
+  @override
+  String get inputZvwWagesHelp =>
+      'Het loon Zorgverzekeringswet op je jaaropgaven, waarover je werkgever de werkgeversheffing Zvw betaalde. Je betaalt de Zvw-bijdrage over je winst alleen tot het maximumbijdrage-inkomen min dit bedrag.';
+
+  @override
+  String get inputEmploymentHours => 'Uren in loondienst';
+
+  @override
+  String inputEmploymentHoursHelp(int years) {
+    return 'De uren die je in het hele jaar in loondienst werkt. Het urencriterium vraagt ook meer tijd in de onderneming dan in ander werk, tenzij je in een of meer van de $years voorgaande jaren geen ondernemer was.';
+  }
+
+  @override
+  String inputNotOndernemerBefore(int years) {
+    return 'Ik was in een of meer van de $years voorgaande jaren geen ondernemer';
+  }
+
+  @override
+  String get inputNotOndernemerBeforeHelp =>
+      'Dan vraagt het urencriterium niet meer tijd in de onderneming dan in je baan. Dat geldt al als je recht hebt op startersaftrek.';
 
   @override
   String get inputSoVerklaring => 'Ik heb een S&O-verklaring voor dit jaar';
@@ -2022,7 +2108,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get plTaxArbeidskortingHelp =>
-      'Een heffingskorting voor werkenden, op basis van de winst vóór ondernemersaftrek en mkb-winstvrijstelling.';
+      'Een heffingskorting voor werkenden, op basis van de winst vóór ondernemersaftrek en mkb-winstvrijstelling plus je loon.';
 
   @override
   String get plTaxAovHelp =>
@@ -2031,6 +2117,13 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get plTaxBelastbareWinstHelp =>
       'Winst na ondernemersaftrek en mkb-winstvrijstelling. De Zvw-bijdrage gaat hiervan uit.';
+
+  @override
+  String get plTaxWages => 'Loon uit dienstbetrekking';
+
+  @override
+  String get plTaxWagesHelp =>
+      'Het loon dat je hieronder invulde. Het is inkomen in box 1, net als de winst, dus het verhoogt het tarief over de winst en verlaagt de algemene heffingskorting.';
 
   @override
   String get plTaxBox1SectionHelp =>
@@ -2096,6 +2189,15 @@ class AppLocalizationsNl extends AppLocalizations {
       'Gegevens die de administratie niet laat zien. Ze veranderen de schatting hierboven.';
 
   @override
+  String plTaxEmploymentSection(int year) {
+    return 'Loondienst in $year';
+  }
+
+  @override
+  String get plTaxEmploymentSectionHelp =>
+      'Als je ook in loondienst werkt. Vul de totalen van al je jaaropgaven van het jaar in. Tijdens het jaar vul je in wat je voor het hele jaar verwacht.';
+
+  @override
   String get plTaxInvestmentSection => 'Investeringsaftrek';
 
   @override
@@ -2145,7 +2247,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get plTaxProfitHelp =>
-      'Winst uit onderneming vóór ondernemersaftrek. De arbeidskorting gaat hiervan uit.';
+      'Winst uit onderneming vóór ondernemersaftrek. De arbeidskorting gaat hiervan uit, samen met eventueel loon.';
 
   @override
   String get plTaxReserveReleased => 'Vrijval herinvesteringsreserve';
@@ -2177,7 +2279,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get plTaxTaxableProfitHelp =>
-      'Het inkomen in box 1 waarover de belasting wordt berekend.';
+      'Het inkomen in box 1 waarover de belasting wordt berekend: belastbare winst plus loon, min de aftrekposten hierboven.';
 
   @override
   String get plTaxUnrealisedZelfs => 'Niet-gerealiseerde zelfstandigenaftrek';
@@ -2192,7 +2294,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get plTaxZvwHelp =>
-      'De inkomensafhankelijke bijdrage Zorgverzekeringswet, over de belastbare winst tot een maximum.';
+      'De inkomensafhankelijke bijdrage Zorgverzekeringswet, over de belastbare winst tot een maximum. Het loon Zvw waarover je werkgever de werkgeversheffing betaalde, verlaagt dat maximum.';
 
   @override
   String get vatReturnIcpSectionHelp =>

@@ -258,7 +258,7 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
 
   final totalHours = hours.requireValue.fold(0.0, (s, h) => s + h.hours);
   final yearOver = year < DateTime.now().year;
-  final meetsUrencriterium = totalHours >= rules.urencriterium;
+  final isStarter = profile.requireValue?.isStarter ?? false;
   final km = TaxService.businessKm(trips.requireValue);
   final assetList = assets.requireValue;
   final every = allAssets.requireValue;
@@ -310,7 +310,7 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
     totalHours: totalHours,
     soHours: soHours,
     hoursFinal: yearOver,
-    isStarter: profile.requireValue?.isStarter ?? false,
+    isStarter: isStarter,
     inputs: yearInputs,
     lijfrentePremium: PensionService.deductiblePremium(
       rules,
@@ -325,7 +325,16 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
       rules: rules,
       result: result,
       totalHours: totalHours,
-      meetsUrencriterium: meetsUrencriterium,
+      meetsUrencriterium: TaxService.meetsUrencriterium(
+        rules: rules,
+        totalHours: totalHours,
+        isStarter: isStarter,
+        inputs: yearInputs,
+      ),
+      timeTestHours: TaxService.timeTestHours(
+        isStarter: isStarter,
+        inputs: yearInputs,
+      ),
       yearOver: yearOver,
       businessKm: km,
     ),
@@ -381,6 +390,10 @@ class TaxEstimate {
   final TaxResult result;
   final double totalHours;
   final bool meetsUrencriterium;
+
+  /// The hours in employment the business hours must exceed for the
+  /// urencriterium, or null when that condition does not apply.
+  final int? timeTestHours;
   final bool yearOver;
   final int businessKm;
 
@@ -389,6 +402,7 @@ class TaxEstimate {
     required this.result,
     required this.totalHours,
     required this.meetsUrencriterium,
+    required this.timeTestHours,
     required this.yearOver,
     required this.businessKm,
   });

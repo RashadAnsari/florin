@@ -222,6 +222,7 @@ class CsvExportService {
     ['Stakingsaftrek', _euro(-t.stakingsaftrek)],
     ['Mkb-winstvrijstelling', _euro(-t.mkbWinstvrijstelling)],
     ['Belastbare winst uit onderneming', _euro(t.belastbareWinst)],
+    ['Loon uit dienstbetrekking', _euro(t.wages)],
     ['Lijfrentepremie', _euro(-t.lijfrenteDeduction)],
     ['Premie arbeidsongeschiktheidsverzekering', _euro(-t.aovDeduction)],
     ['Verrekende verliezen', _euro(-t.lossOffset)],
@@ -233,6 +234,8 @@ class CsvExportService {
     ['Inkomstenbelasting box 1', _euro(t.box1Tax)],
     ['Inkomensafhankelijke bijdrage Zvw', _euro(t.zvwContribution)],
     ['Totaal', _euro(t.totalTax)],
+    ['Ingehouden loonheffing', _euro(-t.wageTaxWithheld)],
+    ['Te betalen (negatief: terug te ontvangen)', _euro(t.taxToPay)],
   ];
 
   /// A new folder inside [parent] for one export, named after the year and

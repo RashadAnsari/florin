@@ -53,6 +53,12 @@ void main() {
     int disabilityUsed = 0,
     int unrealised = 0,
     int losses = 0,
+    bool employed = false,
+    int wages = 0,
+    int withheld = 0,
+    int zvwWages = 0,
+    int jobHours = 0,
+    bool notOndernemerBefore = false,
   }) => TaxYearInput(
     year: 2026,
     partnerHours: partnerHours,
@@ -64,7 +70,162 @@ void main() {
     disabilityStartersUsed: disabilityUsed,
     unrealisedZelfstandigenaftrek: unrealised,
     lossCarryForward: losses,
+    employed: employed,
+    wages: wages,
+    wageTaxWithheld: withheld,
+    zvwWages: zvwWages,
+    employmentHours: jobHours,
+    notOndernemerBefore: notOndernemerBefore,
   );
+
+  TaxYearInput job({
+    int wages = 4000000,
+    int withheld = 0,
+    int? zvwWages,
+    int hours = 0,
+    bool notOndernemerBefore = false,
+  }) => inputs(
+    employed: true,
+    wages: wages,
+    withheld: withheld,
+    zvwWages: zvwWages ?? wages,
+    jobHours: hours,
+    notOndernemerBefore: notOndernemerBefore,
+  );
+
+  group('a job next to the business', () {
+    test('wages and profit are taxed together in box 1 (art. 3.1 lid 2)', () {
+      final r = calc(revenue: 3000000, inputs: job());
+      final alone = calc(revenue: 3000000);
+      expect(r.taxableIncome, alone.taxableIncome + 4000000);
+      expect(r.bracketTax, rules.box1TaxPerBracket(r.taxableIncome));
+    });
+
+    test('arbeidskorting on profit and loon together (art. 8.1 lid 1 e)', () {
+      final r = calc(revenue: 1000000, inputs: job(wages: 1500000));
+      expect(r.arbeidskorting, rules.arbeidskorting.valueFor(2500000));
+    });
+
+    test('algemene heffingskorting on the combined income (art. 2.18)', () {
+      final r = calc(revenue: 3000000, inputs: job());
+      expect(
+        r.algemeneHeffingskorting,
+        rules.algemeneHeffingskorting.valueFor(r.taxableIncome),
+      );
+    });
+
+    test('the tariefaanpassing counts the wages towards the top bracket '
+        '(art. 2.10 lid 2)', () {
+      // € 40.000 profit stays below the top bracket alone, not with
+      // € 60.000 wages.
+      expect(calc(revenue: 4000000).tariefaanpassing, 0);
+      expect(
+        calc(revenue: 4000000, inputs: job(wages: 6000000)).tariefaanpassing,
+        greaterThan(0),
+      );
+    });
+
+    test('loon Zvw lowers the maximum for the Zvw on the profit '
+        '(Zvw art. 43 lid 5)', () {
+      // The Belastingdienst example: € 40.000 loon Zvw leaves € 39.409 of
+      // the maximum for the profit.
+      final r = calc(revenue: 5000000, uren: false, inputs: job());
+      expect(r.belastbareWinst, greaterThan(3940900));
+      expect(r.zvwContribution, (3940900 * rules.zvwRate).round());
+      // Loon above the maximum leaves nothing.
+      expect(
+        calc(
+          revenue: 1500000,
+          inputs: job(wages: 8000000, zvwWages: 8000000),
+        ).zvwContribution,
+        0,
+      );
+    });
+
+    test(
+      'loonheffing withheld is settled against the tax (art. 9.2 lid 1)',
+      () {
+        final r = calc(revenue: 3000000, inputs: job(withheld: 900000));
+        expect(r.wageTaxWithheld, 900000);
+        expect(r.taxToPay, r.totalTax - 900000);
+        final refund = calc(inputs: job(withheld: 2000000));
+        expect(refund.taxToPay, lessThan(0));
+      },
+    );
+
+    test('net profit after tax counts only the tax the business adds', () {
+      final r = calc(revenue: 3000000, inputs: job());
+      expect(r.wageOnlyTax, TaxService.wageOnlyTax(4000000, rules));
+      expect(r.netProfitAfterTax, r.grossProfit - (r.totalTax - r.wageOnlyTax));
+      expect(calc(inputs: job()).businessTax, 0);
+    });
+
+    test('a job turned off counts nothing', () {
+      final off = inputs(wages: 4000000, withheld: 900000, zvwWages: 4000000);
+      expect(
+        calc(revenue: 3000000, inputs: off).taxableIncome,
+        calc(revenue: 3000000).taxableIncome,
+      );
+      expect(calc(revenue: 3000000, inputs: off).wageTaxWithheld, 0);
+    });
+  });
+
+  group('urencriterium with a job (art. 3.6 lid 1)', () {
+    test('needs more hours in the business than in the job', () {
+      expect(
+        calc(
+          revenue: 5000000,
+          hours: 1300,
+          inputs: job(hours: 1300),
+        ).zelfstandigenaftrek,
+        0,
+      );
+      expect(
+        calc(
+          revenue: 5000000,
+          hours: 1301,
+          inputs: job(hours: 1300),
+        ).zelfstandigenaftrek,
+        rules.zelfstandigenaftrek,
+      );
+    });
+
+    test('not when the user was not an ondernemer in a previous year '
+        '(lid 1 b)', () {
+      expect(
+        calc(
+          revenue: 5000000,
+          hours: 1300,
+          inputs: job(hours: 1800, notOndernemerBefore: true),
+        ).zelfstandigenaftrek,
+        rules.zelfstandigenaftrek,
+      );
+      expect(
+        calc(
+          revenue: 5000000,
+          hours: 1300,
+          starter: true,
+          inputs: job(hours: 1800),
+        ).startersaftrek,
+        rules.startersaftrek,
+      );
+    });
+
+    test('the job hours apply only to someone employed', () {
+      expect(
+        TaxService.timeTestHours(isStarter: false, inputs: job(hours: 500)),
+        500,
+      );
+      expect(
+        TaxService.timeTestHours(isStarter: false, inputs: inputs()),
+        null,
+      );
+      expect(
+        TaxService.timeTestHours(isStarter: true, inputs: job(hours: 500)),
+        null,
+      );
+    });
+  });
 
   group('ondernemersaftrek', () {
     test('meewerkaftrek by partner hours (art. 3.78)', () {

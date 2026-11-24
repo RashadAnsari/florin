@@ -51,7 +51,7 @@
     }
   },
   "dashboardUrencriterium": "Urencriterium",
-  "dashboardUrencriteriumHelp": "The hours you worked for the business this year against the urencriterium. The zelfstandigenaftrek and most other deductions for business owners require it (Wet IB 2001 art. 3.76). All business hours count, not only billable ones.",
+  "dashboardUrencriteriumHelp": "The hours you worked for the business this year against the urencriterium. The zelfstandigenaftrek and most other deductions for business owners require it (Wet IB 2001 art. 3.76). All business hours count, not only billable ones. With a job, the business must also take more of your time than the job (art. 3.6).",
   "dashboardBtwDeadlines": "VAT deadlines",
   "dashboardMonthlyRevenue": "Monthly revenue",
   "deadlineStatusFiled": "filed",
@@ -255,6 +255,14 @@
     "placeholders": {
       "left": {
         "type": "String"
+      }
+    }
+  },
+  "hoursUrencriteriumJob": "Not more than {hours} hrs in employment",
+  "@hoursUrencriteriumJob": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
       }
     }
   },
@@ -500,8 +508,14 @@
     }
   },
   "plTaxTotalTax": "Estimated total tax",
+  "plTaxWageTaxWithheld": "Loonheffing withheld",
+  "plTaxWageTaxWithheldHelp": "The loonbelasting and premie volksverzekeringen your employers withheld, as you entered below. The return settles it against the tax above.",
+  "plTaxToPay": "Estimated tax to pay",
+  "plTaxRefund": "Estimated refund",
+  "plTaxToPayHelp": "Estimated: the total tax minus the loonheffing withheld. Payments on a voorlopige aanslag are not subtracted.",
   "plTaxNetProfit": "Estimated net profit after tax",
-  "plTaxEffectiveRate": "Effective rate: {rate}%",
+  "plTaxNetProfitHelp": "Estimated: gross profit minus the tax the business adds. With wages, that is the total tax minus the tax on the wages alone.",
+  "plTaxEffectiveRate": "Effective rate on the profit: {rate}%",
   "@plTaxEffectiveRate": {
     "placeholders": {
       "rate": {
@@ -525,6 +539,17 @@
   },
   "plTaxUrenBannerSuffixDone": ", so no zelfstandigenaftrek",
   "plTaxUrenBannerSuffixPending": ". Until you reach it, the estimate leaves out the zelfstandigenaftrek and the other deductions that need it",
+  "plTaxUrenJobBanner": "Urencriterium: {hours} hours logged for the business, not more than the {jobHours} hours in employment. The urencriterium needs more time in the business than in other work, so the estimate leaves out the zelfstandigenaftrek and the other deductions that need it.",
+  "@plTaxUrenJobBanner": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "jobHours": {
+        "type": "int"
+      }
+    }
+  },
   "settingsLanguageSection": "Language",
   "settingsLanguageNl": "Dutch",
   "settingsLanguageEn": "English",
@@ -726,7 +751,7 @@
       }
     }
   },
-  "plTaxEstimateNotice": "This is an estimate for a business owner under the AOW age with no other income. Income from employment, a partner, box 2 or box 3 is not included.",
+  "plTaxEstimateNotice": "This is an estimate for a business owner under the AOW age. Wages from employment count when you enter them below. Income of a partner, from other work, box 2 or box 3 is not included.",
   "@assetsFieldUsefulLifeMin": {
     "placeholders": {
       "years": {
@@ -1067,7 +1092,10 @@
   },
   "dashboardDeductibleCostsHelp": "Costs deductible for income tax, including depreciation and the mileage allowance. Estimated.",
   "dashboardEstimatedTaxHelp": "Estimated income tax and Zvw contribution on your profit so far. Not a tax assessment.",
-  "dashboardNetProfitAfterTaxHelp": "Profit minus the estimated tax. An estimate, not a final figure.",
+  "dashboardEstimatedTaxToPay": "Estimated tax to pay",
+  "dashboardEstimatedRefund": "Estimated refund",
+  "dashboardEstimatedTaxToPayHelp": "Estimated income tax and Zvw contribution on your profit so far and your wages, minus the loonheffing withheld. Not a tax assessment.",
+  "dashboardNetProfitAfterTaxHelp": "Profit minus the estimated tax the business adds. An estimate, not a final figure.",
   "expensesFieldCar": "Business car",
   "expensesFieldCarHelp": "Link costs such as fuel and insurance to a business car. A linked cost counts in full, as the bijtelling and the VAT on private use correct for private use. Linked costs cap the bijtelling and decide the VAT on private use.",
   "expensesNoCar": "Not for a business car",
@@ -1097,6 +1125,32 @@
   },
   "inputLossCarryForward": "Losses from earlier years",
   "inputLossCarryForwardHelp": "Box 1 losses from earlier years still to offset, as stated by the Belastingdienst. Offset against this year's income.",
+  "inputEmployed": "I also work as an employee this year",
+  "inputEmployedHelp": "Wages count in box 1 together with your profit, and the urencriterium then also compares your hours in the business with your hours in employment.",
+  "inputWages": "Wages (loon)",
+  "inputWagesHelp": "The loon on your jaaropgaven: the wage that is taxed, not the gross salary. It is added to your profit in box 1.",
+  "inputWageTaxWithheld": "Loonheffing withheld",
+  "inputWageTaxWithheldHelp": "The loonheffing on your jaaropgaven: the loonbelasting and premie volksverzekeringen your employers withheld. The return subtracts it from the tax.",
+  "inputZvwWages": "Loon Zvw",
+  "inputZvwWagesHelp": "The loon Zorgverzekeringswet on your jaaropgaven, on which your employer paid the werkgeversheffing Zvw. You pay the Zvw contribution on your profit only up to the maximum bijdrage-inkomen minus this amount.",
+  "inputEmploymentHours": "Hours in employment",
+  "inputEmploymentHoursHelp": "The hours you work as an employee in the whole year. The urencriterium also requires more time in the business than in other work, unless you were not a business owner in one or more of the {years} previous years.",
+  "@inputEmploymentHoursHelp": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "inputNotOndernemerBefore": "I was not a business owner in one or more of the {years} previous years",
+  "@inputNotOndernemerBefore": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "inputNotOndernemerBeforeHelp": "Then the urencriterium does not require more time in the business than in your job. It already applies when you are eligible for the startersaftrek.",
   "inputSoVerklaring": "I have an S&O-verklaring for this year",
   "inputSoVerklaringHelp": "An S&O-verklaring from RVO for research and development. With at least {hours} WBSO hours you get the S&O-aftrek.",
   "@inputSoVerklaringHelp": {
@@ -1173,9 +1227,11 @@
   },
   "pensionEstimatedTaxSavingHelp": "Estimated: the box 1 tax you save by deducting the premium, before heffingskortingen.",
   "plTaxAlgHeffingHelp": "A tax credit everyone gets. It decreases as income rises above a threshold.",
-  "plTaxArbeidskortingHelp": "A tax credit for working people, based on profit before ondernemersaftrek and mkb-winstvrijstelling.",
+  "plTaxArbeidskortingHelp": "A tax credit for working people, based on the profit before ondernemersaftrek and mkb-winstvrijstelling plus your wages.",
   "plTaxAovHelp": "Premiums for private disability insurance are fully deductible from box 1 income.",
   "plTaxBelastbareWinstHelp": "Profit after ondernemersaftrek and mkb-winstvrijstelling. The Zvw contribution is based on it.",
+  "plTaxWages": "Wages from employment",
+  "plTaxWagesHelp": "The loon you entered below. It is box 1 income like the profit, so it raises the rate on the profit and lowers the algemene heffingskorting.",
   "plTaxBox1SectionHelp": "Estimated income tax including national insurance premiums, in brackets, minus the heffingskortingen.",
   "plTaxCarPrivateUse": "Private use of business car",
   "plTaxCarPrivateUseHelp": "The bijtelling: a percentage of the catalogue value added to profit for private use, at most the car costs. None with a trip log of {km} private km a year or less.",
@@ -1236,6 +1292,15 @@
     }
   },
   "plTaxInputsSectionHelp": "Facts the bookkeeping cannot show. They change the estimate above.",
+  "plTaxEmploymentSection": "Employment in {year}",
+  "@plTaxEmploymentSection": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "plTaxEmploymentSectionHelp": "If you also work as an employee. Enter the totals of all your jaaropgaven for the year. During the year, enter what you expect for the whole year.",
   "plTaxInvestmentSection": "Investment deductions",
   "plTaxInvestmentSectionHelp": "Extra deductions for assets bought this year.",
   "plTaxKiaHelp": "Kleinschaligheidsinvesteringsaftrek: a percentage or fixed amount based on your total qualifying investments this year.",
@@ -1256,7 +1321,7 @@
   "plTaxMileageAllowanceHelp": "Business and commuting kilometres in a private vehicle, at the Belastingdienst rate per km.",
   "plTaxMkbHelp": "A percentage of profit after ondernemersaftrek that is exempt from tax. No urencriterium needed.",
   "plTaxProfit": "Profit",
-  "plTaxProfitHelp": "Profit from business before ondernemersaftrek. The arbeidskorting is based on it.",
+  "plTaxProfitHelp": "Profit from business before ondernemersaftrek. The arbeidskorting is based on it, together with any wages.",
   "plTaxReserveReleased": "Herinvesteringsreserve released",
   "plTaxReserveReleasedHelp": "Reserve not used within {years} years, or left when the business stops, is added to profit.",
   "@plTaxReserveReleasedHelp": {
@@ -1285,11 +1350,11 @@
     }
   },
   "plTaxStartersaftrekHelp": "An extra deduction on top of the zelfstandigenaftrek for business owners who recently started.",
-  "plTaxTaxableProfitHelp": "The income in box 1 the tax is calculated on.",
+  "plTaxTaxableProfitHelp": "The income in box 1 the tax is calculated on: belastbare winst plus wages, minus the deductions above.",
   "plTaxUnrealisedZelfs": "Unused zelfstandigenaftrek from earlier years",
   "plTaxUnrealisedZelfsHelp": "Zelfstandigenaftrek from earlier years that did not fit the profit then, used up to this year's profit.",
   "plTaxZelfstandigenaftrekHelp": "A fixed deduction for business owners who meet the urencriterium. At most the profit, unless you are a starter.",
-  "plTaxZvwHelp": "The income-related contribution to the health care insurance act, on belastbare winst up to a maximum.",
+  "plTaxZvwHelp": "The income-related contribution to the health care insurance act, on belastbare winst up to a maximum. The loon Zvw your employer paid the werkgeversheffing on lowers that maximum.",
   "vatReturnIcpSectionHelp": "Supplies to businesses in other EU countries, reported separately in the ICP report. While you take part in the KOR you file no ICP report, so invoices from those dates are not listed.",
   "vatRow1aHelp": "Revenue taxed at {rate} and the VAT on it.",
   "@vatRow1aHelp": {

@@ -72,10 +72,18 @@ class DashboardScreen extends ConsumerWidget {
           ),
         ),
         card(
+          // With loonheffing withheld, what is left to pay is the figure
+          // the user acts on.
           StatCard(
-            label: l.dashboardEstimatedTax,
-            help: l.dashboardEstimatedTaxHelp,
-            value: AppFormat.cents(r.totalTax),
+            label: r.wageTaxWithheld == 0
+                ? l.dashboardEstimatedTax
+                : r.taxToPay < 0
+                ? l.dashboardEstimatedRefund
+                : l.dashboardEstimatedTaxToPay,
+            help: r.wageTaxWithheld == 0
+                ? l.dashboardEstimatedTaxHelp
+                : l.dashboardEstimatedTaxToPayHelp,
+            value: AppFormat.cents(r.taxToPay.abs()),
             delta: l.dashboardEffectiveRate(
               AppFormat.percent(r.effectiveTaxRate / 10000, 1),
             ),
@@ -130,6 +138,7 @@ class DashboardScreen extends ConsumerWidget {
             UrencriteriumProgress(
               totalHours: hours.fold(0.0, (s, h) => s + h.hours),
               target: rules.urencriterium,
+              jobHours: estimate?.timeTestHours,
               yearOver: year < DateTime.now().year,
             ),
             if (showKor) ...[

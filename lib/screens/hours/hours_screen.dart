@@ -45,6 +45,10 @@ class HoursScreen extends ConsumerWidget {
             .where((e) => e.billable)
             .fold<double>(0.0, (s, e) => s + e.hours),
         target: rules.urencriterium,
+        jobHours: ref
+            .watch(taxEstimateProvider(year))
+            .valueOrNull
+            ?.timeTestHours,
         yearOver: year < DateTime.now().year,
       ),
       itemBuilder: (context, e) => ListTile(

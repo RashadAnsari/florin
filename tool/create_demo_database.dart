@@ -916,6 +916,13 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
       soStarter: Value(false),
       unrealisedZelfstandigenaftrek: Value(50000),
       lossCarryForward: Value(100000),
+      // A part-time job: its wages share box 1, and its hours stay below
+      // the business hours for the urencriterium.
+      employed: Value(true),
+      wages: Value(1200000),
+      wageTaxWithheld: Value(150000),
+      zvwWages: Value(1200000),
+      employmentHours: Value(520),
     ),
   );
 

@@ -112,7 +112,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboardUrencriteriumHelp =>
-      'The hours you worked for the business this year against the urencriterium. The zelfstandigenaftrek and most other deductions for business owners require it (Wet IB 2001 art. 3.76). All business hours count, not only billable ones.';
+      'The hours you worked for the business this year against the urencriterium. The zelfstandigenaftrek and most other deductions for business owners require it (Wet IB 2001 art. 3.76). All business hours count, not only billable ones. With a job, the business must also take more of your time than the job (art. 3.6).';
 
   @override
   String get dashboardBtwDeadlines => 'VAT deadlines';
@@ -534,6 +534,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String hoursUrencriteriumLeft(String left) {
     return '$left hrs to go';
+  }
+
+  @override
+  String hoursUrencriteriumJob(int hours) {
+    return 'Not more than $hours hrs in employment';
   }
 
   @override
@@ -966,11 +971,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get plTaxTotalTax => 'Estimated total tax';
 
   @override
+  String get plTaxWageTaxWithheld => 'Loonheffing withheld';
+
+  @override
+  String get plTaxWageTaxWithheldHelp =>
+      'The loonbelasting and premie volksverzekeringen your employers withheld, as you entered below. The return settles it against the tax above.';
+
+  @override
+  String get plTaxToPay => 'Estimated tax to pay';
+
+  @override
+  String get plTaxRefund => 'Estimated refund';
+
+  @override
+  String get plTaxToPayHelp =>
+      'Estimated: the total tax minus the loonheffing withheld. Payments on a voorlopige aanslag are not subtracted.';
+
+  @override
   String get plTaxNetProfit => 'Estimated net profit after tax';
 
   @override
+  String get plTaxNetProfitHelp =>
+      'Estimated: gross profit minus the tax the business adds. With wages, that is the total tax minus the tax on the wages alone.';
+
+  @override
   String plTaxEffectiveRate(String rate) {
-    return 'Effective rate: $rate%';
+    return 'Effective rate on the profit: $rate%';
   }
 
   @override
@@ -984,6 +1010,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get plTaxUrenBannerSuffixPending =>
       '. Until you reach it, the estimate leaves out the zelfstandigenaftrek and the other deductions that need it';
+
+  @override
+  String plTaxUrenJobBanner(String hours, int jobHours) {
+    return 'Urencriterium: $hours hours logged for the business, not more than the $jobHours hours in employment. The urencriterium needs more time in the business than in other work, so the estimate leaves out the zelfstandigenaftrek and the other deductions that need it.';
+  }
 
   @override
   String get settingsLanguageSection => 'Language';
@@ -1257,7 +1288,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get plTaxEstimateNotice =>
-      'This is an estimate for a business owner under the AOW age with no other income. Income from employment, a partner, box 2 or box 3 is not included.';
+      'This is an estimate for a business owner under the AOW age. Wages from employment count when you enter them below. Income of a partner, from other work, box 2 or box 3 is not included.';
 
   @override
   String settingsMoved(String path) {
@@ -1894,8 +1925,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'Estimated income tax and Zvw contribution on your profit so far. Not a tax assessment.';
 
   @override
+  String get dashboardEstimatedTaxToPay => 'Estimated tax to pay';
+
+  @override
+  String get dashboardEstimatedRefund => 'Estimated refund';
+
+  @override
+  String get dashboardEstimatedTaxToPayHelp =>
+      'Estimated income tax and Zvw contribution on your profit so far and your wages, minus the loonheffing withheld. Not a tax assessment.';
+
+  @override
   String get dashboardNetProfitAfterTaxHelp =>
-      'Profit minus the estimated tax. An estimate, not a final figure.';
+      'Profit minus the estimated tax the business adds. An estimate, not a final figure.';
 
   @override
   String get expensesFieldCar => 'Business car';
@@ -1939,6 +1980,51 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get inputLossCarryForwardHelp =>
       'Box 1 losses from earlier years still to offset, as stated by the Belastingdienst. Offset against this year\'s income.';
+
+  @override
+  String get inputEmployed => 'I also work as an employee this year';
+
+  @override
+  String get inputEmployedHelp =>
+      'Wages count in box 1 together with your profit, and the urencriterium then also compares your hours in the business with your hours in employment.';
+
+  @override
+  String get inputWages => 'Wages (loon)';
+
+  @override
+  String get inputWagesHelp =>
+      'The loon on your jaaropgaven: the wage that is taxed, not the gross salary. It is added to your profit in box 1.';
+
+  @override
+  String get inputWageTaxWithheld => 'Loonheffing withheld';
+
+  @override
+  String get inputWageTaxWithheldHelp =>
+      'The loonheffing on your jaaropgaven: the loonbelasting and premie volksverzekeringen your employers withheld. The return subtracts it from the tax.';
+
+  @override
+  String get inputZvwWages => 'Loon Zvw';
+
+  @override
+  String get inputZvwWagesHelp =>
+      'The loon Zorgverzekeringswet on your jaaropgaven, on which your employer paid the werkgeversheffing Zvw. You pay the Zvw contribution on your profit only up to the maximum bijdrage-inkomen minus this amount.';
+
+  @override
+  String get inputEmploymentHours => 'Hours in employment';
+
+  @override
+  String inputEmploymentHoursHelp(int years) {
+    return 'The hours you work as an employee in the whole year. The urencriterium also requires more time in the business than in other work, unless you were not a business owner in one or more of the $years previous years.';
+  }
+
+  @override
+  String inputNotOndernemerBefore(int years) {
+    return 'I was not a business owner in one or more of the $years previous years';
+  }
+
+  @override
+  String get inputNotOndernemerBeforeHelp =>
+      'Then the urencriterium does not require more time in the business than in your job. It already applies when you are eligible for the startersaftrek.';
 
   @override
   String get inputSoVerklaring => 'I have an S&O-verklaring for this year';
@@ -2015,7 +2101,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get plTaxArbeidskortingHelp =>
-      'A tax credit for working people, based on profit before ondernemersaftrek and mkb-winstvrijstelling.';
+      'A tax credit for working people, based on the profit before ondernemersaftrek and mkb-winstvrijstelling plus your wages.';
 
   @override
   String get plTaxAovHelp =>
@@ -2024,6 +2110,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get plTaxBelastbareWinstHelp =>
       'Profit after ondernemersaftrek and mkb-winstvrijstelling. The Zvw contribution is based on it.';
+
+  @override
+  String get plTaxWages => 'Wages from employment';
+
+  @override
+  String get plTaxWagesHelp =>
+      'The loon you entered below. It is box 1 income like the profit, so it raises the rate on the profit and lowers the algemene heffingskorting.';
 
   @override
   String get plTaxBox1SectionHelp =>
@@ -2089,6 +2182,15 @@ class AppLocalizationsEn extends AppLocalizations {
       'Facts the bookkeeping cannot show. They change the estimate above.';
 
   @override
+  String plTaxEmploymentSection(int year) {
+    return 'Employment in $year';
+  }
+
+  @override
+  String get plTaxEmploymentSectionHelp =>
+      'If you also work as an employee. Enter the totals of all your jaaropgaven for the year. During the year, enter what you expect for the whole year.';
+
+  @override
   String get plTaxInvestmentSection => 'Investment deductions';
 
   @override
@@ -2138,7 +2240,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get plTaxProfitHelp =>
-      'Profit from business before ondernemersaftrek. The arbeidskorting is based on it.';
+      'Profit from business before ondernemersaftrek. The arbeidskorting is based on it, together with any wages.';
 
   @override
   String get plTaxReserveReleased => 'Herinvesteringsreserve released';
@@ -2170,7 +2272,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get plTaxTaxableProfitHelp =>
-      'The income in box 1 the tax is calculated on.';
+      'The income in box 1 the tax is calculated on: belastbare winst plus wages, minus the deductions above.';
 
   @override
   String get plTaxUnrealisedZelfs =>
@@ -2186,7 +2288,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get plTaxZvwHelp =>
-      'The income-related contribution to the health care insurance act, on belastbare winst up to a maximum.';
+      'The income-related contribution to the health care insurance act, on belastbare winst up to a maximum. The loon Zvw your employer paid the werkgeversheffing on lowers that maximum.';
 
   @override
   String get vatReturnIcpSectionHelp =>

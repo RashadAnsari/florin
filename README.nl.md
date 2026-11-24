@@ -26,11 +26,11 @@ Florin houdt je facturen, uitgaven, btw-aangiftes, uren, kilometers, bedrijfsmid
 ## Waarom Florin
 
 - **Gebouwd op de Nederlandse belastingwet, met bronnen.** Elk tarief, elke grens en elke factuurregel in Florin is gecontroleerd in de wettekst op wetten.overheid.nl of bij de Belastingdienst. Het citaat en de link staan in [`docs/legal.md`](docs/legal.md) en [`docs/tax-years/`](docs/tax-years/).
-- **Het hele jaar inzicht in je cijfers.** Het dashboard toont omzet, kosten, te betalen btw en een schatting van je inkomstenbelasting terwijl je facturen en uitgaven invoert. Elke schatting staat als schatting aangegeven.
+- **Het hele jaar inzicht in je cijfers.** Het dashboard toont omzet, kosten, te betalen btw en een schatting van je inkomstenbelasting terwijl je facturen en uitgaven invoert, ook met loon uit een baan naast je onderneming. Elke schatting staat als schatting aangegeven.
 - **Uitleg waar je hem nodig hebt.** Elk veld en elk fiscaal begrip heeft een korte uitleg onder de muisaanwijzer.
 - **Facturen opgebouwd volgens de btw-regels.** Pdf-facturen bevatten de vermeldingen uit artikel 35a van de Wet op de omzetbelasting, met btw verlegd, intracommunautaire leveringen, diensten buiten de EU en creditnota's die de gecorrigeerde factuur noemen.
-- **Jouw gegevens blijven van jou.** Eén lokaal databasebestand, in een map die je zelf kiest. Zet het in iCloud Drive, OneDrive of Dropbox als back-up.
-- **Klaar voor je aangiftes en je boekhouder.** Exporteer een volledig jaar met één klik naar CSV-bestanden, in een nieuwe map met de exportdatum in de naam: alle gegevens, de btw-aangifte van elk kwartaal per rubriek in hele euro's zoals het formulier vraagt, het ICP-overzicht van elk kwartaal en de geschatte inkomstenbelasting.
+- **Jouw gegevens blijven van jou.** Eén lokaal databasebestand, `florin.db`, met je bonnen in een map ernaast, in een map die je zelf kiest. Zet die map in iCloud Drive, OneDrive of Dropbox als back-up, of kopieer hem naar een veilige plek terwijl Florin gesloten is. Via Instellingen kopieer je de database en bonnen naar een andere map, en kies je bij de eerste start een map waarin al `florin.db` staat, dan opent Florin die. Florin maakt nooit verbinding met internet: de lettertypen zitten in de app.
+- **Klaar voor je aangiftes en je boekhouder.** Exporteer een volledig jaar met één klik naar CSV-bestanden, in een nieuwe map met de exportdatum in de naam: alle gegevens, de btw-aangifte van elk kwartaal per rubriek in hele euro's zoals het formulier vraagt, het ICP-overzicht van elk kwartaal, de geschatte inkomstenbelasting en je bonnen. Florin zet de cijfers klaar; je dient ze zelf in via Mijn Belastingdienst Zakelijk, of je boekhouder doet dat.
 - **Gratis en open source** onder de MIT-licentie.
 
 ## Functies
@@ -42,12 +42,12 @@ Florin houdt je facturen, uitgaven, btw-aangiftes, uren, kilometers, bedrijfsmid
 | **Uitgaven** | Kosten per categorie met btw-teruggave, zakelijk gebruikspercentage en bonnetjesregistratie, ook voor aankopen waarbij de btw naar jou is verlegd. Voor voedsel, drank en representatie neemt Florin wat het meest aftrekt: de 80%-regeling of de drempel van € 5.700. Btw op restaurantmaaltijden wordt niet teruggevraagd. |
 | **Btw-aangifte** | Elk kwartaal vooraf ingevuld vanuit je administratie: rubrieken 1a, 1b, 1d, 1e, 2a, 3a, 3b, 4a, 4b, 5a en 5b, plus de prestaties voor de ICP-opgaaf. Aangifte en betaling per kwartaal bijgehouden, met de deadline erbij. |
 | **Kleineondernemersregeling** | Vul in wanneer je KOR begon en Florin volgt hem: KOR-facturen zonder btw, geen btw terugvragen op inkopen, geen gewone aangifte voor kwartalen die de KOR dekt, een incidentele aangifte als er btw naar je is verlegd, en je omzet tegenover de grens van € 20.000. Zonder KOR verwacht Florin elk kwartaal een aangifte, ook een nihilaangifte. De factuur die de grens overschrijdt is weer belast met btw en Florin beëindigt de KOR vanaf daar. |
-| **Schatting inkomstenbelasting** | Zelfstandigenaftrek, startersaftrek, S&O-aftrek, meewerkaftrek, stakingsaftrek, startersaftrek bij arbeidsongeschiktheid, mkb-winstvrijstelling, KIA, EIA, MIA, desinvesteringsbijtelling, herinvesteringsreserve, afschrijvingen, winst op verkochte bedrijfsmiddelen, lijfrente, arbeidsongeschiktheidsverzekering, verliezen uit eerdere jaren, algemene heffingskorting, arbeidskorting en de Zvw-bijdrage. |
-| **Urencriterium** | Uren per klant en project, met je voortgang naar de 1.225 uur die je nodig hebt voor de zelfstandigenaftrek. |
+| **Schatting inkomstenbelasting** | Voor een ondernemer onder de AOW-leeftijd, met of zonder baan naast de onderneming. Loon van je jaaropgaaf wordt samen met je winst belast, de al ingehouden loonheffing gaat eraf en het loon Zvw verlaagt de Zvw-bijdrage over je winst. Zelfstandigenaftrek, startersaftrek, S&O-aftrek, meewerkaftrek, stakingsaftrek, startersaftrek bij arbeidsongeschiktheid, mkb-winstvrijstelling, KIA, EIA, MIA, desinvesteringsbijtelling, herinvesteringsreserve, afschrijvingen, winst op verkochte bedrijfsmiddelen, lijfrente, arbeidsongeschiktheidsverzekering, verliezen uit eerdere jaren, algemene heffingskorting, arbeidskorting en de Zvw-bijdrage. Een fiscale partner, overig werk, uitkeringen, box 2 en box 3 tellen niet mee; [`docs/legal.md`](docs/legal.md) noemt wat Florin niet berekent. |
+| **Urencriterium** | Uren per klant en project, met je voortgang naar de 1.225 uur die je nodig hebt voor de zelfstandigenaftrek. Met een baan controleert Florin ook dat je meer uren aan de onderneming besteedt dan in loondienst, tenzij je in een of meer van de vijf voorgaande jaren geen ondernemer was. |
 | **Kilometers** | Zakelijke ritten en woon-werkritten met kilometerstanden en doel, afgetrokken tegen het tarief van de Belastingdienst voor dat jaar. |
 | **Bedrijfsmiddelen** | Lineaire afschrijving per dag tot de restwaarde, zakelijk gebruikspercentage, KIA, EIA, MIA en de herinvesteringsreserve. De btw op de aankoop en op een verkoop komt in je btw-aangifte, en btw die je niet terugvraagt, zoals onder de KOR, telt mee als kosten. |
 | **Auto van de zaak** | De bijtelling voor privégebruik met de korting voor emissievrije auto's en de 500 km-regel, en de btw over privégebruik in de laatste aangifte van het jaar. |
-| **Pensioen** | Je jaarruimte op basis van het inkomen van vorig jaar, AOW-franchise en factor A, plus reserveringsruimte. |
+| **Pensioen** | Je jaarruimte op basis van de winst en het loon van vorig jaar, AOW-franchise en factor A, plus reserveringsruimte, en premies voor een arbeidsongeschiktheidsverzekering (AOV). |
 | **Klanten** | Contactgegevens, btw- en KvK-nummer en het Wet DBA-risico per klant. |
 
 Florin dekt het belastingjaar **2026**. Alleen gedekte jaren zijn te kiezen en te boeken; een nieuw jaar komt in een update zodra de bedragen zijn gepubliceerd en gecontroleerd.
@@ -87,23 +87,6 @@ Wil je Florin gebruiken zonder te installeren, pak dan `florin-windows-x64.zip` 
 Op Ubuntu, Debian, Linux Mint en andere Debian-gebaseerde systemen download je `florin-linux-amd64.deb` en open je het bestand om te installeren. Florin verschijnt daarna in je appmenu.
 
 Op andere distributies pak je `florin-linux-x64.tar.gz` uit in een map en start je `./florin`.
-
-## Veelgestelde vragen
-
-**Waar worden mijn gegevens opgeslagen?**
-In één bestand, `florin.db`, inclusief je bedrijfsgegevens. Je kiest de map bij de eerste start van Florin en kunt de database later via Instellingen naar een andere map kopiëren. Kies je bij de eerste start een map waarin al `florin.db` staat, dan opent Florin die.
-
-**Hoe maak ik een back-up?**
-Zet de databasemap in een gesynchroniseerde map of een map waarvan een back-up wordt gemaakt, of kopieer `florin.db` naar een veilige plek. Sluit Florin voordat je het bestand kopieert.
-
-**Kan Florin mijn btw-aangifte of inkomstenbelasting indienen?**
-Nee. Florin zet de cijfers klaar; je dient ze zelf in via Mijn Belastingdienst Zakelijk, of je boekhouder doet dat.
-
-**Voor welke situaties geldt de schatting van de inkomstenbelasting?**
-Eén ondernemer onder de AOW-leeftijd zonder ander inkomen. Loon, een fiscale partner, box 2 en box 3 tellen niet mee. [`docs/legal.md`](docs/legal.md) noemt wat Florin niet berekent.
-
-**Heeft Florin een internetverbinding nodig?**
-Nee. Florin maakt nooit verbinding met internet: je gegevens blijven op je computer en de lettertypen zitten in de app.
 
 ## Zelf bouwen
 
