@@ -17,7 +17,22 @@ flutter build linux --release
 .claude/skills/ui-review/scripts/shot.sh invoices 80 143   # clicks, then saves
 ```
 
+On Linux the dark theme needs GNOME's settings schema (`apt-get install gsettings-desktop-schemas`): Flutter reads `color-scheme` from `org.gnome.desktop.interface`, and without the schema every theme renders light.
+
 `start.sh` opens the demo's year, or `UI_REVIEW_YEAR` when set. It copies `demo/` to a work folder (`UI_REVIEW_DIR`, default `/tmp/florin-ui-review`), so clicks never change the demo, sets the language and the GTK colour scheme, and opens a 1440 x 900 window at the left top of display `:99`. Read each screenshot with the Read tool. Use `xdotool key Escape` to close a dialog and `xdotool click 5` over a page to scroll it. At 1440 x 900 the sidebar items sit at x 80 and y 101 (Dashboard) to 479 (Pension) in steps of 42, Settings at y 866, a page's back button at (257, 28) and its add button at (1411, 28).
+
+## README screenshots
+
+`docs/screenshots/dashboard-en.png` and `dashboard-nl.png` show the demo's dashboard in dark mode at 2560 x 1600. Retake both whenever the dashboard or the demo changes:
+
+```sh
+GDK_SCALE=2 .claude/skills/ui-review/scripts/start.sh en dark 2560 1600
+.claude/skills/ui-review/scripts/shot.sh dashboard-en
+GDK_SCALE=2 .claude/skills/ui-review/scripts/start.sh nl dark 2560 1600
+.claude/skills/ui-review/scripts/shot.sh dashboard-nl
+```
+
+Then copy them from the shots folder into `docs/screenshots/`.
 
 ## What to open
 
