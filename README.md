@@ -45,7 +45,7 @@ Florin keeps your invoices, expenses, BTW returns, hours, mileage, assets and pe
 | **Income tax estimate** | Zelfstandigenaftrek, startersaftrek, S&O-aftrek, meewerkaftrek, stakingsaftrek, startersaftrek bij arbeidsongeschiktheid, mkb-winstvrijstelling, KIA, EIA, MIA, desinvesteringsbijtelling, herinvesteringsreserve, depreciation, gains on sold assets, lijfrente, disability insurance, losses from earlier years, algemene heffingskorting, arbeidskorting and the Zvw contribution. |
 | **Urencriterium** | Hours per client and project, with progress towards the 1,225 hours you need for the zelfstandigenaftrek. |
 | **Mileage** | Business and commuting trips with odometer readings and purpose, deducted at the Belastingdienst rate for the year. |
-| **Fixed assets** | Straight-line depreciation by day down to the residual value, business use percentage, KIA, EIA, MIA and the herinvesteringsreserve. |
+| **Fixed assets** | Straight-line depreciation by day down to the residual value, business use percentage, KIA, EIA, MIA and the herinvesteringsreserve. The BTW on the purchase and on a sale goes into your BTW return, and BTW you cannot reclaim, such as under the KOR, counts as part of the cost. |
 | **Business car** | The private-use addition (bijtelling) with the zero-emission reduction and the 500 km rule, and the BTW on private use in the last return of the year. |
 | **Pension** | Your jaarruimte from last year's income, AOW-franchise and factor A, plus reserveringsruimte. |
 | **Clients** | Contact details, BTW and KvK numbers, and the Wet DBA risk per client. |

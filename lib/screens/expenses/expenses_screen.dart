@@ -188,16 +188,20 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
 
   int get _vatAmount => _rules.vatOn(_vatRate, _amountExclVat);
 
-  int get _deductibleAmount => ExpenseMath.deductible(
+  /// A cost of a business car counts in full: the bijtelling and the BTW on
+  /// private use correct its private use (`docs/legal.md`).
+  double get _share => _carAssetId != null ? 1.0 : _businessUsePct;
+
+  int get _deductibleAmount => PurchaseMath.deductible(
     amountExclVat: _amountExclVat,
     vatAmount: _vatAmount,
-    businessUsePct: _businessUsePct,
+    businessUsePct: _share,
     vatReclaimable: _vatReclaimable,
   );
 
-  int get _vatToReclaim => ExpenseMath.vatToReclaim(
+  int get _vatToReclaim => PurchaseMath.vatToReclaim(
     vatAmount: _vatAmount,
-    businessUsePct: _businessUsePct,
+    businessUsePct: _share,
     vatReclaimable: _vatReclaimable,
   );
 
@@ -231,7 +235,7 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
               purchaseVat: Value(_purchaseVat),
               vatAmount: Value(_vatAmount),
               totalInclVat: Value(_amountExclVat + (_shifted ? 0 : _vatAmount)),
-              businessUsePct: Value(_businessUsePct),
+              businessUsePct: Value(_share),
               deductibleAmount: Value(_deductibleAmount),
               vatReclaimable: Value(_vatReclaimable),
               vatToReclaim: Value(_vatToReclaim),
@@ -413,10 +417,11 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
               bold: true,
             ),
             const SizedBox(height: AppSpacing.section),
-            BusinessUseSlider(
-              value: _businessUsePct,
-              onChanged: (v) => setState(() => _businessUsePct = v),
-            ),
+            if (_carAssetId == null)
+              BusinessUseSlider(
+                value: _businessUsePct,
+                onChanged: (v) => setState(() => _businessUsePct = v),
+              ),
             ValueRow(
               label: l.expensesDeductible,
               value: AppFormat.cents(_deductibleAmount),

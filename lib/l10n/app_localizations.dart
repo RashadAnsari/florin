@@ -2429,7 +2429,7 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldCostHelp.
   ///
   /// In en, this message translates to:
-  /// **'The purchase price without VAT. Depreciation and the investment deductions are based on this amount.'**
+  /// **'The purchase price without VAT. With any VAT you do not reclaim, it is the cost that depreciation and the investment deductions are based on.'**
   String get assetsFieldCostHelp;
 
   /// No description provided for @assetsFieldDisposalDateHelp.
@@ -2441,7 +2441,7 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldDisposalProceedsHelp.
   ///
   /// In en, this message translates to:
-  /// **'What you received for the asset, without VAT. The difference with the book value is a gain or loss.'**
+  /// **'What you received for the asset, without VAT, or its market value when you took it into private use. The difference with the book value is a gain or loss.'**
   String get assetsFieldDisposalProceedsHelp;
 
   /// No description provided for @assetsFieldKiaHelp.
@@ -2479,6 +2479,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'How many years you expect to use the asset. At least {years}, because depreciation is limited to {pct} of the cost a year.'**
   String assetsFieldUsefulLifeHelp(int years, String pct);
+
+  /// No description provided for @assetsVatSection.
+  ///
+  /// In en, this message translates to:
+  /// **'VAT on the purchase'**
+  String get assetsVatSection;
+
+  /// No description provided for @assetsVatSectionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The VAT on the purchase invoice. VAT you reclaim goes into the VAT return of the quarter of purchase; VAT you do not reclaim is part of the asset\'s cost.'**
+  String get assetsVatSectionHelp;
+
+  /// No description provided for @assetsFieldVatRate.
+  ///
+  /// In en, this message translates to:
+  /// **'VAT rate'**
+  String get assetsFieldVatRate;
+
+  /// No description provided for @assetsFieldVatRateHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The VAT rate on the purchase invoice: {high}, {low}, 0% or exempt. Choose 0% when no VAT was charged, such as on a purchase from a private seller.'**
+  String assetsFieldVatRateHelp(String high, String low);
+
+  /// No description provided for @assetsValidateVatRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the VAT rate on the purchase invoice: the VAT in your return depends on it.'**
+  String get assetsValidateVatRate;
+
+  /// No description provided for @assetsFieldVatAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'VAT amount'**
+  String get assetsFieldVatAmount;
+
+  /// No description provided for @assetsFieldVatAmountHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The VAT on the purchase invoice. Florin has no tax rules for the year of purchase, so you enter the amount instead of a rate.'**
+  String get assetsFieldVatAmountHelp;
+
+  /// No description provided for @assetsFieldPurchaseVat.
+  ///
+  /// In en, this message translates to:
+  /// **'How the VAT was charged'**
+  String get assetsFieldPurchaseVat;
+
+  /// No description provided for @assetsFieldPurchaseVatHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Dutch VAT when the supplier charged it. Shifted when the invoice says the VAT is reverse-charged to you, or the supplier is abroad: you then report and deduct the VAT yourself.'**
+  String get assetsFieldPurchaseVatHelp;
+
+  /// No description provided for @assetsReclaimVat.
+  ///
+  /// In en, this message translates to:
+  /// **'Reclaim this VAT'**
+  String get assetsReclaimVat;
+
+  /// No description provided for @assetsReclaimVatHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Tick when you may deduct this VAT in your VAT return. You may for the business share used for work you charge VAT on: not while you take part in the KOR, and not for an asset used only for VAT-exempt work.'**
+  String get assetsReclaimVatHelp;
+
+  /// No description provided for @assetsValidateKorReclaim.
+  ///
+  /// In en, this message translates to:
+  /// **'You take part in the KOR on the purchase date, so you cannot reclaim this VAT. Untick Reclaim this VAT: the VAT is then part of the cost.'**
+  String get assetsValidateKorReclaim;
+
+  /// No description provided for @assetsKorNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'You take part in the KOR on the purchase date. The VAT is not reclaimed; it is part of the cost that depreciation and the investment deductions are based on.'**
+  String get assetsKorNotice;
+
+  /// No description provided for @assetsFieldVat.
+  ///
+  /// In en, this message translates to:
+  /// **'VAT'**
+  String get assetsFieldVat;
+
+  /// No description provided for @assetsVatBack.
+  ///
+  /// In en, this message translates to:
+  /// **'VAT back'**
+  String get assetsVatBack;
+
+  /// No description provided for @assetsCostForTax.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost for income tax'**
+  String get assetsCostForTax;
+
+  /// No description provided for @assetsCostForTaxHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The price and any VAT you do not reclaim. Depreciation and the investment deductions are based on it.'**
+  String get assetsCostForTaxHelp;
+
+  /// No description provided for @assetsFieldSaleInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale invoice'**
+  String get assetsFieldSaleInvoice;
+
+  /// No description provided for @assetsFieldSaleInvoiceHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The invoice you issued in Florin for this sale only. Its amount is the proceeds and its VAT is in your VAT return; it does not count as revenue or for the KOR turnover. Choose none for a sale without an invoice in Florin or when you took the asset into private use.'**
+  String get assetsFieldSaleInvoiceHelp;
+
+  /// No description provided for @assetsSaleInvoiceNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No invoice in Florin'**
+  String get assetsSaleInvoiceNone;
+
+  /// No description provided for @assetsProceedsFromInvoiceHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'What the sale invoice and any credit note on it come to, without VAT. The difference with the book value is a gain or loss.'**
+  String get assetsProceedsFromInvoiceHelp;
+
+  /// No description provided for @assetsFieldDisposalVatRate.
+  ///
+  /// In en, this message translates to:
+  /// **'VAT on the sale'**
+  String get assetsFieldDisposalVatRate;
+
+  /// No description provided for @assetsFieldDisposalVatRateHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The VAT you owe on the sale, or on taking the asset into private use, over the business share of the proceeds. It goes into the VAT return of that quarter. Usually {high}; exempt only when you used the asset solely for VAT-exempt work and deducted no VAT on it.'**
+  String assetsFieldDisposalVatRateHelp(String high);
+
+  /// No description provided for @assetsValidateDisposalVatRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the VAT rate of the sale: the VAT in your return depends on it.'**
+  String get assetsValidateDisposalVatRate;
+
+  /// No description provided for @assetsSaleKorNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'You take part in the KOR on the sale date, so there is no VAT on the sale.'**
+  String get assetsSaleKorNotice;
 
   /// No description provided for @clientsContractExpiryHelp.
   ///
@@ -2945,7 +3095,7 @@ abstract class AppLocalizations {
   /// No description provided for @assetsCarSectionHelp.
   ///
   /// In en, this message translates to:
-  /// **'These details decide the addition for private use (bijtelling) and the VAT on private use.'**
+  /// **'These details decide the addition for private use (bijtelling) and the VAT on private use. A business car counts in full: the bijtelling and the VAT on private use correct for its private use.'**
   String get assetsCarSectionHelp;
 
   /// No description provided for @assetsFieldCatalogueValue.
@@ -3013,18 +3163,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hydrogen or integrated solar'**
   String get zeroEmissionHydrogenOrSolar;
-
-  /// No description provided for @assetsFieldVatOnPurchase.
-  ///
-  /// In en, this message translates to:
-  /// **'VAT deducted on purchase'**
-  String get assetsFieldVatOnPurchase;
-
-  /// No description provided for @assetsFieldVatOnPurchaseHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'The VAT on the purchase that you deducted in your VAT return. Leave 0 if you deducted none, for example for a car bought from a private seller.'**
-  String get assetsFieldVatOnPurchaseHelp;
 
   /// No description provided for @assetsFieldMarketValue.
   ///
@@ -3197,7 +3335,7 @@ abstract class AppLocalizations {
   /// No description provided for @expensesFieldCarHelp.
   ///
   /// In en, this message translates to:
-  /// **'Link costs such as fuel and insurance to a business car. They cap the bijtelling and decide the VAT on private use.'**
+  /// **'Link costs such as fuel and insurance to a business car. A linked cost counts in full, as the bijtelling and the VAT on private use correct for private use. Linked costs cap the bijtelling and decide the VAT on private use.'**
   String get expensesFieldCarHelp;
 
   /// No description provided for @expensesNoCar.

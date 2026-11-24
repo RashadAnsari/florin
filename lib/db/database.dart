@@ -49,7 +49,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump with every schema change and run `make migration`; see AGENTS.md.
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -78,6 +78,48 @@ class AppDatabase extends _$AppDatabase {
               schema.expenses.paperOriginalKept,
             );
             await m.createTable(schema.receipts);
+          },
+          from2To3: (m, schema) async {
+            final assets = schema.fixedAssets;
+            // A car's deducted purchase BTW becomes its purchase BTW. A car
+            // counts in full: the bijtelling and the BTW on private use
+            // correct its private use (docs/legal.md).
+            await m.alterTable(
+              TableMigration(
+                assets,
+                columnTransformer: {
+                  assets.vatAmount: const CustomExpression<int>(
+                    'vat_deducted_on_purchase',
+                  ),
+                  assets.vatToReclaim: const CustomExpression<int>(
+                    'vat_deducted_on_purchase',
+                  ),
+                  assets.businessUsePct: const CustomExpression<double>(
+                    "CASE WHEN kind = 'car' THEN 1.0 ELSE business_use_pct END",
+                  ),
+                },
+                newColumns: [
+                  assets.vatRate,
+                  assets.purchaseVat,
+                  assets.vatAmount,
+                  assets.vatReclaimable,
+                  assets.vatToReclaim,
+                  assets.disposalInvoiceId,
+                  assets.disposalVatRate,
+                  assets.disposalVatAmount,
+                ],
+              ),
+            );
+            // Costs linked to a business car count in full for the same
+            // reason; the amounts follow PurchaseMath with a share of 1.
+            await customStatement(
+              'UPDATE expenses SET business_use_pct = 1.0, '
+              'deductible_amount = amount_excl_vat + '
+              'CASE WHEN vat_reclaimable = 1 THEN 0 ELSE vat_amount END, '
+              'vat_to_reclaim = '
+              'CASE WHEN vat_reclaimable = 1 THEN vat_amount ELSE 0 END '
+              'WHERE car_asset_id IS NOT NULL',
+            );
           },
         )(m, from, to),
       );

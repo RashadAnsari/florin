@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
+import '../../services/asset_service.dart';
 import '../../services/domain.dart';
 import '../../services/tax_service.dart';
 import '../../services/vat_service.dart';
@@ -24,6 +25,9 @@ class DashboardScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final year = ref.watch(fiscalYearProvider);
     final invoices = ref.watch(invoicesProvider(year)).valueOrNull ?? [];
+    final assetSales = AssetService.saleInvoiceIds(
+      ref.watch(allAssetsProvider).valueOrNull ?? const [],
+    );
     final hours = ref.watch(hourEntriesProvider(year)).valueOrNull ?? [];
     final rules = ref.watch(taxRulesProvider(year));
     final estimate = ref.watch(taxEstimateProvider(year)).valueOrNull;
@@ -54,8 +58,8 @@ class DashboardScreen extends ConsumerWidget {
         StatCard(
           label: l.dashboardNetRevenue,
           value: AppFormat.cents(
-            TaxService.grossRevenue(invoices) -
-                TaxService.creditNotes(invoices),
+            TaxService.grossRevenue(invoices, assetSales: assetSales) -
+                TaxService.creditNotes(invoices, assetSales: assetSales),
           ),
         ),
       ),

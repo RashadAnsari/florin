@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 
 import '../db/database.dart';
+import 'asset_service.dart';
 import '../theme/app_theme.dart';
 import 'domain.dart';
 import 'receipt_store.dart';
@@ -47,6 +48,20 @@ class CsvExportService {
       'Diensten buiten de EU, niet in NL belast',
     VatTreatment.kor => 'Vrijgesteld, kleineondernemersregeling',
   };
+
+  static String _purchaseVat(PurchaseVat p) => switch (p) {
+    PurchaseVat.domestic => 'Nederlandse btw',
+    PurchaseVat.reverseChargeNl => 'Btw verlegd binnenland',
+    PurchaseVat.fromEu => 'Verlegd uit EU-land',
+    PurchaseVat.fromOutsideEu => 'Verlegd uit land buiten de EU',
+  };
+
+  /// A rate in the words of the year it applied in, or nothing for a year
+  /// without rules in Florin.
+  static String _rateIn(VatRate? rate, DateTime? date) {
+    final rules = date == null ? null : taxRulesFor(date.year);
+    return rate == null || rules == null ? '' : rate.dutchLabel(rules);
+  }
 
   static String _category(ExpenseCategory c) => switch (c) {
     ExpenseCategory.office => 'Kantoor en benodigdheden',
@@ -355,6 +370,13 @@ class CsvExportService {
     final assets = await (db.select(
       db.fixedAssets,
     )..orderBy([(a) => OrderingTerm.asc(a.purchaseDate)])).get();
+    final saleInvoiceIds = AssetService.saleInvoiceIds(assets);
+    final saleInvoiceNumbers = {
+      for (final i in await (db.select(
+        db.invoices,
+      )..where((i) => i.id.isIn(saleInvoiceIds))).get())
+        i.id: i.invoiceNumber,
+    };
     final clients = await db.select(db.clients).get();
     final clientNames = {for (final c in clients) c.id: c.name};
     final clientsById = {for (final c in clients) c.id: c};
@@ -362,9 +384,7 @@ class CsvExportService {
     // An asset's purchase invoice matters every year the asset is in use.
     final assetsInUse = {
       for (final a in assets)
-        if (a.purchaseDate.year <= year &&
-            (a.disposalDate == null || a.disposalDate!.year >= year))
-          a.id: a,
+        if (AssetService.inUse(a, year)) a.id: a,
     };
     final expensesById = {for (final e in expenses) e.id: e};
     final invoicesById = {for (final i in invoices) i.id: i};
@@ -500,12 +520,7 @@ class CsvExportService {
           e.description,
           _category(e.category),
           e.vatRate.dutchLabel(rules),
-          switch (e.purchaseVat) {
-            PurchaseVat.domestic => 'Nederlandse btw',
-            PurchaseVat.reverseChargeNl => 'Btw verlegd binnenland',
-            PurchaseVat.fromEu => 'Verlegd uit EU-land',
-            PurchaseVat.fromOutsideEu => 'Verlegd uit land buiten de EU',
-          },
+          _purchaseVat(e.purchaseVat),
           _euro(e.amountExclVat),
           _euro(e.vatAmount),
           _euro(e.totalInclVat),
@@ -565,6 +580,10 @@ class CsvExportService {
         'Naam',
         'Soort',
         'Kosten excl. btw',
+        'Btw-tarief aankoop',
+        'Btw-behandeling aankoop',
+        'Btw aankoop',
+        'Btw te vorderen',
         'Restwaarde',
         'Aankoopdatum',
         'Zakelijk gebruik %',
@@ -576,6 +595,9 @@ class CsvExportService {
         'Cataloguswaarde',
         'Verkoopdatum',
         'Verkoopopbrengst',
+        'Verkoopfactuur',
+        'Btw-tarief verkoop',
+        'Btw verkoop',
         'Boekwinst naar herinvesteringsreserve',
       ],
       for (final a in assets)
@@ -583,6 +605,10 @@ class CsvExportService {
           a.assetName,
           a.kind == AssetKind.car ? 'Auto van de zaak' : 'Bedrijfsmiddel',
           _euro(a.costExclVat),
+          _rateIn(a.vatRate, a.purchaseDate),
+          _purchaseVat(a.purchaseVat),
+          _euro(a.vatAmount),
+          _euro(a.vatToReclaim),
           _euro(a.residualValue),
           _date(a.purchaseDate),
           (a.businessUsePct * 100).round(),
@@ -599,6 +625,11 @@ class CsvExportService {
           a.catalogueValue == null ? '' : _euro(a.catalogueValue!),
           _date(a.disposalDate),
           a.disposalProceeds == null ? '' : _euro(a.disposalProceeds!),
+          a.disposalInvoiceId == null
+              ? ''
+              : (saleInvoiceNumbers[a.disposalInvoiceId] ?? ''),
+          _rateIn(a.disposalVatRate, a.disposalDate),
+          a.disposalVatAmount == null ? '' : _euro(a.disposalVatAmount!),
           _yesNo(a.reserveGain),
         ],
     ]);

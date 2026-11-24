@@ -15,16 +15,4 @@ class AssetDao extends DatabaseAccessor<AppDatabase>
   Stream<List<FixedAsset>> watchAll() => (select(
     fixedAssets,
   )..orderBy([(a) => OrderingTerm.asc(a.purchaseDate)])).watch();
-
-  /// Assets bought before the end of [year] and not disposed before it.
-  Stream<List<FixedAsset>> watchInUse(int year) =>
-      (select(fixedAssets)
-            ..where(
-              (a) =>
-                  a.purchaseDate.isSmallerThanValue(DateTime(year + 1)) &
-                  (a.disposalDate.isNull() |
-                      a.disposalDate.isBiggerOrEqualValue(DateTime(year))),
-            )
-            ..orderBy([(a) => OrderingTerm.asc(a.assetName)]))
-          .watch();
 }

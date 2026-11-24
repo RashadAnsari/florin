@@ -8,6 +8,7 @@ import 'generated/schema.dart';
 
 import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v2.dart' as v2;
+import 'generated/schema_v3.dart' as v3;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -166,6 +167,160 @@ void main() {
         expect(await newDb.select(newDb.invoices).get(), [newInvoice]);
         expect(await newDb.select(newDb.expenses).get(), [newExpense]);
         expect(await newDb.select(newDb.receipts).get(), isEmpty);
+      },
+    );
+  });
+
+  test('migration from v2 to v3 moves a car\'s purchase BTW and counts a car '
+      'and its costs in full', () async {
+    const oldCar = v2.FixedAssetsData(
+      id: 1,
+      kind: 'car',
+      assetName: 'Auto',
+      costExclVat: 2000000,
+      residualValue: 200000,
+      purchaseDate: 1767225600,
+      businessUsePct: 0.7,
+      usefulLifeYears: 5,
+      kiaEligible: 0,
+      eiaEligible: 0,
+      reinvestmentReserveApplied: 0,
+      reserveGain: 0,
+      catalogueValue: 3000000,
+      zeroEmission: 'none',
+      keepsTripLog: 0,
+      vatDeductedOnPurchase: 420000,
+    );
+    const oldLaptop = v2.FixedAssetsData(
+      id: 2,
+      kind: 'general',
+      assetName: 'Laptop',
+      costExclVat: 200000,
+      residualValue: 0,
+      purchaseDate: 1767225600,
+      businessUsePct: 0.8,
+      usefulLifeYears: 5,
+      kiaEligible: 1,
+      eiaEligible: 0,
+      reinvestmentReserveApplied: 0,
+      reserveGain: 0,
+      zeroEmission: 'none',
+      keepsTripLog: 0,
+      vatDeductedOnPurchase: 0,
+    );
+    // The purchase BTW was not recorded on a general asset, so none is
+    // reclaimed until the user enters it: the cautious reading.
+    const newCar = v3.FixedAssetsData(
+      id: 1,
+      kind: 'car',
+      assetName: 'Auto',
+      costExclVat: 2000000,
+      purchaseVat: 'domestic',
+      vatAmount: 420000,
+      vatReclaimable: 1,
+      vatToReclaim: 420000,
+      residualValue: 200000,
+      purchaseDate: 1767225600,
+      businessUsePct: 1,
+      usefulLifeYears: 5,
+      kiaEligible: 0,
+      eiaEligible: 0,
+      reinvestmentReserveApplied: 0,
+      reserveGain: 0,
+      catalogueValue: 3000000,
+      zeroEmission: 'none',
+      keepsTripLog: 0,
+    );
+    const newLaptop = v3.FixedAssetsData(
+      id: 2,
+      kind: 'general',
+      assetName: 'Laptop',
+      costExclVat: 200000,
+      purchaseVat: 'domestic',
+      vatAmount: 0,
+      vatReclaimable: 1,
+      vatToReclaim: 0,
+      residualValue: 0,
+      purchaseDate: 1767225600,
+      businessUsePct: 0.8,
+      usefulLifeYears: 5,
+      kiaEligible: 1,
+      eiaEligible: 0,
+      reinvestmentReserveApplied: 0,
+      reserveGain: 0,
+      zeroEmission: 'none',
+      keepsTripLog: 0,
+    );
+    v2.ExpensesData oldExpense(int id, int? car, int reclaimable) =>
+        v2.ExpensesData(
+          id: id,
+          date: 1767225600,
+          supplier: 'Tankstation',
+          description: 'Brandstof',
+          category: 'travel',
+          paperOriginalKept: 0,
+          amountExclVat: 10000,
+          vatRate: 'high',
+          purchaseVat: 'domestic',
+          vatAmount: 2100,
+          totalInclVat: 12100,
+          businessUsePct: 0.6,
+          deductibleAmount: reclaimable == 1 ? 6000 : 7260,
+          vatReclaimable: reclaimable,
+          vatToReclaim: reclaimable == 1 ? 1260 : 0,
+          carAssetId: car,
+        );
+    v3.ExpensesData newExpense(
+      int id,
+      int? car,
+      int reclaimable, {
+      required double share,
+      required int deductible,
+      required int vatBack,
+    }) => v3.ExpensesData(
+      id: id,
+      date: 1767225600,
+      supplier: 'Tankstation',
+      description: 'Brandstof',
+      category: 'travel',
+      paperOriginalKept: 0,
+      amountExclVat: 10000,
+      vatRate: 'high',
+      purchaseVat: 'domestic',
+      vatAmount: 2100,
+      totalInclVat: 12100,
+      businessUsePct: share,
+      deductibleAmount: deductible,
+      vatReclaimable: reclaimable,
+      vatToReclaim: vatBack,
+      carAssetId: car,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 2,
+      newVersion: 3,
+      createOld: v2.DatabaseAtV2.new,
+      createNew: v3.DatabaseAtV3.new,
+      openTestedDatabase: AppDatabase.new,
+      createItems: (batch, oldDb) {
+        batch.insertAll(oldDb.fixedAssets, [oldCar, oldLaptop]);
+        batch.insertAll(oldDb.expenses, [
+          oldExpense(1, 1, 1),
+          oldExpense(2, 1, 0),
+          oldExpense(3, null, 1),
+        ]);
+      },
+      validateItems: (newDb) async {
+        expect(await newDb.select(newDb.fixedAssets).get(), [
+          newCar,
+          newLaptop,
+        ]);
+        expect(await newDb.select(newDb.expenses).get(), [
+          newExpense(1, 1, 1, share: 1, deductible: 10000, vatBack: 2100),
+          newExpense(2, 1, 0, share: 1, deductible: 12100, vatBack: 0),
+          // An expense without a car keeps its share and amounts.
+          newExpense(3, null, 1, share: 0.6, deductible: 6000, vatBack: 1260),
+        ]);
       },
     );
   });

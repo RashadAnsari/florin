@@ -172,16 +172,20 @@ Where Florin implements it: `KorService` and `KorStatus` in
   reduce it. Services taxed in another country (`euServices`,
   `servicesOutsideEu`) do not count. Florin cannot tell which exemption an
   exempt line has, so it counts every exempt line: the cautious reading.
-  A sale recorded on an asset does not count (art. 25 lid 2); an invoice for
-  it does, as Florin cannot tell it apart: the cautious reading.
+  A sale recorded on an asset does not count (art. 25 lid 2), and neither
+  does an invoice an asset names as its sale invoice, or a credit note that
+  corrects one. An invoice for a sale that no asset names does count, as
+  Florin cannot tell it apart: the cautious reading.
 - While the KOR applies, an invoice for a supply in the Netherlands must use
   `VatTreatment.kor`; services taxed abroad keep their treatment. The invoice
   that passes the limit must carry BTW. The KOR PDF shows no BTW column, no
   BTW totals and no seller BTW number, following lid 4, and states that the
   exemption applies, as the Belastingdienst asks.
-- No BTW on purchases is reclaimed on KOR dates: the expense form blocks it,
-  and the calculations treat that BTW as cost even for expenses saved before
-  the KOR dates were entered.
+- No BTW on purchases is reclaimed on KOR dates: the expense and asset forms
+  block it, and the calculations treat that BTW as cost even for records
+  saved before the KOR dates were entered. For an asset that cost is what
+  depreciation and the investment deductions use. A sale of an asset without
+  an invoice on a KOR date carries no BTW.
 - BTW shifted to the user (2a, 4a, 4b) is owed in KOR quarters and not
   deducted; a KOR quarter with BTW owed needs an incidental return. See
   Filing a return.
@@ -282,8 +286,11 @@ supplies (artikel 11) carry no BTW and are not reported in the return.
 [Belastingdienst, Btw-aangifte als u diensten afneemt van leveranciers uit landen buiten de EU](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/zakendoen_met_het_buitenland/zakendoen_buiten_de_eu/aangifte_doen_als_u_zakendoet_buiten_de_eu/aangifte_doen_als_u_diensten_afneemt_van_leveranciers_uit_niet_eu_landen)
 
 Where Florin implements it: `VatService.calculateQuarter` fills 1a, 1b, 1d,
-1e, 2a, 3a, 3b, 4a, 4b, 5a and 5b. `PurchaseVat` on an expense decides 2a, 4a
-or 4b. Rubriek 1c (other rates) and 3c (installation and distance sales) do
+1e, 2a, 3a, 3b, 4a, 4b, 5a and 5b. An expense and the purchase of an asset
+count alike (`asPurchase`): `PurchaseVat` decides 2a, 4a or 4b, and the BTW
+reclaimed goes in 5b in the quarter of the purchase date. The sale of an
+asset without an invoice in Florin goes in 1a, 1b or 1e by its rate; see BTW
+on an asset. Rubriek 1c (other rates) and 3c (installation and distance sales) do
 not occur in the supplies Florin records. Services to businesses outside the
 EU are in no rubriek; see Services to businesses outside the EU above.
 
@@ -420,8 +427,10 @@ asset has a residual value below which it is not depreciated. Depreciation is
 spread by day over the useful life, so the year of purchase and the year of
 disposal are time-proportional. Florin depreciates the business-use share of
 an asset, which equals full depreciation minus a proportional private-use
-correction. Cars use the private-use addition below instead. Goodwill and
-buildings are not recorded as assets in Florin.
+correction. A car counts in full and uses the private-use addition below
+instead. Depreciation starts from the investment of artikel 3.43, see
+Investeringsaftrek and desinvesteringsbijtelling. Goodwill and buildings are
+not recorded as assets in Florin.
 
 ## Selling an asset
 
@@ -435,11 +444,64 @@ buildings are not recorded as assets in Florin.
 
 Where Florin implements it: `AssetService.disposalResult` adds the proceeds
 minus the book value to the profit in the year of sale, unless the gain is put
-in the herinvesteringsreserve. `AssetService.reserveLedger` books reserves off
+in the herinvesteringsreserve. When the sale was invoiced in Florin, the
+asset names that invoice: its amount less the credit notes on it is the
+proceeds (`AssetService.withSaleInvoices`), and it is left out of revenue so
+the sale is not counted twice. `AssetService.reserveLedger` books reserves off
 on later purchases, oldest first, and releases what is left after 3 years or
 when the business stops. The rule that a booked-off asset may not drop below
 the book value of the one sold, and the exception for assets not depreciated
 or depreciated over more than 10 years, are left to the user.
+
+## BTW on an asset
+
+> Kiest u ervoor om investeringsgoederen gedeeltelijk tot uw bedrijfsvermogen te rekenen? Dan maakt u een verdeling tussen zakelijk gebruik en privégebruik. De btw voor het zakelijke gedeelte is aftrekbaar voor zover dat gedeelte voor belaste omzet wordt gebruikt.
+
+> Verkoopt u de goederen later weer? Dan mag u over het deel dat u tot uw privévermogen rekent, geen btw in rekening brengen. Gaat het over een roerend goed? Dan berekent u btw over het deel dat u als bedrijfsvermogen hebt aangemerkt.
+
+[Belastingdienst, Btw aftrekken als u investeringsgoederen gedeeltelijk tot bedrijfsvermogen rekent](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/btw_aftrekken/privegebruik/gemengd_gebruik/investeringsgoederen/gedeeltelijk_bedrijfsvermogen), read 2026-11-24
+
+> 3 Met een levering onder bezwarende titel als bedoeld in artikel 1, onderdeel a, worden gelijkgesteld: a. het door een ondernemer aan zijn bedrijf onttrekken van een goed dat hij voor eigen privé-doeleinden of voor privé-doeleinden van zijn personeel bestemt, dat hij om niet verstrekt of, meer in het algemeen, dat hij voor andere dan bedrijfsdoeleinden bestemt, ingeval met betrekking tot dat goed of de bestanddelen daarvan recht op volledige of gedeeltelijke aftrek van de belasting is ontstaan;
+
+[Wet op de omzetbelasting 1968, artikel 3 lid 3](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-24
+
+> 3 Ten aanzien van de handelingen, bedoeld in artikel 3, derde lid, en artikel 3a, eerste lid, wordt de vergoeding gesteld op de aankoopprijs van de goederen of van soortgelijke goederen of, indien er geen aankoopprijs is, de kostprijs, berekend op het tijdstip waarop deze handelingen worden uitgevoerd.
+
+> 5 Bij of krachtens algemene maatregel van bestuur kan worden bepaald in hoever: […] d. bij levering anders dan met toepassing van artikel 28b of 28d, van gebruikte personenauto's, gebruikte motorrijwielen en gebruikte bestelauto's in de zin van artikel 10 van de Wet op de belasting van personenauto’s en motorrijwielen 1992, de vergoeding wordt verminderd met de op de voet van die wet geheven belasting.
+
+[Wet op de omzetbelasting 1968, artikel 8 leden 3 en 5](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-24
+
+> r. de levering van een roerende zaak die in het bedrijf van de ondernemer uitsluitend is gebruikt ten behoeve van vrijgestelde prestaties of voor doeleinden als zijn bedoeld in artikel 16, ingeval ter zake van de voorafgaande levering van die zaak geen belasting in aftrek is gebracht;
+
+[Wet op de omzetbelasting 1968, artikel 11 lid 1](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-24
+
+> De levering van gebruikte roerende bedrijfsmiddelen is vrijgesteld van btw, als u die uitsluitend hebt gebruikt voor:
+
+[Belastingdienst, Vrijstelling roerende bedrijfsmiddelen gebruikt binnen eigen bedrijf](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/tarieven_en_vrijstellingen/vrijstellingen/vrijstelling_voor_levering_roerende_bedrijfsmiddelen_die_binnen_het_eigen_bedrijf_gebruikt_zijn), read 2026-11-24
+
+Where Florin implements it: the asset form, `FixedAssetDomain` in
+`lib/services/domain.dart`, `VatService.calculateQuarter` and
+`KorService.applyToAssets`.
+
+- An asset holds the BTW of its purchase as an expense does: the rate, who
+  accounts for it (`PurchaseVat`), and whether it is reclaimed. The BTW back
+  is the business share (`PurchaseMath.vatToReclaim`), in 5b of the quarter
+  of purchase, with shifted BTW in 2a, 4a or 4b. A car is wholly in the
+  business, so all its purchase BTW is reclaimed and private use is paid in
+  1d. For a purchase year without rules in Florin the BTW is entered as an
+  amount, as no return of that year is made in Florin.
+- A sale, or taking the asset out of the business with its market value as
+  proceeds, carries BTW over the business share of the proceeds at the rate
+  the user picks: the general rate by default, exempt for the case of
+  artikel 11 lid 1 r. It goes in 1a, 1b or 1e of the quarter of the disposal
+  date. A sale invoiced in Florin is named on the asset and carries its BTW
+  in that invoice only.
+- Not modelled: the reduction of the base by the rest-BPM of a used car
+  (artikel 8 lid 5 d), so Florin counts BTW over the whole proceeds, the
+  cautious reading; the revision of deducted BTW when the business share
+  changes in later years; and private use of an asset kept wholly in the
+  business, other than a car. The business share entered is the share in
+  the business for BTW and income tax alike.
 
 ## Investeringsaftrek and desinvesteringsbijtelling
 
@@ -455,7 +517,19 @@ or depreciated over more than 10 years, are left to the user.
 
 [Wet inkomstenbelasting 2001, artikel 3.45](https://wetten.overheid.nl/BWBR0011353/2026-01-01), read 2026-11-24
 
-Where Florin implements it: `AssetService`. A car never counts for the KIA
+> 1 Onder investeren wordt verstaan het aangaan van verplichtingen ter zake van de aanschaffing of de verbetering van een bedrijfsmiddel, alsmede het maken van voortbrengingskosten ter zake van een bedrijfsmiddel, voorzover die verplichtingen en kosten op de belastingplichtige drukken.
+
+[Wet inkomstenbelasting 2001, artikel 3.43](https://wetten.overheid.nl/BWBR0011353/2026-01-01), read 2026-11-24
+
+> Kunt u de btw op de kosten terugkrijgen, dan neemt u de kostprijs exclusief btw. Hebt u geen recht op btw-aftrek, bijvoorbeeld omdat u alleen vrijgestelde prestaties verricht, dan gaat u uit van € 450 inclusief btw.
+
+[Belastingdienst, Kosten die u in 1 jaar mag aftrekken](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/winst/inkomstenbelasting/inkomstenbelasting_voor_ondernemers/zakelijke_kosten/kosten_die_u_in_1_jaar_mag_aftrekken), read 2026-11-24
+
+Where Florin implements it: `AssetService`, on the investment
+`FixedAsset.cost`: the price excl. BTW plus BTW that is not reclaimed, which
+stays a burden on the ondernemer (`PurchaseMath.cost`, shared with
+expenses). The KIA, EIA and MIA, their minimum per asset, depreciation and
+the desinvesteringsbijtelling all use it. A car never counts for the KIA
 or the EIA, and the asset form hides those options for a car: Florin cannot
 tell a passenger car from a van, so it takes the cautious reading. The MIA
 applies to a car, as lid 3 allows.
@@ -485,13 +559,15 @@ cars first registered in that year (`car_reductions.dart`):
 | [2024-01-01](https://wetten.overheid.nl/BWBR0011353/2024-01-01) | 6% | € 1.800 |
 | [2025-01-01](https://wetten.overheid.nl/BWBR0011353/2025-01-01) | 5% | € 1.500 |
 
-> Dit bedrag is maximaal het bedrag van de autokosten.
+> Rijdt u in een (bestel)auto van uw onderneming? En gebruikt u deze auto ook privé? Dan telt u voor dat privégebruik een bedrag bij de winst. Dit bedrag is maximaal het bedrag van de autokosten.
 
 [Belastingdienst, Fiscale informatie 2026, Winst uit onderneming, 6.4.1.2](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2026/winst_uit_onderneming)
 
 Where Florin implements it: `CarService.privateUseAddition`, day by day over
 the days the car is in the business, capped at the costs linked to the car
-plus its depreciation. The 500 km test uses the trips logged in that car,
+plus its depreciation. As the addition is how private use counts, a car and
+the costs linked to it count in full: the asset and expense forms store a
+business share of 100% for them and hide the slider. The 500 km test uses the trips logged in that car,
 annualised, and only when the user keeps a complete trip log for it.
 
 ## BTW on private use of a business car
@@ -504,8 +580,14 @@ annualised, and only when the user keeps a complete trip log for it.
 
 [Belastingdienst, Btw en privégebruik auto van de zaak: woon-werkverkeer](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/btw_aftrekken/btw_en_de_auto/privegebruik_auto_van_de_zaak/woon_werkverkeer)
 
+> Rekent u de auto volledig tot uw bedrijfsvermogen? Dan kunt u de btw als voorbelasting aftrekken over de aanschaf, het onderhoud en het gebruik. U kunt de btw alleen aftrekken over het gedeelte dat voor belaste omzet wordt gebruikt. Gebruikt u of een werknemer een auto van de zaak privé? Dan moet u over dit privégebruik btw betalen.
+
+[Belastingdienst, Btw aftrekken over een auto die u zakelijk en privé gebruikt](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/btw_aftrekken/btw_en_de_auto/btw_en_de_auto), read 2026-11-24
+
 Where Florin implements it: `CarService.btwPrivateUse`, reported in rubriek 1d
-of the fourth quarter. Without a trip log Florin applies 2,7% or 1,5% by whole
+of the fourth quarter. The purchase BTW is the BTW the car's record reclaims,
+counted in 5b in the quarter of purchase; under the KOR that is none, so the
+car counts as one bought without BTW. Without a trip log Florin applies 2,7% or 1,5% by whole
 months, capped as quoted: in the 4 years after the year of purchase at the
 upkeep BTW plus one fifth of the purchase BTW, later or without purchase BTW
 at the upkeep BTW alone. In the year of purchase the page names no cap below
