@@ -30,6 +30,41 @@ abstract final class InvoicePdfService {
     VatTreatment.kor => 'Vrijgesteld op grond van de kleineondernemersregeling',
   };
 
+  /// The rate column of [line]: the rate with Dutch BTW, and with domestic
+  /// reverse charge the rate that would apply without it (art. 35a lid 1 i).
+  static String rateCell(Invoice invoice, InvoiceLine line) =>
+      invoice.vatTreatment.lineRates.contains(line.vatRate)
+      ? line.vatRate.dutchLabel
+      : '-';
+
+  /// The BTW rows under the subtotal: per rate or exemption the base and the
+  /// BTW (art. 35a lid 1 h and j); with domestic reverse charge the base per
+  /// rate as without it, marked verlegd; otherwise a BTW of nil.
+  static List<(String, String)> vatRows(
+    Invoice invoice,
+    List<InvoiceLine> lines,
+  ) {
+    String money(int cents) => AppFormat.cents(invoice.sign * cents);
+    final rates = invoice.vatTreatment.lineRates;
+    final byRate = <VatRate, (int, int)>{};
+    for (final l in lines) {
+      if (!rates.contains(l.vatRate)) continue;
+      final (base, vat) = byRate[l.vatRate] ?? (0, 0);
+      byRate[l.vatRate] = (base + l.lineTotalExclVat, vat + l.vatAmount);
+    }
+    if (byRate.isEmpty) return [('Btw', money(0))];
+    final reverse = invoice.vatTreatment == VatTreatment.reverseChargeNl;
+    return [
+      for (final MapEntry(key: rate, value: (base, vat)) in byRate.entries)
+        rate == VatRate.exempt
+            ? ('Vrijgesteld van btw over ${money(base)}', '-')
+            : (
+                'Btw ${rate.dutchLabel} over ${money(base)}',
+                reverse ? 'verlegd' : money(vat),
+              ),
+    ];
+  }
+
   static Future<void> save({
     required Invoice invoice,
     required List<InvoiceLine> lines,
@@ -80,13 +115,6 @@ abstract final class InvoicePdfService {
     String money(int cents) => AppFormat.cents(sign * cents);
     final note = _treatmentNote(invoice.vatTreatment);
     final kor = invoice.vatTreatment == VatTreatment.kor;
-
-    // Wet OB art. 35a lid 1 h: the amount per rate or exemption.
-    final byRate = <VatRate, (int, int)>{};
-    for (final l in lines) {
-      final (base, vat) = byRate[l.vatRate] ?? (0, 0);
-      byRate[l.vatRate] = (base + l.lineTotalExclVat, vat + l.vatAmount);
-    }
 
     final doc = pw.Document(
       theme: pw.ThemeData.withFont(base: regular, bold: bold),
@@ -238,13 +266,7 @@ abstract final class InvoicePdfService {
                       right: true,
                     ),
                     cell(AppFormat.cents(l.unitPriceExclVat), right: true),
-                    if (!kor)
-                      cell(
-                        invoice.vatTreatment == VatTreatment.standard
-                            ? l.vatRate.dutchLabel
-                            : '-',
-                        right: true,
-                      ),
+                    if (!kor) cell(rateCell(invoice, l), right: true),
                     cell(money(l.lineTotalExclVat), right: true),
                   ],
                 ),
@@ -266,16 +288,8 @@ abstract final class InvoicePdfService {
                       ]
                     : [
                         total('Totaal excl. btw', money(invoice.totalExclVat)),
-                        if (invoice.vatTreatment == VatTreatment.standard)
-                          for (final e in byRate.entries)
-                            total(
-                              e.key == VatRate.exempt
-                                  ? 'Vrijgesteld van btw over ${money(e.value.$1)}'
-                                  : 'Btw ${e.key.dutchLabel} over ${money(e.value.$1)}',
-                              e.key == VatRate.exempt ? '-' : money(e.value.$2),
-                            )
-                        else
-                          total('Btw', money(0)),
+                        for (final (label, value) in vatRows(invoice, lines))
+                          total(label, value),
                         pw.Divider(color: PdfColors.grey400),
                         total(
                           'Totaal incl. btw',

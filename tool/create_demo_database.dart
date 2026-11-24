@@ -185,7 +185,7 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
           unit: Value(unit),
           unitPriceExclVat: Value(price),
           vatRate: Value(
-            treatment == VatTreatment.standard ? rate : VatRate.zero,
+            treatment.lineRates.contains(rate) ? rate : VatRate.zero,
           ),
           vatAmount: Value(lineVat),
           lineTotalExclVat: Value(total),

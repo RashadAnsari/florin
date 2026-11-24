@@ -1,5 +1,6 @@
 import 'package:florin/db/database.dart';
 import 'package:florin/services/asset_service.dart';
+import 'package:florin/services/csv_export_service.dart';
 import 'package:florin/services/tax_rules/tax_year_rules.dart';
 import 'package:florin/services/tax_service.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -15,7 +16,8 @@ void main() {
     int aov = 0,
     int disposalResult = 0,
     int stakingswinst = 0,
-    double hours = 0,
+    double? hours,
+    bool yearOver = true,
     double soHours = 0,
     TaxYearInput? inputs,
   }) => TaxService.calculate(
@@ -31,9 +33,10 @@ void main() {
     carPrivateUse: 0,
     reserveReleased: 0,
     stakingswinst: stakingswinst,
-    totalHours: hours,
+    // With the urencriterium, the hours that meet it unless given.
+    totalHours: hours ?? (uren ? rules.urencriterium.toDouble() : 0),
     soHours: soHours,
-    assumeUrencriterium: uren,
+    hoursFinal: yearOver,
     isStarter: starter,
     inputs: inputs,
     lijfrentePremium: lijfrente,
@@ -165,6 +168,77 @@ void main() {
     final r = calc(revenue: 5000000, uren: false);
     expect(r.zelfstandigenaftrek, 0);
     expect(r.mkbWinstvrijstelling, (5000000 * 0.127).round());
+  });
+
+  group('urencriterium counts the logged hours only (AGENTS.md rule 5)', () {
+    test('this year, no zelfstandigenaftrek before 1.225 hours are logged', () {
+      final r = calc(revenue: 5000000, hours: 600, yearOver: false);
+      expect(r.zelfstandigenaftrek, 0);
+      expect(
+        calc(
+          revenue: 5000000,
+          hours: 1225,
+          yearOver: false,
+        ).zelfstandigenaftrek,
+        120000,
+      );
+    });
+
+    test('the startersaftrek bij arbeidsongeschiktheid waits for the year '
+        'to end, as it needs the urencriterium not to be met (art. 3.78a)', () {
+      TaxResult r(bool over) => calc(
+        revenue: 2000000,
+        starter: true,
+        hours: 900,
+        yearOver: over,
+        inputs: inputs(disability: true),
+      );
+      expect(r(false).disabilityStartersaftrek, 0);
+      expect(r(true).disabilityStartersaftrek, 1200000);
+    });
+  });
+
+  group('tariefaanpassing (Wet IB 2001 art. 2.10 lid 2 and 3)', () {
+    test('ondernemersaftrek and mkb-winstvrijstelling above the top bracket '
+        'cost 11,94% back', () {
+      // € 100.000 profit: all € 13.747,60 of deductions lie above € 78.426.
+      final r = calc(revenue: 10000000);
+      final deducted = r.zelfstandigenaftrek + r.mkbWinstvrijstelling;
+      expect(deducted, 1374760);
+      expect(r.tariefaanpassing, (1374760 * 0.1194).round());
+    });
+
+    test('only the part of the deductions above € 78.426 counts', () {
+      // € 85.000 profit: taxable income plus deductions exceeds the top
+      // bracket by € 6.574, less than the deductions.
+      final r = calc(revenue: 8500000);
+      expect(r.tariefaanpassing, (657400 * 0.1194).round());
+    });
+
+    test('the income tax export lists it before the heffingskortingen', () {
+      final rows = CsvExportService.incomeTaxRows(calc(revenue: 10000000));
+      final labels = [for (final r in rows) r.first];
+      expect(
+        labels.indexOf('Tariefaanpassing'),
+        labels.indexOf('Belasting box 1 vóór heffingskortingen') + 1,
+      );
+      expect(
+        rows.firstWhere((r) => r.first == 'Tariefaanpassing').last,
+        (1374760 * 0.1194).round() / 100,
+      );
+    });
+
+    test('nothing below the top bracket, and it raises box 1 tax', () {
+      expect(calc(revenue: 5000000).tariefaanpassing, 0);
+      final r = calc(revenue: 10000000);
+      expect(
+        r.box1Tax,
+        r.grossBox1Tax +
+            r.tariefaanpassing -
+            r.algemeneHeffingskorting -
+            r.arbeidskorting,
+      );
+    });
   });
 
   test('mkb-winstvrijstelling applies after ondernemersaftrek', () {

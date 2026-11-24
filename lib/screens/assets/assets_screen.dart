@@ -144,7 +144,7 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
   /// there is entered rather than computed.
   bool get _needsDeductionInput =>
       taxRulesFor(_purchaseDate.year) == null &&
-      (_kiaEligible || _eiaEligible || _miaCategory != null);
+      (!_isCar && (_kiaEligible || _eiaEligible) || _miaCategory != null);
 
   /// Herinvesteringsreserve available when this asset was bought.
   int _availableReserve(List<FixedAsset> all) {
@@ -192,8 +192,8 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
               businessUsePct: Value(_businessUsePct),
               usefulLifeYears: Value(parseWholeNumber(_usefulLife.text)!),
               kiaEligible: Value(!_isCar && _kiaEligible),
-              eiaEligible: Value(_eiaEligible),
-              miaCategory: Value(_eiaEligible ? null : _miaCategory),
+              eiaEligible: Value(!_isCar && _eiaEligible),
+              miaCategory: Value(!_isCar && _eiaEligible ? null : _miaCategory),
               investmentDeductionReceived: Value(
                 _needsDeductionInput ? _deductionReceived : null,
               ),
@@ -406,16 +406,19 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                 title: l.assetsFieldKia,
                 help: l.assetsFieldKiaHelp,
               ),
-            HelpCheckbox(
-              value: _eiaEligible,
-              onChanged: (v) => setState(() {
-                _eiaEligible = v;
-                if (v) _miaCategory = null;
-              }),
-              title: l.assetsFieldEia,
-              help: l.assetsFieldEiaHelp,
-            ),
-            const SizedBox(height: AppSpacing.field),
+            // No EIA on a car (art. 3.45 lid 1 d); the MIA is allowed.
+            if (!_isCar) ...[
+              HelpCheckbox(
+                value: _eiaEligible,
+                onChanged: (v) => setState(() {
+                  _eiaEligible = v;
+                  if (v) _miaCategory = null;
+                }),
+                title: l.assetsFieldEia,
+                help: l.assetsFieldEiaHelp,
+              ),
+              const SizedBox(height: AppSpacing.field),
+            ],
             DropdownButtonFormField<MiaCategory?>(
               style: fieldTextStyle(context),
               initialValue: _miaCategory,
@@ -429,7 +432,7 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                 for (final c in MiaCategory.values)
                   DropdownMenuItem(value: c, child: Text(c.label(l))),
               ],
-              onChanged: _eiaEligible
+              onChanged: !_isCar && _eiaEligible
                   ? null
                   : (c) => setState(() => _miaCategory = c),
             ),

@@ -240,6 +240,12 @@ class PlTaxScreen extends ConsumerWidget {
                       ),
                       r.bracketTax[i],
                     ),
+                if (r.tariefaanpassing > 0)
+                  ValueRow.cents(
+                    l.plTaxTariefaanpassing,
+                    r.tariefaanpassing,
+                    help: l.plTaxTariefaanpassingHelp,
+                  ),
                 ValueRow.cents(
                   l.plTaxAlgHeffing,
                   -r.algemeneHeffingskorting,

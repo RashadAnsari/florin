@@ -376,7 +376,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clientsHighRiskWarning =>
-      'High Wet DBA risk: the Belastingdienst may treat this work as employment. Review the working relationship with an adviser.';
+      'High Wet DBA risk in your own assessment: if the work is employment in law, the Belastingdienst treats it as such.';
 
   @override
   String get clientsDeleteTitle => 'Delete client';
@@ -483,7 +483,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expenseCatTravel => 'Travel & accommodation';
 
   @override
-  String get expenseCatMeals => 'Meals & entertainment';
+  String get expenseCatMeals => 'Food, drinks, representation and congresses';
 
   @override
   String get expenseCatSoftware => 'Software & subscriptions';
@@ -944,6 +944,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get plTaxArbeidskorting => 'Labour tax credit';
 
   @override
+  String get plTaxTariefaanpassing => 'Tariefaanpassing';
+
+  @override
+  String get plTaxTariefaanpassingHelp =>
+      'The ondernemersaftrek and the mkb-winstvrijstelling lower your tax at most at the rate below the top bracket. For the part of them that falls in the top bracket, the difference is added back (Wet IB 2001 art. 2.10 lid 2).';
+
+  @override
   String get plTaxInkomsten => 'Income tax';
 
   @override
@@ -972,7 +979,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get plTaxUrenBannerSuffixPending =>
-      '. The estimate assumes you reach it this year';
+      '. Until you reach it, the estimate leaves out the zelfstandigenaftrek and the other deductions that need it';
 
   @override
   String get settingsLanguageSection => 'Language';
@@ -1197,6 +1204,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'After sending, the invoice can no longer be changed or deleted. Corrections are made with a credit note.';
 
   @override
+  String invoiceIssueRenumber(String number, String next) {
+    return '$number does not follow the last invoice you issued in this series, so it is sent as $next: invoice numbers follow on without gaps (Wet OB 1968 art. 35a lid 1 b).';
+  }
+
+  @override
+  String invoiceActionSendAs(String number) {
+    return 'Send as $number';
+  }
+
+  @override
   String get invoiceActionCreditNote => 'Credit note';
 
   @override
@@ -1223,7 +1240,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expensesFoodNotice =>
-      'Food, drinks and representation are 80% deductible for income tax (Wet IB 2001 art. 3.15). VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed (Wet OB 1968 art. 15).';
+      'Food, drinks, representation, congresses, seminars and study trips are deductible for income tax at 80%, or as far as they exceed a yearly threshold if that is more (Wet IB 2001 art. 3.15). VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed (Wet OB 1968 art. 15).';
 
   @override
   String plTaxFoodLimited(String category, String amount) {
@@ -1396,7 +1413,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expensesFieldCategoryHelp =>
-      'What kind of cost this is. Food, drinks and representation are only partly deductible.';
+      'What kind of cost this is. Food, drinks, representation, congresses, seminars, excursions and study trips are only partly deductible (Wet IB 2001 art. 3.15), so they belong in their own category.';
 
   @override
   String get expensesFieldDescriptionHelp =>
@@ -1420,7 +1437,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expensesReclaimVatHelp =>
-      'Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, or for private use.';
+      'Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, for private use, or for gifts to someone who cannot deduct VAT when they total more than € 227 for that person in a year (Besluit uitsluiting aftrek omzetbelasting 1968).';
 
   @override
   String get hoursFieldClientProjectHelp =>
@@ -1485,11 +1502,24 @@ class AppLocalizationsEn extends AppLocalizations {
       'When you delivered, if that differs from the invoice date. The law requires it on the invoice in that case.';
 
   @override
+  String invoiceLateNotice(String date) {
+    return 'An invoice is due by the 15th of the month after the supply (Wet OB 1968 art. 34g): for this supply by $date.';
+  }
+
+  @override
   String get invoiceFieldUnitHelp =>
       'The unit of the quantity, such as hours or pieces.';
 
   @override
   String get invoiceFieldVatHelp => 'The VAT rate for this line.';
+
+  @override
+  String get invoiceFieldVatReverseHelp =>
+      'The VAT rate that would apply without reverse charge. The invoice states it with the amount per rate, and your customer pays the VAT.';
+
+  @override
+  String get invoiceValidateLineRate =>
+      'Choose the VAT rate for this line: the invoice states it, also when the VAT is reverse-charged.';
 
   @override
   String get invoiceFieldVatTreatmentHelp =>
@@ -1556,7 +1586,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pensionFactorAHelp =>
-      'The pension you built up with an employer last year, from the factor A on your UPO. Leave 0 if you had none.';
+      'The pension you built up with an employer last year, from the factor A on your UPO. Leave 0 if you had none. If your pension scheme follows the Wet toekomst pensioenen, your UPO shows premiums instead: the law then lowers the jaarruimte by those premiums, which Florin does not calculate.';
 
   @override
   String get pensionLijfrenteHelp =>
@@ -1936,7 +1966,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String plTaxFoodLimitedHelp(String pct, String drempel) {
-    return 'Food, drinks and representation are deductible for $pct%, or above the first $drempel. Florin uses whichever gives the larger deduction.';
+    return 'Food, drinks, representation, congresses, seminars and study trips are deductible for $pct%, or above the first $drempel (Wet IB 2001 art. 3.15). Florin uses whichever gives the larger deduction.';
   }
 
   @override
@@ -2426,7 +2456,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get receiptsHelp =>
-      'The receipt or invoice for this expense, as a PDF, photo or scan. Florin copies it into the receipts folder next to your database and leaves your file as it is. The Belastingdienst asks you to keep receipts and invoices for 7 years in the form you received them; a scan or photo must show the whole document, front and back.';
+      'The receipt or invoice for this expense, as a PDF, photo or scan. Florin copies it into the receipts folder next to your database and leaves your file as it is. The Belastingdienst asks you to keep receipts and invoices for 7 years in the form you received them; a scan or photo must be a correct and complete copy of the original, with its marks of authenticity.';
 
   @override
   String get receiptsAssetTitle => 'Purchase invoice and receipts';

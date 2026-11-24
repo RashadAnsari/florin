@@ -376,7 +376,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get clientsHighRiskWarning =>
-      'Hoog Wet DBA-risico: de Belastingdienst kan dit werk als dienstbetrekking zien. Laat de arbeidsrelatie beoordelen door een adviseur.';
+      'Hoog Wet DBA-risico in je eigen beoordeling: is het werk volgens de wet een dienstbetrekking, dan behandelt de Belastingdienst het zo.';
 
   @override
   String get clientsDeleteTitle => 'Klant verwijderen';
@@ -485,7 +485,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get expenseCatTravel => 'Reizen & verblijf';
 
   @override
-  String get expenseCatMeals => 'Maaltijden & entertainment';
+  String get expenseCatMeals => 'Voedsel, drank, representatie en congressen';
 
   @override
   String get expenseCatSoftware => 'Software & abonnementen';
@@ -948,6 +948,13 @@ class AppLocalizationsNl extends AppLocalizations {
   String get plTaxArbeidskorting => 'Arbeidskorting';
 
   @override
+  String get plTaxTariefaanpassing => 'Tariefaanpassing';
+
+  @override
+  String get plTaxTariefaanpassingHelp =>
+      'De ondernemersaftrek en de mkb-winstvrijstelling verlagen je belasting hoogstens tegen het tarief onder de hoogste schijf. Voor het deel dat in de hoogste schijf valt, wordt het verschil bijgeteld (Wet IB 2001 art. 2.10 lid 2).';
+
+  @override
   String get plTaxInkomsten => 'Inkomstenbelasting';
 
   @override
@@ -976,7 +983,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get plTaxUrenBannerSuffixPending =>
-      '. De schatting gaat ervan uit dat je het dit jaar haalt';
+      '. Tot je het haalt, laat de schatting de zelfstandigenaftrek en de andere aftrekposten die het vereisen weg';
 
   @override
   String get settingsLanguageSection => 'Taal';
@@ -1200,6 +1207,16 @@ class AppLocalizationsNl extends AppLocalizations {
       'Na verzenden kan de factuur niet meer worden gewijzigd of verwijderd. Correcties maak je met een creditnota.';
 
   @override
+  String invoiceIssueRenumber(String number, String next) {
+    return '$number sluit niet aan op de laatste factuur die je in deze reeks uitreikte, dus hij wordt verstuurd als $next: factuurnummers lopen zonder gaten door (Wet OB 1968 art. 35a lid 1 b).';
+  }
+
+  @override
+  String invoiceActionSendAs(String number) {
+    return 'Versturen als $number';
+  }
+
+  @override
   String get invoiceActionCreditNote => 'Creditnota';
 
   @override
@@ -1226,7 +1243,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get expensesFoodNotice =>
-      'Voedsel, drank en representatie zijn voor 80% aftrekbaar voor de inkomstenbelasting (Wet IB 2001 art. 3.15). Btw op eten en drinken in een restaurant, café of hotel is niet aftrekbaar (Wet OB 1968 art. 15).';
+      'Voedsel, drank, representatie, congressen, seminars en studiereizen zijn voor de inkomstenbelasting voor 80% aftrekbaar, of voor zover ze een jaarlijkse drempel overschrijden als dat meer is (Wet IB 2001 art. 3.15). Btw op eten en drinken in een restaurant, café of hotel is niet aftrekbaar (Wet OB 1968 art. 15).';
 
   @override
   String plTaxFoodLimited(String category, String amount) {
@@ -1400,7 +1417,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get expensesFieldCategoryHelp =>
-      'Wat voor kosten dit zijn. Voedsel, drank en representatie zijn maar gedeeltelijk aftrekbaar.';
+      'Wat voor kosten dit zijn. Voedsel, drank, representatie, congressen, seminars, excursies en studiereizen zijn maar gedeeltelijk aftrekbaar (Wet IB 2001 art. 3.15), dus ze horen in hun eigen categorie.';
 
   @override
   String get expensesFieldDescriptionHelp =>
@@ -1424,7 +1441,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get expensesReclaimVatHelp =>
-      'Vink aan als je deze btw mag aftrekken in je btw-aangifte. Niet voor eten en drinken in een restaurant, of voor privégebruik.';
+      'Vink aan als je deze btw mag aftrekken in je btw-aangifte. Niet voor eten en drinken in een restaurant, voor privégebruik, of voor geschenken aan iemand die zelf geen btw aftrekt als ze voor die persoon samen meer dan € 227 per jaar zijn (Besluit uitsluiting aftrek omzetbelasting 1968).';
 
   @override
   String get hoursFieldClientProjectHelp =>
@@ -1488,11 +1505,24 @@ class AppLocalizationsNl extends AppLocalizations {
       'Wanneer je leverde, als dat afwijkt van de factuurdatum. De wet vereist het dan op de factuur.';
 
   @override
+  String invoiceLateNotice(String date) {
+    return 'Een factuur reik je uit uiterlijk de 15e van de maand na de levering (Wet OB 1968 art. 34g): voor deze levering uiterlijk $date.';
+  }
+
+  @override
   String get invoiceFieldUnitHelp =>
       'De eenheid van het aantal, zoals uren of stuks.';
 
   @override
   String get invoiceFieldVatHelp => 'Het btw-tarief voor deze regel.';
+
+  @override
+  String get invoiceFieldVatReverseHelp =>
+      'Het btw-tarief dat zonder verlegging zou gelden. De factuur vermeldt het met het bedrag per tarief, en je klant betaalt de btw.';
+
+  @override
+  String get invoiceValidateLineRate =>
+      'Kies het btw-tarief voor deze regel: de factuur vermeldt het, ook als de btw verlegd is.';
 
   @override
   String get invoiceFieldVatTreatmentHelp =>
@@ -1559,7 +1589,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get pensionFactorAHelp =>
-      'Het pensioen dat je vorig jaar bij een werkgever opbouwde, de factor A op je UPO. Laat 0 als je dat niet had.';
+      'Het pensioen dat je vorig jaar bij een werkgever opbouwde, uit de factor A op je UPO. Laat 0 als je dat niet had. Valt je pensioenregeling onder de Wet toekomst pensioenen, dan staan op je UPO premies: de wet verlaagt de jaarruimte dan met die premies, en dat berekent Florin niet.';
 
   @override
   String get pensionLijfrenteHelp =>
@@ -1943,7 +1973,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String plTaxFoodLimitedHelp(String pct, String drempel) {
-    return 'Voedsel, drank en representatie zijn voor $pct% aftrekbaar, of boven de eerste $drempel. Florin neemt wat de grootste aftrek geeft.';
+    return 'Voedsel, drank, representatie, congressen, seminars en studiereizen zijn voor $pct% aftrekbaar, of boven de eerste $drempel (Wet IB 2001 art. 3.15). Florin neemt wat de grootste aftrek geeft.';
   }
 
   @override
@@ -2437,7 +2467,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get receiptsHelp =>
-      'De bon of factuur van deze uitgave, als pdf, foto of scan. Florin kopieert hem naar de map met bonnen naast je database en laat je eigen bestand ongemoeid. De Belastingdienst vraagt bonnen en facturen 7 jaar te bewaren in de vorm waarin je ze ontving; een scan of foto moet het hele document tonen, voor- en achterkant.';
+      'De bon of factuur van deze uitgave, als pdf, foto of scan. Florin kopieert hem naar de map met bonnen naast je database en laat je eigen bestand ongemoeid. De Belastingdienst vraagt bonnen en facturen 7 jaar te bewaren in de vorm waarin je ze ontving; een scan of foto moet een juiste en volledige weergave van het origineel zijn, met de echtheidskenmerken.';
 
   @override
   String get receiptsAssetTitle => 'Aankoopfactuur en bonnen';

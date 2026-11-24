@@ -68,6 +68,34 @@ void main() {
     expect((await invoices.getLines(id)).map((l) => l.description), ['c']);
   });
 
+  group('issued numbers follow on (Wet OB 1968 art. 35a lid 1 b; '
+      'Belastingdienst, Factuureisen)', () {
+    Future<int> add(String number, InvoiceStatus status) =>
+        invoices.saveWithLines(
+          invoice(number).copyWith(status: Value(status)),
+          [line('a')],
+        );
+
+    test('the next number follows the last issued one in its series, and a '
+        'series with nothing issued keeps the given number', () async {
+      expect(await invoices.nextIssuedNumber(2026, 'F'), isNull);
+      await add('F-2026-001', InvoiceStatus.sent);
+      await add('F-2026-003', InvoiceStatus.draft);
+      await add('2026-77', InvoiceStatus.paid);
+      expect(await invoices.nextIssuedNumber(2026, 'F'), 'F-2026-002');
+    });
+
+    test('renumbering a draft swaps numbers with the draft that holds the '
+        'number', () async {
+      await add('F-2026-001', InvoiceStatus.sent);
+      final second = await add('F-2026-002', InvoiceStatus.draft);
+      final third = await add('F-2026-003', InvoiceStatus.draft);
+      await invoices.renumberDraft(third, 'F-2026-002');
+      expect((await invoices.getById(third))!.invoiceNumber, 'F-2026-002');
+      expect((await invoices.getById(second))!.invoiceNumber, 'F-2026-003');
+    });
+  });
+
   test('deleting an invoice deletes its lines', () async {
     final id = await invoices.saveWithLines(invoice('F-2026-001'), [line('a')]);
     await invoices.remove((await invoices.getById(id))!);

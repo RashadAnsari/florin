@@ -80,6 +80,56 @@ class InvoiceDao extends DatabaseAccessor<AppDatabase>
       );
 
   /// Highest sequence number used in `<prefix>-<year>-<n>`, plus one.
+  /// The number the next issued invoice of the series [prefix]-[year] must
+  /// take: one after the highest issued, so issued numbers follow on (Wet OB
+  /// 1968 art. 35a lid 1 b). Null while nothing in the series is issued, so
+  /// a series carried over from elsewhere keeps the number the user gave.
+  Future<String?> nextIssuedNumber(int year, String prefix) async {
+    final pattern = RegExp('^$prefix-$year-(\\d+)\$');
+    final issued =
+        await (select(invoices)..where(
+              (i) =>
+                  i.invoiceNumber.like('$prefix-$year-%') &
+                  i.status.equalsValue(InvoiceStatus.draft).not(),
+            ))
+            .get();
+    var max = 0;
+    for (final i in issued) {
+      final seq = int.parse(
+        pattern.firstMatch(i.invoiceNumber)?.group(1) ?? '0',
+      );
+      if (seq > max) max = seq;
+    }
+    if (max == 0) return null;
+    return '$prefix-$year-${(max + 1).toString().padLeft(3, '0')}';
+  }
+
+  /// Gives the draft [id] the number [number]. A draft that holds that
+  /// number takes the old one, so both stay unique.
+  Future<void> renumberDraft(int id, String number) => transaction(() async {
+    final draft = (await getById(id))!;
+    final holder =
+        await (select(invoices)..where(
+              (i) => i.invoiceNumber.equals(number) & i.id.equals(id).not(),
+            ))
+            .getSingleOrNull();
+    Future<void> setNumber(int invoiceId, String n) =>
+        (update(invoices)..where((i) => i.id.equals(invoiceId))).write(
+          InvoicesCompanion(invoiceNumber: Value(n)),
+        );
+    if (holder != null) {
+      if (holder.status != InvoiceStatus.draft) {
+        throw StateError('Invoice number $number is already issued');
+      }
+      // A free number for the moment both change, as numbers are unique.
+      await setNumber(holder.id, '${draft.invoiceNumber}#${holder.id}');
+      await setNumber(id, number);
+      await setNumber(holder.id, draft.invoiceNumber);
+    } else {
+      await setNumber(id, number);
+    }
+  });
+
   Future<int> nextSequenceNumber(int year, String prefix) async {
     final numbers =
         await (selectOnly(invoices)

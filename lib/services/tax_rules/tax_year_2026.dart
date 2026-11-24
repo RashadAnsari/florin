@@ -37,6 +37,7 @@ const taxYear2026 = TaxYearRules(
   zelfstandigenaftrek: 120000,
   startersaftrek: 212300,
   mkbWinstvrijstelling: 0.127,
+  tariefaanpassingRate: 0.1194,
   urencriterium: 1225,
   zvwRate: 0.0485,
   zvwMaxIncome: 7940900,

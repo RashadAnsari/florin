@@ -27,6 +27,9 @@ class TaxResult {
   final int lossOffset;
   final int taxableIncome;
   final List<int> bracketTax;
+
+  /// Tax added back on deductions above the top bracket (art. 2.10 lid 2).
+  final int tariefaanpassing;
   final int algemeneHeffingskorting;
   final int arbeidskorting;
   final int box1Tax;
@@ -55,6 +58,7 @@ class TaxResult {
     required this.lossOffset,
     required this.taxableIncome,
     required this.bracketTax,
+    required this.tariefaanpassing,
     required this.algemeneHeffingskorting,
     required this.arbeidskorting,
     required this.box1Tax,
@@ -149,7 +153,8 @@ abstract final class TaxService {
     required int stakingswinst,
     required double totalHours,
     required double soHours,
-    required bool assumeUrencriterium,
+    // Whether the year is over, so the hours logged are all there will be.
+    required bool hoursFinal,
     required bool isStarter,
     required TaxYearInput? inputs,
     required int lijfrentePremium,
@@ -168,7 +173,9 @@ abstract final class TaxService {
         totalCosts +
         additions -
         investmentDeduction.total;
-    final uren = assumeUrencriterium || totalHours >= rules.urencriterium;
+    // Only logged hours count: assuming the urencriterium would understate
+    // the tax (AGENTS.md rule 5).
+    final uren = totalHours >= rules.urencriterium;
 
     // Ondernemersaftrek (art. 3.74), in the order of the return.
     var zelfstandigenaftrek = 0;
@@ -198,7 +205,8 @@ abstract final class TaxService {
         meewerkaftrek = (meewerkBase * meewerkRate(i?.partnerHours ?? 0, rules))
             .round();
       }
-    } else if (isStarter &&
+    } else if (hoursFinal &&
+        isStarter &&
         (i?.disabilityBenefit ?? false) &&
         totalHours >= rules.reducedUrencriterium) {
       final used = i?.disabilityStartersUsed ?? 0;
@@ -235,7 +243,21 @@ abstract final class TaxService {
     final taxableIncome = beforeLosses - lossOffset;
 
     final bracketTax = rules.box1TaxPerBracket(taxableIncome);
-    final grossBox1 = bracketTax.fold(0, (s, t) => s + t);
+    // Art. 2.10 lid 2 and 3: the ondernemersaftrek, and the mkb-
+    // winstvrijstelling while the profit after ondernemersaftrek is positive,
+    // save at most the rate below the top bracket.
+    final grondslagverminderend =
+        ondernemersaftrek + (afterOndernemersaftrek > 0 ? mkb : 0);
+    final aboveTop =
+        taxableIncome + grondslagverminderend - rules.topBracketStart;
+    final tariefaanpassing = grondslagverminderend <= 0 || aboveTop <= 0
+        ? 0
+        : ((aboveTop < grondslagverminderend
+                      ? aboveTop
+                      : grondslagverminderend) *
+                  rules.tariefaanpassingRate)
+              .round();
+    final grossBox1 = bracketTax.fold(0, (s, t) => s + t) + tariefaanpassing;
     final ahk = rules.algemeneHeffingskorting.valueFor(taxableIncome);
     final ak = rules.arbeidskorting.valueFor(profit);
     final box1 = (grossBox1 - ahk - ak).clamp(0, grossBox1);
@@ -266,6 +288,7 @@ abstract final class TaxService {
       lossOffset: lossOffset,
       taxableIncome: taxableIncome,
       bracketTax: bracketTax,
+      tariefaanpassing: tariefaanpassing,
       algemeneHeffingskorting: ahk,
       arbeidskorting: ak,
       box1Tax: box1,

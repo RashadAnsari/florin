@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/native.dart';
 import 'package:florin/db/database.dart';
+import 'package:florin/services/domain.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../tool/create_demo_database.dart';
@@ -55,6 +56,19 @@ void main() {
       VatTreatment.values.toSet(),
     );
     expect(lines.map((l) => l.vatRate).toSet(), VatRate.values.toSet());
+    // A domestic reverse charge invoice states the rate of its lines.
+    final reverse = invoices
+        .where((i) => i.vatTreatment == VatTreatment.reverseChargeNl)
+        .map((i) => i.id)
+        .toSet();
+    expect(
+      lines.any(
+        (l) =>
+            reverse.contains(l.invoiceId) &&
+            VatTreatment.reverseChargeNl.lineRates.contains(l.vatRate),
+      ),
+      isTrue,
+    );
     expect(expenses.map((e) => e.vatRate).toSet(), VatRate.values.toSet());
     expect(
       expenses.map((e) => e.category).toSet(),

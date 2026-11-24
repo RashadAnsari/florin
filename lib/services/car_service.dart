@@ -197,7 +197,12 @@ abstract final class CarService {
             : rules.btwPrivateCarRate;
         final months = period.$2.month - period.$1.month + 1;
         amount = (car.catalogueValue ?? 0) * rate * months / 12;
-        if (amount > deductedThisYear) amount = deductedThisYear;
+        // The cap counts one fifth of the purchase BTW in the 4 years after
+        // the year of purchase; in that year itself all of it was deducted.
+        final cap = year == purchaseYear
+            ? costVat + car.vatDeductedOnPurchase
+            : deductedThisYear;
+        if (amount > cap) amount = cap.toDouble();
       }
       total += amount.round();
     }
