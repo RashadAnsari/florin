@@ -348,7 +348,7 @@
   "assetsFieldPurchaseDate": "Purchase date",
   "assetsFieldUsefulLife": "Useful life",
   "assetsFieldUsefulLifeUnit": "yrs",
-  "assetsFieldUsefulLifeMin": "Enter at least {years} years: depreciation is limited to 20% of the cost a year",
+  "assetsFieldUsefulLifeMin": "Enter at least {years} years: depreciation is limited to {pct} of the cost a year",
   "assetsValidateName": "Enter the asset name",
   "assetsValidateCost": "Enter the cost excluding VAT, above zero: depreciation is calculated from it.",
   "assetsFieldKia": "KIA eligible",
@@ -425,8 +425,22 @@
   "vatReturnPaid": "VAT paid",
   "vatReturnDue": "VAT due",
   "vatReturnRefund": "VAT refund",
-  "vatRow1a": "1a  Supplies / services taxed at 21%",
-  "vatRow1b": "1b  Supplies / services taxed at 9%",
+  "vatRow1a": "1a  Supplies / services taxed at {rate}",
+  "@vatRow1a": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "vatRow1b": "1b  Supplies / services taxed at {rate}",
+  "@vatRow1b": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
   "vatRow3a": "3a  Supplies to countries outside the EU (export)",
   "vatRow5a": "5a  VAT on revenue",
   "vatRow5b": "5b  Input tax (to reclaim)",
@@ -594,7 +608,17 @@
   },
   "firstLaunchDbDefaultFolder": "The app's own data folder (default)",
   "firstLaunchChooseFolder": "Choose folder",
-  "firstLaunchStartersSubtitle": "For business owners who were not a business owner in one or more of the 5 previous years, and used the zelfstandigenaftrek at most twice in that period",
+  "firstLaunchStartersSubtitle": "For business owners who were not a business owner in one or more of the {years} previous years, and used the zelfstandigenaftrek at most {max} times in that period",
+  "@firstLaunchStartersSubtitle": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
   "firstLaunchGetStarted": "Get started",
   "firstLaunchSaveError": "Could not finish setup: {error}",
   "@firstLaunchSaveError": {
@@ -614,8 +638,6 @@
       }
     }
   },
-  "vatRate21": "21%",
-  "vatRate9": "9%",
   "vatRate0": "0%",
   "vatRateExempt": "Exempt",
   "genericSaveError": "Could not save: {error}",
@@ -670,7 +692,17 @@
   "invoiceRemoveLine": "Remove line",
   "invoiceLockedNotice": "This invoice is issued, so it cannot be changed. To correct it, make a credit note that refers to it.",
   "invoiceLockedCreditNotice": "This credit note is issued, so it cannot be changed.",
-  "expensesFoodNotice": "Food, drinks, representation, congresses, seminars and study trips are deductible for income tax at 80%, or as far as they exceed a yearly threshold if that is more (Wet IB 2001 art. 3.15). VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed (Wet OB 1968 art. 15).",
+  "expensesFoodNotice": "Food, drinks, representation, congresses, seminars and study trips are deductible for income tax at {pct}, or as far as they exceed {drempel} a year if that is more (Wet IB 2001 art. 3.15). VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed (Wet OB 1968 art. 15).",
+  "@expensesFoodNotice": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      },
+      "drempel": {
+        "type": "String"
+      }
+    }
+  },
   "plTaxFoodLimited": "{category} ({amount})",
   "@plTaxFoodLimited": {
     "placeholders": {
@@ -699,6 +731,9 @@
     "placeholders": {
       "years": {
         "type": "int"
+      },
+      "pct": {
+        "type": "String"
       }
     }
   },
@@ -732,7 +767,14 @@
   "vatRow3b": "3b  Supplies to or services in EU countries",
   "vatTreatmentEuServices": "Services to an EU business (VAT reverse-charged)",
   "vatTreatmentEuGoods": "Goods to an EU business (intra-Community supply, 0%)",
-  "vatReturnIcpNote": "Report these supplies in the ICP report. Goods to EU businesses above € 50.000 in a quarter must be reported per month.",
+  "vatReturnIcpNote": "Report these supplies in the ICP report. Goods to EU businesses above {amount} in a quarter must be reported per month.",
+  "@vatReturnIcpNote": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "assetsFieldResidualValue": "Residual value",
   "assetsValidateResidualValue": "Enter the residual value, or 0 if the asset will have no value left",
   "assetsValidateResidualAboveCost": "The residual value cannot be higher than the cost",
@@ -742,12 +784,29 @@
   "assetsFieldCostHelp": "The purchase price without VAT. Depreciation and the investment deductions are based on this amount.",
   "assetsFieldDisposalDateHelp": "The date you sold the asset or took it out of the business. Depreciation stops on this date.",
   "assetsFieldDisposalProceedsHelp": "What you received for the asset, without VAT. The difference with the book value is a gain or loss.",
-  "assetsFieldKiaHelp": "Kleinschaligheidsinvesteringsaftrek: an extra deduction for business assets. Assets under € 450 do not count, and passenger cars and some other assets are excluded.",
+  "assetsFieldKiaHelp": "Kleinschaligheidsinvesteringsaftrek: an extra deduction for business assets. Assets under {min} do not count, and passenger cars and some other assets are excluded.",
+  "@assetsFieldKiaHelp": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      }
+    }
+  },
   "assetsFieldNameHelp": "A name you recognise the asset by, such as \"MacBook Pro 2026\".",
   "assetsFieldNotesHelp": "Anything you want to remember about this asset. Not used in calculations.",
   "assetsFieldPurchaseDateHelp": "The date you bought the asset. Depreciation starts on this date and the investment deductions apply to this year.",
   "assetsFieldResidualValueHelp": "What the asset will still be worth at the end of its useful life. Depreciation stops at this value.",
-  "assetsFieldUsefulLifeHelp": "How many years you expect to use the asset. At least 5, because depreciation is limited to 20% of the cost a year.",
+  "assetsFieldUsefulLifeHelp": "How many years you expect to use the asset. At least {years}, because depreciation is limited to {pct} of the cost a year.",
+  "@assetsFieldUsefulLifeHelp": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      },
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
   "clientsContractExpiryHelp": "When the agreement with this client ends.",
   "clientsContractSignedHelp": "Tick when you and the client have signed a written agreement.",
   "clientsFieldActiveHelp": "Inactive clients stay in your records but are not offered on new invoices.",
@@ -767,14 +826,38 @@
   "expensesFieldPaidFromHelp": "The account or card you paid with, to match the expense with your bank statement.",
   "expensesFieldPaymentRefHelp": "The reference of the payment or invoice, to find it back later.",
   "expensesFieldSupplierHelp": "The business you bought from, as on the receipt.",
-  "expensesFieldVatRateHelp": "The VAT rate on the receipt: 21%, 9%, 0% or exempt.",
-  "expensesReclaimVatHelp": "Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, for private use, or for gifts to someone who cannot deduct VAT when they total more than € 227 for that person in a year (Besluit uitsluiting aftrek omzetbelasting 1968).",
+  "expensesFieldVatRateHelp": "The VAT rate on the receipt: {high}, {low}, 0% or exempt.",
+  "@expensesFieldVatRateHelp": {
+    "placeholders": {
+      "high": {
+        "type": "String"
+      },
+      "low": {
+        "type": "String"
+      }
+    }
+  },
+  "expensesReclaimVatHelp": "Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, for private use, or for gifts to someone who cannot deduct VAT when they total more than {amount} for that person in a year (Besluit uitsluiting aftrek omzetbelasting 1968).",
+  "@expensesReclaimVatHelp": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "hoursFieldClientProjectHelp": "The client or project the hours were for.",
   "hoursFieldDateHelp": "The day you worked.",
   "hoursFieldDescriptionHelp": "What you did. All hours spent on the business count towards the urencriterium, not only billable ones.",
   "hoursFieldHoursHelp": "How many hours you worked that day, such as 7,5.",
   "hoursFieldNotesHelp": "Anything you want to remember about these hours.",
-  "hoursFieldWorkTypeHelp": "The kind of work. WBSO hours count towards the 500 hours needed for the S&O-aftrek.",
+  "hoursFieldWorkTypeHelp": "The kind of work. WBSO hours count towards the {hours} hours needed for the S&O-aftrek.",
+  "@hoursFieldWorkTypeHelp": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "invoiceFieldClientHelp": "Who the invoice is for. Their name and address are printed on it.",
   "invoiceFieldDescriptionHelp": "What you delivered: the nature of the goods or services, as the law requires on an invoice.",
   "invoiceFieldDueDateHelp": "The last day for payment: the invoice date plus the payment term.",
@@ -823,7 +906,17 @@
   "settingsBusinessNameHelp": "Your business name as registered with the KvK. It is printed on every invoice.",
   "settingsIbanHelp": "The bank account clients pay to. It is printed in the payment instructions.",
   "settingsKvkNumberHelp": "Your 8-digit KvK number. It is printed on every invoice.",
-  "settingsStartersaftrekHelp": "You get the startersaftrek if you were not a business owner in at least one of the 5 previous years and used the zelfstandigenaftrek at most twice in that period.",
+  "settingsStartersaftrekHelp": "You get the startersaftrek if you were not a business owner in at least one of the {years} previous years and used the zelfstandigenaftrek at most {max} times in that period.",
+  "@settingsStartersaftrekHelp": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
   "settingsVatNumberHelp": "Your VAT identification number (btw-id), NL followed by 9 digits, B and 2 digits. It is printed on every invoice.",
   "vatReturnFiledHelp": "Tick once you have filed this quarter's return in Mijn Belastingdienst Zakelijk.",
   "vatReturnPaidHelp": "Tick once you have paid the VAT due for this quarter.",
@@ -847,21 +940,69 @@
   "assetsFieldVatOnPurchase": "VAT deducted on purchase",
   "assetsFieldVatOnPurchaseHelp": "The VAT on the purchase that you deducted in your VAT return. Leave 0 if you deducted none, for example for a car bought from a private seller.",
   "assetsFieldMarketValue": "Market value",
-  "assetsFieldMarketValueHelp": "What the car is worth now. Only used once the car is more than 15 years old.",
+  "assetsFieldMarketValueHelp": "What the car is worth now. Only used once the car is more than {years} years old.",
+  "@assetsFieldMarketValueHelp": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
   "assetsFieldTripLog": "I keep a complete trip log for this car",
-  "assetsFieldTripLogHelp": "With a complete trip log of all trips in this car, there is no bijtelling at 500 private km a year or less, and VAT on private use is based on the actual kilometres.",
+  "assetsFieldTripLogHelp": "With a complete trip log of all trips in this car, there is no bijtelling at {km} private km a year or less, and VAT on private use is based on the actual kilometres.",
+  "@assetsFieldTripLogHelp": {
+    "placeholders": {
+      "km": {
+        "type": "int"
+      }
+    }
+  },
   "assetsInvestmentSection": "Investment deductions",
-  "assetsInvestmentSectionHelp": "Extra deductions in the year of purchase. If you sell the asset within 5 years, part of them is added back.",
+  "assetsInvestmentSectionHelp": "Extra deductions in the year of purchase. If you sell the asset within {years} years, part of them is added back.",
+  "@assetsInvestmentSectionHelp": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
   "assetsFieldEia": "Energy investment (EIA), reported to RVO",
-  "assetsFieldEiaHelp": "An asset on the RVO Energy List, reported to RVO within 3 months. At least € 2.500 per asset. Cannot be combined with MIA.",
+  "assetsFieldEiaHelp": "An asset on the RVO Energy List, reported to RVO within {months} months. At least {min} per asset. Cannot be combined with MIA.",
+  "@assetsFieldEiaHelp": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      },
+      "min": {
+        "type": "String"
+      }
+    }
+  },
   "assetsFieldMia": "Environmental investment (MIA)",
-  "assetsFieldMiaHelp": "The category on the RVO Environmental List, reported to RVO within 3 months. At least € 2.500 per asset.",
+  "assetsFieldMiaHelp": "The category on the RVO Environmental List, reported to RVO within {months} months. At least {min} per asset.",
+  "@assetsFieldMiaHelp": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      },
+      "min": {
+        "type": "String"
+      }
+    }
+  },
   "assetsMiaNone": "None",
   "miaCategoryOne": "Category I",
   "miaCategoryTwo": "Category II",
   "miaCategoryThree": "Category III",
   "assetsFieldDeductionReceived": "Investment deduction received",
-  "assetsFieldDeductionReceivedHelp": "The KIA, EIA and MIA you received for this asset in its purchase year, from that year's tax return. Needed to add part back if you sell it within 5 years.",
+  "assetsFieldDeductionReceivedHelp": "The KIA, EIA and MIA you received for this asset in its purchase year, from that year's tax return. Needed to add part back if you sell it within {years} years.",
+  "@assetsFieldDeductionReceivedHelp": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
   "assetsValidateDeductionReceived": "Enter the investment deduction you received for this asset, or 0",
   "assetsFieldReserveApplied": "Herinvesteringsreserve booked off",
   "assetsFieldReserveAppliedHelp": "Part of the herinvesteringsreserve booked off on this purchase. It lowers the cost to depreciate.",
@@ -876,7 +1017,14 @@
   "assetsValidateReserveAboveAvailable": "This is more than the herinvesteringsreserve available",
   "assetsValidateReserveAboveCost": "This is more than the cost minus the residual value",
   "assetsFieldReserveGain": "Put the gain in the herinvesteringsreserve",
-  "assetsFieldReserveGainHelp": "Only when you intend to buy a replacement. The gain is then not taxed now but booked off on the next purchase; unused after 3 years, it is added to your profit.",
+  "assetsFieldReserveGainHelp": "Only when you intend to buy a replacement. The gain is then not taxed now but booked off on the next purchase; unused after {years} years, it is added to your profit.",
+  "@assetsFieldReserveGainHelp": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
   "dashboardDeductibleCostsHelp": "Costs deductible for income tax, including depreciation and the mileage allowance. Estimated.",
   "dashboardEstimatedTaxHelp": "Estimated income tax and Zvw contribution on your profit so far. Not a tax assessment.",
   "dashboardNetProfitAfterTaxHelp": "Profit minus the estimated tax. An estimate, not a final figure.",
@@ -887,23 +1035,84 @@
   "mileageFieldVehicleHelp": "A private vehicle earns the per-km deduction. Trips in a business car do not; they count for its trip log instead.",
   "mileagePrivateVehicle": "Private vehicle",
   "inputPartnerHours": "Partner's hours in the business",
-  "inputPartnerHoursHelp": "Hours your fiscal partner worked in your business this year without pay, or for less than € 5.000. From 525 hours you get the meewerkaftrek.",
+  "inputPartnerHoursHelp": "Hours your fiscal partner worked in your business this year without pay, or for less than {pay}. From {hours} hours you get the meewerkaftrek.",
+  "@inputPartnerHoursHelp": {
+    "placeholders": {
+      "pay": {
+        "type": "String"
+      },
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "inputUnrealisedZelfs": "Unused zelfstandigenaftrek",
-  "inputUnrealisedZelfsHelp": "Zelfstandigenaftrek from the previous 9 years that did not fit your profit, as stated by the Belastingdienst. Used up to this year's profit.",
+  "inputUnrealisedZelfsHelp": "Zelfstandigenaftrek from the previous {years} years that did not fit your profit, as stated by the Belastingdienst. Used up to this year's profit.",
+  "@inputUnrealisedZelfsHelp": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
   "inputLossCarryForward": "Losses from earlier years",
   "inputLossCarryForwardHelp": "Box 1 losses from earlier years still to offset, as stated by the Belastingdienst. Offset against this year's income.",
   "inputSoVerklaring": "I have an S&O-verklaring for this year",
-  "inputSoVerklaringHelp": "An S&O-verklaring from RVO for research and development. With at least 500 WBSO hours you get the S&O-aftrek.",
+  "inputSoVerklaringHelp": "An S&O-verklaring from RVO for research and development. With at least {hours} WBSO hours you get the S&O-aftrek.",
+  "@inputSoVerklaringHelp": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "inputSoStarter": "Starter increase for the S&O-aftrek",
-  "inputSoStarterHelp": "You were not a business owner in one or more of the 5 previous years and received an S&O-verklaring for at most 2 years in that period.",
+  "inputSoStarterHelp": "You were not a business owner in one or more of the {years} previous years and received an S&O-verklaring for at most {max} years in that period.",
+  "@inputSoStarterHelp": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
   "inputBusinessCeased": "I stopped the whole business this year",
   "inputBusinessCeasedHelp": "Gains on selling or taking over the business assets are stakingswinst. You get the stakingsaftrek on them, and any herinvesteringsreserve is added to your profit.",
   "inputStakingsUsedBefore": "Stakingsaftrek used before",
-  "inputStakingsUsedBeforeHelp": "Stakingsaftrek you received in earlier years. It lowers the maximum of € 3.630.",
+  "inputStakingsUsedBeforeHelp": "Stakingsaftrek you received in earlier years. It lowers the maximum of {max}.",
+  "@inputStakingsUsedBeforeHelp": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "inputDisabilityBenefit": "I receive a disability benefit",
-  "inputDisabilityBenefitHelp": "A benefit such as WIA, WAO, WAZ or Wajong. As a starter with at least 800 but under 1.225 hours you may get the startersaftrek bij arbeidsongeschiktheid.",
+  "inputDisabilityBenefitHelp": "A benefit such as WIA, WAO, WAZ or Wajong. As a starter with at least {reduced} but under {hours} hours you may get the startersaftrek bij arbeidsongeschiktheid.",
+  "@inputDisabilityBenefitHelp": {
+    "placeholders": {
+      "reduced": {
+        "type": "int"
+      },
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "inputDisabilityUsed": "Years used in the previous 5",
-  "inputDisabilityUsedHelp": "How many of the previous 5 years you received the startersaftrek bij arbeidsongeschiktheid: 0, 1, 2 or 3.",
+  "inputDisabilityUsedHelp": "How many of the previous {years} years you received the startersaftrek bij arbeidsongeschiktheid, from 0 to {max}.",
+  "@inputDisabilityUsedHelp": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
   "inputWholeNumber": "Enter a whole number from 0 to {max}",
   "@inputWholeNumber": {
     "placeholders": {
@@ -914,7 +1123,14 @@
   },
   "pensionAowFranchiseHelp": "The part of your income for which you already build up AOW. Jaarruimte is only calculated on income above it.",
   "pensionPensioengrondslagHelp": "Last year's income minus the AOW-franchise, up to the legal maximum.",
-  "pensionJaarruimteHelp": "30% of the premiegrondslag minus a multiple of factor A, up to the yearly maximum. What you may deduct for a lijfrente this year.",
+  "pensionJaarruimteHelp": "{pct} of the premiegrondslag minus a multiple of factor A, up to the yearly maximum. What you may deduct for a lijfrente this year.",
+  "@pensionJaarruimteHelp": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
   "pensionEstimatedTaxSavingHelp": "Estimated: the box 1 tax you save by deducting the premium, before heffingskortingen.",
   "plTaxAlgHeffingHelp": "A tax credit everyone gets. It decreases as income rises above a threshold.",
   "plTaxArbeidskortingHelp": "A tax credit for working people, based on profit before ondernemersaftrek and mkb-winstvrijstelling.",
@@ -922,13 +1138,41 @@
   "plTaxBelastbareWinstHelp": "Profit after ondernemersaftrek and mkb-winstvrijstelling. The Zvw contribution is based on it.",
   "plTaxBox1SectionHelp": "Estimated income tax including national insurance premiums, in brackets, minus the heffingskortingen.",
   "plTaxCarPrivateUse": "Private use of business car",
-  "plTaxCarPrivateUseHelp": "The bijtelling: a percentage of the catalogue value added to profit for private use, at most the car costs. None with a trip log of 500 private km a year or less.",
-  "plTaxDeductionsSectionHelp": "Deductions for business owners. Most require the urencriterium of 1.225 hours.",
+  "plTaxCarPrivateUseHelp": "The bijtelling: a percentage of the catalogue value added to profit for private use, at most the car costs. None with a trip log of {km} private km a year or less.",
+  "@plTaxCarPrivateUseHelp": {
+    "placeholders": {
+      "km": {
+        "type": "int"
+      }
+    }
+  },
+  "plTaxDeductionsSectionHelp": "Deductions for business owners. Most require the urencriterium of {hours} hours.",
+  "@plTaxDeductionsSectionHelp": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "plTaxDepreciationHelp": "The part of your assets' cost written off this year, spread by day over their useful life.",
   "plTaxDesinvestering": "Desinvesteringsbijtelling",
-  "plTaxDesinvesteringHelp": "Part of an investment deduction added back because an asset was sold within 5 years of the start of its purchase year.",
+  "plTaxDesinvesteringHelp": "Part of an investment deduction added back because an asset was sold within {years} years of the start of its purchase year.",
+  "@plTaxDesinvesteringHelp": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
   "plTaxDisabilityStarters": "Startersaftrek bij arbeidsongeschiktheid",
-  "plTaxDisabilityStartersHelp": "For starters with a disability benefit who work at least 800 hours but do not meet the urencriterium. At most the profit.",
+  "plTaxDisabilityStartersHelp": "For starters with a disability benefit who work at least {hours} hours but do not meet the urencriterium. At most the profit.",
+  "@plTaxDisabilityStartersHelp": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "plTaxDisposalResultHelp": "Sale price minus book value of assets sold this year. A gain adds to profit, a loss lowers it.",
   "plTaxEia": "Energie-investeringsaftrek (EIA)",
   "plTaxEiaHelp": "An extra deduction for investments on the RVO Energy List.",
@@ -959,7 +1203,14 @@
   "plTaxLossOffset": "Losses from earlier years",
   "plTaxLossOffsetHelp": "Box 1 losses from earlier years, offset against this year's income.",
   "plTaxMeewerk": "Meewerkaftrek",
-  "plTaxMeewerkHelp": "A percentage of profit when your fiscal partner works at least 525 hours in the business without pay.",
+  "plTaxMeewerkHelp": "A percentage of profit when your fiscal partner works at least {hours} hours in the business without pay.",
+  "@plTaxMeewerkHelp": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "plTaxMia": "Milieu-investeringsaftrek (MIA)",
   "plTaxMiaHelp": "An extra deduction for investments on the RVO Environmental List.",
   "plTaxMileageAllowanceHelp": "Business and commuting kilometres in a private vehicle, at the Belastingdienst rate per km.",
@@ -967,11 +1218,32 @@
   "plTaxProfit": "Profit",
   "plTaxProfitHelp": "Profit from business before ondernemersaftrek. The arbeidskorting is based on it.",
   "plTaxReserveReleased": "Herinvesteringsreserve released",
-  "plTaxReserveReleasedHelp": "Reserve not used within 3 years, or left when the business stops, is added to profit.",
+  "plTaxReserveReleasedHelp": "Reserve not used within {years} years, or left when the business stops, is added to profit.",
+  "@plTaxReserveReleasedHelp": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
   "plTaxSo": "S&O-aftrek",
-  "plTaxSoHelp": "For research and development with an S&O-verklaring and at least 500 hours.",
+  "plTaxSoHelp": "For research and development with an S&O-verklaring and at least {hours} hours.",
+  "@plTaxSoHelp": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "plTaxStakings": "Stakingsaftrek",
-  "plTaxStakingsHelp": "A deduction on the gain when the whole business stops, up to € 3.630 over your lifetime.",
+  "plTaxStakingsHelp": "A deduction on the gain when the whole business stops, up to {max} over your lifetime.",
+  "@plTaxStakingsHelp": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "plTaxStartersaftrekHelp": "An extra deduction on top of the zelfstandigenaftrek for business owners who recently started.",
   "plTaxTaxableProfitHelp": "The income in box 1 the tax is calculated on.",
   "plTaxUnrealisedZelfs": "Unused zelfstandigenaftrek from earlier years",
@@ -979,10 +1251,34 @@
   "plTaxZelfstandigenaftrekHelp": "A fixed deduction for business owners who meet the urencriterium. At most the profit, unless you are a starter.",
   "plTaxZvwHelp": "The income-related contribution to the health care insurance act, on belastbare winst up to a maximum.",
   "vatReturnIcpSectionHelp": "Supplies to businesses in other EU countries, reported separately in the ICP report. While you take part in the KOR you file no ICP report, so invoices from those dates are not listed.",
-  "vatRow1aHelp": "Revenue taxed at 21% and the VAT on it.",
-  "vatRow1bHelp": "Revenue taxed at 9% and the VAT on it.",
+  "vatRow1aHelp": "Revenue taxed at {rate} and the VAT on it.",
+  "@vatRow1aHelp": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "vatRow1bHelp": "Revenue taxed at {rate} and the VAT on it.",
+  "@vatRow1bHelp": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
   "vatRow1d": "1d  Private use",
-  "vatRow1dHelp": "VAT on private use of business cars: 2,7% or 1,5% of the catalogue value, or the actual private share with a trip log. In the last return of the year only.",
+  "vatRow1dHelp": "VAT on private use of business cars: {rate} or {reduced} of the catalogue value, or the actual private share with a trip log. In the last return of the year only.",
+  "@vatRow1dHelp": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "reduced": {
+        "type": "String"
+      }
+    }
+  },
   "vatRow1eHelp": "Revenue at 0% or where the VAT is reverse-charged to a Dutch business.",
   "vatRow3aHelp": "Exports of goods to countries outside the EU. Services to businesses outside the EU are not reported.",
   "vatRow3bHelp": "Goods and services to businesses in other EU countries.",
@@ -1101,7 +1397,14 @@
   "expensesValidateKorReclaim": "You take part in the KOR on this date, so you cannot reclaim VAT on purchases. Untick Reclaim VAT: the VAT then counts as part of the cost.",
   "expensesKorNotice": "You take part in the KOR on this date. VAT on purchases is not reclaimed; it counts as part of the cost for income tax.",
   "settingsKorStart": "KOR applies from",
-  "settingsKorStartHelp": "The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst's confirmation. Until that date you file every return as usual. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most € 20.000 a year. Leave empty when you do not take part.",
+  "settingsKorStartHelp": "The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst's confirmation. Until that date you file every return as usual. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most {limit} a year. Leave empty when you do not take part.",
+  "@settingsKorStartHelp": {
+    "placeholders": {
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
   "settingsKorEnd": "KOR ended on",
   "settingsKorEndHelp": "The first day the KOR no longer applies after you deregistered yourself. Leave empty otherwise: when your turnover passes the limit, Florin ends the KOR from that invoice on.",
   "settingsValidateKorStart": "The KOR starts on the first day of a return period, so enter a 1st of the month, as in the Belastingdienst's confirmation.",
@@ -1112,7 +1415,14 @@
   "korExceededBadge": "Limit passed on {date}",
   "korLeftBadge": "{left} below the limit",
   "dashboardKor": "KOR turnover",
-  "dashboardKorHelp": "Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above € 20.000 in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next. The KOR is not automatic: it applies only after you register and the Belastingdienst confirms the start date. Until then you file a return every quarter, however low your turnover.",
+  "dashboardKorHelp": "Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above {limit} in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next. The KOR is not automatic: it applies only after you register and the Belastingdienst confirms the start date. Until then you file a return every quarter, however low your turnover.",
+  "@dashboardKorHelp": {
+    "placeholders": {
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
   "@korProgress": {
     "placeholders": {
       "turnover": {
@@ -1186,12 +1496,33 @@
   "invoiceTotal": "Total",
   "settingsTaxKor": "KOR turnover limit",
   "settingsKorSection": "Kleineondernemersregeling (KOR)",
-  "settingsKorSectionHelp": "A VAT exemption for businesses with at most € 20.000 turnover in the Netherlands a year. It is not automatic: you register for it and deregister with the Belastingdienst, and without it you file a return every quarter. Enter its dates here so Florin follows it.",
+  "settingsKorSectionHelp": "A VAT exemption for businesses with at most {limit} turnover in the Netherlands a year. It is not automatic: you register for it and deregister with the Belastingdienst, and without it you file a return every quarter. Enter its dates here so Florin follows it.",
+  "@settingsKorSectionHelp": {
+    "placeholders": {
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
   "receiptTypeEInvoice": "E-invoice (UBL)",
   "receiptsTitle": "Receipts",
-  "receiptsHelp": "The receipt or invoice for this expense, as a PDF, photo or scan. Florin copies it into the receipts folder next to your database and leaves your file as it is. The Belastingdienst asks you to keep receipts and invoices for 7 years in the form you received them; a scan or photo must be a correct and complete copy of the original, with its marks of authenticity.",
+  "receiptsHelp": "The receipt or invoice for this expense, as a PDF, photo or scan. Florin copies it into the receipts folder next to your database and leaves your file as it is. The Belastingdienst asks you to keep receipts and invoices for {years} years in the form you received them; a scan or photo must be a correct and complete copy of the original, with its marks of authenticity.",
+  "@receiptsHelp": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
   "receiptsAssetTitle": "Purchase invoice and receipts",
-  "receiptsAssetHelp": "The purchase invoice of this asset and any other proof, as a PDF, photo or scan. It belongs in your records while the asset is in use, and 7 years after that.",
+  "receiptsAssetHelp": "The purchase invoice of this asset and any other proof, as a PDF, photo or scan. It belongs in your records while the asset is in use, and {years} years after that.",
+  "@receiptsAssetHelp": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
   "receiptsInvoiceTitle": "Documents",
   "receiptsInvoiceHelp": "The PDF of this invoice exactly as Florin made it when you issued it, kept as sent. For an invoice your customer issued, add their document here.",
   "receiptsNone": "No files yet. Drop PDFs, photos or scans here, or add them.",
@@ -1206,8 +1537,22 @@
   "receiptsAdded": "added {date}",
   "receiptsMissing": "The file is missing from the receipts folder. Restore it from a backup.",
   "receiptsKeepUntil": "Keep until",
-  "receiptsKeepUntilHelp": "The Belastingdienst asks you to keep invoices and receipts for 7 years. Florin counts them from the end of the year they belong to and never deletes them.",
-  "receiptsKeepWhileInUse": "While in use, then 7 years",
+  "receiptsKeepUntilHelp": "The Belastingdienst asks you to keep invoices and receipts for {years} years. Florin counts them from the end of the year they belong to and never deletes them.",
+  "@receiptsKeepUntilHelp": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "receiptsKeepWhileInUse": "While in use, then {years} years",
+  "@receiptsKeepWhileInUse": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
   "receiptsRejectedEmpty": "{name} is empty. Choose the file again.",
   "receiptsRejectedTooLarge": "{name} is larger than {max}. Save the scan at a lower resolution, keeping every page readable, and add it again.",
   "receiptsRejectedType": "{name} is not a PDF, JPEG, PNG, HEIC, TIFF or UBL e-invoice. Save or print it as PDF and add it again.",

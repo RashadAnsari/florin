@@ -38,7 +38,8 @@ from other software continues.
 
 [Wet op de omzetbelasting 1968, artikel 34g](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-24
 
-Where Florin implements it: `latestInvoiceDate`; the invoice form warns when
+Where Florin implements it: `TaxYearRules.latestInvoiceDate`, from
+`invoiceDueDay`; the invoice form warns when
 the invoice date is after that day for the supply date entered.
 
 > Verlegt u btw naar een andere ondernemer? Dan brengt u geen btw in rekening, maar zet u op de factuur 'btw verlegd'. Daarnaast vermeldt u het btw-identificatienummer van de afnemer op de factuur. […] Op de factuur vermeldt u de vergoeding per btw-tarief, zoals deze zou gelden als de btw niet zou zijn verlegd.
@@ -245,9 +246,14 @@ ondernemer of artikel 25a, eerste lid. They stay in rubriek 3b.
 
 ## BTW rates
 
-`VatRate` in `lib/db/enums.dart` holds 21% and 9%, the general and reduced
-rates of Wet OB 1968 artikel 9. Exempt supplies (artikel 11) carry no BTW and
-are not reported in the return.
+> 1 De belasting bedraagt 21 percent. 2 In afwijking van het eerste lid bedraagt de belasting: a. 9 percent voor leveringen van goederen en diensten, genoemd in de bij deze wet behorende tabel I; b. nihil voor leveringen van goederen en diensten, genoemd in de bij deze wet behorende tabel II, mits is voldaan aan bij algemene maatregel van bestuur vast te stellen voorwaarden.
+
+[Wet op de omzetbelasting 1968, artikel 9](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-24
+
+Where Florin implements it: `VatRate` is the category of a line or expense;
+its percentage is a yearly rule, `TaxYearRules.vatRates`, so labels, BTW
+amounts, the PDF and the export take the rate of the record's year. Exempt
+supplies (artikel 11) carry no BTW and are not reported in the return.
 
 ## BTW return rubrieken
 
@@ -319,8 +325,13 @@ certificate.
 
 [Belastingdienst, Uiterste aangifte- en betaaldatums](https://www.belastingdienst.nl/wps/wcm/connect/nl/btw/content/uiterste-aangifte-en-betaaldatums)
 
+> 1 In de gevallen waarin de belastingwet voldoening van in een tijdvak verschuldigd geworden of afdracht van in een tijdvak ingehouden belasting op aangifte voorschrijft, is de belastingplichtige, onderscheidenlijk de inhoudingsplichtige, gehouden de belasting binnen één maand na het einde van dat tijdvak overeenkomstig de aangifte aan de ontvanger te betalen.
+
+[Algemene wet inzake rijksbelastingen, artikel 19 lid 1](https://wetten.overheid.nl/BWBR0002320/2026-10-01), read 2026-11-24 from the official XML of the version in force from 1 October 2026
+
 Where Florin implements it: `VatService.filingDeadline`, the last day of the
-month after the quarter.
+month after the quarter, from `TaxYearRules.vatReturnDueMonths`. For a new
+year, quote its row of the table above.
 
 ## Filing a return
 
@@ -403,7 +414,8 @@ rule, so the user leaves it unticked for such gifts.
 
 [Belastingdienst, Fiscale informatie 2026, Winst-en-verliesrekening en balans](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2026/winst_en_verliesrekening_en_balans)
 
-Where Florin implements it: `AssetService.minUsefulLifeYears` is 5, and every
+Where Florin implements it: `TaxYearRules.minUsefulLifeYears` is 5, from
+`maxDepreciationRate`, and every
 asset has a residual value below which it is not depreciated. Depreciation is
 spread by day over the useful life, so the year of purchase and the year of
 disposal are time-proportional. Florin depreciates the business-use share of
@@ -458,7 +470,9 @@ use) are recorded as a sale with the market value as proceeds.
 
 > Na de eerste wijziging van de CO2-uitstootgrens of het percentage in het tweede lid na de datum van eerste toelating van de auto, is voor een periode van 60 maanden te rekenen vanaf de eerste dag van de maand volgend op de datum van eerste toelating, de verlaging, bedoeld in het tweede lid, van toepassing overeenkomstig de bepalingen die gelden direct voorafgaand aan die wijziging.
 
-[Wet inkomstenbelasting 2001, artikel 3.20 leden 1 en 11](https://wetten.overheid.nl/BWBR0011353)
+> 5 Voor de toepassing van dit artikel en de daarop berustende bepalingen wordt verstaan onder: […] b. waarde van de auto: catalogusprijs in de zin van artikel 9 van de Wet op de belasting van personenauto’s en motorrijwielen 1992 vermeerderd met de belasting van personenauto’s en motorrijwielen ingevolge de artikelen 9 tot en met 9c van die wet, met dien verstande dat de waarde van een auto die meer dan vijftien jaar geleden voor het eerst in gebruik is genomen, wordt gesteld op de waarde in het economische verkeer.
+
+[Wet inkomstenbelasting 2001, artikel 3.20 leden 1, 5 en 11](https://wetten.overheid.nl/BWBR0011353)
 
 The zero-emission reduction of artikel 3.20 lid 2 in each version, used for
 cars first registered in that year (`car_reductions.dart`):

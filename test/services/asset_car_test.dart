@@ -298,6 +298,28 @@ void main() {
       expect(add(car2025), 1100000 - 150000);
     });
 
+    test('a car registered in a year with rules keeps that year\'s '
+        'zero-emission reduction (art. 3.20 lid 11)', () {
+      final car = asset(
+        1,
+        kind: AssetKind.car,
+        catalogue: 5000000,
+        registered: DateTime(2026, 3, 1),
+        bought: DateTime(2026, 3, 1),
+        zeroEmission: ZeroEmission.battery,
+      );
+      // 22% of € 50.000 minus the 2026 reduction of 4%, at most € 1.200,
+      // over the ten months the car is in the business.
+      final addition = CarService.privateUseAddition(
+        assets: [car],
+        trips: const [],
+        expenses: [carExpense(1, 2000000, 0)],
+        year: 2026,
+        rules: rules,
+      );
+      expect(addition, closeTo((1100000 - 120000) * 306 / 365, 2));
+    });
+
     test('BTW: 2.7% of the catalogue value, capped at deducted BTW', () {
       final car = asset(
         1,

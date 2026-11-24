@@ -1,4 +1,5 @@
 import 'package:florin/db/database.dart';
+import 'package:florin/services/tax_rules/tax_year_rules.dart';
 import 'package:florin/services/domain.dart';
 import 'package:florin/services/vat_service.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -36,7 +37,7 @@ InvoiceLine _line(int invoiceId, VatRate rate, int amount) => InvoiceLine(
   quantity: 1,
   unitPriceExclVat: amount,
   vatRate: rate,
-  vatAmount: rate.vatOn(amount),
+  vatAmount: taxRulesFor(2026)!.vatOn(rate, amount),
   lineTotalExclVat: amount,
   sortOrder: 0,
 );

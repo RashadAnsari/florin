@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart' show Value;
+import '../../services/tax_rules/tax_year_rules.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/validators.dart';
 import '../../widgets/form_error_text.dart';
@@ -182,7 +183,10 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
   final _receiptDraft = ReceiptDraft();
   late int? _carAssetId = widget.expense?.carAssetId;
 
-  int get _vatAmount => _vatRate.vatOn(_amountExclVat);
+  // The rules of the expense's own year; its date lies in a supported year.
+  TaxYearRules get _rules => ref.read(taxRulesProvider(_date.year));
+
+  int get _vatAmount => _rules.vatOn(_vatRate, _amountExclVat);
 
   int get _deductibleAmount => ExpenseMath.deductible(
     amountExclVat: _amountExclVat,
@@ -327,7 +331,12 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
             ],
             if (_category == ExpenseCategory.foodAndRepresentation) ...[
               const SizedBox(height: AppSpacing.field),
-              NoticeBanner(l.expensesFoodNotice),
+              NoticeBanner(
+                l.expensesFoodNotice(
+                  AppFormat.percentLabel(_rules.gemengdeKostenPct),
+                  AppFormat.euros(_rules.gemengdeKostenDrempel),
+                ),
+              ),
             ],
             const SizedBox(height: AppSpacing.field),
             FormRow(
@@ -369,10 +378,13 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
                 ),
                 EnumDropdown(
                   label: l.expensesFieldVatRate,
-                  help: l.expensesFieldVatRateHelp,
+                  help: l.expensesFieldVatRateHelp(
+                    AppFormat.percentLabel(_rules.vatRates[VatRate.high]!),
+                    AppFormat.percentLabel(_rules.vatRates[VatRate.low]!),
+                  ),
                   value: _vatRate,
                   values: VatRate.values,
-                  labelOf: (r) => r.label(l),
+                  labelOf: (r) => r.label(l, _rules),
                   onChanged: (r) => setState(() => _vatRate = r),
                   required: true,
                 ),
@@ -418,7 +430,9 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
               value: _vatReclaimable,
               onChanged: (v) => setState(() => _vatReclaimable = v),
               title: l.expensesReclaimVat,
-              help: l.expensesReclaimVatHelp,
+              help: l.expensesReclaimVatHelp(
+                AppFormat.euros(_rules.buaGiftThreshold),
+              ),
             ),
             FormErrorText(
               validator: () => _korApplies && _vatReclaimable
@@ -477,8 +491,10 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
               draft: _receiptDraft,
               year: _date.year,
               title: l.receiptsTitle,
-              help: l.receiptsHelp,
-              keepUntil: AppFormat.date(ReceiptService.keepUntil(_date.year)),
+              help: l.receiptsHelp(_rules.retentionYears),
+              keepUntil: AppFormat.date(
+                ref.watch(taxRulesProvider(_date.year)).keepUntil(_date.year),
+              ),
             ),
             const SizedBox(height: AppSpacing.field),
             HelpCheckbox(

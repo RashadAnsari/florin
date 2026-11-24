@@ -1,3 +1,4 @@
+import 'tax_rules/tax_year_rules.dart';
 import 'dart:io';
 
 import 'package:csv/csv.dart';
@@ -317,6 +318,7 @@ class CsvExportService {
     required ReceiptStore receipts,
   }) async {
     assert(quarters.length == 4);
+    final rules = taxRulesFor(year)!;
     final dir = (await createExportFolder(parent, year, DateTime.now())).path;
 
     final invoices =
@@ -467,7 +469,7 @@ class CsvExportService {
           l.quantity,
           l.unit ?? '',
           _euro(l.unitPriceExclVat),
-          l.vatRate.dutchLabel,
+          l.vatRate.dutchLabel(rules),
           _euro(l.vatAmount),
           _euro(l.lineTotalExclVat),
         ],
@@ -497,7 +499,7 @@ class CsvExportService {
           e.supplier,
           e.description,
           _category(e.category),
-          e.vatRate.dutchLabel,
+          e.vatRate.dutchLabel(rules),
           switch (e.purchaseVat) {
             PurchaseVat.domestic => 'Nederlandse btw',
             PurchaseVat.reverseChargeNl => 'Btw verlegd binnenland',

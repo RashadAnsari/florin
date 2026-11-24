@@ -60,6 +60,7 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
         ?.where((v) => v.quarter == _quarter)
         .firstOrNull;
     final deadline = VatService.filingDeadline(year, _quarter);
+    final rules = ref.watch(taxRulesProvider(year));
     final kor = ref.watch(korStatusProvider).valueOrNull ?? KorStatus.none;
     final korCovered = kor.coversQuarter(year, _quarter);
     final korExceeded = kor.exceededOn[year];
@@ -108,9 +109,7 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
               NoticeBanner(
                 l.vatReturnKorExceeded(
                   AppFormat.date(korExceeded),
-                  AppFormat.cents(
-                    ref.watch(taxRulesProvider(year)).korThreshold,
-                  ),
+                  AppFormat.cents(rules.korThreshold),
                 ),
                 tone: NoticeTone.warning,
               ),
@@ -123,13 +122,21 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                 children: [
                   SectionLabel(l.vatReturnRevenueSection),
                   ValueRow(
-                    label: l.vatRow1a,
-                    help: l.vatRow1aHelp,
+                    label: l.vatRow1a(
+                      AppFormat.percentLabel(rules.vatRates[VatRate.high]!),
+                    ),
+                    help: l.vatRow1aHelp(
+                      AppFormat.percentLabel(rules.vatRates[VatRate.high]!),
+                    ),
                     value: AppFormat.cents(r.revenue1a),
                   ),
                   ValueRow(
-                    label: l.vatRow1b,
-                    help: l.vatRow1bHelp,
+                    label: l.vatRow1b(
+                      AppFormat.percentLabel(rules.vatRates[VatRate.low]!),
+                    ),
+                    help: l.vatRow1bHelp(
+                      AppFormat.percentLabel(rules.vatRates[VatRate.low]!),
+                    ),
                     value: AppFormat.cents(r.revenue1b),
                   ),
                   ValueRow(
@@ -140,7 +147,10 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                   if (r.vat1d > 0)
                     ValueRow(
                       label: l.vatRow1d,
-                      help: l.vatRow1dHelp,
+                      help: l.vatRow1dHelp(
+                        AppFormat.percentLabel(rules.btwPrivateCarRate),
+                        AppFormat.percentLabel(rules.btwPrivateCarReducedRate),
+                      ),
                       value: AppFormat.cents(r.vat1d),
                     ),
                   ValueRow(
@@ -224,7 +234,12 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                       l.vatReturnIcpSection,
                       help: l.vatReturnIcpSectionHelp,
                     ),
-                    Text(l.vatReturnIcpNote, style: theme.textTheme.bodySmall),
+                    Text(
+                      l.vatReturnIcpNote(
+                        AppFormat.euros(rules.icpQuarterlyGoodsMax),
+                      ),
+                      style: theme.textTheme.bodySmall,
+                    ),
                     const SizedBox(height: AppSpacing.heading),
                     for (final inv in r.icpInvoices)
                       ValueRow.cents(inv.invoiceNumber, inv.signedExclVat),

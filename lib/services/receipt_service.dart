@@ -16,20 +16,10 @@ export 'receipt_store.dart'
 /// its row, and nothing is ever deleted. A removed receipt keeps its row and
 /// its file, in the removed folder.
 class ReceiptService {
-  /// The Belastingdienst's bewaarplicht for invoices and receipts
-  /// (`docs/legal.md`, Receipts).
-  static const retentionYears = 7;
-
   final ReceiptDao dao;
   final ReceiptStore store;
 
   const ReceiptService(this.dao, this.store);
-
-  /// The last day a receipt of the bookkeeping year [year] must be kept:
-  /// the end of the seventh year after it, the cautious reading of when the
-  /// term starts.
-  static DateTime keepUntil(int year) =>
-      DateTime(year + retentionYears, 12, 31);
 
   /// A receipt with the same content as [file], to warn before a duplicate.
   Future<Receipt?> duplicateOf(File file) async =>

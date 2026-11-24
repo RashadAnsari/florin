@@ -728,8 +728,8 @@ class AppLocalizationsNl extends AppLocalizations {
   String get assetsFieldUsefulLifeUnit => 'jaar';
 
   @override
-  String assetsFieldUsefulLifeMin(int years) {
-    return 'Voer minstens $years jaar in: afschrijving is beperkt tot 20% van de kosten per jaar';
+  String assetsFieldUsefulLifeMin(int years, String pct) {
+    return 'Voer minstens $years jaar in: afschrijving is beperkt tot $pct van de kosten per jaar';
   }
 
   @override
@@ -867,10 +867,14 @@ class AppLocalizationsNl extends AppLocalizations {
   String get vatReturnRefund => 'Terug te ontvangen BTW';
 
   @override
-  String get vatRow1a => '1a  Leveringen / diensten belast met 21%';
+  String vatRow1a(String rate) {
+    return '1a  Leveringen / diensten belast met $rate';
+  }
 
   @override
-  String get vatRow1b => '1b  Leveringen / diensten belast met 9%';
+  String vatRow1b(String rate) {
+    return '1b  Leveringen / diensten belast met $rate';
+  }
 
   @override
   String get vatRow3a => '3a  Leveringen naar landen buiten de EU (uitvoer)';
@@ -1129,8 +1133,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get firstLaunchChooseFolder => 'Map kiezen';
 
   @override
-  String get firstLaunchStartersSubtitle =>
-      'Voor ondernemers die in een of meer van de 5 voorgaande jaren geen ondernemer waren en in die periode hoogstens twee keer zelfstandigenaftrek hadden';
+  String firstLaunchStartersSubtitle(int years, int max) {
+    return 'Voor ondernemers die in een of meer van de $years voorgaande jaren geen ondernemer waren en in die periode hoogstens $max keer zelfstandigenaftrek hadden';
+  }
 
   @override
   String get firstLaunchGetStarted => 'Aan de slag';
@@ -1150,12 +1155,6 @@ class AppLocalizationsNl extends AppLocalizations {
   String deadlineBadgeDays(int days) {
     return '$days dagen';
   }
-
-  @override
-  String get vatRate21 => '21%';
-
-  @override
-  String get vatRate9 => '9%';
 
   @override
   String get vatRate0 => '0%';
@@ -1242,8 +1241,9 @@ class AppLocalizationsNl extends AppLocalizations {
       'Deze creditnota is uitgereikt en kan niet meer veranderen.';
 
   @override
-  String get expensesFoodNotice =>
-      'Voedsel, drank, representatie, congressen, seminars en studiereizen zijn voor de inkomstenbelasting voor 80% aftrekbaar, of voor zover ze een jaarlijkse drempel overschrijden als dat meer is (Wet IB 2001 art. 3.15). Btw op eten en drinken in een restaurant, café of hotel is niet aftrekbaar (Wet OB 1968 art. 15).';
+  String expensesFoodNotice(String pct, String drempel) {
+    return 'Voedsel, drank, representatie, congressen, seminars en studiereizen zijn voor de inkomstenbelasting voor $pct aftrekbaar, of voor zover ze $drempel per jaar overschrijden als dat meer is (Wet IB 2001 art. 3.15). Btw op eten en drinken in een restaurant, café of hotel is niet aftrekbaar (Wet OB 1968 art. 15).';
+  }
 
   @override
   String plTaxFoodLimited(String category, String amount) {
@@ -1301,8 +1301,9 @@ class AppLocalizationsNl extends AppLocalizations {
       'Goederen aan EU-ondernemer (intracommunautaire levering, 0%)';
 
   @override
-  String get vatReturnIcpNote =>
-      'Geef deze prestaties op in de ICP-opgaaf. Lever je in een kwartaal meer dan € 50.000 aan goederen aan EU-ondernemers, dan doe je de opgaaf per maand.';
+  String vatReturnIcpNote(String amount) {
+    return 'Geef deze prestaties op in de ICP-opgaaf. Lever je in een kwartaal meer dan $amount aan goederen aan EU-ondernemers, dan doe je de opgaaf per maand.';
+  }
 
   @override
   String get assetsFieldResidualValue => 'Restwaarde';
@@ -1338,8 +1339,9 @@ class AppLocalizationsNl extends AppLocalizations {
       'Wat je voor het bedrijfsmiddel kreeg, zonder btw. Het verschil met de boekwaarde is winst of verlies.';
 
   @override
-  String get assetsFieldKiaHelp =>
-      'Kleinschaligheidsinvesteringsaftrek: een extra aftrek voor bedrijfsmiddelen. Bedrijfsmiddelen onder € 450 tellen niet mee, en personenauto\'s en sommige andere bedrijfsmiddelen zijn uitgesloten.';
+  String assetsFieldKiaHelp(String min) {
+    return 'Kleinschaligheidsinvesteringsaftrek: een extra aftrek voor bedrijfsmiddelen. Bedrijfsmiddelen onder $min tellen niet mee, en personenauto\'s en sommige andere bedrijfsmiddelen zijn uitgesloten.';
+  }
 
   @override
   String get assetsFieldNameHelp =>
@@ -1358,8 +1360,9 @@ class AppLocalizationsNl extends AppLocalizations {
       'Wat het bedrijfsmiddel aan het eind van de levensduur nog waard is. De afschrijving stopt bij deze waarde.';
 
   @override
-  String get assetsFieldUsefulLifeHelp =>
-      'Hoeveel jaar je het bedrijfsmiddel verwacht te gebruiken. Minimaal 5, omdat afschrijving beperkt is tot 20% van de kosten per jaar.';
+  String assetsFieldUsefulLifeHelp(int years, String pct) {
+    return 'Hoeveel jaar je het bedrijfsmiddel verwacht te gebruiken. Minimaal $years, omdat afschrijving beperkt is tot $pct van de kosten per jaar.';
+  }
 
   @override
   String get clientsContractExpiryHelp =>
@@ -1436,12 +1439,14 @@ class AppLocalizationsNl extends AppLocalizations {
       'Het bedrijf waar je kocht, zoals op de bon.';
 
   @override
-  String get expensesFieldVatRateHelp =>
-      'Het btw-tarief op de bon: 21%, 9%, 0% of vrijgesteld.';
+  String expensesFieldVatRateHelp(String high, String low) {
+    return 'Het btw-tarief op de bon: $high, $low, 0% of vrijgesteld.';
+  }
 
   @override
-  String get expensesReclaimVatHelp =>
-      'Vink aan als je deze btw mag aftrekken in je btw-aangifte. Niet voor eten en drinken in een restaurant, voor privégebruik, of voor geschenken aan iemand die zelf geen btw aftrekt als ze voor die persoon samen meer dan € 227 per jaar zijn (Besluit uitsluiting aftrek omzetbelasting 1968).';
+  String expensesReclaimVatHelp(String amount) {
+    return 'Vink aan als je deze btw mag aftrekken in je btw-aangifte. Niet voor eten en drinken in een restaurant, voor privégebruik, of voor geschenken aan iemand die zelf geen btw aftrekt als ze voor die persoon samen meer dan $amount per jaar zijn (Besluit uitsluiting aftrek omzetbelasting 1968).';
+  }
 
   @override
   String get hoursFieldClientProjectHelp =>
@@ -1463,8 +1468,9 @@ class AppLocalizationsNl extends AppLocalizations {
       'Alles wat je over deze uren wilt onthouden.';
 
   @override
-  String get hoursFieldWorkTypeHelp =>
-      'Het soort werk. WBSO-uren tellen mee voor de 500 uur die nodig zijn voor de S&O-aftrek.';
+  String hoursFieldWorkTypeHelp(int hours) {
+    return 'Het soort werk. WBSO-uren tellen mee voor de $hours uur die nodig zijn voor de S&O-aftrek.';
+  }
 
   @override
   String get invoiceFieldClientHelp =>
@@ -1624,8 +1630,9 @@ class AppLocalizationsNl extends AppLocalizations {
       'Je KvK-nummer van 8 cijfers. Het staat op elke factuur.';
 
   @override
-  String get settingsStartersaftrekHelp =>
-      'Je krijgt de startersaftrek als je in minstens één van de 5 voorgaande jaren geen ondernemer was en in die periode hoogstens twee keer zelfstandigenaftrek had.';
+  String settingsStartersaftrekHelp(int years, int max) {
+    return 'Je krijgt de startersaftrek als je in minstens één van de $years voorgaande jaren geen ondernemer was en in die periode hoogstens $max keer zelfstandigenaftrek had.';
+  }
 
   @override
   String get settingsVatNumberHelp =>
@@ -1709,37 +1716,42 @@ class AppLocalizationsNl extends AppLocalizations {
   String get assetsFieldMarketValue => 'Waarde in het economisch verkeer';
 
   @override
-  String get assetsFieldMarketValueHelp =>
-      'Wat de auto nu waard is. Wordt alleen gebruikt als de auto ouder is dan 15 jaar.';
+  String assetsFieldMarketValueHelp(int years) {
+    return 'Wat de auto nu waard is. Wordt alleen gebruikt als de auto ouder is dan $years jaar.';
+  }
 
   @override
   String get assetsFieldTripLog =>
       'Ik houd een sluitende rittenregistratie bij voor deze auto';
 
   @override
-  String get assetsFieldTripLogHelp =>
-      'Met een sluitende rittenregistratie van alle ritten in deze auto is er geen bijtelling bij 500 privékilometers per jaar of minder, en gaat de btw over privégebruik uit van de werkelijke kilometers.';
+  String assetsFieldTripLogHelp(int km) {
+    return 'Met een sluitende rittenregistratie van alle ritten in deze auto is er geen bijtelling bij $km privékilometers per jaar of minder, en gaat de btw over privégebruik uit van de werkelijke kilometers.';
+  }
 
   @override
   String get assetsInvestmentSection => 'Investeringsaftrek';
 
   @override
-  String get assetsInvestmentSectionHelp =>
-      'Extra aftrek in het jaar van aankoop. Verkoop je het bedrijfsmiddel binnen 5 jaar, dan telt een deel weer bij de winst.';
+  String assetsInvestmentSectionHelp(int years) {
+    return 'Extra aftrek in het jaar van aankoop. Verkoop je het bedrijfsmiddel binnen $years jaar, dan telt een deel weer bij de winst.';
+  }
 
   @override
   String get assetsFieldEia => 'Energie-investering (EIA), gemeld bij RVO';
 
   @override
-  String get assetsFieldEiaHelp =>
-      'Een bedrijfsmiddel op de Energielijst van RVO, binnen 3 maanden gemeld bij RVO. Minimaal € 2.500 per bedrijfsmiddel. Niet te combineren met MIA.';
+  String assetsFieldEiaHelp(int months, String min) {
+    return 'Een bedrijfsmiddel op de Energielijst van RVO, binnen $months maanden gemeld bij RVO. Minimaal $min per bedrijfsmiddel. Niet te combineren met MIA.';
+  }
 
   @override
   String get assetsFieldMia => 'Milieu-investering (MIA)';
 
   @override
-  String get assetsFieldMiaHelp =>
-      'De categorie op de Milieulijst van RVO, binnen 3 maanden gemeld bij RVO. Minimaal € 2.500 per bedrijfsmiddel.';
+  String assetsFieldMiaHelp(int months, String min) {
+    return 'De categorie op de Milieulijst van RVO, binnen $months maanden gemeld bij RVO. Minimaal $min per bedrijfsmiddel.';
+  }
 
   @override
   String get assetsMiaNone => 'Geen';
@@ -1757,8 +1769,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get assetsFieldDeductionReceived => 'Ontvangen investeringsaftrek';
 
   @override
-  String get assetsFieldDeductionReceivedHelp =>
-      'De KIA, EIA en MIA die je voor dit bedrijfsmiddel kreeg in het jaar van aankoop, uit de aangifte van dat jaar. Nodig om een deel bij te tellen als je het binnen 5 jaar verkoopt.';
+  String assetsFieldDeductionReceivedHelp(int years) {
+    return 'De KIA, EIA en MIA die je voor dit bedrijfsmiddel kreeg in het jaar van aankoop, uit de aangifte van dat jaar. Nodig om een deel bij te tellen als je het binnen $years jaar verkoopt.';
+  }
 
   @override
   String get assetsValidateDeductionReceived =>
@@ -1789,8 +1802,9 @@ class AppLocalizationsNl extends AppLocalizations {
       'Boekwinst naar de herinvesteringsreserve';
 
   @override
-  String get assetsFieldReserveGainHelp =>
-      'Alleen als je van plan bent een vervanger te kopen. De boekwinst wordt dan nu niet belast maar afgeboekt op de volgende aankoop; na 3 jaar ongebruikt telt hij bij je winst.';
+  String assetsFieldReserveGainHelp(int years) {
+    return 'Alleen als je van plan bent een vervanger te kopen. De boekwinst wordt dan nu niet belast maar afgeboekt op de volgende aankoop; na $years jaar ongebruikt telt hij bij je winst.';
+  }
 
   @override
   String get dashboardDeductibleCostsHelp =>
@@ -1828,15 +1842,17 @@ class AppLocalizationsNl extends AppLocalizations {
   String get inputPartnerHours => 'Uren van je partner in de onderneming';
 
   @override
-  String get inputPartnerHoursHelp =>
-      'Uren die je fiscale partner dit jaar in je onderneming werkte zonder vergoeding of voor minder dan € 5.000. Vanaf 525 uur krijg je de meewerkaftrek.';
+  String inputPartnerHoursHelp(String pay, int hours) {
+    return 'Uren die je fiscale partner dit jaar in je onderneming werkte zonder vergoeding of voor minder dan $pay. Vanaf $hours uur krijg je de meewerkaftrek.';
+  }
 
   @override
   String get inputUnrealisedZelfs => 'Niet-gerealiseerde zelfstandigenaftrek';
 
   @override
-  String get inputUnrealisedZelfsHelp =>
-      'Zelfstandigenaftrek uit de vorige 9 jaar die niet in je winst paste, zoals vastgesteld door de Belastingdienst. Wordt gebruikt tot de winst van dit jaar.';
+  String inputUnrealisedZelfsHelp(int years) {
+    return 'Zelfstandigenaftrek uit de vorige $years jaar die niet in je winst paste, zoals vastgesteld door de Belastingdienst. Wordt gebruikt tot de winst van dit jaar.';
+  }
 
   @override
   String get inputLossCarryForward => 'Verliezen uit eerdere jaren';
@@ -1849,15 +1865,17 @@ class AppLocalizationsNl extends AppLocalizations {
   String get inputSoVerklaring => 'Ik heb een S&O-verklaring voor dit jaar';
 
   @override
-  String get inputSoVerklaringHelp =>
-      'Een S&O-verklaring van RVO voor speur- en ontwikkelingswerk. Met minstens 500 WBSO-uren krijg je de S&O-aftrek.';
+  String inputSoVerklaringHelp(int hours) {
+    return 'Een S&O-verklaring van RVO voor speur- en ontwikkelingswerk. Met minstens $hours WBSO-uren krijg je de S&O-aftrek.';
+  }
 
   @override
   String get inputSoStarter => 'Startersverhoging S&O-aftrek';
 
   @override
-  String get inputSoStarterHelp =>
-      'Je was in een of meer van de 5 voorgaande jaren geen ondernemer en kreeg in die periode voor hoogstens 2 jaar een S&O-verklaring.';
+  String inputSoStarterHelp(int years, int max) {
+    return 'Je was in een of meer van de $years voorgaande jaren geen ondernemer en kreeg in die periode voor hoogstens $max jaar een S&O-verklaring.';
+  }
 
   @override
   String get inputBusinessCeased =>
@@ -1871,23 +1889,26 @@ class AppLocalizationsNl extends AppLocalizations {
   String get inputStakingsUsedBefore => 'Eerder gebruikte stakingsaftrek';
 
   @override
-  String get inputStakingsUsedBeforeHelp =>
-      'Stakingsaftrek die je in eerdere jaren kreeg. Verlaagt het maximum van € 3.630.';
+  String inputStakingsUsedBeforeHelp(String max) {
+    return 'Stakingsaftrek die je in eerdere jaren kreeg. Verlaagt het maximum van $max.';
+  }
 
   @override
   String get inputDisabilityBenefit =>
       'Ik heb een arbeidsongeschiktheidsuitkering';
 
   @override
-  String get inputDisabilityBenefitHelp =>
-      'Een uitkering zoals WIA, WAO, WAZ of Wajong. Als starter met minstens 800 maar minder dan 1.225 uur kun je de startersaftrek bij arbeidsongeschiktheid krijgen.';
+  String inputDisabilityBenefitHelp(int reduced, int hours) {
+    return 'Een uitkering zoals WIA, WAO, WAZ of Wajong. Als starter met minstens $reduced maar minder dan $hours uur kun je de startersaftrek bij arbeidsongeschiktheid krijgen.';
+  }
 
   @override
   String get inputDisabilityUsed => 'Jaren gebruikt in de vorige 5';
 
   @override
-  String get inputDisabilityUsedHelp =>
-      'In hoeveel van de vorige 5 jaar je de startersaftrek bij arbeidsongeschiktheid kreeg: 0, 1, 2 of 3.';
+  String inputDisabilityUsedHelp(int years, int max) {
+    return 'In hoeveel van de vorige $years jaar je de startersaftrek bij arbeidsongeschiktheid kreeg, van 0 tot $max.';
+  }
 
   @override
   String inputWholeNumber(int max) {
@@ -1903,8 +1924,9 @@ class AppLocalizationsNl extends AppLocalizations {
       'Het inkomen van vorig jaar min de AOW-franchise, tot het wettelijke maximum.';
 
   @override
-  String get pensionJaarruimteHelp =>
-      '30% van de premiegrondslag min een veelvoud van factor A, tot het jaarlijkse maximum. Wat je dit jaar voor een lijfrente mag aftrekken.';
+  String pensionJaarruimteHelp(String pct) {
+    return '$pct van de premiegrondslag min een veelvoud van factor A, tot het jaarlijkse maximum. Wat je dit jaar voor een lijfrente mag aftrekken.';
+  }
 
   @override
   String get pensionEstimatedTaxSavingHelp =>
@@ -1934,12 +1956,14 @@ class AppLocalizationsNl extends AppLocalizations {
   String get plTaxCarPrivateUse => 'Privégebruik auto van de zaak';
 
   @override
-  String get plTaxCarPrivateUseHelp =>
-      'De bijtelling: een percentage van de cataloguswaarde dat bij de winst telt voor privégebruik, hoogstens de autokosten. Geen bijtelling met een rittenregistratie van 500 privékilometers per jaar of minder.';
+  String plTaxCarPrivateUseHelp(int km) {
+    return 'De bijtelling: een percentage van de cataloguswaarde dat bij de winst telt voor privégebruik, hoogstens de autokosten. Geen bijtelling met een rittenregistratie van $km privékilometers per jaar of minder.';
+  }
 
   @override
-  String get plTaxDeductionsSectionHelp =>
-      'Aftrekposten voor ondernemers. De meeste vereisen het urencriterium van 1.225 uur.';
+  String plTaxDeductionsSectionHelp(int hours) {
+    return 'Aftrekposten voor ondernemers. De meeste vereisen het urencriterium van $hours uur.';
+  }
 
   @override
   String get plTaxDepreciationHelp =>
@@ -1949,16 +1973,18 @@ class AppLocalizationsNl extends AppLocalizations {
   String get plTaxDesinvestering => 'Desinvesteringsbijtelling';
 
   @override
-  String get plTaxDesinvesteringHelp =>
-      'Deel van een investeringsaftrek dat terugkomt omdat een bedrijfsmiddel binnen 5 jaar na het begin van het jaar van aankoop is verkocht.';
+  String plTaxDesinvesteringHelp(int years) {
+    return 'Deel van een investeringsaftrek dat terugkomt omdat een bedrijfsmiddel binnen $years jaar na het begin van het jaar van aankoop is verkocht.';
+  }
 
   @override
   String get plTaxDisabilityStarters =>
       'Startersaftrek bij arbeidsongeschiktheid';
 
   @override
-  String get plTaxDisabilityStartersHelp =>
-      'Voor starters met een arbeidsongeschiktheidsuitkering die minstens 800 uur werken maar niet aan het urencriterium voldoen. Hoogstens de winst.';
+  String plTaxDisabilityStartersHelp(int hours) {
+    return 'Voor starters met een arbeidsongeschiktheidsuitkering die minstens $hours uur werken maar niet aan het urencriterium voldoen. Hoogstens de winst.';
+  }
 
   @override
   String get plTaxDisposalResultHelp =>
@@ -2011,8 +2037,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get plTaxMeewerk => 'Meewerkaftrek';
 
   @override
-  String get plTaxMeewerkHelp =>
-      'Een percentage van de winst als je fiscale partner minstens 525 uur zonder vergoeding in de onderneming werkt.';
+  String plTaxMeewerkHelp(int hours) {
+    return 'Een percentage van de winst als je fiscale partner minstens $hours uur zonder vergoeding in de onderneming werkt.';
+  }
 
   @override
   String get plTaxMia => 'Milieu-investeringsaftrek (MIA)';
@@ -2040,22 +2067,25 @@ class AppLocalizationsNl extends AppLocalizations {
   String get plTaxReserveReleased => 'Vrijval herinvesteringsreserve';
 
   @override
-  String get plTaxReserveReleasedHelp =>
-      'Reserve die niet binnen 3 jaar is gebruikt, of overblijft als de onderneming stopt, telt bij de winst.';
+  String plTaxReserveReleasedHelp(int years) {
+    return 'Reserve die niet binnen $years jaar is gebruikt, of overblijft als de onderneming stopt, telt bij de winst.';
+  }
 
   @override
   String get plTaxSo => 'S&O-aftrek';
 
   @override
-  String get plTaxSoHelp =>
-      'Voor speur- en ontwikkelingswerk met een S&O-verklaring en minstens 500 uur.';
+  String plTaxSoHelp(int hours) {
+    return 'Voor speur- en ontwikkelingswerk met een S&O-verklaring en minstens $hours uur.';
+  }
 
   @override
   String get plTaxStakings => 'Stakingsaftrek';
 
   @override
-  String get plTaxStakingsHelp =>
-      'Een aftrek op de winst bij het stoppen van de hele onderneming, tot € 3.630 over je hele leven.';
+  String plTaxStakingsHelp(String max) {
+    return 'Een aftrek op de winst bij het stoppen van de hele onderneming, tot $max over je hele leven.';
+  }
 
   @override
   String get plTaxStartersaftrekHelp =>
@@ -2085,17 +2115,22 @@ class AppLocalizationsNl extends AppLocalizations {
       'Leveringen aan ondernemers in andere EU-landen, apart opgegeven in de ICP-opgaaf. Zolang je meedoet aan de KOR doe je geen ICP-opgaaf, dus facturen van die datums staan er niet in.';
 
   @override
-  String get vatRow1aHelp => 'Omzet belast met 21% en de btw daarover.';
+  String vatRow1aHelp(String rate) {
+    return 'Omzet belast met $rate en de btw daarover.';
+  }
 
   @override
-  String get vatRow1bHelp => 'Omzet belast met 9% en de btw daarover.';
+  String vatRow1bHelp(String rate) {
+    return 'Omzet belast met $rate en de btw daarover.';
+  }
 
   @override
   String get vatRow1d => '1d  Privégebruik';
 
   @override
-  String get vatRow1dHelp =>
-      'Btw over privégebruik van auto\'s van de zaak: 2,7% of 1,5% van de cataloguswaarde, of het werkelijke privédeel met een rittenregistratie. Alleen in de laatste aangifte van het jaar.';
+  String vatRow1dHelp(String rate, String reduced) {
+    return 'Btw over privégebruik van auto\'s van de zaak: $rate of $reduced van de cataloguswaarde, of het werkelijke privédeel met een rittenregistratie. Alleen in de laatste aangifte van het jaar.';
+  }
 
   @override
   String get vatRow1eHelp =>
@@ -2324,8 +2359,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsKorStart => 'KOR geldt vanaf';
 
   @override
-  String get settingsKorStartHelp =>
-      'De eerste dag waarop de kleineondernemersregeling (KOR) voor je geldt, zoals in de bevestiging van de Belastingdienst. Tot die datum doe je elke aangifte zoals gewoonlijk. Onder de KOR bereken je geen btw, doe je geen gewone btw-aangifte en vraag je geen btw terug, zolang je omzet in Nederland hoogstens € 20.000 per jaar is. Laat leeg als je niet meedoet.';
+  String settingsKorStartHelp(String limit) {
+    return 'De eerste dag waarop de kleineondernemersregeling (KOR) voor je geldt, zoals in de bevestiging van de Belastingdienst. Tot die datum doe je elke aangifte zoals gewoonlijk. Onder de KOR bereken je geen btw, doe je geen gewone btw-aangifte en vraag je geen btw terug, zolang je omzet in Nederland hoogstens $limit per jaar is. Laat leeg als je niet meedoet.';
+  }
 
   @override
   String get settingsKorEnd => 'KOR beëindigd op';
@@ -2368,8 +2404,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get dashboardKor => 'Omzet voor de KOR';
 
   @override
-  String get dashboardKorHelp =>
-      'Je omzet die meetelt voor de kleineondernemersregeling: prestaties belast in Nederland, ook 0% en verlegging binnenland, niet diensten die in het buitenland belast zijn. Boven € 20.000 in een kalenderjaar eindigt de KOR met de levering die de grens overschrijdt, voor de rest van dat jaar en het jaar erna. De KOR gaat niet vanzelf: hij geldt pas als je je aanmeldt en de Belastingdienst de ingangsdatum bevestigt. Tot dan doe je elk kwartaal aangifte, hoe laag je omzet ook is.';
+  String dashboardKorHelp(String limit) {
+    return 'Je omzet die meetelt voor de kleineondernemersregeling: prestaties belast in Nederland, ook 0% en verlegging binnenland, niet diensten die in het buitenland belast zijn. Boven $limit in een kalenderjaar eindigt de KOR met de levering die de grens overschrijdt, voor de rest van dat jaar en het jaar erna. De KOR gaat niet vanzelf: hij geldt pas als je je aanmeldt en de Belastingdienst de ingangsdatum bevestigt. Tot dan doe je elk kwartaal aangifte, hoe laag je omzet ook is.';
+  }
 
   @override
   String get deadlineStatusKor => 'geen aangifte (KOR)';
@@ -2456,8 +2493,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsKorSection => 'Kleineondernemersregeling (KOR)';
 
   @override
-  String get settingsKorSectionHelp =>
-      'Een btw-vrijstelling voor ondernemers met hoogstens € 20.000 omzet in Nederland per jaar. Hij gaat niet vanzelf: je meldt je aan en af bij de Belastingdienst, en zonder KOR doe je elk kwartaal aangifte. Vul hier de datums in zodat Florin hem volgt.';
+  String settingsKorSectionHelp(String limit) {
+    return 'Een btw-vrijstelling voor ondernemers met hoogstens $limit omzet in Nederland per jaar. Hij gaat niet vanzelf: je meldt je aan en af bij de Belastingdienst, en zonder KOR doe je elk kwartaal aangifte. Vul hier de datums in zodat Florin hem volgt.';
+  }
 
   @override
   String get receiptTypeEInvoice => 'E-factuur (UBL)';
@@ -2466,15 +2504,17 @@ class AppLocalizationsNl extends AppLocalizations {
   String get receiptsTitle => 'Bonnen';
 
   @override
-  String get receiptsHelp =>
-      'De bon of factuur van deze uitgave, als pdf, foto of scan. Florin kopieert hem naar de map met bonnen naast je database en laat je eigen bestand ongemoeid. De Belastingdienst vraagt bonnen en facturen 7 jaar te bewaren in de vorm waarin je ze ontving; een scan of foto moet een juiste en volledige weergave van het origineel zijn, met de echtheidskenmerken.';
+  String receiptsHelp(int years) {
+    return 'De bon of factuur van deze uitgave, als pdf, foto of scan. Florin kopieert hem naar de map met bonnen naast je database en laat je eigen bestand ongemoeid. De Belastingdienst vraagt bonnen en facturen $years jaar te bewaren in de vorm waarin je ze ontving; een scan of foto moet een juiste en volledige weergave van het origineel zijn, met de echtheidskenmerken.';
+  }
 
   @override
   String get receiptsAssetTitle => 'Aankoopfactuur en bonnen';
 
   @override
-  String get receiptsAssetHelp =>
-      'De aankoopfactuur van dit bedrijfsmiddel en ander bewijs, als pdf, foto of scan. Die hoort in je administratie zolang je het bedrijfsmiddel gebruikt, en 7 jaar daarna.';
+  String receiptsAssetHelp(int years) {
+    return 'De aankoopfactuur van dit bedrijfsmiddel en ander bewijs, als pdf, foto of scan. Die hoort in je administratie zolang je het bedrijfsmiddel gebruikt, en $years jaar daarna.';
+  }
 
   @override
   String get receiptsInvoiceTitle => 'Documenten';
@@ -2525,11 +2565,14 @@ class AppLocalizationsNl extends AppLocalizations {
   String get receiptsKeepUntil => 'Bewaren tot';
 
   @override
-  String get receiptsKeepUntilHelp =>
-      'De Belastingdienst vraagt facturen en bonnen 7 jaar te bewaren. Florin telt vanaf het einde van het jaar waar ze bij horen en verwijdert ze nooit.';
+  String receiptsKeepUntilHelp(int years) {
+    return 'De Belastingdienst vraagt facturen en bonnen $years jaar te bewaren. Florin telt vanaf het einde van het jaar waar ze bij horen en verwijdert ze nooit.';
+  }
 
   @override
-  String get receiptsKeepWhileInUse => 'Zolang in gebruik, daarna 7 jaar';
+  String receiptsKeepWhileInUse(int years) {
+    return 'Zolang in gebruik, daarna $years jaar';
+  }
 
   @override
   String receiptsRejectedEmpty(String name) {

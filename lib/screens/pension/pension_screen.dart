@@ -100,7 +100,9 @@ class PensionScreen extends ConsumerWidget {
                 ValueRow.cents(
                   l.pensionJaarruimteMax(AppFormat.cents(rules.jaarruimteMax)),
                   room.jaarruimte,
-                  help: l.pensionJaarruimteHelp,
+                  help: l.pensionJaarruimteHelp(
+                    AppFormat.percentLabel(rules.jaarruimtePct),
+                  ),
                 ),
                 ValueRow.cents(
                   l.pensionReserveringsruimte,

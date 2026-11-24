@@ -1,4 +1,6 @@
 import '../db/enums.dart';
+import '../theme/app_theme.dart';
+import '../services/tax_rules/tax_year_rules.dart';
 import 'app_localizations.dart';
 
 // Localized labels for stored enum keys. Raw keys are never shown.
@@ -93,9 +95,10 @@ extension ReceiptTypeLabel on ReceiptType {
 }
 
 extension VatRateLabel on VatRate {
-  String label(AppLocalizations l) => switch (this) {
-    VatRate.high => l.vatRate21,
-    VatRate.low => l.vatRate9,
+  /// The rate with the percentage of [rules], the rules of the record's year.
+  String label(AppLocalizations l, TaxYearRules rules) => switch (this) {
+    VatRate.high ||
+    VatRate.low => AppFormat.percentLabel(rules.vatRates[this]!),
     VatRate.zero => l.vatRate0,
     VatRate.exempt => l.vatRateExempt,
   };

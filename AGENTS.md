@@ -23,7 +23,8 @@ figures in [`docs/tax-years/<year>.md`](docs/tax-years/).
 
 Two skills hold the procedures:
 
-- `legal-review` (`.claude/skills/legal-review/`): run it before merging any
+- `legal-review` (`.claude/skills/legal-review/`, with scripts that read the
+  statutes and check every quote in the docs): run it before merging any
   change to invoices, BTW, the KOR, the ICP-opgaaf, income tax, depreciation,
   pension, receipts retention, Wet DBA or legal copy.
 - `new-tax-year` (`.claude/skills/new-tax-year/`): the only way a tax year is
@@ -49,7 +50,13 @@ Two skills hold the procedures:
    from the data, take the branch that overstates tax rather than understates
    it, and tell the user.
 6. **Statutory figures are code, not settings.** Users cannot edit rates or
-   thresholds; they live in `lib/services/tax_rules/`.
+   thresholds; they live in the year's `TaxYearRules` in
+   `lib/services/tax_rules/`, and nowhere else: not as a constant in a
+   service, not in the BTW rate enum, not written into a help text. A text
+   that names a figure takes it from the rules through a placeholder, so a
+   new year needs only its rules file. `docs/tax-years/README.md` explains
+   every field; `test/services/tax_year_docs_test.dart` checks it and the
+   texts.
 7. **Exports follow the form they feed.** A figure the user copies into a
    return is exported in the layout, codes, units and rounding of that
    return, sourced in `docs/legal.md`: the BTW return as one file per
@@ -87,7 +94,10 @@ docs/
   images/                README images: the logo
   screenshots/           README screenshots of the dashboard, one per language
   legal.md               Non-yearly rules with sources
-  tax-years/<year>.md    Yearly figures with sources
+  tax-years/README.md    Every field of TaxYearRules: meaning, law, where
+                         to find the value for a new year
+  tax-years/<year>.md    Yearly figures with sources, ending in a table of
+                         every field
 drift_schemas/           Exported schema snapshot per schema version
 test/                    Service, DAO, schema and theme contrast tests
 .claude/skills/          legal-review, new-tax-year, ui-review
@@ -163,11 +173,13 @@ find, older ones included. These are shared:
 | Parsing typed numbers and optional text | `parseWholeNumber`, `parseDecimal`, `optionalText`, `normalizeId` in `formats.dart`; `AppFormat.parseCents` for money |
 | Credit notes in totals | `Invoice.sign`, `signedExclVat`, `signedInclVat` in `lib/services/domain.dart` |
 | An expense's cost and BTW back | `ExpenseMath` in `domain.dart` |
-| Dutch text for the PDF and CSV | getters such as `VatRate.dutchLabel` in `domain.dart`; enum labels in the CSV mapping |
+| Dutch text for the PDF and CSV | `VatRate.dutchLabel(rules)` and the other helpers in `domain.dart`; enum labels in the CSV mapping |
+| A statutory figure, a BTW amount, a term or a deadline | The year's `TaxYearRules` (`taxRulesProvider`, `taxRulesFor`): `vatOn`, `keepUntil`, `latestInvoiceDate`, `minUsefulLifeYears` and its fields |
+| A rate or amount in a text | `AppFormat.percentLabel` and `AppFormat.euros`, passed into a placeholder |
 | Whether a treatment fits a country | `VatTreatment.fitsCountry`, `euCountries` |
 | KOR status, turnover and its effect on expenses | `KorService`, `KorStatus`, `korStatusProvider`, `effectiveExpensesProvider` |
 | Combining several provider streams | `waitForAll` in `lib/providers/providers.dart` |
-| Showing money, dates and rates | `AppFormat.cents`, `date`, `number`, `percent`, `hours`, `fileSize` in `lib/theme/app_theme.dart` |
+| Showing money, dates and rates | `AppFormat.cents`, `euros`, `date`, `number`, `percent`, `percentLabel`, `hours`, `fileSize` in `lib/theme/app_format.dart`, plain Dart so services and tools can use it |
 | Storing, checking, removing and exporting receipt files | `ReceiptService`, `ReceiptStore`, `receiptsProvider`; `CsvExportService.receiptExportPath` for names in an export |
 
 The component library in `lib/widgets/`:
@@ -395,7 +407,8 @@ side.
 | Anything in `README.md` | `README.nl.md` with the same content, and the reverse |
 | A feature, supported platform, OS minimum or install step | Both READMEs and the release notes body in `.github/workflows/build.yml` |
 | A legal rule or legal copy | `docs/legal.md`, and run the `legal-review` skill |
-| A tax year | Only through the `new-tax-year` skill: rules file, `taxYears`, `docs/tax-years/`, tests, both READMEs |
+| A tax year | Only through the `new-tax-year` skill: rules file, `taxYears`, `docs/tax-years/<year>.md` with its table of every field, tests, both READMEs |
+| A field of `TaxYearRules` | Its value in every year's rules file, `docs/tax-years/README.md`, every `docs/tax-years/<year>.md`, and the texts that name it |
 | A table | `schemaVersion`, `make migration`, the migration step and its test, and `tool/create_demo_database.dart` so `make demo` still runs |
 | An enum in `lib/db/enums.dart` | `lib/l10n/labels.dart`, the Dutch mapping in `csv_export_service.dart`, and a migration if a stored value changed |
 | A shared widget's behaviour | Every screen that uses it, and the table above |

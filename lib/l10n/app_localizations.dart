@@ -1421,8 +1421,8 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldUsefulLifeMin.
   ///
   /// In en, this message translates to:
-  /// **'Enter at least {years} years: depreciation is limited to 20% of the cost a year'**
-  String assetsFieldUsefulLifeMin(int years);
+  /// **'Enter at least {years} years: depreciation is limited to {pct} of the cost a year'**
+  String assetsFieldUsefulLifeMin(int years, String pct);
 
   /// No description provided for @assetsValidateName.
   ///
@@ -1673,14 +1673,14 @@ abstract class AppLocalizations {
   /// No description provided for @vatRow1a.
   ///
   /// In en, this message translates to:
-  /// **'1a  Supplies / services taxed at 21%'**
-  String get vatRow1a;
+  /// **'1a  Supplies / services taxed at {rate}'**
+  String vatRow1a(String rate);
 
   /// No description provided for @vatRow1b.
   ///
   /// In en, this message translates to:
-  /// **'1b  Supplies / services taxed at 9%'**
-  String get vatRow1b;
+  /// **'1b  Supplies / services taxed at {rate}'**
+  String vatRow1b(String rate);
 
   /// No description provided for @vatRow3a.
   ///
@@ -2129,8 +2129,8 @@ abstract class AppLocalizations {
   /// No description provided for @firstLaunchStartersSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'For business owners who were not a business owner in one or more of the 5 previous years, and used the zelfstandigenaftrek at most twice in that period'**
-  String get firstLaunchStartersSubtitle;
+  /// **'For business owners who were not a business owner in one or more of the {years} previous years, and used the zelfstandigenaftrek at most {max} times in that period'**
+  String firstLaunchStartersSubtitle(int years, int max);
 
   /// No description provided for @firstLaunchGetStarted.
   ///
@@ -2161,18 +2161,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{days} days'**
   String deadlineBadgeDays(int days);
-
-  /// No description provided for @vatRate21.
-  ///
-  /// In en, this message translates to:
-  /// **'21%'**
-  String get vatRate21;
-
-  /// No description provided for @vatRate9.
-  ///
-  /// In en, this message translates to:
-  /// **'9%'**
-  String get vatRate9;
 
   /// No description provided for @vatRate0.
   ///
@@ -2315,8 +2303,8 @@ abstract class AppLocalizations {
   /// No description provided for @expensesFoodNotice.
   ///
   /// In en, this message translates to:
-  /// **'Food, drinks, representation, congresses, seminars and study trips are deductible for income tax at 80%, or as far as they exceed a yearly threshold if that is more (Wet IB 2001 art. 3.15). VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed (Wet OB 1968 art. 15).'**
-  String get expensesFoodNotice;
+  /// **'Food, drinks, representation, congresses, seminars and study trips are deductible for income tax at {pct}, or as far as they exceed {drempel} a year if that is more (Wet IB 2001 art. 3.15). VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed (Wet OB 1968 art. 15).'**
+  String expensesFoodNotice(String pct, String drempel);
 
   /// No description provided for @plTaxFoodLimited.
   ///
@@ -2399,8 +2387,8 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnIcpNote.
   ///
   /// In en, this message translates to:
-  /// **'Report these supplies in the ICP report. Goods to EU businesses above € 50.000 in a quarter must be reported per month.'**
-  String get vatReturnIcpNote;
+  /// **'Report these supplies in the ICP report. Goods to EU businesses above {amount} in a quarter must be reported per month.'**
+  String vatReturnIcpNote(String amount);
 
   /// No description provided for @assetsFieldResidualValue.
   ///
@@ -2459,8 +2447,8 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldKiaHelp.
   ///
   /// In en, this message translates to:
-  /// **'Kleinschaligheidsinvesteringsaftrek: an extra deduction for business assets. Assets under € 450 do not count, and passenger cars and some other assets are excluded.'**
-  String get assetsFieldKiaHelp;
+  /// **'Kleinschaligheidsinvesteringsaftrek: an extra deduction for business assets. Assets under {min} do not count, and passenger cars and some other assets are excluded.'**
+  String assetsFieldKiaHelp(String min);
 
   /// No description provided for @assetsFieldNameHelp.
   ///
@@ -2489,8 +2477,8 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldUsefulLifeHelp.
   ///
   /// In en, this message translates to:
-  /// **'How many years you expect to use the asset. At least 5, because depreciation is limited to 20% of the cost a year.'**
-  String get assetsFieldUsefulLifeHelp;
+  /// **'How many years you expect to use the asset. At least {years}, because depreciation is limited to {pct} of the cost a year.'**
+  String assetsFieldUsefulLifeHelp(int years, String pct);
 
   /// No description provided for @clientsContractExpiryHelp.
   ///
@@ -2609,14 +2597,14 @@ abstract class AppLocalizations {
   /// No description provided for @expensesFieldVatRateHelp.
   ///
   /// In en, this message translates to:
-  /// **'The VAT rate on the receipt: 21%, 9%, 0% or exempt.'**
-  String get expensesFieldVatRateHelp;
+  /// **'The VAT rate on the receipt: {high}, {low}, 0% or exempt.'**
+  String expensesFieldVatRateHelp(String high, String low);
 
   /// No description provided for @expensesReclaimVatHelp.
   ///
   /// In en, this message translates to:
-  /// **'Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, for private use, or for gifts to someone who cannot deduct VAT when they total more than € 227 for that person in a year (Besluit uitsluiting aftrek omzetbelasting 1968).'**
-  String get expensesReclaimVatHelp;
+  /// **'Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, for private use, or for gifts to someone who cannot deduct VAT when they total more than {amount} for that person in a year (Besluit uitsluiting aftrek omzetbelasting 1968).'**
+  String expensesReclaimVatHelp(String amount);
 
   /// No description provided for @hoursFieldClientProjectHelp.
   ///
@@ -2651,8 +2639,8 @@ abstract class AppLocalizations {
   /// No description provided for @hoursFieldWorkTypeHelp.
   ///
   /// In en, this message translates to:
-  /// **'The kind of work. WBSO hours count towards the 500 hours needed for the S&O-aftrek.'**
-  String get hoursFieldWorkTypeHelp;
+  /// **'The kind of work. WBSO hours count towards the {hours} hours needed for the S&O-aftrek.'**
+  String hoursFieldWorkTypeHelp(int hours);
 
   /// No description provided for @invoiceFieldClientHelp.
   ///
@@ -2903,8 +2891,8 @@ abstract class AppLocalizations {
   /// No description provided for @settingsStartersaftrekHelp.
   ///
   /// In en, this message translates to:
-  /// **'You get the startersaftrek if you were not a business owner in at least one of the 5 previous years and used the zelfstandigenaftrek at most twice in that period.'**
-  String get settingsStartersaftrekHelp;
+  /// **'You get the startersaftrek if you were not a business owner in at least one of the {years} previous years and used the zelfstandigenaftrek at most {max} times in that period.'**
+  String settingsStartersaftrekHelp(int years, int max);
 
   /// No description provided for @settingsVatNumberHelp.
   ///
@@ -3047,8 +3035,8 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldMarketValueHelp.
   ///
   /// In en, this message translates to:
-  /// **'What the car is worth now. Only used once the car is more than 15 years old.'**
-  String get assetsFieldMarketValueHelp;
+  /// **'What the car is worth now. Only used once the car is more than {years} years old.'**
+  String assetsFieldMarketValueHelp(int years);
 
   /// No description provided for @assetsFieldTripLog.
   ///
@@ -3059,8 +3047,8 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldTripLogHelp.
   ///
   /// In en, this message translates to:
-  /// **'With a complete trip log of all trips in this car, there is no bijtelling at 500 private km a year or less, and VAT on private use is based on the actual kilometres.'**
-  String get assetsFieldTripLogHelp;
+  /// **'With a complete trip log of all trips in this car, there is no bijtelling at {km} private km a year or less, and VAT on private use is based on the actual kilometres.'**
+  String assetsFieldTripLogHelp(int km);
 
   /// No description provided for @assetsInvestmentSection.
   ///
@@ -3071,8 +3059,8 @@ abstract class AppLocalizations {
   /// No description provided for @assetsInvestmentSectionHelp.
   ///
   /// In en, this message translates to:
-  /// **'Extra deductions in the year of purchase. If you sell the asset within 5 years, part of them is added back.'**
-  String get assetsInvestmentSectionHelp;
+  /// **'Extra deductions in the year of purchase. If you sell the asset within {years} years, part of them is added back.'**
+  String assetsInvestmentSectionHelp(int years);
 
   /// No description provided for @assetsFieldEia.
   ///
@@ -3083,8 +3071,8 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldEiaHelp.
   ///
   /// In en, this message translates to:
-  /// **'An asset on the RVO Energy List, reported to RVO within 3 months. At least € 2.500 per asset. Cannot be combined with MIA.'**
-  String get assetsFieldEiaHelp;
+  /// **'An asset on the RVO Energy List, reported to RVO within {months} months. At least {min} per asset. Cannot be combined with MIA.'**
+  String assetsFieldEiaHelp(int months, String min);
 
   /// No description provided for @assetsFieldMia.
   ///
@@ -3095,8 +3083,8 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldMiaHelp.
   ///
   /// In en, this message translates to:
-  /// **'The category on the RVO Environmental List, reported to RVO within 3 months. At least € 2.500 per asset.'**
-  String get assetsFieldMiaHelp;
+  /// **'The category on the RVO Environmental List, reported to RVO within {months} months. At least {min} per asset.'**
+  String assetsFieldMiaHelp(int months, String min);
 
   /// No description provided for @assetsMiaNone.
   ///
@@ -3131,8 +3119,8 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldDeductionReceivedHelp.
   ///
   /// In en, this message translates to:
-  /// **'The KIA, EIA and MIA you received for this asset in its purchase year, from that year\'s tax return. Needed to add part back if you sell it within 5 years.'**
-  String get assetsFieldDeductionReceivedHelp;
+  /// **'The KIA, EIA and MIA you received for this asset in its purchase year, from that year\'s tax return. Needed to add part back if you sell it within {years} years.'**
+  String assetsFieldDeductionReceivedHelp(int years);
 
   /// No description provided for @assetsValidateDeductionReceived.
   ///
@@ -3179,8 +3167,8 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldReserveGainHelp.
   ///
   /// In en, this message translates to:
-  /// **'Only when you intend to buy a replacement. The gain is then not taxed now but booked off on the next purchase; unused after 3 years, it is added to your profit.'**
-  String get assetsFieldReserveGainHelp;
+  /// **'Only when you intend to buy a replacement. The gain is then not taxed now but booked off on the next purchase; unused after {years} years, it is added to your profit.'**
+  String assetsFieldReserveGainHelp(int years);
 
   /// No description provided for @dashboardDeductibleCostsHelp.
   ///
@@ -3245,8 +3233,8 @@ abstract class AppLocalizations {
   /// No description provided for @inputPartnerHoursHelp.
   ///
   /// In en, this message translates to:
-  /// **'Hours your fiscal partner worked in your business this year without pay, or for less than € 5.000. From 525 hours you get the meewerkaftrek.'**
-  String get inputPartnerHoursHelp;
+  /// **'Hours your fiscal partner worked in your business this year without pay, or for less than {pay}. From {hours} hours you get the meewerkaftrek.'**
+  String inputPartnerHoursHelp(String pay, int hours);
 
   /// No description provided for @inputUnrealisedZelfs.
   ///
@@ -3257,8 +3245,8 @@ abstract class AppLocalizations {
   /// No description provided for @inputUnrealisedZelfsHelp.
   ///
   /// In en, this message translates to:
-  /// **'Zelfstandigenaftrek from the previous 9 years that did not fit your profit, as stated by the Belastingdienst. Used up to this year\'s profit.'**
-  String get inputUnrealisedZelfsHelp;
+  /// **'Zelfstandigenaftrek from the previous {years} years that did not fit your profit, as stated by the Belastingdienst. Used up to this year\'s profit.'**
+  String inputUnrealisedZelfsHelp(int years);
 
   /// No description provided for @inputLossCarryForward.
   ///
@@ -3281,8 +3269,8 @@ abstract class AppLocalizations {
   /// No description provided for @inputSoVerklaringHelp.
   ///
   /// In en, this message translates to:
-  /// **'An S&O-verklaring from RVO for research and development. With at least 500 WBSO hours you get the S&O-aftrek.'**
-  String get inputSoVerklaringHelp;
+  /// **'An S&O-verklaring from RVO for research and development. With at least {hours} WBSO hours you get the S&O-aftrek.'**
+  String inputSoVerklaringHelp(int hours);
 
   /// No description provided for @inputSoStarter.
   ///
@@ -3293,8 +3281,8 @@ abstract class AppLocalizations {
   /// No description provided for @inputSoStarterHelp.
   ///
   /// In en, this message translates to:
-  /// **'You were not a business owner in one or more of the 5 previous years and received an S&O-verklaring for at most 2 years in that period.'**
-  String get inputSoStarterHelp;
+  /// **'You were not a business owner in one or more of the {years} previous years and received an S&O-verklaring for at most {max} years in that period.'**
+  String inputSoStarterHelp(int years, int max);
 
   /// No description provided for @inputBusinessCeased.
   ///
@@ -3317,8 +3305,8 @@ abstract class AppLocalizations {
   /// No description provided for @inputStakingsUsedBeforeHelp.
   ///
   /// In en, this message translates to:
-  /// **'Stakingsaftrek you received in earlier years. It lowers the maximum of € 3.630.'**
-  String get inputStakingsUsedBeforeHelp;
+  /// **'Stakingsaftrek you received in earlier years. It lowers the maximum of {max}.'**
+  String inputStakingsUsedBeforeHelp(String max);
 
   /// No description provided for @inputDisabilityBenefit.
   ///
@@ -3329,8 +3317,8 @@ abstract class AppLocalizations {
   /// No description provided for @inputDisabilityBenefitHelp.
   ///
   /// In en, this message translates to:
-  /// **'A benefit such as WIA, WAO, WAZ or Wajong. As a starter with at least 800 but under 1.225 hours you may get the startersaftrek bij arbeidsongeschiktheid.'**
-  String get inputDisabilityBenefitHelp;
+  /// **'A benefit such as WIA, WAO, WAZ or Wajong. As a starter with at least {reduced} but under {hours} hours you may get the startersaftrek bij arbeidsongeschiktheid.'**
+  String inputDisabilityBenefitHelp(int reduced, int hours);
 
   /// No description provided for @inputDisabilityUsed.
   ///
@@ -3341,8 +3329,8 @@ abstract class AppLocalizations {
   /// No description provided for @inputDisabilityUsedHelp.
   ///
   /// In en, this message translates to:
-  /// **'How many of the previous 5 years you received the startersaftrek bij arbeidsongeschiktheid: 0, 1, 2 or 3.'**
-  String get inputDisabilityUsedHelp;
+  /// **'How many of the previous {years} years you received the startersaftrek bij arbeidsongeschiktheid, from 0 to {max}.'**
+  String inputDisabilityUsedHelp(int years, int max);
 
   /// No description provided for @inputWholeNumber.
   ///
@@ -3365,8 +3353,8 @@ abstract class AppLocalizations {
   /// No description provided for @pensionJaarruimteHelp.
   ///
   /// In en, this message translates to:
-  /// **'30% of the premiegrondslag minus a multiple of factor A, up to the yearly maximum. What you may deduct for a lijfrente this year.'**
-  String get pensionJaarruimteHelp;
+  /// **'{pct} of the premiegrondslag minus a multiple of factor A, up to the yearly maximum. What you may deduct for a lijfrente this year.'**
+  String pensionJaarruimteHelp(String pct);
 
   /// No description provided for @pensionEstimatedTaxSavingHelp.
   ///
@@ -3413,14 +3401,14 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxCarPrivateUseHelp.
   ///
   /// In en, this message translates to:
-  /// **'The bijtelling: a percentage of the catalogue value added to profit for private use, at most the car costs. None with a trip log of 500 private km a year or less.'**
-  String get plTaxCarPrivateUseHelp;
+  /// **'The bijtelling: a percentage of the catalogue value added to profit for private use, at most the car costs. None with a trip log of {km} private km a year or less.'**
+  String plTaxCarPrivateUseHelp(int km);
 
   /// No description provided for @plTaxDeductionsSectionHelp.
   ///
   /// In en, this message translates to:
-  /// **'Deductions for business owners. Most require the urencriterium of 1.225 hours.'**
-  String get plTaxDeductionsSectionHelp;
+  /// **'Deductions for business owners. Most require the urencriterium of {hours} hours.'**
+  String plTaxDeductionsSectionHelp(int hours);
 
   /// No description provided for @plTaxDepreciationHelp.
   ///
@@ -3437,8 +3425,8 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxDesinvesteringHelp.
   ///
   /// In en, this message translates to:
-  /// **'Part of an investment deduction added back because an asset was sold within 5 years of the start of its purchase year.'**
-  String get plTaxDesinvesteringHelp;
+  /// **'Part of an investment deduction added back because an asset was sold within {years} years of the start of its purchase year.'**
+  String plTaxDesinvesteringHelp(int years);
 
   /// No description provided for @plTaxDisabilityStarters.
   ///
@@ -3449,8 +3437,8 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxDisabilityStartersHelp.
   ///
   /// In en, this message translates to:
-  /// **'For starters with a disability benefit who work at least 800 hours but do not meet the urencriterium. At most the profit.'**
-  String get plTaxDisabilityStartersHelp;
+  /// **'For starters with a disability benefit who work at least {hours} hours but do not meet the urencriterium. At most the profit.'**
+  String plTaxDisabilityStartersHelp(int hours);
 
   /// No description provided for @plTaxDisposalResultHelp.
   ///
@@ -3533,8 +3521,8 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxMeewerkHelp.
   ///
   /// In en, this message translates to:
-  /// **'A percentage of profit when your fiscal partner works at least 525 hours in the business without pay.'**
-  String get plTaxMeewerkHelp;
+  /// **'A percentage of profit when your fiscal partner works at least {hours} hours in the business without pay.'**
+  String plTaxMeewerkHelp(int hours);
 
   /// No description provided for @plTaxMia.
   ///
@@ -3581,8 +3569,8 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxReserveReleasedHelp.
   ///
   /// In en, this message translates to:
-  /// **'Reserve not used within 3 years, or left when the business stops, is added to profit.'**
-  String get plTaxReserveReleasedHelp;
+  /// **'Reserve not used within {years} years, or left when the business stops, is added to profit.'**
+  String plTaxReserveReleasedHelp(int years);
 
   /// No description provided for @plTaxSo.
   ///
@@ -3593,8 +3581,8 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxSoHelp.
   ///
   /// In en, this message translates to:
-  /// **'For research and development with an S&O-verklaring and at least 500 hours.'**
-  String get plTaxSoHelp;
+  /// **'For research and development with an S&O-verklaring and at least {hours} hours.'**
+  String plTaxSoHelp(int hours);
 
   /// No description provided for @plTaxStakings.
   ///
@@ -3605,8 +3593,8 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxStakingsHelp.
   ///
   /// In en, this message translates to:
-  /// **'A deduction on the gain when the whole business stops, up to € 3.630 over your lifetime.'**
-  String get plTaxStakingsHelp;
+  /// **'A deduction on the gain when the whole business stops, up to {max} over your lifetime.'**
+  String plTaxStakingsHelp(String max);
 
   /// No description provided for @plTaxStartersaftrekHelp.
   ///
@@ -3653,14 +3641,14 @@ abstract class AppLocalizations {
   /// No description provided for @vatRow1aHelp.
   ///
   /// In en, this message translates to:
-  /// **'Revenue taxed at 21% and the VAT on it.'**
-  String get vatRow1aHelp;
+  /// **'Revenue taxed at {rate} and the VAT on it.'**
+  String vatRow1aHelp(String rate);
 
   /// No description provided for @vatRow1bHelp.
   ///
   /// In en, this message translates to:
-  /// **'Revenue taxed at 9% and the VAT on it.'**
-  String get vatRow1bHelp;
+  /// **'Revenue taxed at {rate} and the VAT on it.'**
+  String vatRow1bHelp(String rate);
 
   /// No description provided for @vatRow1d.
   ///
@@ -3671,8 +3659,8 @@ abstract class AppLocalizations {
   /// No description provided for @vatRow1dHelp.
   ///
   /// In en, this message translates to:
-  /// **'VAT on private use of business cars: 2,7% or 1,5% of the catalogue value, or the actual private share with a trip log. In the last return of the year only.'**
-  String get vatRow1dHelp;
+  /// **'VAT on private use of business cars: {rate} or {reduced} of the catalogue value, or the actual private share with a trip log. In the last return of the year only.'**
+  String vatRow1dHelp(String rate, String reduced);
 
   /// No description provided for @vatRow1eHelp.
   ///
@@ -4037,8 +4025,8 @@ abstract class AppLocalizations {
   /// No description provided for @settingsKorStartHelp.
   ///
   /// In en, this message translates to:
-  /// **'The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst\'s confirmation. Until that date you file every return as usual. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most € 20.000 a year. Leave empty when you do not take part.'**
-  String get settingsKorStartHelp;
+  /// **'The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst\'s confirmation. Until that date you file every return as usual. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most {limit} a year. Leave empty when you do not take part.'**
+  String settingsKorStartHelp(String limit);
 
   /// No description provided for @settingsKorEnd.
   ///
@@ -4103,8 +4091,8 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardKorHelp.
   ///
   /// In en, this message translates to:
-  /// **'Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above € 20.000 in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next. The KOR is not automatic: it applies only after you register and the Belastingdienst confirms the start date. Until then you file a return every quarter, however low your turnover.'**
-  String get dashboardKorHelp;
+  /// **'Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above {limit} in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next. The KOR is not automatic: it applies only after you register and the Belastingdienst confirms the start date. Until then you file a return every quarter, however low your turnover.'**
+  String dashboardKorHelp(String limit);
 
   /// No description provided for @deadlineStatusKor.
   ///
@@ -4241,8 +4229,8 @@ abstract class AppLocalizations {
   /// No description provided for @settingsKorSectionHelp.
   ///
   /// In en, this message translates to:
-  /// **'A VAT exemption for businesses with at most € 20.000 turnover in the Netherlands a year. It is not automatic: you register for it and deregister with the Belastingdienst, and without it you file a return every quarter. Enter its dates here so Florin follows it.'**
-  String get settingsKorSectionHelp;
+  /// **'A VAT exemption for businesses with at most {limit} turnover in the Netherlands a year. It is not automatic: you register for it and deregister with the Belastingdienst, and without it you file a return every quarter. Enter its dates here so Florin follows it.'**
+  String settingsKorSectionHelp(String limit);
 
   /// No description provided for @receiptTypeEInvoice.
   ///
@@ -4259,8 +4247,8 @@ abstract class AppLocalizations {
   /// No description provided for @receiptsHelp.
   ///
   /// In en, this message translates to:
-  /// **'The receipt or invoice for this expense, as a PDF, photo or scan. Florin copies it into the receipts folder next to your database and leaves your file as it is. The Belastingdienst asks you to keep receipts and invoices for 7 years in the form you received them; a scan or photo must be a correct and complete copy of the original, with its marks of authenticity.'**
-  String get receiptsHelp;
+  /// **'The receipt or invoice for this expense, as a PDF, photo or scan. Florin copies it into the receipts folder next to your database and leaves your file as it is. The Belastingdienst asks you to keep receipts and invoices for {years} years in the form you received them; a scan or photo must be a correct and complete copy of the original, with its marks of authenticity.'**
+  String receiptsHelp(int years);
 
   /// No description provided for @receiptsAssetTitle.
   ///
@@ -4271,8 +4259,8 @@ abstract class AppLocalizations {
   /// No description provided for @receiptsAssetHelp.
   ///
   /// In en, this message translates to:
-  /// **'The purchase invoice of this asset and any other proof, as a PDF, photo or scan. It belongs in your records while the asset is in use, and 7 years after that.'**
-  String get receiptsAssetHelp;
+  /// **'The purchase invoice of this asset and any other proof, as a PDF, photo or scan. It belongs in your records while the asset is in use, and {years} years after that.'**
+  String receiptsAssetHelp(int years);
 
   /// No description provided for @receiptsInvoiceTitle.
   ///
@@ -4361,14 +4349,14 @@ abstract class AppLocalizations {
   /// No description provided for @receiptsKeepUntilHelp.
   ///
   /// In en, this message translates to:
-  /// **'The Belastingdienst asks you to keep invoices and receipts for 7 years. Florin counts them from the end of the year they belong to and never deletes them.'**
-  String get receiptsKeepUntilHelp;
+  /// **'The Belastingdienst asks you to keep invoices and receipts for {years} years. Florin counts them from the end of the year they belong to and never deletes them.'**
+  String receiptsKeepUntilHelp(int years);
 
   /// No description provided for @receiptsKeepWhileInUse.
   ///
   /// In en, this message translates to:
-  /// **'While in use, then 7 years'**
-  String get receiptsKeepWhileInUse;
+  /// **'While in use, then {years} years'**
+  String receiptsKeepWhileInUse(int years);
 
   /// No description provided for @receiptsRejectedEmpty.
   ///

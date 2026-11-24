@@ -1,3 +1,5 @@
+import '../theme/app_format.dart';
+import 'tax_rules/tax_year_rules.dart';
 import '../db/database.dart';
 
 /// Today if it falls in [year], otherwise the nearest day of that year.
@@ -32,11 +34,6 @@ extension InvoiceDomain on Invoice {
       status == InvoiceStatus.sent && dueDate.isBefore(DateTime.now());
 }
 
-/// The last day to issue the invoice for a supply on [supply]: the 15th of
-/// the next month (Wet OB 1968 art. 34g).
-DateTime latestInvoiceDate(DateTime supply) =>
-    DateTime(supply.year, supply.month + 1, 15);
-
 /// The 27 EU member states by ISO 3166 code, as listed by the EU
 /// (`docs/legal.md`, EU member states). Greece's BTW prefix EL counts too.
 const euCountries = {
@@ -49,13 +46,11 @@ bool isEuCountry(String country) =>
     euCountries.contains(country.trim().toUpperCase());
 
 extension VatRateDomain on VatRate {
-  /// The rate as Dutch documents print it: invoice PDFs and CSV exports.
-  String get dutchLabel => switch (this) {
-    VatRate.high => '21%',
-    VatRate.low => '9%',
-    VatRate.zero => '0%',
-    VatRate.exempt => 'Vrijgesteld',
-  };
+  /// The rate as Dutch documents print it, invoice PDFs and CSV exports,
+  /// with the percentages of [rules], the rules of the record's year.
+  String dutchLabel(TaxYearRules rules) => this == VatRate.exempt
+      ? 'Vrijgesteld'
+      : AppFormat.percentLabel(rules.vatRates[this]!);
 }
 
 extension VatTreatmentDomain on VatTreatment {
