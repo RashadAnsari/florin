@@ -106,5 +106,22 @@ void main() {
     expect(assets.any((a) => a.reserveGain), isTrue);
     expect(assets.any((a) => a.reinvestmentReserveApplied > 0), isTrue);
     expect(assets.any((a) => a.investmentDeductionReceived != null), isTrue);
+    // Purchase BTW reclaimed, kept as cost under the KOR, and entered for a
+    // year without rules; a sale with BTW, one the KOR exempts, and one
+    // invoiced in Florin.
+    expect(assets.any((a) => a.vatToReclaim > 0), isTrue);
+    expect(assets.any((a) => !a.vatReclaimable && a.vatAmount > 0), isTrue);
+    expect(assets.any((a) => a.vatRate == null && a.vatAmount > 0), isTrue);
+    expect(assets.any((a) => a.disposalVatAmount != null), isTrue);
+    expect(
+      assets.any(
+        (a) =>
+            a.disposalDate != null &&
+            a.disposalInvoiceId == null &&
+            a.disposalVatRate == null,
+      ),
+      isTrue,
+    );
+    expect(assets.any((a) => a.disposalInvoiceId != null), isTrue);
   });
 }

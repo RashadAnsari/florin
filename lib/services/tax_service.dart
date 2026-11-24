@@ -86,14 +86,32 @@ class TaxResult {
 }
 
 abstract final class TaxService {
-  /// Revenue excl. VAT from issued invoices.
-  static int grossRevenue(List<Invoice> invoices) => invoices
-      .where((i) => i.invoiceType == InvoiceType.invoice && i.isIssued)
+  /// Revenue excl. VAT from issued invoices. An invoice in [assetSales]
+  /// sells an asset: its amount is that asset's proceeds instead.
+  static int grossRevenue(
+    List<Invoice> invoices, {
+    Set<int> assetSales = const {},
+  }) => invoices
+      .where(
+        (i) =>
+            i.invoiceType == InvoiceType.invoice &&
+            i.isIssued &&
+            !assetSales.contains(i.id),
+      )
       .fold(0, (s, i) => s + i.totalExclVat);
 
-  /// Credit notes excl. VAT, as a positive amount.
-  static int creditNotes(List<Invoice> invoices) => invoices
-      .where((i) => i.invoiceType == InvoiceType.creditNote && i.isIssued)
+  /// Credit notes excl. VAT, as a positive amount, leaving out those that
+  /// correct the sale of an asset.
+  static int creditNotes(
+    List<Invoice> invoices, {
+    Set<int> assetSales = const {},
+  }) => invoices
+      .where(
+        (i) =>
+            i.invoiceType == InvoiceType.creditNote &&
+            i.isIssued &&
+            !assetSales.contains(i.correctedInvoiceId),
+      )
       .fold(0, (s, i) => s + i.totalExclVat);
 
   /// Food, drinks and representation costs of the year.

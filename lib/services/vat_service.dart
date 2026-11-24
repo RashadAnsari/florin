@@ -100,16 +100,20 @@ abstract final class VatService {
 
   /// Rubrieken per the Belastingdienst guidance in `docs/legal.md`. Exempt
   /// supplies, supplies exempt under the KOR and services to businesses
-  /// outside the EU are not reported.
+  /// outside the EU are not reported. [expenses] and [assets] are as they
+  /// count, with the KOR applied: an asset's purchase counts like an
+  /// expense, and its sale without an invoice like a supply at its rate.
   static VatQuarterResult calculateQuarter({
     required List<Invoice> invoices,
     required List<InvoiceLine> lines,
     required List<Expense> expenses,
+    List<FixedAsset> assets = const [],
     required int year,
     required int quarter,
     int privateUseVat = 0,
     KorStatus kor = KorStatus.none,
   }) {
+    bool inQuarter(DateTime d) => d.year == year && quarterOf(d) == quarter;
     final linesByInvoice = <int, List<InvoiceLine>>{};
     for (final line in lines) {
       linesByInvoice.putIfAbsent(line.invoiceId, () => []).add(line);
@@ -117,9 +121,24 @@ abstract final class VatService {
 
     var r1a = 0, v1a = 0, r1b = 0, v1b = 0, r1e = 0, r3a = 0, r3b = 0;
     var outside = 0, korExempt = 0;
+    void supply(VatRate rate, int base, int vat) {
+      switch (rate) {
+        case VatRate.high:
+          r1a += base;
+          v1a += vat;
+        case VatRate.low:
+          r1b += base;
+          v1b += vat;
+        case VatRate.zero:
+          r1e += base;
+        case VatRate.exempt:
+          break;
+      }
+    }
+
     final icp = <Invoice>[];
     for (final inv in invoices) {
-      if (!inv.isIssued || quarterOf(inv.invoiceDate) != quarter) continue;
+      if (!inv.isIssued || !inQuarter(inv.invoiceDate)) continue;
       final sign = inv.sign;
       switch (inv.vatTreatment) {
         case VatTreatment.reverseChargeNl:
@@ -137,32 +156,39 @@ abstract final class VatService {
           korExempt += inv.signedExclVat;
         case VatTreatment.standard:
           for (final line in linesByInvoice[inv.id] ?? const <InvoiceLine>[]) {
-            final base = sign * line.lineTotalExclVat;
-            final vat = sign * line.vatAmount;
-            switch (line.vatRate) {
-              case VatRate.high:
-                r1a += base;
-                v1a += vat;
-              case VatRate.low:
-                r1b += base;
-                v1b += vat;
-              case VatRate.zero:
-                r1e += base;
-              case VatRate.exempt:
-                break;
-            }
+            supply(
+              line.vatRate,
+              sign * line.lineTotalExclVat,
+              sign * line.vatAmount,
+            );
           }
       }
     }
+    // A sale invoiced in Florin is in that invoice; the BTW on a sale or
+    // withdrawal without one is on the asset (Wet OB 1968 art. 3 lid 3 a).
+    for (final a in assets) {
+      final rate = a.disposalVatRate;
+      if (a.disposalDate == null ||
+          !inQuarter(a.disposalDate!) ||
+          a.disposalInvoiceId != null ||
+          rate == null) {
+        continue;
+      }
+      supply(rate, a.businessProceeds, a.disposalVatAmount ?? 0);
+    }
 
-    final qExpenses = expenses.where((e) => quarterOf(e.date) == quarter);
-    final inputVat = qExpenses.fold(0, (s, e) => s + e.vatToReclaim);
-    int base(PurchaseVat p) => qExpenses
+    final purchases = [
+      for (final e in expenses)
+        if (inQuarter(e.date)) e.asPurchase,
+      for (final a in assets)
+        if (inQuarter(a.purchaseDate)) a.asPurchase,
+    ];
+    final inputVat = purchases.fold(0, (s, p) => s + p.vatToReclaim);
+    int base(PurchaseVat p) => purchases
         .where((e) => e.purchaseVat == p)
-        .fold(0, (s, e) => s + e.amountExclVat);
-    int vat(PurchaseVat p) => qExpenses
-        .where((e) => e.purchaseVat == p)
-        .fold(0, (s, e) => s + e.vatAmount);
+        .fold(0, (s, e) => s + e.base);
+    int vat(PurchaseVat p) =>
+        purchases.where((e) => e.purchaseVat == p).fold(0, (s, e) => s + e.vat);
 
     // BTW owed in a period is paid on a return (art. 14 lid 1), so a KOR
     // quarter with BTW owed, such as BTW shifted to the user, needs one.

@@ -24,6 +24,7 @@ import 'package:florin/db/daos/vat_return_dao.dart';
 import 'package:florin/db/database.dart';
 import 'package:florin/db/daos/receipt_dao.dart';
 import 'package:florin/services/domain.dart';
+import 'package:florin/services/tax_rules/tax_year_rules.dart';
 import 'package:florin/services/receipt_service.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -33,6 +34,8 @@ const _year = 2026;
 // takes the turnover past € 20.000, which ends the KOR from that supply.
 final _korStart = DateTime(_year, 1, 1);
 final _korEndedOn = DateTime(_year, 4, 28);
+
+bool _underKor(DateTime d) => !d.isBefore(_korStart) && d.isBefore(_korEndedOn);
 
 Future<void> main(List<String> args) async {
   final dir = Directory(args.isEmpty ? 'demo' : args.first)
@@ -330,6 +333,14 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     lines: [('Ontwerp jaarverslag', 30, 8500, VatRate.high)],
     status: InvoiceStatus.draft,
   );
+  // The sale of a used monitor, linked to its asset below: its amount is the
+  // proceeds, not revenue.
+  final monitorSale = await invoice(
+    clientId: dutch,
+    date: DateTime(_year, 9, 10),
+    lines: [('Verkoop gebruikte monitor', 1, 15000, VatRate.high)],
+    unit: 'stuk',
+  );
 
   // Number the own invoices in date order, as one consecutive series
   // (Wet OB 1968 art. 35a lid 1 b). Self-billed invoices keep the reseller's.
@@ -376,33 +387,71 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     ZeroEmission zeroEmission = ZeroEmission.none,
     int? marketValue,
     bool tripLog = false,
-    int vatOnPurchase = 0,
-  }) => assets.save(
-    FixedAssetsCompanion(
-      kind: Value(kind),
-      assetName: Value(name),
-      costExclVat: Value(cost),
-      residualValue: Value(residual),
-      purchaseDate: Value(bought),
-      businessUsePct: Value(use),
-      usefulLifeYears: Value(life),
-      kiaEligible: Value(kia),
-      eiaEligible: Value(eia),
-      miaCategory: Value(mia),
-      investmentDeductionReceived: Value(deductionReceived),
-      reinvestmentReserveApplied: Value(reserveApplied),
-      disposalDate: Value(sold),
-      disposalProceeds: Value(proceeds),
-      reserveGain: Value(reserveGain),
-      catalogueValue: Value(catalogue),
-      firstRegistration: Value(registered),
-      zeroEmission: Value(zeroEmission),
-      marketValue: Value(marketValue),
-      keepsTripLog: Value(tripLog),
-      vatDeductedOnPurchase: Value(vatOnPurchase),
-      notes: Value(kind == AssetKind.car ? 'Fictieve auto voor de demo' : null),
-    ),
-  );
+    VatRate rate = VatRate.high,
+    PurchaseVat purchaseVat = PurchaseVat.domestic,
+    int? enteredVat,
+    VatRate? saleRate,
+    int? saleInvoiceId,
+  }) {
+    // A year without rules has its BTW entered rather than worked out.
+    final rules = taxRulesFor(bought.year);
+    final vat = rules == null ? enteredVat ?? 0 : rules.vatOn(rate, cost);
+    final share = kind == AssetKind.car ? 1.0 : use;
+    // Under the KOR no BTW is reclaimed, and a sale carries none.
+    final reclaimed = !_underKor(bought);
+    final chargesSaleVat =
+        sold != null && saleInvoiceId == null && !_underKor(sold);
+    return assets.save(
+      FixedAssetsCompanion(
+        kind: Value(kind),
+        assetName: Value(name),
+        costExclVat: Value(cost),
+        vatRate: Value(rules == null ? null : rate),
+        purchaseVat: Value(purchaseVat),
+        vatAmount: Value(vat),
+        vatReclaimable: Value(reclaimed),
+        vatToReclaim: Value(
+          PurchaseMath.vatToReclaim(
+            vatAmount: vat,
+            businessUsePct: share,
+            vatReclaimable: reclaimed,
+          ),
+        ),
+        residualValue: Value(residual),
+        purchaseDate: Value(bought),
+        businessUsePct: Value(share),
+        usefulLifeYears: Value(life),
+        kiaEligible: Value(kia),
+        eiaEligible: Value(eia),
+        miaCategory: Value(mia),
+        investmentDeductionReceived: Value(deductionReceived),
+        reinvestmentReserveApplied: Value(reserveApplied),
+        disposalDate: Value(sold),
+        disposalProceeds: Value(proceeds),
+        reserveGain: Value(reserveGain),
+        catalogueValue: Value(catalogue),
+        firstRegistration: Value(registered),
+        zeroEmission: Value(zeroEmission),
+        marketValue: Value(marketValue),
+        keepsTripLog: Value(tripLog),
+        disposalInvoiceId: Value(saleInvoiceId),
+        disposalVatRate: Value(
+          chargesSaleVat ? saleRate ?? VatRate.high : null,
+        ),
+        disposalVatAmount: Value(
+          chargesSaleVat
+              ? taxRulesFor(sold.year)!.vatOn(
+                  saleRate ?? VatRate.high,
+                  PurchaseMath.share(proceeds ?? 0, share),
+                )
+              : null,
+        ),
+        notes: Value(
+          kind == AssetKind.car ? 'Fictieve auto voor de demo' : null,
+        ),
+      ),
+    );
+  }
 
   final macbook = await asset(
     'MacBook Pro',
@@ -454,6 +503,7 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     400000,
     DateTime(2024, 4, 1),
     residual: 40000,
+    enteredVat: 84000,
     deductionReceived: 112000,
     sold: DateTime(_year, 3, 31),
     proceeds: 380000,
@@ -471,19 +521,28 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     'Printer',
     60000,
     DateTime(2023, 1, 10),
-    sold: DateTime(_year, 2, 1),
+    enteredVat: 12600,
+    sold: DateTime(_year, 8, 14),
     proceeds: 5000,
+  );
+  await asset(
+    'Monitor',
+    40000,
+    DateTime(2025, 2, 3),
+    enteredVat: 8400,
+    sold: DateTime(_year, 9, 10),
+    proceeds: 15000,
+    saleInvoiceId: monitorSale,
   );
   final car = await asset(
     'Elektrische auto',
     3200000,
-    DateTime(_year, 4, 1),
+    DateTime(_year, 5, 4),
     residual: 800000,
     kind: AssetKind.car,
     catalogue: 3900000,
     registered: DateTime(2025, 3, 20),
     zeroEmission: ZeroEmission.battery,
-    vatOnPurchase: 672000,
   );
   final van = await asset(
     'Bestelauto',
@@ -494,7 +553,6 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     catalogue: 2600000,
     registered: DateTime(2022, 5, 1),
     tripLog: true,
-    vatOnPurchase: 378000,
   );
   await asset(
     'Klassieke auto',
@@ -556,7 +614,7 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
             ),
             businessUsePct: Value(use),
             deductibleAmount: Value(
-              ExpenseMath.deductible(
+              PurchaseMath.deductible(
                 amountExclVat: amount,
                 vatAmount: vat,
                 businessUsePct: use,
@@ -565,7 +623,7 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
             ),
             vatReclaimable: Value(reclaimed),
             vatToReclaim: Value(
-              ExpenseMath.vatToReclaim(
+              PurchaseMath.vatToReclaim(
                 vatAmount: vat,
                 businessUsePct: use,
                 vatReclaimable: reclaimed,
@@ -620,7 +678,7 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
           ? [('TV-$_year-$m.xml', _demoEInvoice('TV-$_year-$m'))]
           : const [],
     );
-    if (month >= 4) {
+    if (month >= 5) {
       await expense(
         DateTime(_year, month, 12),
         'Laadpaal Voorbeeld',

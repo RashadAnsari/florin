@@ -3308,6 +3308,64 @@ class $FixedAssetsTable extends FixedAssets
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  @override
+  late final GeneratedColumnWithTypeConverter<VatRate?, String> vatRate =
+      GeneratedColumn<String>(
+        'vat_rate',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      ).withConverter<VatRate?>($FixedAssetsTable.$convertervatRaten);
+  @override
+  late final GeneratedColumnWithTypeConverter<PurchaseVat, String> purchaseVat =
+      GeneratedColumn<String>(
+        'purchase_vat',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(PurchaseVat.domestic.name),
+      ).withConverter<PurchaseVat>($FixedAssetsTable.$converterpurchaseVat);
+  static const VerificationMeta _vatAmountMeta = const VerificationMeta(
+    'vatAmount',
+  );
+  @override
+  late final GeneratedColumn<int> vatAmount = GeneratedColumn<int>(
+    'vat_amount',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _vatReclaimableMeta = const VerificationMeta(
+    'vatReclaimable',
+  );
+  @override
+  late final GeneratedColumn<bool> vatReclaimable = GeneratedColumn<bool>(
+    'vat_reclaimable',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("vat_reclaimable" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _vatToReclaimMeta = const VerificationMeta(
+    'vatToReclaim',
+  );
+  @override
+  late final GeneratedColumn<int> vatToReclaim = GeneratedColumn<int>(
+    'vat_to_reclaim',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   static const VerificationMeta _residualValueMeta = const VerificationMeta(
     'residualValue',
   );
@@ -3488,17 +3546,6 @@ class $FixedAssetsTable extends FixedAssets
     ),
     defaultValue: const Constant(false),
   );
-  static const VerificationMeta _vatDeductedOnPurchaseMeta =
-      const VerificationMeta('vatDeductedOnPurchase');
-  @override
-  late final GeneratedColumn<int> vatDeductedOnPurchase = GeneratedColumn<int>(
-    'vat_deducted_on_purchase',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
-  );
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   @override
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
@@ -3530,12 +3577,51 @@ class $FixedAssetsTable extends FixedAssets
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _disposalInvoiceIdMeta = const VerificationMeta(
+    'disposalInvoiceId',
+  );
+  @override
+  late final GeneratedColumn<int> disposalInvoiceId = GeneratedColumn<int>(
+    'disposal_invoice_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES invoices (id) ON DELETE RESTRICT',
+    ),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<VatRate?, String>
+  disposalVatRate = GeneratedColumn<String>(
+    'disposal_vat_rate',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  ).withConverter<VatRate?>($FixedAssetsTable.$converterdisposalVatRaten);
+  static const VerificationMeta _disposalVatAmountMeta = const VerificationMeta(
+    'disposalVatAmount',
+  );
+  @override
+  late final GeneratedColumn<int> disposalVatAmount = GeneratedColumn<int>(
+    'disposal_vat_amount',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
     kind,
     assetName,
     costExclVat,
+    vatRate,
+    purchaseVat,
+    vatAmount,
+    vatReclaimable,
+    vatToReclaim,
     residualValue,
     purchaseDate,
     businessUsePct,
@@ -3551,10 +3637,12 @@ class $FixedAssetsTable extends FixedAssets
     zeroEmission,
     marketValue,
     keepsTripLog,
-    vatDeductedOnPurchase,
     notes,
     disposalDate,
     disposalProceeds,
+    disposalInvoiceId,
+    disposalVatRate,
+    disposalVatAmount,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3589,6 +3677,30 @@ class $FixedAssetsTable extends FixedAssets
       );
     } else if (isInserting) {
       context.missing(_costExclVatMeta);
+    }
+    if (data.containsKey('vat_amount')) {
+      context.handle(
+        _vatAmountMeta,
+        vatAmount.isAcceptableOrUnknown(data['vat_amount']!, _vatAmountMeta),
+      );
+    }
+    if (data.containsKey('vat_reclaimable')) {
+      context.handle(
+        _vatReclaimableMeta,
+        vatReclaimable.isAcceptableOrUnknown(
+          data['vat_reclaimable']!,
+          _vatReclaimableMeta,
+        ),
+      );
+    }
+    if (data.containsKey('vat_to_reclaim')) {
+      context.handle(
+        _vatToReclaimMeta,
+        vatToReclaim.isAcceptableOrUnknown(
+          data['vat_to_reclaim']!,
+          _vatToReclaimMeta,
+        ),
+      );
     }
     if (data.containsKey('residual_value')) {
       context.handle(
@@ -3715,15 +3827,6 @@ class $FixedAssetsTable extends FixedAssets
         ),
       );
     }
-    if (data.containsKey('vat_deducted_on_purchase')) {
-      context.handle(
-        _vatDeductedOnPurchaseMeta,
-        vatDeductedOnPurchase.isAcceptableOrUnknown(
-          data['vat_deducted_on_purchase']!,
-          _vatDeductedOnPurchaseMeta,
-        ),
-      );
-    }
     if (data.containsKey('notes')) {
       context.handle(
         _notesMeta,
@@ -3745,6 +3848,24 @@ class $FixedAssetsTable extends FixedAssets
         disposalProceeds.isAcceptableOrUnknown(
           data['disposal_proceeds']!,
           _disposalProceedsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('disposal_invoice_id')) {
+      context.handle(
+        _disposalInvoiceIdMeta,
+        disposalInvoiceId.isAcceptableOrUnknown(
+          data['disposal_invoice_id']!,
+          _disposalInvoiceIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('disposal_vat_amount')) {
+      context.handle(
+        _disposalVatAmountMeta,
+        disposalVatAmount.isAcceptableOrUnknown(
+          data['disposal_vat_amount']!,
+          _disposalVatAmountMeta,
         ),
       );
     }
@@ -3774,6 +3895,30 @@ class $FixedAssetsTable extends FixedAssets
       costExclVat: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}cost_excl_vat'],
+      )!,
+      vatRate: $FixedAssetsTable.$convertervatRaten.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}vat_rate'],
+        ),
+      ),
+      purchaseVat: $FixedAssetsTable.$converterpurchaseVat.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}purchase_vat'],
+        )!,
+      ),
+      vatAmount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}vat_amount'],
+      )!,
+      vatReclaimable: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}vat_reclaimable'],
+      )!,
+      vatToReclaim: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}vat_to_reclaim'],
       )!,
       residualValue: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -3839,10 +3984,6 @@ class $FixedAssetsTable extends FixedAssets
         DriftSqlType.bool,
         data['${effectivePrefix}keeps_trip_log'],
       )!,
-      vatDeductedOnPurchase: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}vat_deducted_on_purchase'],
-      )!,
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
@@ -3855,6 +3996,20 @@ class $FixedAssetsTable extends FixedAssets
         DriftSqlType.int,
         data['${effectivePrefix}disposal_proceeds'],
       ),
+      disposalInvoiceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}disposal_invoice_id'],
+      ),
+      disposalVatRate: $FixedAssetsTable.$converterdisposalVatRaten.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}disposal_vat_rate'],
+        ),
+      ),
+      disposalVatAmount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}disposal_vat_amount'],
+      ),
     );
   }
 
@@ -3865,6 +4020,12 @@ class $FixedAssetsTable extends FixedAssets
 
   static JsonTypeConverter2<AssetKind, String, String> $converterkind =
       const EnumNameConverter<AssetKind>(AssetKind.values);
+  static JsonTypeConverter2<VatRate, String, String> $convertervatRate =
+      const EnumNameConverter<VatRate>(VatRate.values);
+  static JsonTypeConverter2<VatRate?, String?, String?> $convertervatRaten =
+      JsonTypeConverter2.asNullable($convertervatRate);
+  static JsonTypeConverter2<PurchaseVat, String, String> $converterpurchaseVat =
+      const EnumNameConverter<PurchaseVat>(PurchaseVat.values);
   static JsonTypeConverter2<MiaCategory, String, String> $convertermiaCategory =
       const EnumNameConverter<MiaCategory>(MiaCategory.values);
   static JsonTypeConverter2<MiaCategory?, String?, String?>
@@ -3873,6 +4034,12 @@ class $FixedAssetsTable extends FixedAssets
   $converterzeroEmission = const EnumNameConverter<ZeroEmission>(
     ZeroEmission.values,
   );
+  static JsonTypeConverter2<VatRate, String, String> $converterdisposalVatRate =
+      const EnumNameConverter<VatRate>(VatRate.values);
+  static JsonTypeConverter2<VatRate?, String?, String?>
+  $converterdisposalVatRaten = JsonTypeConverter2.asNullable(
+    $converterdisposalVatRate,
+  );
 }
 
 class FixedAsset extends DataClass implements Insertable<FixedAsset> {
@@ -3880,6 +4047,11 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
   final AssetKind kind;
   final String assetName;
   final int costExclVat;
+  final VatRate? vatRate;
+  final PurchaseVat purchaseVat;
+  final int vatAmount;
+  final bool vatReclaimable;
+  final int vatToReclaim;
 
   /// Depreciation stops at this value.
   final int residualValue;
@@ -3904,15 +4076,27 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
   final ZeroEmission zeroEmission;
   final int? marketValue;
   final bool keepsTripLog;
-  final int vatDeductedOnPurchase;
   final String? notes;
   final DateTime? disposalDate;
   final int? disposalProceeds;
+
+  /// The issued invoice for the sale, which then carries its BTW.
+  final int? disposalInvoiceId;
+
+  /// BTW on a sale or withdrawal without an invoice in Florin, over the
+  /// business share of the proceeds.
+  final VatRate? disposalVatRate;
+  final int? disposalVatAmount;
   const FixedAsset({
     required this.id,
     required this.kind,
     required this.assetName,
     required this.costExclVat,
+    this.vatRate,
+    required this.purchaseVat,
+    required this.vatAmount,
+    required this.vatReclaimable,
+    required this.vatToReclaim,
     required this.residualValue,
     required this.purchaseDate,
     required this.businessUsePct,
@@ -3928,10 +4112,12 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
     required this.zeroEmission,
     this.marketValue,
     required this.keepsTripLog,
-    required this.vatDeductedOnPurchase,
     this.notes,
     this.disposalDate,
     this.disposalProceeds,
+    this.disposalInvoiceId,
+    this.disposalVatRate,
+    this.disposalVatAmount,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3944,6 +4130,19 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
     }
     map['asset_name'] = Variable<String>(assetName);
     map['cost_excl_vat'] = Variable<int>(costExclVat);
+    if (!nullToAbsent || vatRate != null) {
+      map['vat_rate'] = Variable<String>(
+        $FixedAssetsTable.$convertervatRaten.toSql(vatRate),
+      );
+    }
+    {
+      map['purchase_vat'] = Variable<String>(
+        $FixedAssetsTable.$converterpurchaseVat.toSql(purchaseVat),
+      );
+    }
+    map['vat_amount'] = Variable<int>(vatAmount);
+    map['vat_reclaimable'] = Variable<bool>(vatReclaimable);
+    map['vat_to_reclaim'] = Variable<int>(vatToReclaim);
     map['residual_value'] = Variable<int>(residualValue);
     map['purchase_date'] = Variable<DateTime>(purchaseDate);
     map['business_use_pct'] = Variable<double>(businessUsePct);
@@ -3979,7 +4178,6 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
       map['market_value'] = Variable<int>(marketValue);
     }
     map['keeps_trip_log'] = Variable<bool>(keepsTripLog);
-    map['vat_deducted_on_purchase'] = Variable<int>(vatDeductedOnPurchase);
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
@@ -3988,6 +4186,17 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
     }
     if (!nullToAbsent || disposalProceeds != null) {
       map['disposal_proceeds'] = Variable<int>(disposalProceeds);
+    }
+    if (!nullToAbsent || disposalInvoiceId != null) {
+      map['disposal_invoice_id'] = Variable<int>(disposalInvoiceId);
+    }
+    if (!nullToAbsent || disposalVatRate != null) {
+      map['disposal_vat_rate'] = Variable<String>(
+        $FixedAssetsTable.$converterdisposalVatRaten.toSql(disposalVatRate),
+      );
+    }
+    if (!nullToAbsent || disposalVatAmount != null) {
+      map['disposal_vat_amount'] = Variable<int>(disposalVatAmount);
     }
     return map;
   }
@@ -3998,6 +4207,13 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
       kind: Value(kind),
       assetName: Value(assetName),
       costExclVat: Value(costExclVat),
+      vatRate: vatRate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(vatRate),
+      purchaseVat: Value(purchaseVat),
+      vatAmount: Value(vatAmount),
+      vatReclaimable: Value(vatReclaimable),
+      vatToReclaim: Value(vatToReclaim),
       residualValue: Value(residualValue),
       purchaseDate: Value(purchaseDate),
       businessUsePct: Value(businessUsePct),
@@ -4024,7 +4240,6 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
           ? const Value.absent()
           : Value(marketValue),
       keepsTripLog: Value(keepsTripLog),
-      vatDeductedOnPurchase: Value(vatDeductedOnPurchase),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
@@ -4034,6 +4249,15 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
       disposalProceeds: disposalProceeds == null && nullToAbsent
           ? const Value.absent()
           : Value(disposalProceeds),
+      disposalInvoiceId: disposalInvoiceId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(disposalInvoiceId),
+      disposalVatRate: disposalVatRate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(disposalVatRate),
+      disposalVatAmount: disposalVatAmount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(disposalVatAmount),
     );
   }
 
@@ -4049,6 +4273,15 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
       ),
       assetName: serializer.fromJson<String>(json['assetName']),
       costExclVat: serializer.fromJson<int>(json['costExclVat']),
+      vatRate: $FixedAssetsTable.$convertervatRaten.fromJson(
+        serializer.fromJson<String?>(json['vatRate']),
+      ),
+      purchaseVat: $FixedAssetsTable.$converterpurchaseVat.fromJson(
+        serializer.fromJson<String>(json['purchaseVat']),
+      ),
+      vatAmount: serializer.fromJson<int>(json['vatAmount']),
+      vatReclaimable: serializer.fromJson<bool>(json['vatReclaimable']),
+      vatToReclaim: serializer.fromJson<int>(json['vatToReclaim']),
       residualValue: serializer.fromJson<int>(json['residualValue']),
       purchaseDate: serializer.fromJson<DateTime>(json['purchaseDate']),
       businessUsePct: serializer.fromJson<double>(json['businessUsePct']),
@@ -4074,12 +4307,14 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
       ),
       marketValue: serializer.fromJson<int?>(json['marketValue']),
       keepsTripLog: serializer.fromJson<bool>(json['keepsTripLog']),
-      vatDeductedOnPurchase: serializer.fromJson<int>(
-        json['vatDeductedOnPurchase'],
-      ),
       notes: serializer.fromJson<String?>(json['notes']),
       disposalDate: serializer.fromJson<DateTime?>(json['disposalDate']),
       disposalProceeds: serializer.fromJson<int?>(json['disposalProceeds']),
+      disposalInvoiceId: serializer.fromJson<int?>(json['disposalInvoiceId']),
+      disposalVatRate: $FixedAssetsTable.$converterdisposalVatRaten.fromJson(
+        serializer.fromJson<String?>(json['disposalVatRate']),
+      ),
+      disposalVatAmount: serializer.fromJson<int?>(json['disposalVatAmount']),
     );
   }
   @override
@@ -4092,6 +4327,15 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
       ),
       'assetName': serializer.toJson<String>(assetName),
       'costExclVat': serializer.toJson<int>(costExclVat),
+      'vatRate': serializer.toJson<String?>(
+        $FixedAssetsTable.$convertervatRaten.toJson(vatRate),
+      ),
+      'purchaseVat': serializer.toJson<String>(
+        $FixedAssetsTable.$converterpurchaseVat.toJson(purchaseVat),
+      ),
+      'vatAmount': serializer.toJson<int>(vatAmount),
+      'vatReclaimable': serializer.toJson<bool>(vatReclaimable),
+      'vatToReclaim': serializer.toJson<int>(vatToReclaim),
       'residualValue': serializer.toJson<int>(residualValue),
       'purchaseDate': serializer.toJson<DateTime>(purchaseDate),
       'businessUsePct': serializer.toJson<double>(businessUsePct),
@@ -4115,10 +4359,14 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
       ),
       'marketValue': serializer.toJson<int?>(marketValue),
       'keepsTripLog': serializer.toJson<bool>(keepsTripLog),
-      'vatDeductedOnPurchase': serializer.toJson<int>(vatDeductedOnPurchase),
       'notes': serializer.toJson<String?>(notes),
       'disposalDate': serializer.toJson<DateTime?>(disposalDate),
       'disposalProceeds': serializer.toJson<int?>(disposalProceeds),
+      'disposalInvoiceId': serializer.toJson<int?>(disposalInvoiceId),
+      'disposalVatRate': serializer.toJson<String?>(
+        $FixedAssetsTable.$converterdisposalVatRaten.toJson(disposalVatRate),
+      ),
+      'disposalVatAmount': serializer.toJson<int?>(disposalVatAmount),
     };
   }
 
@@ -4127,6 +4375,11 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
     AssetKind? kind,
     String? assetName,
     int? costExclVat,
+    Value<VatRate?> vatRate = const Value.absent(),
+    PurchaseVat? purchaseVat,
+    int? vatAmount,
+    bool? vatReclaimable,
+    int? vatToReclaim,
     int? residualValue,
     DateTime? purchaseDate,
     double? businessUsePct,
@@ -4142,15 +4395,22 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
     ZeroEmission? zeroEmission,
     Value<int?> marketValue = const Value.absent(),
     bool? keepsTripLog,
-    int? vatDeductedOnPurchase,
     Value<String?> notes = const Value.absent(),
     Value<DateTime?> disposalDate = const Value.absent(),
     Value<int?> disposalProceeds = const Value.absent(),
+    Value<int?> disposalInvoiceId = const Value.absent(),
+    Value<VatRate?> disposalVatRate = const Value.absent(),
+    Value<int?> disposalVatAmount = const Value.absent(),
   }) => FixedAsset(
     id: id ?? this.id,
     kind: kind ?? this.kind,
     assetName: assetName ?? this.assetName,
     costExclVat: costExclVat ?? this.costExclVat,
+    vatRate: vatRate.present ? vatRate.value : this.vatRate,
+    purchaseVat: purchaseVat ?? this.purchaseVat,
+    vatAmount: vatAmount ?? this.vatAmount,
+    vatReclaimable: vatReclaimable ?? this.vatReclaimable,
+    vatToReclaim: vatToReclaim ?? this.vatToReclaim,
     residualValue: residualValue ?? this.residualValue,
     purchaseDate: purchaseDate ?? this.purchaseDate,
     businessUsePct: businessUsePct ?? this.businessUsePct,
@@ -4173,12 +4433,20 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
     zeroEmission: zeroEmission ?? this.zeroEmission,
     marketValue: marketValue.present ? marketValue.value : this.marketValue,
     keepsTripLog: keepsTripLog ?? this.keepsTripLog,
-    vatDeductedOnPurchase: vatDeductedOnPurchase ?? this.vatDeductedOnPurchase,
     notes: notes.present ? notes.value : this.notes,
     disposalDate: disposalDate.present ? disposalDate.value : this.disposalDate,
     disposalProceeds: disposalProceeds.present
         ? disposalProceeds.value
         : this.disposalProceeds,
+    disposalInvoiceId: disposalInvoiceId.present
+        ? disposalInvoiceId.value
+        : this.disposalInvoiceId,
+    disposalVatRate: disposalVatRate.present
+        ? disposalVatRate.value
+        : this.disposalVatRate,
+    disposalVatAmount: disposalVatAmount.present
+        ? disposalVatAmount.value
+        : this.disposalVatAmount,
   );
   FixedAsset copyWithCompanion(FixedAssetsCompanion data) {
     return FixedAsset(
@@ -4188,6 +4456,17 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
       costExclVat: data.costExclVat.present
           ? data.costExclVat.value
           : this.costExclVat,
+      vatRate: data.vatRate.present ? data.vatRate.value : this.vatRate,
+      purchaseVat: data.purchaseVat.present
+          ? data.purchaseVat.value
+          : this.purchaseVat,
+      vatAmount: data.vatAmount.present ? data.vatAmount.value : this.vatAmount,
+      vatReclaimable: data.vatReclaimable.present
+          ? data.vatReclaimable.value
+          : this.vatReclaimable,
+      vatToReclaim: data.vatToReclaim.present
+          ? data.vatToReclaim.value
+          : this.vatToReclaim,
       residualValue: data.residualValue.present
           ? data.residualValue.value
           : this.residualValue,
@@ -4233,9 +4512,6 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
       keepsTripLog: data.keepsTripLog.present
           ? data.keepsTripLog.value
           : this.keepsTripLog,
-      vatDeductedOnPurchase: data.vatDeductedOnPurchase.present
-          ? data.vatDeductedOnPurchase.value
-          : this.vatDeductedOnPurchase,
       notes: data.notes.present ? data.notes.value : this.notes,
       disposalDate: data.disposalDate.present
           ? data.disposalDate.value
@@ -4243,6 +4519,15 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
       disposalProceeds: data.disposalProceeds.present
           ? data.disposalProceeds.value
           : this.disposalProceeds,
+      disposalInvoiceId: data.disposalInvoiceId.present
+          ? data.disposalInvoiceId.value
+          : this.disposalInvoiceId,
+      disposalVatRate: data.disposalVatRate.present
+          ? data.disposalVatRate.value
+          : this.disposalVatRate,
+      disposalVatAmount: data.disposalVatAmount.present
+          ? data.disposalVatAmount.value
+          : this.disposalVatAmount,
     );
   }
 
@@ -4253,6 +4538,11 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
           ..write('kind: $kind, ')
           ..write('assetName: $assetName, ')
           ..write('costExclVat: $costExclVat, ')
+          ..write('vatRate: $vatRate, ')
+          ..write('purchaseVat: $purchaseVat, ')
+          ..write('vatAmount: $vatAmount, ')
+          ..write('vatReclaimable: $vatReclaimable, ')
+          ..write('vatToReclaim: $vatToReclaim, ')
           ..write('residualValue: $residualValue, ')
           ..write('purchaseDate: $purchaseDate, ')
           ..write('businessUsePct: $businessUsePct, ')
@@ -4268,10 +4558,12 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
           ..write('zeroEmission: $zeroEmission, ')
           ..write('marketValue: $marketValue, ')
           ..write('keepsTripLog: $keepsTripLog, ')
-          ..write('vatDeductedOnPurchase: $vatDeductedOnPurchase, ')
           ..write('notes: $notes, ')
           ..write('disposalDate: $disposalDate, ')
-          ..write('disposalProceeds: $disposalProceeds')
+          ..write('disposalProceeds: $disposalProceeds, ')
+          ..write('disposalInvoiceId: $disposalInvoiceId, ')
+          ..write('disposalVatRate: $disposalVatRate, ')
+          ..write('disposalVatAmount: $disposalVatAmount')
           ..write(')'))
         .toString();
   }
@@ -4282,6 +4574,11 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
     kind,
     assetName,
     costExclVat,
+    vatRate,
+    purchaseVat,
+    vatAmount,
+    vatReclaimable,
+    vatToReclaim,
     residualValue,
     purchaseDate,
     businessUsePct,
@@ -4297,10 +4594,12 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
     zeroEmission,
     marketValue,
     keepsTripLog,
-    vatDeductedOnPurchase,
     notes,
     disposalDate,
     disposalProceeds,
+    disposalInvoiceId,
+    disposalVatRate,
+    disposalVatAmount,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -4310,6 +4609,11 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
           other.kind == this.kind &&
           other.assetName == this.assetName &&
           other.costExclVat == this.costExclVat &&
+          other.vatRate == this.vatRate &&
+          other.purchaseVat == this.purchaseVat &&
+          other.vatAmount == this.vatAmount &&
+          other.vatReclaimable == this.vatReclaimable &&
+          other.vatToReclaim == this.vatToReclaim &&
           other.residualValue == this.residualValue &&
           other.purchaseDate == this.purchaseDate &&
           other.businessUsePct == this.businessUsePct &&
@@ -4326,10 +4630,12 @@ class FixedAsset extends DataClass implements Insertable<FixedAsset> {
           other.zeroEmission == this.zeroEmission &&
           other.marketValue == this.marketValue &&
           other.keepsTripLog == this.keepsTripLog &&
-          other.vatDeductedOnPurchase == this.vatDeductedOnPurchase &&
           other.notes == this.notes &&
           other.disposalDate == this.disposalDate &&
-          other.disposalProceeds == this.disposalProceeds);
+          other.disposalProceeds == this.disposalProceeds &&
+          other.disposalInvoiceId == this.disposalInvoiceId &&
+          other.disposalVatRate == this.disposalVatRate &&
+          other.disposalVatAmount == this.disposalVatAmount);
 }
 
 class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
@@ -4337,6 +4643,11 @@ class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
   final Value<AssetKind> kind;
   final Value<String> assetName;
   final Value<int> costExclVat;
+  final Value<VatRate?> vatRate;
+  final Value<PurchaseVat> purchaseVat;
+  final Value<int> vatAmount;
+  final Value<bool> vatReclaimable;
+  final Value<int> vatToReclaim;
   final Value<int> residualValue;
   final Value<DateTime> purchaseDate;
   final Value<double> businessUsePct;
@@ -4352,15 +4663,22 @@ class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
   final Value<ZeroEmission> zeroEmission;
   final Value<int?> marketValue;
   final Value<bool> keepsTripLog;
-  final Value<int> vatDeductedOnPurchase;
   final Value<String?> notes;
   final Value<DateTime?> disposalDate;
   final Value<int?> disposalProceeds;
+  final Value<int?> disposalInvoiceId;
+  final Value<VatRate?> disposalVatRate;
+  final Value<int?> disposalVatAmount;
   const FixedAssetsCompanion({
     this.id = const Value.absent(),
     this.kind = const Value.absent(),
     this.assetName = const Value.absent(),
     this.costExclVat = const Value.absent(),
+    this.vatRate = const Value.absent(),
+    this.purchaseVat = const Value.absent(),
+    this.vatAmount = const Value.absent(),
+    this.vatReclaimable = const Value.absent(),
+    this.vatToReclaim = const Value.absent(),
     this.residualValue = const Value.absent(),
     this.purchaseDate = const Value.absent(),
     this.businessUsePct = const Value.absent(),
@@ -4376,16 +4694,23 @@ class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
     this.zeroEmission = const Value.absent(),
     this.marketValue = const Value.absent(),
     this.keepsTripLog = const Value.absent(),
-    this.vatDeductedOnPurchase = const Value.absent(),
     this.notes = const Value.absent(),
     this.disposalDate = const Value.absent(),
     this.disposalProceeds = const Value.absent(),
+    this.disposalInvoiceId = const Value.absent(),
+    this.disposalVatRate = const Value.absent(),
+    this.disposalVatAmount = const Value.absent(),
   });
   FixedAssetsCompanion.insert({
     this.id = const Value.absent(),
     this.kind = const Value.absent(),
     required String assetName,
     required int costExclVat,
+    this.vatRate = const Value.absent(),
+    this.purchaseVat = const Value.absent(),
+    this.vatAmount = const Value.absent(),
+    this.vatReclaimable = const Value.absent(),
+    this.vatToReclaim = const Value.absent(),
     required int residualValue,
     required DateTime purchaseDate,
     required double businessUsePct,
@@ -4401,10 +4726,12 @@ class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
     this.zeroEmission = const Value.absent(),
     this.marketValue = const Value.absent(),
     this.keepsTripLog = const Value.absent(),
-    this.vatDeductedOnPurchase = const Value.absent(),
     this.notes = const Value.absent(),
     this.disposalDate = const Value.absent(),
     this.disposalProceeds = const Value.absent(),
+    this.disposalInvoiceId = const Value.absent(),
+    this.disposalVatRate = const Value.absent(),
+    this.disposalVatAmount = const Value.absent(),
   }) : assetName = Value(assetName),
        costExclVat = Value(costExclVat),
        residualValue = Value(residualValue),
@@ -4416,6 +4743,11 @@ class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
     Expression<String>? kind,
     Expression<String>? assetName,
     Expression<int>? costExclVat,
+    Expression<String>? vatRate,
+    Expression<String>? purchaseVat,
+    Expression<int>? vatAmount,
+    Expression<bool>? vatReclaimable,
+    Expression<int>? vatToReclaim,
     Expression<int>? residualValue,
     Expression<DateTime>? purchaseDate,
     Expression<double>? businessUsePct,
@@ -4431,16 +4763,23 @@ class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
     Expression<String>? zeroEmission,
     Expression<int>? marketValue,
     Expression<bool>? keepsTripLog,
-    Expression<int>? vatDeductedOnPurchase,
     Expression<String>? notes,
     Expression<DateTime>? disposalDate,
     Expression<int>? disposalProceeds,
+    Expression<int>? disposalInvoiceId,
+    Expression<String>? disposalVatRate,
+    Expression<int>? disposalVatAmount,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (kind != null) 'kind': kind,
       if (assetName != null) 'asset_name': assetName,
       if (costExclVat != null) 'cost_excl_vat': costExclVat,
+      if (vatRate != null) 'vat_rate': vatRate,
+      if (purchaseVat != null) 'purchase_vat': purchaseVat,
+      if (vatAmount != null) 'vat_amount': vatAmount,
+      if (vatReclaimable != null) 'vat_reclaimable': vatReclaimable,
+      if (vatToReclaim != null) 'vat_to_reclaim': vatToReclaim,
       if (residualValue != null) 'residual_value': residualValue,
       if (purchaseDate != null) 'purchase_date': purchaseDate,
       if (businessUsePct != null) 'business_use_pct': businessUsePct,
@@ -4458,11 +4797,12 @@ class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
       if (zeroEmission != null) 'zero_emission': zeroEmission,
       if (marketValue != null) 'market_value': marketValue,
       if (keepsTripLog != null) 'keeps_trip_log': keepsTripLog,
-      if (vatDeductedOnPurchase != null)
-        'vat_deducted_on_purchase': vatDeductedOnPurchase,
       if (notes != null) 'notes': notes,
       if (disposalDate != null) 'disposal_date': disposalDate,
       if (disposalProceeds != null) 'disposal_proceeds': disposalProceeds,
+      if (disposalInvoiceId != null) 'disposal_invoice_id': disposalInvoiceId,
+      if (disposalVatRate != null) 'disposal_vat_rate': disposalVatRate,
+      if (disposalVatAmount != null) 'disposal_vat_amount': disposalVatAmount,
     });
   }
 
@@ -4471,6 +4811,11 @@ class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
     Value<AssetKind>? kind,
     Value<String>? assetName,
     Value<int>? costExclVat,
+    Value<VatRate?>? vatRate,
+    Value<PurchaseVat>? purchaseVat,
+    Value<int>? vatAmount,
+    Value<bool>? vatReclaimable,
+    Value<int>? vatToReclaim,
     Value<int>? residualValue,
     Value<DateTime>? purchaseDate,
     Value<double>? businessUsePct,
@@ -4486,16 +4831,23 @@ class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
     Value<ZeroEmission>? zeroEmission,
     Value<int?>? marketValue,
     Value<bool>? keepsTripLog,
-    Value<int>? vatDeductedOnPurchase,
     Value<String?>? notes,
     Value<DateTime?>? disposalDate,
     Value<int?>? disposalProceeds,
+    Value<int?>? disposalInvoiceId,
+    Value<VatRate?>? disposalVatRate,
+    Value<int?>? disposalVatAmount,
   }) {
     return FixedAssetsCompanion(
       id: id ?? this.id,
       kind: kind ?? this.kind,
       assetName: assetName ?? this.assetName,
       costExclVat: costExclVat ?? this.costExclVat,
+      vatRate: vatRate ?? this.vatRate,
+      purchaseVat: purchaseVat ?? this.purchaseVat,
+      vatAmount: vatAmount ?? this.vatAmount,
+      vatReclaimable: vatReclaimable ?? this.vatReclaimable,
+      vatToReclaim: vatToReclaim ?? this.vatToReclaim,
       residualValue: residualValue ?? this.residualValue,
       purchaseDate: purchaseDate ?? this.purchaseDate,
       businessUsePct: businessUsePct ?? this.businessUsePct,
@@ -4513,11 +4865,12 @@ class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
       zeroEmission: zeroEmission ?? this.zeroEmission,
       marketValue: marketValue ?? this.marketValue,
       keepsTripLog: keepsTripLog ?? this.keepsTripLog,
-      vatDeductedOnPurchase:
-          vatDeductedOnPurchase ?? this.vatDeductedOnPurchase,
       notes: notes ?? this.notes,
       disposalDate: disposalDate ?? this.disposalDate,
       disposalProceeds: disposalProceeds ?? this.disposalProceeds,
+      disposalInvoiceId: disposalInvoiceId ?? this.disposalInvoiceId,
+      disposalVatRate: disposalVatRate ?? this.disposalVatRate,
+      disposalVatAmount: disposalVatAmount ?? this.disposalVatAmount,
     );
   }
 
@@ -4537,6 +4890,25 @@ class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
     }
     if (costExclVat.present) {
       map['cost_excl_vat'] = Variable<int>(costExclVat.value);
+    }
+    if (vatRate.present) {
+      map['vat_rate'] = Variable<String>(
+        $FixedAssetsTable.$convertervatRaten.toSql(vatRate.value),
+      );
+    }
+    if (purchaseVat.present) {
+      map['purchase_vat'] = Variable<String>(
+        $FixedAssetsTable.$converterpurchaseVat.toSql(purchaseVat.value),
+      );
+    }
+    if (vatAmount.present) {
+      map['vat_amount'] = Variable<int>(vatAmount.value);
+    }
+    if (vatReclaimable.present) {
+      map['vat_reclaimable'] = Variable<bool>(vatReclaimable.value);
+    }
+    if (vatToReclaim.present) {
+      map['vat_to_reclaim'] = Variable<int>(vatToReclaim.value);
     }
     if (residualValue.present) {
       map['residual_value'] = Variable<int>(residualValue.value);
@@ -4591,11 +4963,6 @@ class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
     if (keepsTripLog.present) {
       map['keeps_trip_log'] = Variable<bool>(keepsTripLog.value);
     }
-    if (vatDeductedOnPurchase.present) {
-      map['vat_deducted_on_purchase'] = Variable<int>(
-        vatDeductedOnPurchase.value,
-      );
-    }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
@@ -4604,6 +4971,19 @@ class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
     }
     if (disposalProceeds.present) {
       map['disposal_proceeds'] = Variable<int>(disposalProceeds.value);
+    }
+    if (disposalInvoiceId.present) {
+      map['disposal_invoice_id'] = Variable<int>(disposalInvoiceId.value);
+    }
+    if (disposalVatRate.present) {
+      map['disposal_vat_rate'] = Variable<String>(
+        $FixedAssetsTable.$converterdisposalVatRaten.toSql(
+          disposalVatRate.value,
+        ),
+      );
+    }
+    if (disposalVatAmount.present) {
+      map['disposal_vat_amount'] = Variable<int>(disposalVatAmount.value);
     }
     return map;
   }
@@ -4615,6 +4995,11 @@ class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
           ..write('kind: $kind, ')
           ..write('assetName: $assetName, ')
           ..write('costExclVat: $costExclVat, ')
+          ..write('vatRate: $vatRate, ')
+          ..write('purchaseVat: $purchaseVat, ')
+          ..write('vatAmount: $vatAmount, ')
+          ..write('vatReclaimable: $vatReclaimable, ')
+          ..write('vatToReclaim: $vatToReclaim, ')
           ..write('residualValue: $residualValue, ')
           ..write('purchaseDate: $purchaseDate, ')
           ..write('businessUsePct: $businessUsePct, ')
@@ -4630,10 +5015,12 @@ class FixedAssetsCompanion extends UpdateCompanion<FixedAsset> {
           ..write('zeroEmission: $zeroEmission, ')
           ..write('marketValue: $marketValue, ')
           ..write('keepsTripLog: $keepsTripLog, ')
-          ..write('vatDeductedOnPurchase: $vatDeductedOnPurchase, ')
           ..write('notes: $notes, ')
           ..write('disposalDate: $disposalDate, ')
-          ..write('disposalProceeds: $disposalProceeds')
+          ..write('disposalProceeds: $disposalProceeds, ')
+          ..write('disposalInvoiceId: $disposalInvoiceId, ')
+          ..write('disposalVatRate: $disposalVatRate, ')
+          ..write('disposalVatAmount: $disposalVatAmount')
           ..write(')'))
         .toString();
   }
@@ -10294,6 +10681,24 @@ final class $$InvoicesTableReferences
     );
   }
 
+  static MultiTypedResultKey<$FixedAssetsTable, List<FixedAsset>>
+  _fixedAssetsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.fixedAssets,
+    aliasName: 'invoices__id__fixed_assets__disposal_invoice_id',
+  );
+
+  $$FixedAssetsTableProcessedTableManager get fixedAssetsRefs {
+    final manager = $$FixedAssetsTableTableManager(
+      $_db,
+      $_db.fixedAssets,
+    ).filter((f) => f.disposalInvoiceId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_fixedAssetsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
   static MultiTypedResultKey<$ReceiptsTable, List<Receipt>> _receiptsRefsTable(
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
@@ -10483,6 +10888,31 @@ class $$InvoicesTableFilterComposer
           }) => $$InvoiceLinesTableFilterComposer(
             $db: $db,
             $table: $db.invoiceLines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> fixedAssetsRefs(
+    Expression<bool> Function($$FixedAssetsTableFilterComposer f) f,
+  ) {
+    final $$FixedAssetsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.fixedAssets,
+      getReferencedColumn: (t) => t.disposalInvoiceId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FixedAssetsTableFilterComposer(
+            $db: $db,
+            $table: $db.fixedAssets,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -10836,6 +11266,31 @@ class $$InvoicesTableAnnotationComposer
     return f(composer);
   }
 
+  Expression<T> fixedAssetsRefs<T extends Object>(
+    Expression<T> Function($$FixedAssetsTableAnnotationComposer a) f,
+  ) {
+    final $$FixedAssetsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.fixedAssets,
+      getReferencedColumn: (t) => t.disposalInvoiceId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FixedAssetsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.fixedAssets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
   Expression<T> receiptsRefs<T extends Object>(
     Expression<T> Function($$ReceiptsTableAnnotationComposer a) f,
   ) {
@@ -10879,6 +11334,7 @@ class $$InvoicesTableTableManager
             bool correctedInvoiceId,
             bool clientId,
             bool invoiceLinesRefs,
+            bool fixedAssetsRefs,
             bool receiptsRefs,
           })
         > {
@@ -10998,12 +11454,14 @@ class $$InvoicesTableTableManager
                 correctedInvoiceId = false,
                 clientId = false,
                 invoiceLinesRefs = false,
+                fixedAssetsRefs = false,
                 receiptsRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (invoiceLinesRefs) db.invoiceLines,
+                    if (fixedAssetsRefs) db.fixedAssets,
                     if (receiptsRefs) db.receipts,
                   ],
                   addJoins:
@@ -11073,6 +11531,26 @@ class $$InvoicesTableTableManager
                           referencedColumn: 'invoice_id',
                           typedResults: items,
                         ),
+                      if (fixedAssetsRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Invoice,
+                          $InvoicesTable,
+                          FixedAsset,
+                          $FixedAssetsTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$InvoicesTableReferences
+                              ._fixedAssetsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$InvoicesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).fixedAssetsRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'disposal_invoice_id',
+                          typedResults: items,
+                        ),
                       if (receiptsRefs)
                         await $_getPrefetchedDataByColumns<
                           Invoice,
@@ -11117,6 +11595,7 @@ typedef $$InvoicesTableProcessedTableManager =
         bool correctedInvoiceId,
         bool clientId,
         bool invoiceLinesRefs,
+        bool fixedAssetsRefs,
         bool receiptsRefs,
       })
     >;
@@ -11539,6 +12018,11 @@ typedef $$FixedAssetsTableCreateCompanionBuilder =
       Value<AssetKind> kind,
       required String assetName,
       required int costExclVat,
+      Value<VatRate?> vatRate,
+      Value<PurchaseVat> purchaseVat,
+      Value<int> vatAmount,
+      Value<bool> vatReclaimable,
+      Value<int> vatToReclaim,
       required int residualValue,
       required DateTime purchaseDate,
       required double businessUsePct,
@@ -11554,10 +12038,12 @@ typedef $$FixedAssetsTableCreateCompanionBuilder =
       Value<ZeroEmission> zeroEmission,
       Value<int?> marketValue,
       Value<bool> keepsTripLog,
-      Value<int> vatDeductedOnPurchase,
       Value<String?> notes,
       Value<DateTime?> disposalDate,
       Value<int?> disposalProceeds,
+      Value<int?> disposalInvoiceId,
+      Value<VatRate?> disposalVatRate,
+      Value<int?> disposalVatAmount,
     });
 typedef $$FixedAssetsTableUpdateCompanionBuilder =
     FixedAssetsCompanion Function({
@@ -11565,6 +12051,11 @@ typedef $$FixedAssetsTableUpdateCompanionBuilder =
       Value<AssetKind> kind,
       Value<String> assetName,
       Value<int> costExclVat,
+      Value<VatRate?> vatRate,
+      Value<PurchaseVat> purchaseVat,
+      Value<int> vatAmount,
+      Value<bool> vatReclaimable,
+      Value<int> vatToReclaim,
       Value<int> residualValue,
       Value<DateTime> purchaseDate,
       Value<double> businessUsePct,
@@ -11580,15 +12071,34 @@ typedef $$FixedAssetsTableUpdateCompanionBuilder =
       Value<ZeroEmission> zeroEmission,
       Value<int?> marketValue,
       Value<bool> keepsTripLog,
-      Value<int> vatDeductedOnPurchase,
       Value<String?> notes,
       Value<DateTime?> disposalDate,
       Value<int?> disposalProceeds,
+      Value<int?> disposalInvoiceId,
+      Value<VatRate?> disposalVatRate,
+      Value<int?> disposalVatAmount,
     });
 
 final class $$FixedAssetsTableReferences
     extends BaseReferences<_$AppDatabase, $FixedAssetsTable, FixedAsset> {
   $$FixedAssetsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $InvoicesTable _disposalInvoiceIdTable(_$AppDatabase db) => db.invoices
+      .createAlias('fixed_assets__disposal_invoice_id__invoices__id');
+
+  $$InvoicesTableProcessedTableManager? get disposalInvoiceId {
+    final $_column = $_itemColumn<int>('disposal_invoice_id');
+    if ($_column == null) return null;
+    final manager = $$InvoicesTableTableManager(
+      $_db,
+      $_db.invoices,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_disposalInvoiceIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 
   static MultiTypedResultKey<$ExpensesTable, List<Expense>> _expensesRefsTable(
     _$AppDatabase db,
@@ -11677,6 +12187,33 @@ class $$FixedAssetsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnWithTypeConverterFilters<VatRate?, VatRate, String> get vatRate =>
+      $composableBuilder(
+        column: $table.vatRate,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnWithTypeConverterFilters<PurchaseVat, PurchaseVat, String>
+  get purchaseVat => $composableBuilder(
+    column: $table.purchaseVat,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<int> get vatAmount => $composableBuilder(
+    column: $table.vatAmount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get vatReclaimable => $composableBuilder(
+    column: $table.vatReclaimable,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get vatToReclaim => $composableBuilder(
+    column: $table.vatToReclaim,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<int> get residualValue => $composableBuilder(
     column: $table.residualValue,
     builder: (column) => ColumnFilters(column),
@@ -11754,11 +12291,6 @@ class $$FixedAssetsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get vatDeductedOnPurchase => $composableBuilder(
-    column: $table.vatDeductedOnPurchase,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<String> get notes => $composableBuilder(
     column: $table.notes,
     builder: (column) => ColumnFilters(column),
@@ -11773,6 +12305,40 @@ class $$FixedAssetsTableFilterComposer
     column: $table.disposalProceeds,
     builder: (column) => ColumnFilters(column),
   );
+
+  ColumnWithTypeConverterFilters<VatRate?, VatRate, String>
+  get disposalVatRate => $composableBuilder(
+    column: $table.disposalVatRate,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<int> get disposalVatAmount => $composableBuilder(
+    column: $table.disposalVatAmount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$InvoicesTableFilterComposer get disposalInvoiceId {
+    final $$InvoicesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.disposalInvoiceId,
+      referencedTable: $db.invoices,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$InvoicesTableFilterComposer(
+            $db: $db,
+            $table: $db.invoices,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   Expression<bool> expensesRefs(
     Expression<bool> Function($$ExpensesTableFilterComposer f) f,
@@ -11879,6 +12445,31 @@ class $$FixedAssetsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get vatRate => $composableBuilder(
+    column: $table.vatRate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get purchaseVat => $composableBuilder(
+    column: $table.purchaseVat,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get vatAmount => $composableBuilder(
+    column: $table.vatAmount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get vatReclaimable => $composableBuilder(
+    column: $table.vatReclaimable,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get vatToReclaim => $composableBuilder(
+    column: $table.vatToReclaim,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get residualValue => $composableBuilder(
     column: $table.residualValue,
     builder: (column) => ColumnOrderings(column),
@@ -11954,11 +12545,6 @@ class $$FixedAssetsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get vatDeductedOnPurchase => $composableBuilder(
-    column: $table.vatDeductedOnPurchase,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get notes => $composableBuilder(
     column: $table.notes,
     builder: (column) => ColumnOrderings(column),
@@ -11973,6 +12559,39 @@ class $$FixedAssetsTableOrderingComposer
     column: $table.disposalProceeds,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get disposalVatRate => $composableBuilder(
+    column: $table.disposalVatRate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get disposalVatAmount => $composableBuilder(
+    column: $table.disposalVatAmount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$InvoicesTableOrderingComposer get disposalInvoiceId {
+    final $$InvoicesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.disposalInvoiceId,
+      referencedTable: $db.invoices,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$InvoicesTableOrderingComposer(
+            $db: $db,
+            $table: $db.invoices,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$FixedAssetsTableAnnotationComposer
@@ -11995,6 +12614,28 @@ class $$FixedAssetsTableAnnotationComposer
 
   GeneratedColumn<int> get costExclVat => $composableBuilder(
     column: $table.costExclVat,
+    builder: (column) => column,
+  );
+
+  GeneratedColumnWithTypeConverter<VatRate?, String> get vatRate =>
+      $composableBuilder(column: $table.vatRate, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<PurchaseVat, String> get purchaseVat =>
+      $composableBuilder(
+        column: $table.purchaseVat,
+        builder: (column) => column,
+      );
+
+  GeneratedColumn<int> get vatAmount =>
+      $composableBuilder(column: $table.vatAmount, builder: (column) => column);
+
+  GeneratedColumn<bool> get vatReclaimable => $composableBuilder(
+    column: $table.vatReclaimable,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get vatToReclaim => $composableBuilder(
+    column: $table.vatToReclaim,
     builder: (column) => column,
   );
 
@@ -12075,11 +12716,6 @@ class $$FixedAssetsTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<int> get vatDeductedOnPurchase => $composableBuilder(
-    column: $table.vatDeductedOnPurchase,
-    builder: (column) => column,
-  );
-
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
 
@@ -12092,6 +12728,40 @@ class $$FixedAssetsTableAnnotationComposer
     column: $table.disposalProceeds,
     builder: (column) => column,
   );
+
+  GeneratedColumnWithTypeConverter<VatRate?, String> get disposalVatRate =>
+      $composableBuilder(
+        column: $table.disposalVatRate,
+        builder: (column) => column,
+      );
+
+  GeneratedColumn<int> get disposalVatAmount => $composableBuilder(
+    column: $table.disposalVatAmount,
+    builder: (column) => column,
+  );
+
+  $$InvoicesTableAnnotationComposer get disposalInvoiceId {
+    final $$InvoicesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.disposalInvoiceId,
+      referencedTable: $db.invoices,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$InvoicesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.invoices,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   Expression<T> expensesRefs<T extends Object>(
     Expression<T> Function($$ExpensesTableAnnotationComposer a) f,
@@ -12183,6 +12853,7 @@ class $$FixedAssetsTableTableManager
           (FixedAsset, $$FixedAssetsTableReferences),
           FixedAsset,
           PrefetchHooks Function({
+            bool disposalInvoiceId,
             bool expensesRefs,
             bool mileageTripsRefs,
             bool receiptsRefs,
@@ -12205,6 +12876,11 @@ class $$FixedAssetsTableTableManager
                 Value<AssetKind> kind = const Value.absent(),
                 Value<String> assetName = const Value.absent(),
                 Value<int> costExclVat = const Value.absent(),
+                Value<VatRate?> vatRate = const Value.absent(),
+                Value<PurchaseVat> purchaseVat = const Value.absent(),
+                Value<int> vatAmount = const Value.absent(),
+                Value<bool> vatReclaimable = const Value.absent(),
+                Value<int> vatToReclaim = const Value.absent(),
                 Value<int> residualValue = const Value.absent(),
                 Value<DateTime> purchaseDate = const Value.absent(),
                 Value<double> businessUsePct = const Value.absent(),
@@ -12220,15 +12896,22 @@ class $$FixedAssetsTableTableManager
                 Value<ZeroEmission> zeroEmission = const Value.absent(),
                 Value<int?> marketValue = const Value.absent(),
                 Value<bool> keepsTripLog = const Value.absent(),
-                Value<int> vatDeductedOnPurchase = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime?> disposalDate = const Value.absent(),
                 Value<int?> disposalProceeds = const Value.absent(),
+                Value<int?> disposalInvoiceId = const Value.absent(),
+                Value<VatRate?> disposalVatRate = const Value.absent(),
+                Value<int?> disposalVatAmount = const Value.absent(),
               }) => FixedAssetsCompanion(
                 id: id,
                 kind: kind,
                 assetName: assetName,
                 costExclVat: costExclVat,
+                vatRate: vatRate,
+                purchaseVat: purchaseVat,
+                vatAmount: vatAmount,
+                vatReclaimable: vatReclaimable,
+                vatToReclaim: vatToReclaim,
                 residualValue: residualValue,
                 purchaseDate: purchaseDate,
                 businessUsePct: businessUsePct,
@@ -12244,10 +12927,12 @@ class $$FixedAssetsTableTableManager
                 zeroEmission: zeroEmission,
                 marketValue: marketValue,
                 keepsTripLog: keepsTripLog,
-                vatDeductedOnPurchase: vatDeductedOnPurchase,
                 notes: notes,
                 disposalDate: disposalDate,
                 disposalProceeds: disposalProceeds,
+                disposalInvoiceId: disposalInvoiceId,
+                disposalVatRate: disposalVatRate,
+                disposalVatAmount: disposalVatAmount,
               ),
           createCompanionCallback:
               ({
@@ -12255,6 +12940,11 @@ class $$FixedAssetsTableTableManager
                 Value<AssetKind> kind = const Value.absent(),
                 required String assetName,
                 required int costExclVat,
+                Value<VatRate?> vatRate = const Value.absent(),
+                Value<PurchaseVat> purchaseVat = const Value.absent(),
+                Value<int> vatAmount = const Value.absent(),
+                Value<bool> vatReclaimable = const Value.absent(),
+                Value<int> vatToReclaim = const Value.absent(),
                 required int residualValue,
                 required DateTime purchaseDate,
                 required double businessUsePct,
@@ -12270,15 +12960,22 @@ class $$FixedAssetsTableTableManager
                 Value<ZeroEmission> zeroEmission = const Value.absent(),
                 Value<int?> marketValue = const Value.absent(),
                 Value<bool> keepsTripLog = const Value.absent(),
-                Value<int> vatDeductedOnPurchase = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime?> disposalDate = const Value.absent(),
                 Value<int?> disposalProceeds = const Value.absent(),
+                Value<int?> disposalInvoiceId = const Value.absent(),
+                Value<VatRate?> disposalVatRate = const Value.absent(),
+                Value<int?> disposalVatAmount = const Value.absent(),
               }) => FixedAssetsCompanion.insert(
                 id: id,
                 kind: kind,
                 assetName: assetName,
                 costExclVat: costExclVat,
+                vatRate: vatRate,
+                purchaseVat: purchaseVat,
+                vatAmount: vatAmount,
+                vatReclaimable: vatReclaimable,
+                vatToReclaim: vatToReclaim,
                 residualValue: residualValue,
                 purchaseDate: purchaseDate,
                 businessUsePct: businessUsePct,
@@ -12294,10 +12991,12 @@ class $$FixedAssetsTableTableManager
                 zeroEmission: zeroEmission,
                 marketValue: marketValue,
                 keepsTripLog: keepsTripLog,
-                vatDeductedOnPurchase: vatDeductedOnPurchase,
                 notes: notes,
                 disposalDate: disposalDate,
                 disposalProceeds: disposalProceeds,
+                disposalInvoiceId: disposalInvoiceId,
+                disposalVatRate: disposalVatRate,
+                disposalVatAmount: disposalVatAmount,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -12309,6 +13008,7 @@ class $$FixedAssetsTableTableManager
               .toList(),
           prefetchHooksCallback:
               ({
+                disposalInvoiceId = false,
                 expensesRefs = false,
                 mileageTripsRefs = false,
                 receiptsRefs = false,
@@ -12320,7 +13020,40 @@ class $$FixedAssetsTableTableManager
                     if (mileageTripsRefs) db.mileageTrips,
                     if (receiptsRefs) db.receipts,
                   ],
-                  addJoins: null,
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (disposalInvoiceId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.disposalInvoiceId,
+                                    referencedTable:
+                                        $$FixedAssetsTableReferences
+                                            ._disposalInvoiceIdTable(db),
+                                    referencedColumn:
+                                        $$FixedAssetsTableReferences
+                                            ._disposalInvoiceIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (expensesRefs)
@@ -12404,6 +13137,7 @@ typedef $$FixedAssetsTableProcessedTableManager =
       (FixedAsset, $$FixedAssetsTableReferences),
       FixedAsset,
       PrefetchHooks Function({
+        bool disposalInvoiceId,
         bool expensesRefs,
         bool mileageTripsRefs,
         bool receiptsRefs,

@@ -1324,7 +1324,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assetsFieldCostHelp =>
-      'The purchase price without VAT. Depreciation and the investment deductions are based on this amount.';
+      'The purchase price without VAT. With any VAT you do not reclaim, it is the cost that depreciation and the investment deductions are based on.';
 
   @override
   String get assetsFieldDisposalDateHelp =>
@@ -1332,7 +1332,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assetsFieldDisposalProceedsHelp =>
-      'What you received for the asset, without VAT. The difference with the book value is a gain or loss.';
+      'What you received for the asset, without VAT, or its market value when you took it into private use. The difference with the book value is a gain or loss.';
 
   @override
   String assetsFieldKiaHelp(String min) {
@@ -1359,6 +1359,97 @@ class AppLocalizationsEn extends AppLocalizations {
   String assetsFieldUsefulLifeHelp(int years, String pct) {
     return 'How many years you expect to use the asset. At least $years, because depreciation is limited to $pct of the cost a year.';
   }
+
+  @override
+  String get assetsVatSection => 'VAT on the purchase';
+
+  @override
+  String get assetsVatSectionHelp =>
+      'The VAT on the purchase invoice. VAT you reclaim goes into the VAT return of the quarter of purchase; VAT you do not reclaim is part of the asset\'s cost.';
+
+  @override
+  String get assetsFieldVatRate => 'VAT rate';
+
+  @override
+  String assetsFieldVatRateHelp(String high, String low) {
+    return 'The VAT rate on the purchase invoice: $high, $low, 0% or exempt. Choose 0% when no VAT was charged, such as on a purchase from a private seller.';
+  }
+
+  @override
+  String get assetsValidateVatRate =>
+      'Choose the VAT rate on the purchase invoice: the VAT in your return depends on it.';
+
+  @override
+  String get assetsFieldVatAmount => 'VAT amount';
+
+  @override
+  String get assetsFieldVatAmountHelp =>
+      'The VAT on the purchase invoice. Florin has no tax rules for the year of purchase, so you enter the amount instead of a rate.';
+
+  @override
+  String get assetsFieldPurchaseVat => 'How the VAT was charged';
+
+  @override
+  String get assetsFieldPurchaseVatHelp =>
+      'Dutch VAT when the supplier charged it. Shifted when the invoice says the VAT is reverse-charged to you, or the supplier is abroad: you then report and deduct the VAT yourself.';
+
+  @override
+  String get assetsReclaimVat => 'Reclaim this VAT';
+
+  @override
+  String get assetsReclaimVatHelp =>
+      'Tick when you may deduct this VAT in your VAT return. You may for the business share used for work you charge VAT on: not while you take part in the KOR, and not for an asset used only for VAT-exempt work.';
+
+  @override
+  String get assetsValidateKorReclaim =>
+      'You take part in the KOR on the purchase date, so you cannot reclaim this VAT. Untick Reclaim this VAT: the VAT is then part of the cost.';
+
+  @override
+  String get assetsKorNotice =>
+      'You take part in the KOR on the purchase date. The VAT is not reclaimed; it is part of the cost that depreciation and the investment deductions are based on.';
+
+  @override
+  String get assetsFieldVat => 'VAT';
+
+  @override
+  String get assetsVatBack => 'VAT back';
+
+  @override
+  String get assetsCostForTax => 'Cost for income tax';
+
+  @override
+  String get assetsCostForTaxHelp =>
+      'The price and any VAT you do not reclaim. Depreciation and the investment deductions are based on it.';
+
+  @override
+  String get assetsFieldSaleInvoice => 'Sale invoice';
+
+  @override
+  String get assetsFieldSaleInvoiceHelp =>
+      'The invoice you issued in Florin for this sale only. Its amount is the proceeds and its VAT is in your VAT return; it does not count as revenue or for the KOR turnover. Choose none for a sale without an invoice in Florin or when you took the asset into private use.';
+
+  @override
+  String get assetsSaleInvoiceNone => 'No invoice in Florin';
+
+  @override
+  String get assetsProceedsFromInvoiceHelp =>
+      'What the sale invoice and any credit note on it come to, without VAT. The difference with the book value is a gain or loss.';
+
+  @override
+  String get assetsFieldDisposalVatRate => 'VAT on the sale';
+
+  @override
+  String assetsFieldDisposalVatRateHelp(String high) {
+    return 'The VAT you owe on the sale, or on taking the asset into private use, over the business share of the proceeds. It goes into the VAT return of that quarter. Usually $high; exempt only when you used the asset solely for VAT-exempt work and deducted no VAT on it.';
+  }
+
+  @override
+  String get assetsValidateDisposalVatRate =>
+      'Choose the VAT rate of the sale: the VAT in your return depends on it.';
+
+  @override
+  String get assetsSaleKorNotice =>
+      'You take part in the KOR on the sale date, so there is no VAT on the sale.';
 
   @override
   String get clientsContractExpiryHelp =>
@@ -1661,7 +1752,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assetsCarSectionHelp =>
-      'These details decide the addition for private use (bijtelling) and the VAT on private use.';
+      'These details decide the addition for private use (bijtelling) and the VAT on private use. A business car counts in full: the bijtelling and the VAT on private use correct for its private use.';
 
   @override
   String get assetsFieldCatalogueValue => 'Catalogue value';
@@ -1700,13 +1791,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get zeroEmissionHydrogenOrSolar => 'Hydrogen or integrated solar';
-
-  @override
-  String get assetsFieldVatOnPurchase => 'VAT deducted on purchase';
-
-  @override
-  String get assetsFieldVatOnPurchaseHelp =>
-      'The VAT on the purchase that you deducted in your VAT return. Leave 0 if you deducted none, for example for a car bought from a private seller.';
 
   @override
   String get assetsFieldMarketValue => 'Market value';
@@ -1818,7 +1902,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expensesFieldCarHelp =>
-      'Link costs such as fuel and insurance to a business car. They cap the bijtelling and decide the VAT on private use.';
+      'Link costs such as fuel and insurance to a business car. A linked cost counts in full, as the bijtelling and the VAT on private use correct for private use. Linked costs cap the bijtelling and decide the VAT on private use.';
 
   @override
   String get expensesNoCar => 'Not for a business car';

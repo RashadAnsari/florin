@@ -156,9 +156,9 @@ abstract final class CarService {
           .fold(0, (s, e) => s + e.vatToReclaim);
       final purchaseYear = car.purchaseDate.year;
       final purchaseShare =
-          car.vatDeductedOnPurchase > 0 &&
+          car.vatToReclaim > 0 &&
               year < purchaseYear + rules.btwPrivateCarPurchaseYears
-          ? car.vatDeductedOnPurchase / rules.btwPrivateCarPurchaseYears
+          ? car.vatToReclaim / rules.btwPrivateCarPurchaseYears
           : 0.0;
       if (costVat == 0 && purchaseShare == 0) continue;
       final deductedThisYear = costVat + purchaseShare;
@@ -176,7 +176,7 @@ abstract final class CarService {
         amount = deductedThisYear * privateKm / totalKm;
       } else {
         final reduced =
-            car.vatDeductedOnPurchase == 0 ||
+            car.vatToReclaim == 0 ||
             year > purchaseYear + rules.btwPrivateCarReducedAfterYears;
         final rate = reduced
             ? rules.btwPrivateCarReducedRate
@@ -186,7 +186,7 @@ abstract final class CarService {
         // The cap counts one fifth of the purchase BTW in the 4 years after
         // the year of purchase; in that year itself all of it was deducted.
         final cap = year == purchaseYear
-            ? costVat + car.vatDeductedOnPurchase
+            ? costVat + car.vatToReclaim
             : deductedThisYear;
         if (amount > cap) amount = cap.toDouble();
       }

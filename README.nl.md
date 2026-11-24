@@ -45,7 +45,7 @@ Florin houdt je facturen, uitgaven, btw-aangiftes, uren, kilometers, bedrijfsmid
 | **Schatting inkomstenbelasting** | Zelfstandigenaftrek, startersaftrek, S&O-aftrek, meewerkaftrek, stakingsaftrek, startersaftrek bij arbeidsongeschiktheid, mkb-winstvrijstelling, KIA, EIA, MIA, desinvesteringsbijtelling, herinvesteringsreserve, afschrijvingen, winst op verkochte bedrijfsmiddelen, lijfrente, arbeidsongeschiktheidsverzekering, verliezen uit eerdere jaren, algemene heffingskorting, arbeidskorting en de Zvw-bijdrage. |
 | **Urencriterium** | Uren per klant en project, met je voortgang naar de 1.225 uur die je nodig hebt voor de zelfstandigenaftrek. |
 | **Kilometers** | Zakelijke ritten en woon-werkritten met kilometerstanden en doel, afgetrokken tegen het tarief van de Belastingdienst voor dat jaar. |
-| **Bedrijfsmiddelen** | Lineaire afschrijving per dag tot de restwaarde, zakelijk gebruikspercentage, KIA, EIA, MIA en de herinvesteringsreserve. |
+| **Bedrijfsmiddelen** | Lineaire afschrijving per dag tot de restwaarde, zakelijk gebruikspercentage, KIA, EIA, MIA en de herinvesteringsreserve. De btw op de aankoop en op een verkoop komt in je btw-aangifte, en btw die je niet terugvraagt, zoals onder de KOR, telt mee als kosten. |
 | **Auto van de zaak** | De bijtelling voor privégebruik met de korting voor emissievrije auto's en de 500 km-regel, en de btw over privégebruik in de laatste aangifte van het jaar. |
 | **Pensioen** | Je jaarruimte op basis van het inkomen van vorig jaar, AOW-franchise en factor A, plus reserveringsruimte. |
 | **Klanten** | Contactgegevens, btw- en KvK-nummer en het Wet DBA-risico per klant. |

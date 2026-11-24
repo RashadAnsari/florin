@@ -1,6 +1,10 @@
 import 'package:florin/db/database.dart';
 import 'package:florin/services/asset_service.dart';
 import 'package:florin/services/car_service.dart';
+import 'package:florin/services/domain.dart';
+import 'package:florin/services/kor_service.dart';
+import 'package:florin/services/tax_service.dart';
+import 'package:florin/services/vat_service.dart';
 import 'package:florin/services/tax_rules/tax_year_rules.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -24,14 +28,25 @@ FixedAsset asset(
   ZeroEmission zeroEmission = ZeroEmission.none,
   bool tripLog = false,
   int vatOnPurchase = 0,
+  PurchaseVat purchaseVat = PurchaseVat.domestic,
+  bool vatReclaimable = true,
+  double businessUse = 1,
+  VatRate? saleVatRate,
+  int? saleVat,
+  int? saleInvoiceId,
 }) => FixedAsset(
   id: id,
   kind: kind,
   assetName: 'Asset $id',
   costExclVat: cost,
+  vatRate: vatOnPurchase > 0 ? VatRate.high : null,
+  purchaseVat: purchaseVat,
+  vatAmount: vatOnPurchase,
+  vatReclaimable: vatReclaimable,
+  vatToReclaim: vatReclaimable ? (vatOnPurchase * businessUse).round() : 0,
   residualValue: 0,
   purchaseDate: bought ?? DateTime(2026, 1, 1),
-  businessUsePct: 1,
+  businessUsePct: businessUse,
   usefulLifeYears: 5,
   kiaEligible: kia,
   eiaEligible: eia,
@@ -45,7 +60,9 @@ FixedAsset asset(
   firstRegistration: registered,
   zeroEmission: zeroEmission,
   keepsTripLog: tripLog,
-  vatDeductedOnPurchase: vatOnPurchase,
+  disposalVatRate: saleVatRate,
+  disposalVatAmount: saleVat,
+  disposalInvoiceId: saleInvoiceId,
 );
 
 Expense carExpense(int carId, int amount, int vat) => Expense(
@@ -82,7 +99,221 @@ MileageTrip trip(int carId, TripType type, int km) => MileageTrip(
   routeDeviation: false,
 );
 
+Invoice saleInvoice(
+  int id,
+  int total, {
+  InvoiceType type = InvoiceType.invoice,
+  int? corrects,
+  VatTreatment treatment = VatTreatment.standard,
+}) => Invoice(
+  id: id,
+  invoiceNumber: 'F-2026-$id',
+  invoiceType: type,
+  correctedInvoiceId: corrects,
+  invoiceDate: DateTime(2026, 9, 10),
+  clientId: 1,
+  vatTreatment: treatment,
+  selfBilled: false,
+  sellerName: 'S',
+  sellerVatNumber: 'NL000000000B00',
+  sellerKvkNumber: '00000000',
+  sellerAddress: 'A',
+  sellerIban: 'NL91ABNA0417164300',
+  paymentTermDays: 14,
+  status: InvoiceStatus.sent,
+  totalExclVat: total,
+  totalVat: 0,
+  totalInclVat: total,
+);
+
+VatQuarterResult quarterOf2026(
+  int quarter,
+  List<FixedAsset> assets, {
+  KorStatus kor = KorStatus.none,
+}) => VatService.calculateQuarter(
+  invoices: const [],
+  lines: const [],
+  expenses: const [],
+  assets: assets,
+  year: 2026,
+  quarter: quarter,
+  kor: kor,
+);
+
+final korAll2026 = KorStatus(
+  start: DateTime(2026),
+  end: null,
+  exceededOn: const {},
+  turnover: const {},
+);
+
 void main() {
+  group('BTW on an asset (Wet OB 1968 art. 3 lid 3 a, 15 and 25a)', () {
+    test('purchase BTW goes in 5b in its quarter, for the business share', () {
+      final laptop = asset(
+        1,
+        cost: 200000,
+        bought: DateTime(2026, 5, 10),
+        vatOnPurchase: 42000,
+        businessUse: 0.8,
+      );
+      final older = asset(
+        2,
+        cost: 200000,
+        bought: DateTime(2025, 5, 10),
+        vatOnPurchase: 42000,
+      );
+      expect(quarterOf2026(2, [laptop, older]).inputVat5b, 33600);
+      expect(quarterOf2026(1, [laptop, older]).inputVat5b, 0);
+    });
+
+    test('BTW shifted on an asset from an EU supplier: 4b and back in 5b', () {
+      final machine = asset(
+        1,
+        bought: DateTime(2026, 2, 1),
+        vatOnPurchase: 210000,
+        purchaseVat: PurchaseVat.fromEu,
+      );
+      final r = quarterOf2026(1, [machine]);
+      expect(r.base4b, 1000000);
+      expect(r.vat4b, 210000);
+      expect(r.inputVat5b, 210000);
+      expect(r.netVat, 0);
+    });
+
+    test('BTW not reclaimed is part of the investment (Wet IB 2001 art. '
+        '3.43 lid 1): depreciation, the KIA and its € 450 limit', () {
+      final kept = asset(1, vatOnPurchase: 210000, vatReclaimable: false);
+      expect(kept.cost, 1210000);
+      expect(
+        AssetService.depreciation(kept, 2026),
+        AssetService.depreciation(asset(2, cost: 1210000), 2026),
+      );
+      final small = [
+        asset(3, cost: 40000, vatOnPurchase: 8400, kia: true),
+        asset(
+          4,
+          cost: 40000,
+          vatOnPurchase: 8400,
+          vatReclaimable: false,
+          kia: true,
+        ),
+      ];
+      expect(AssetService.kiaInvestments(small, 2026, rules), 48400);
+    });
+
+    test('under the KOR purchase BTW is not deducted and becomes cost', () {
+      final counted = KorService.applyToAssets([
+        asset(1, bought: DateTime(2026, 3, 1), vatOnPurchase: 210000),
+      ], korAll2026);
+      expect(counted.single.vatToReclaim, 0);
+      expect(counted.single.cost, 1210000);
+      expect(quarterOf2026(1, counted).inputVat5b, 0);
+    });
+
+    test('BTW shifted on an asset in a KOR quarter is owed: an incidental '
+        'return', () {
+      final counted = KorService.applyToAssets([
+        asset(
+          1,
+          bought: DateTime(2026, 2, 1),
+          vatOnPurchase: 210000,
+          purchaseVat: PurchaseVat.fromEu,
+        ),
+      ], korAll2026);
+      final r = quarterOf2026(1, counted, kor: korAll2026);
+      expect(r.vat4b, 210000);
+      expect(r.inputVat5b, 0);
+      expect(r.duty, ReturnDuty.incidental);
+    });
+
+    test('a sale without an invoice in Florin carries BTW over the business '
+        'share of the proceeds, in its quarter', () {
+      FixedAsset sold(VatRate rate) => asset(
+        1,
+        cost: 200000,
+        bought: DateTime(2025, 1, 1),
+        businessUse: 0.5,
+        sold: DateTime(2026, 8, 14),
+        proceeds: 100000,
+        saleVatRate: rate,
+        saleVat: rules.vatOn(rate, 50000),
+      );
+      final high = quarterOf2026(3, [sold(VatRate.high)]);
+      expect(high.revenue1a, 50000);
+      expect(high.vat1a, 10500);
+      expect(quarterOf2026(2, [sold(VatRate.high)]).vat1a, 0);
+      expect(quarterOf2026(3, [sold(VatRate.zero)]).revenue1e, 50000);
+      expect(quarterOf2026(3, [sold(VatRate.exempt)]).isEmpty, isTrue);
+    });
+
+    test('the KOR exempts a sale without an invoice', () {
+      final counted = KorService.applyToAssets([
+        asset(
+          1,
+          bought: DateTime(2025, 1, 1),
+          sold: DateTime(2026, 8, 14),
+          proceeds: 100000,
+          saleVatRate: VatRate.high,
+          saleVat: 21000,
+        ),
+      ], korAll2026);
+      expect(counted.single.disposalVatRate, isNull);
+      expect(quarterOf2026(3, counted).vat1a, 0);
+    });
+
+    test('a sale invoiced in Florin: the invoice carries the BTW, and its '
+        'amount, less credit notes, is the proceeds, not revenue or KOR '
+        'turnover (art. 25 lid 2)', () {
+      final invoices = [
+        saleInvoice(9, 15000),
+        saleInvoice(10, 5000, type: InvoiceType.creditNote, corrects: 9),
+        saleInvoice(11, 100000),
+      ];
+      final monitor = asset(
+        1,
+        cost: 40000,
+        bought: DateTime(2025, 2, 3),
+        sold: DateTime(2026, 9, 10),
+        proceeds: 15000,
+        saleInvoiceId: 9,
+      );
+      final sales = AssetService.saleInvoiceIds([monitor]);
+      expect(sales, {9});
+      expect(
+        AssetService.withSaleInvoices([
+          monitor,
+        ], invoices).single.disposalProceeds,
+        10000,
+      );
+      expect(quarterOf2026(3, [monitor]).isEmpty, isTrue);
+      expect(TaxService.grossRevenue(invoices, assetSales: sales), 100000);
+      expect(TaxService.creditNotes(invoices, assetSales: sales), 0);
+      expect(KorService.turnover(invoices, 2026, assetSales: sales), 100000);
+    });
+
+    test('a car whose purchase BTW was not deducted pays BTW on private use '
+        'as one bought without BTW', () {
+      int privateUse(FixedAsset car) => CarService.btwPrivateUse(
+        assets: [car],
+        trips: const [],
+        expenses: [carExpense(1, 100000, 21000)],
+        year: 2026,
+        rules: rules,
+      );
+      FixedAsset car({int vat = 0, bool reclaimed = true}) => asset(
+        1,
+        cost: 3000000,
+        kind: AssetKind.car,
+        catalogue: 4000000,
+        registered: DateTime(2026, 1, 1),
+        vatOnPurchase: vat,
+        vatReclaimable: reclaimed,
+      );
+      expect(privateUse(car(vat: 630000, reclaimed: false)), privateUse(car()));
+    });
+  });
+
   group('investeringsaftrek (Fiscale informatie 2026, 8.2)', () {
     test('EIA 40% and MIA by category, from € 2.500 per asset', () {
       final d = AssetService.investmentDeduction(

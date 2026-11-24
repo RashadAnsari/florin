@@ -314,6 +314,10 @@ void main() {
           id: 1,
           assetName: 'Laptop',
           costExclVat: 500000,
+          purchaseVat: PurchaseVat.domestic,
+          vatAmount: 0,
+          vatReclaimable: true,
+          vatToReclaim: 0,
           residualValue: residual,
           disposalProceeds: proceeds,
           purchaseDate: DateTime(2026, 7, 2),
@@ -327,7 +331,6 @@ void main() {
           reserveGain: false,
           zeroEmission: ZeroEmission.none,
           keepsTripLog: false,
-          vatDeductedOnPurchase: 0,
         );
 
     test('is time-proportional in the year of purchase', () {

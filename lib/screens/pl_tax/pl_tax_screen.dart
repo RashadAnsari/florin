@@ -26,8 +26,10 @@ class PlTaxScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context)!;
     final year = ref.watch(fiscalYearProvider);
-    final expenses = ref.watch(expensesProvider(year)).valueOrNull ?? [];
-    final assets = ref.watch(assetsProvider(year)).valueOrNull ?? [];
+    // The rows below follow the estimate: the KOR applied, as it counts.
+    final expenses =
+        ref.watch(effectiveExpensesProvider(year)).valueOrNull ?? [];
+    final assets = ref.watch(assetsInUseProvider(year)).valueOrNull ?? [];
 
     return Scaffold(
       appBar: AppBar(title: Text(l.plTaxTitle)),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../widgets/validators.dart';
 import '../../widgets/form_error_text.dart';
 import '../../widgets/amount_field.dart';
+import '../../services/asset_service.dart';
 import '../../services/formats.dart';
 import '../../widgets/help.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -457,6 +458,9 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
           amount: _totalExclVat,
           limit: limit,
           excludingId: _original?.id,
+          assetSales: AssetService.saleInvoiceIds(
+            ref.read(allAssetsProvider).valueOrNull ?? const [],
+          ),
         );
     if (exceeds) {
       return t == VatTreatment.kor

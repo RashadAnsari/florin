@@ -1328,7 +1328,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get assetsFieldCostHelp =>
-      'De aankoopprijs zonder btw. Afschrijving en de investeringsaftrek gaan uit van dit bedrag.';
+      'De aankoopprijs zonder btw. Met de btw die je niet terugvraagt is dit de kostprijs waarover je afschrijft en investeringsaftrek krijgt.';
 
   @override
   String get assetsFieldDisposalDateHelp =>
@@ -1336,7 +1336,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get assetsFieldDisposalProceedsHelp =>
-      'Wat je voor het bedrijfsmiddel kreeg, zonder btw. Het verschil met de boekwaarde is winst of verlies.';
+      'Wat je voor het bedrijfsmiddel kreeg, zonder btw, of de marktwaarde als je het privé ging gebruiken. Het verschil met de boekwaarde is winst of verlies.';
 
   @override
   String assetsFieldKiaHelp(String min) {
@@ -1363,6 +1363,97 @@ class AppLocalizationsNl extends AppLocalizations {
   String assetsFieldUsefulLifeHelp(int years, String pct) {
     return 'Hoeveel jaar je het bedrijfsmiddel verwacht te gebruiken. Minimaal $years, omdat afschrijving beperkt is tot $pct van de kosten per jaar.';
   }
+
+  @override
+  String get assetsVatSection => 'Btw op de aankoop';
+
+  @override
+  String get assetsVatSectionHelp =>
+      'De btw op de aankoopfactuur. Btw die je terugvraagt komt in de btw-aangifte van het kwartaal van aankoop; btw die je niet terugvraagt hoort bij de kosten van het bedrijfsmiddel.';
+
+  @override
+  String get assetsFieldVatRate => 'BTW-tarief';
+
+  @override
+  String assetsFieldVatRateHelp(String high, String low) {
+    return 'Het btw-tarief op de aankoopfactuur: $high, $low, 0% of vrijgesteld. Kies 0% als er geen btw is gerekend, zoals bij een aankoop van een particulier.';
+  }
+
+  @override
+  String get assetsValidateVatRate =>
+      'Kies het btw-tarief op de aankoopfactuur: de btw in je aangifte hangt ervan af.';
+
+  @override
+  String get assetsFieldVatAmount => 'Btw-bedrag';
+
+  @override
+  String get assetsFieldVatAmountHelp =>
+      'De btw op de aankoopfactuur. Florin heeft geen belastingregels voor het jaar van aankoop, dus je vult het bedrag in in plaats van een tarief.';
+
+  @override
+  String get assetsFieldPurchaseVat => 'Hoe de btw is berekend';
+
+  @override
+  String get assetsFieldPurchaseVatHelp =>
+      'Nederlandse btw als de leverancier die rekende. Verlegd als op de factuur staat dat de btw naar jou is verlegd, of als de leverancier in het buitenland zit: je geeft de btw dan zelf aan en trekt hem weer af.';
+
+  @override
+  String get assetsReclaimVat => 'Deze btw terugvragen';
+
+  @override
+  String get assetsReclaimVatHelp =>
+      'Vink aan als je deze btw mag aftrekken in je btw-aangifte. Dat mag voor het zakelijke deel dat je gebruikt voor werk waarover je btw rekent: niet zolang je meedoet aan de KOR, en niet voor een bedrijfsmiddel dat je alleen voor btw-vrijgesteld werk gebruikt.';
+
+  @override
+  String get assetsValidateKorReclaim =>
+      'Je doet op de aankoopdatum mee aan de KOR, dus je kunt deze btw niet terugvragen. Vink Deze btw terugvragen uit: de btw hoort dan bij de kosten.';
+
+  @override
+  String get assetsKorNotice =>
+      'Je doet op de aankoopdatum mee aan de KOR. De btw vraag je niet terug; die hoort bij de kosten waarover je afschrijft en investeringsaftrek krijgt.';
+
+  @override
+  String get assetsFieldVat => 'BTW';
+
+  @override
+  String get assetsVatBack => 'BTW terug';
+
+  @override
+  String get assetsCostForTax => 'Kosten voor de inkomstenbelasting';
+
+  @override
+  String get assetsCostForTaxHelp =>
+      'De prijs en de btw die je niet terugvraagt. Afschrijving en investeringsaftrek gaan hiervan uit.';
+
+  @override
+  String get assetsFieldSaleInvoice => 'Verkoopfactuur';
+
+  @override
+  String get assetsFieldSaleInvoiceHelp =>
+      'De factuur die je in Florin alleen voor deze verkoop maakte. Het bedrag is de opbrengst en de btw staat in je btw-aangifte; het telt niet als omzet en niet voor de KOR-omzet. Kies geen bij een verkoop zonder factuur in Florin of als je het bedrijfsmiddel privé ging gebruiken.';
+
+  @override
+  String get assetsSaleInvoiceNone => 'Geen factuur in Florin';
+
+  @override
+  String get assetsProceedsFromInvoiceHelp =>
+      'Waar de verkoopfactuur en een creditnota daarop samen op uitkomen, zonder btw. Het verschil met de boekwaarde is winst of verlies.';
+
+  @override
+  String get assetsFieldDisposalVatRate => 'Btw op de verkoop';
+
+  @override
+  String assetsFieldDisposalVatRateHelp(String high) {
+    return 'De btw die je verschuldigd bent over de verkoop, of over het privé gaan gebruiken van het bedrijfsmiddel, over het zakelijke deel van de opbrengst. Die komt in de btw-aangifte van dat kwartaal. Meestal $high; vrijgesteld alleen als je het bedrijfsmiddel uitsluitend voor btw-vrijgesteld werk gebruikte en er geen btw op aftrok.';
+  }
+
+  @override
+  String get assetsValidateDisposalVatRate =>
+      'Kies het btw-tarief van de verkoop: de btw in je aangifte hangt ervan af.';
+
+  @override
+  String get assetsSaleKorNotice =>
+      'Je doet op de verkoopdatum mee aan de KOR, dus er is geen btw op de verkoop.';
 
   @override
   String get clientsContractExpiryHelp =>
@@ -1664,7 +1755,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get assetsCarSectionHelp =>
-      'Deze gegevens bepalen de bijtelling voor privégebruik en de btw over privégebruik.';
+      'Deze gegevens bepalen de bijtelling voor privégebruik en de btw over privégebruik. Een auto van de zaak telt volledig mee: de bijtelling en de btw over privégebruik corrigeren het privégebruik.';
 
   @override
   String get assetsFieldCatalogueValue => 'Cataloguswaarde';
@@ -1704,13 +1795,6 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get zeroEmissionHydrogenOrSolar =>
       'Waterstof of geïntegreerde zonnepanelen';
-
-  @override
-  String get assetsFieldVatOnPurchase => 'Afgetrokken btw bij aankoop';
-
-  @override
-  String get assetsFieldVatOnPurchaseHelp =>
-      'De btw op de aankoop die je in je btw-aangifte aftrok. Laat 0 als je niets aftrok, bijvoorbeeld bij een auto van een particulier.';
 
   @override
   String get assetsFieldMarketValue => 'Waarde in het economisch verkeer';
@@ -1823,7 +1907,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get expensesFieldCarHelp =>
-      'Koppel kosten zoals brandstof en verzekering aan een auto van de zaak. Ze begrenzen de bijtelling en bepalen de btw over privégebruik.';
+      'Koppel kosten zoals brandstof en verzekering aan een auto van de zaak. Een gekoppelde kost telt volledig mee, want de bijtelling en de btw over privégebruik corrigeren het privégebruik. Gekoppelde kosten begrenzen de bijtelling en bepalen de btw over privégebruik.';
 
   @override
   String get expensesNoCar => 'Niet voor een auto van de zaak';

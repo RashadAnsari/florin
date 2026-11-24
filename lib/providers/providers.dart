@@ -140,9 +140,9 @@ final hourEntriesProvider = StreamProvider.family<List<HourEntry>, int>(
 final mileageTripsProvider = StreamProvider.family<List<MileageTrip>, int>(
   (ref, year) => ref.watch(mileageDaoProvider).watchInYear(year),
 );
-final assetsProvider = StreamProvider.family<List<FixedAsset>, int>(
-  (ref, year) => ref.watch(assetDaoProvider).watchInUse(year),
-);
+
+/// Every asset as stored, for pickers and the asset form. Figures use
+/// [effectiveAssetsProvider].
 final allAssetsProvider = StreamProvider(
   (ref) => ref.watch(assetDaoProvider).watchAll(),
 );
@@ -170,8 +170,15 @@ AsyncValue<T>? waitForAll<T>(List<AsyncValue<Object?>> values) {
 final korStatusProvider = Provider<AsyncValue<KorStatus>>((ref) {
   final profile = ref.watch(businessProfileProvider);
   final invoices = ref.watch(allInvoicesProvider);
-  return waitForAll<KorStatus>([profile, invoices]) ??
-      AsyncData(KorService.status(profile.requireValue, invoices.requireValue));
+  final assets = ref.watch(allAssetsProvider);
+  return waitForAll<KorStatus>([profile, invoices, assets]) ??
+      AsyncData(
+        KorService.status(
+          profile.requireValue,
+          invoices.requireValue,
+          assetSales: AssetService.saleInvoiceIds(assets.requireValue),
+        ),
+      );
 });
 
 /// The expenses of [year] as they count, with the KOR applied.
@@ -184,6 +191,35 @@ final effectiveExpensesProvider =
             KorService.applyToExpenses(expenses.requireValue, kor.requireValue),
           );
     });
+
+/// Every asset as it counts: the proceeds of a sale invoiced in Florin from
+/// that invoice, and the KOR applied.
+final effectiveAssetsProvider = Provider<AsyncValue<List<FixedAsset>>>((ref) {
+  final assets = ref.watch(allAssetsProvider);
+  final invoices = ref.watch(allInvoicesProvider);
+  final kor = ref.watch(korStatusProvider);
+  return waitForAll<List<FixedAsset>>([assets, invoices, kor]) ??
+      AsyncData(
+        KorService.applyToAssets(
+          AssetService.withSaleInvoices(
+            assets.requireValue,
+            invoices.requireValue,
+          ),
+          kor.requireValue,
+        ),
+      );
+});
+
+/// The assets that belong to the business in [year], as they count, by name.
+final assetsInUseProvider = Provider.family<AsyncValue<List<FixedAsset>>, int>(
+  (ref, year) => ref
+      .watch(effectiveAssetsProvider)
+      .whenData(
+        (all) =>
+            all.where((a) => AssetService.inUse(a, year)).toList()
+              ..sort((a, b) => a.assetName.compareTo(b.assetName)),
+      ),
+);
 
 /// Verified statutory figures for a supported year.
 final taxRulesProvider = Provider.family<TaxYearRules, int>(
@@ -202,8 +238,8 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
   final expenses = ref.watch(effectiveExpensesProvider(year));
   final hours = ref.watch(hourEntriesProvider(year));
   final trips = ref.watch(mileageTripsProvider(year));
-  final assets = ref.watch(assetsProvider(year));
-  final allAssets = ref.watch(allAssetsProvider);
+  final assets = ref.watch(assetsInUseProvider(year));
+  final allAssets = ref.watch(effectiveAssetsProvider);
   final pension = ref.watch(pensionProvider(year));
   final inputs = ref.watch(taxYearInputsProvider(year));
   final all = [
@@ -226,6 +262,7 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
   final km = TaxService.businessKm(trips.requireValue);
   final assetList = assets.requireValue;
   final every = allAssets.requireValue;
+  final assetSales = AssetService.saleInvoiceIds(every);
   final yearInputs = inputs.requireValue;
   final ceased = yearInputs?.businessCeased ?? false;
   final reserve = AssetService.reserveLedger(
@@ -238,8 +275,14 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
       .fold(0.0, (s, h) => s + h.hours);
   final result = TaxService.calculate(
     rules: rules,
-    grossRevenue: TaxService.grossRevenue(invoices.requireValue),
-    creditNotes: TaxService.creditNotes(invoices.requireValue),
+    grossRevenue: TaxService.grossRevenue(
+      invoices.requireValue,
+      assetSales: assetSales,
+    ),
+    creditNotes: TaxService.creditNotes(
+      invoices.requireValue,
+      assetSales: assetSales,
+    ),
     deductibleExpenses: TaxService.deductibleExpenses(
       expenses.requireValue,
       rules,
@@ -299,7 +342,7 @@ final vatQuarterProvider =
       final lines = ref.watch(invoiceLinesProvider(key.year));
       final expenses = ref.watch(effectiveExpensesProvider(key.year));
       final trips = ref.watch(mileageTripsProvider(key.year));
-      final assets = ref.watch(allAssetsProvider);
+      final assets = ref.watch(effectiveAssetsProvider);
       final kor = ref.watch(korStatusProvider);
       final pending = waitForAll<VatQuarterResult>([
         invoices,
@@ -315,6 +358,7 @@ final vatQuarterProvider =
           invoices: invoices.requireValue,
           lines: lines.requireValue,
           expenses: expenses.requireValue,
+          assets: assets.requireValue,
           year: key.year,
           quarter: key.quarter,
           kor: kor.requireValue,

@@ -172,12 +172,13 @@ find, older ones included. These are shared:
 | Format checks: BTW numbers, KvK, IBAN, email, phone, country | `isValid*` in `lib/services/formats.dart` |
 | Parsing typed numbers and optional text | `parseWholeNumber`, `parseDecimal`, `optionalText`, `normalizeId` in `formats.dart`; `AppFormat.parseCents` for money |
 | Credit notes in totals | `Invoice.sign`, `signedExclVat`, `signedInclVat` in `lib/services/domain.dart` |
-| An expense's cost and BTW back | `ExpenseMath` in `domain.dart` |
+| The cost and BTW back of an expense or asset, and a purchase as the BTW return counts it | `PurchaseMath`, `asPurchase`, `FixedAsset.cost` in `domain.dart` |
 | Dutch text for the PDF and CSV | `VatRate.dutchLabel(rules)` and the other helpers in `domain.dart`; enum labels in the CSV mapping |
 | A statutory figure, a BTW amount, a term or a deadline | The year's `TaxYearRules` (`taxRulesProvider`, `taxRulesFor`): `vatOn`, `keepUntil`, `latestInvoiceDate`, `minUsefulLifeYears` and its fields |
 | A rate or amount in a text | `AppFormat.percentLabel` and `AppFormat.euros`, passed into a placeholder |
 | Whether a treatment fits a country | `VatTreatment.fitsCountry`, `euCountries` |
-| KOR status, turnover and its effect on expenses | `KorService`, `KorStatus`, `korStatusProvider`, `effectiveExpensesProvider` |
+| KOR status, turnover and its effect on expenses and assets | `KorService`, `KorStatus`, `korStatusProvider`, `effectiveExpensesProvider`, `effectiveAssetsProvider` |
+| Assets in use in a year, sales invoiced in Florin | `AssetService.inUse`, `assetsInUseProvider`, `AssetService.saleInvoiceIds`, `invoicedProceeds` |
 | Combining several provider streams | `waitForAll` in `lib/providers/providers.dart` |
 | Showing money, dates and rates | `AppFormat.cents`, `euros`, `date`, `number`, `percent`, `percentLabel`, `hours`, `fileSize` in `lib/theme/app_format.dart`, plain Dart so services and tools can use it |
 | Storing, checking, removing and exporting receipt files | `ReceiptService`, `ReceiptStore`, `receiptsProvider`; `CsvExportService.receiptExportPath` for names in an export |

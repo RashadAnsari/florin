@@ -781,9 +781,9 @@
   "plTaxDisposalResult": "Result on sold assets",
   "plTaxAov": "Disability insurance premiums",
   "pensionAovHelper": "Premiums for disability insurance are deducted in full in the tax estimate.",
-  "assetsFieldCostHelp": "The purchase price without VAT. Depreciation and the investment deductions are based on this amount.",
+  "assetsFieldCostHelp": "The purchase price without VAT. With any VAT you do not reclaim, it is the cost that depreciation and the investment deductions are based on.",
   "assetsFieldDisposalDateHelp": "The date you sold the asset or took it out of the business. Depreciation stops on this date.",
-  "assetsFieldDisposalProceedsHelp": "What you received for the asset, without VAT. The difference with the book value is a gain or loss.",
+  "assetsFieldDisposalProceedsHelp": "What you received for the asset, without VAT, or its market value when you took it into private use. The difference with the book value is a gain or loss.",
   "assetsFieldKiaHelp": "Kleinschaligheidsinvesteringsaftrek: an extra deduction for business assets. Assets under {min} do not count, and passenger cars and some other assets are excluded.",
   "@assetsFieldKiaHelp": {
     "placeholders": {
@@ -807,6 +807,48 @@
       }
     }
   },
+  "assetsVatSection": "VAT on the purchase",
+  "assetsVatSectionHelp": "The VAT on the purchase invoice. VAT you reclaim goes into the VAT return of the quarter of purchase; VAT you do not reclaim is part of the asset's cost.",
+  "assetsFieldVatRate": "VAT rate",
+  "assetsFieldVatRateHelp": "The VAT rate on the purchase invoice: {high}, {low}, 0% or exempt. Choose 0% when no VAT was charged, such as on a purchase from a private seller.",
+  "@assetsFieldVatRateHelp": {
+    "placeholders": {
+      "high": {
+        "type": "String"
+      },
+      "low": {
+        "type": "String"
+      }
+    }
+  },
+  "assetsValidateVatRate": "Choose the VAT rate on the purchase invoice: the VAT in your return depends on it.",
+  "assetsFieldVatAmount": "VAT amount",
+  "assetsFieldVatAmountHelp": "The VAT on the purchase invoice. Florin has no tax rules for the year of purchase, so you enter the amount instead of a rate.",
+  "assetsFieldPurchaseVat": "How the VAT was charged",
+  "assetsFieldPurchaseVatHelp": "Dutch VAT when the supplier charged it. Shifted when the invoice says the VAT is reverse-charged to you, or the supplier is abroad: you then report and deduct the VAT yourself.",
+  "assetsReclaimVat": "Reclaim this VAT",
+  "assetsReclaimVatHelp": "Tick when you may deduct this VAT in your VAT return. You may for the business share used for work you charge VAT on: not while you take part in the KOR, and not for an asset used only for VAT-exempt work.",
+  "assetsValidateKorReclaim": "You take part in the KOR on the purchase date, so you cannot reclaim this VAT. Untick Reclaim this VAT: the VAT is then part of the cost.",
+  "assetsKorNotice": "You take part in the KOR on the purchase date. The VAT is not reclaimed; it is part of the cost that depreciation and the investment deductions are based on.",
+  "assetsFieldVat": "VAT",
+  "assetsVatBack": "VAT back",
+  "assetsCostForTax": "Cost for income tax",
+  "assetsCostForTaxHelp": "The price and any VAT you do not reclaim. Depreciation and the investment deductions are based on it.",
+  "assetsFieldSaleInvoice": "Sale invoice",
+  "assetsFieldSaleInvoiceHelp": "The invoice you issued in Florin for this sale only. Its amount is the proceeds and its VAT is in your VAT return; it does not count as revenue or for the KOR turnover. Choose none for a sale without an invoice in Florin or when you took the asset into private use.",
+  "assetsSaleInvoiceNone": "No invoice in Florin",
+  "assetsProceedsFromInvoiceHelp": "What the sale invoice and any credit note on it come to, without VAT. The difference with the book value is a gain or loss.",
+  "assetsFieldDisposalVatRate": "VAT on the sale",
+  "assetsFieldDisposalVatRateHelp": "The VAT you owe on the sale, or on taking the asset into private use, over the business share of the proceeds. It goes into the VAT return of that quarter. Usually {high}; exempt only when you used the asset solely for VAT-exempt work and deducted no VAT on it.",
+  "@assetsFieldDisposalVatRateHelp": {
+    "placeholders": {
+      "high": {
+        "type": "String"
+      }
+    }
+  },
+  "assetsValidateDisposalVatRate": "Choose the VAT rate of the sale: the VAT in your return depends on it.",
+  "assetsSaleKorNotice": "You take part in the KOR on the sale date, so there is no VAT on the sale.",
   "clientsContractExpiryHelp": "When the agreement with this client ends.",
   "clientsContractSignedHelp": "Tick when you and the client have signed a written agreement.",
   "clientsFieldActiveHelp": "Inactive clients stay in your records but are not offered on new invoices.",
@@ -925,7 +967,7 @@
   "assetsFieldKind": "Type",
   "assetsFieldKindHelp": "Choose car for a passenger car or van that belongs to the business. Private use of it is added to your profit and to your VAT return.",
   "assetsCarSection": "Car",
-  "assetsCarSectionHelp": "These details decide the addition for private use (bijtelling) and the VAT on private use.",
+  "assetsCarSectionHelp": "These details decide the addition for private use (bijtelling) and the VAT on private use. A business car counts in full: the bijtelling and the VAT on private use correct for its private use.",
   "assetsFieldCatalogueValue": "Catalogue value",
   "assetsFieldCatalogueValueHelp": "The original list price including VAT and BPM, as on the registration certificate or the RDW website.",
   "assetsValidateCatalogueValue": "Enter the catalogue value including VAT and BPM, above zero: the private-use addition is a percentage of it.",
@@ -937,8 +979,6 @@
   "zeroEmissionNone": "No",
   "zeroEmissionBattery": "Battery electric",
   "zeroEmissionHydrogenOrSolar": "Hydrogen or integrated solar",
-  "assetsFieldVatOnPurchase": "VAT deducted on purchase",
-  "assetsFieldVatOnPurchaseHelp": "The VAT on the purchase that you deducted in your VAT return. Leave 0 if you deducted none, for example for a car bought from a private seller.",
   "assetsFieldMarketValue": "Market value",
   "assetsFieldMarketValueHelp": "What the car is worth now. Only used once the car is more than {years} years old.",
   "@assetsFieldMarketValueHelp": {
@@ -1029,7 +1069,7 @@
   "dashboardEstimatedTaxHelp": "Estimated income tax and Zvw contribution on your profit so far. Not a tax assessment.",
   "dashboardNetProfitAfterTaxHelp": "Profit minus the estimated tax. An estimate, not a final figure.",
   "expensesFieldCar": "Business car",
-  "expensesFieldCarHelp": "Link costs such as fuel and insurance to a business car. They cap the bijtelling and decide the VAT on private use.",
+  "expensesFieldCarHelp": "Link costs such as fuel and insurance to a business car. A linked cost counts in full, as the bijtelling and the VAT on private use correct for private use. Linked costs cap the bijtelling and decide the VAT on private use.",
   "expensesNoCar": "Not for a business car",
   "mileageFieldVehicle": "Vehicle",
   "mileageFieldVehicleHelp": "A private vehicle earns the per-km deduction. Trips in a business car do not; they count for its trip log instead.",

@@ -85,6 +85,15 @@ abstract final class KorService {
     VatTreatment.euServices || VatTreatment.servicesOutsideEu => false,
   };
 
+  /// Whether issued invoice [i] counts for the turnover. The sale of an
+  /// asset Florin depreciates does not (art. 25 lid 2): [assetSales] holds
+  /// the invoices that sell one, and their credit notes follow them.
+  static bool _countsInvoice(Invoice i, Set<int> assetSales) =>
+      i.isIssued &&
+      counts(i.vatTreatment) &&
+      !assetSales.contains(i.id) &&
+      !assetSales.contains(i.correctedInvoiceId);
+
   /// The turnover that counts, from issued invoices in [year] up to and
   /// including [through], leaving out [excludingId].
   static int turnover(
@@ -92,23 +101,27 @@ abstract final class KorService {
     int year, {
     DateTime? through,
     int? excludingId,
+    Set<int> assetSales = const {},
   }) => invoices
       .where(
         (i) =>
-            i.isIssued &&
+            _countsInvoice(i, assetSales) &&
             i.id != excludingId &&
             i.invoiceDate.year == year &&
-            (through == null || !i.invoiceDate.isAfter(through)) &&
-            counts(i.vatTreatment),
+            (through == null || !i.invoiceDate.isAfter(through)),
       )
       .fold(0, (s, i) => s + i.signedExclVat);
 
   /// The status from the profile and every issued invoice. Years without
   /// verified rules have no known limit and are left out.
-  static KorStatus status(BusinessProfile? profile, List<Invoice> invoices) {
+  static KorStatus status(
+    BusinessProfile? profile,
+    List<Invoice> invoices, {
+    Set<int> assetSales = const {},
+  }) {
     final byYear = <int, List<Invoice>>{};
     for (final i in invoices) {
-      if (i.isIssued && counts(i.vatTreatment)) {
+      if (_countsInvoice(i, assetSales)) {
         byYear.putIfAbsent(i.invoiceDate.year, () => []).add(i);
       }
     }
@@ -147,6 +160,7 @@ abstract final class KorService {
     required int amount,
     required int limit,
     int? excludingId,
+    Set<int> assetSales = const {},
   }) {
     if (!counts(treatment)) return false;
     final before = turnover(
@@ -154,6 +168,7 @@ abstract final class KorService {
       date.year,
       through: date,
       excludingId: excludingId,
+      assetSales: assetSales,
     );
     return before + amount > limit;
   }
@@ -173,4 +188,27 @@ abstract final class KorService {
     for (final e in expenses)
       status.appliesOn(e.date) && e.vatReclaimable ? e.withoutVatReclaim() : e,
   ];
+
+  /// [assets] as they count while the scheme applies: no BTW on a purchase
+  /// is deducted, so it becomes part of the cost, and a sale without an
+  /// invoice carries no BTW, as the scheme exempts it (art. 25a lid 1 and 4).
+  /// A sale invoiced in Florin follows its invoice's treatment.
+  static List<FixedAsset> applyToAssets(
+    List<FixedAsset> assets,
+    KorStatus status,
+  ) => [for (final a in assets) _applyToAsset(a, status)];
+
+  static FixedAsset _applyToAsset(FixedAsset a, KorStatus status) {
+    var counted = status.appliesOn(a.purchaseDate) && a.vatReclaimable
+        ? a.withoutVatReclaim()
+        : a;
+    final sold = a.disposalDate;
+    if (sold != null &&
+        a.disposalInvoiceId == null &&
+        a.disposalVatRate != null &&
+        status.appliesOn(sold)) {
+      counted = counted.withoutSaleVat();
+    }
+    return counted;
+  }
 }

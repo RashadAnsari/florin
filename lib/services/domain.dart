@@ -1,3 +1,5 @@
+import 'package:drift/drift.dart' show Value;
+
 import '../theme/app_format.dart';
 import 'tax_rules/tax_year_rules.dart';
 import '../db/database.dart';
@@ -108,35 +110,103 @@ extension ClientDomain on Client {
   }
 }
 
-/// How an expense counts, shared by the expense form and the calculations.
-abstract final class ExpenseMath {
-  /// The cost for income tax: BTW that is not reclaimed is part of it.
+/// How a purchase counts, an expense or an asset, shared by the forms and
+/// the calculations.
+abstract final class PurchaseMath {
+  /// The business share of [amount].
+  static int share(int amount, double businessUsePct) =>
+      (amount * businessUsePct).round();
+
+  /// The cost before the business share: BTW that is not reclaimed is part
+  /// of it (Wet IB 2001 art. 3.43 lid 1, `docs/legal.md`).
+  static int cost({
+    required int amountExclVat,
+    required int vatAmount,
+    required bool vatReclaimable,
+  }) => amountExclVat + (vatReclaimable ? 0 : vatAmount);
+
+  /// The cost for income tax: the business share of [cost].
   static int deductible({
     required int amountExclVat,
     required int vatAmount,
     required double businessUsePct,
     required bool vatReclaimable,
-  }) => ((amountExclVat + (vatReclaimable ? 0 : vatAmount)) * businessUsePct)
-      .round();
+  }) => share(
+    cost(
+      amountExclVat: amountExclVat,
+      vatAmount: vatAmount,
+      vatReclaimable: vatReclaimable,
+    ),
+    businessUsePct,
+  );
 
   static int vatToReclaim({
     required int vatAmount,
     required double businessUsePct,
     required bool vatReclaimable,
-  }) => vatReclaimable ? (vatAmount * businessUsePct).round() : 0;
+  }) => vatReclaimable ? share(vatAmount, businessUsePct) : 0;
 }
 
+/// A purchase as the BTW return counts it: the base and BTW of shifted
+/// purchases (2a, 4a, 4b) and the BTW reclaimed (5b).
+typedef Purchase = ({
+  DateTime date,
+  int base,
+  PurchaseVat purchaseVat,
+  int vat,
+  int vatToReclaim,
+});
+
 extension ExpenseDomain on Expense {
+  Purchase get asPurchase => (
+    date: date,
+    base: amountExclVat,
+    purchaseVat: purchaseVat,
+    vat: vatAmount,
+    vatToReclaim: vatToReclaim,
+  );
+
   /// This expense with its BTW not reclaimed, as the KOR requires.
   Expense withoutVatReclaim() => copyWith(
     vatReclaimable: false,
     vatToReclaim: 0,
-    deductibleAmount: ExpenseMath.deductible(
+    deductibleAmount: PurchaseMath.deductible(
       amountExclVat: amountExclVat,
       vatAmount: vatAmount,
       businessUsePct: businessUsePct,
       vatReclaimable: false,
     ),
+  );
+}
+
+extension FixedAssetDomain on FixedAsset {
+  Purchase get asPurchase => (
+    date: purchaseDate,
+    base: costExclVat,
+    purchaseVat: purchaseVat,
+    vat: vatAmount,
+    vatToReclaim: vatToReclaim,
+  );
+
+  /// The investment for income tax: the price and any BTW not reclaimed.
+  int get cost => PurchaseMath.cost(
+    amountExclVat: costExclVat,
+    vatAmount: vatAmount,
+    vatReclaimable: vatReclaimable,
+  );
+
+  /// The business share of the proceeds, the base of the BTW on a sale.
+  int get businessProceeds =>
+      PurchaseMath.share(disposalProceeds ?? 0, businessUsePct);
+
+  /// This asset with its purchase BTW not reclaimed, as the KOR requires.
+  FixedAsset withoutVatReclaim() =>
+      copyWith(vatReclaimable: false, vatToReclaim: 0);
+
+  /// This asset with no BTW on its sale, which the KOR exempts.
+  FixedAsset withoutSaleVat() => copyWith(
+    disposalVatRate: const Value(null),
+    disposalVatAmount: const Value(null),
   );
 }
 

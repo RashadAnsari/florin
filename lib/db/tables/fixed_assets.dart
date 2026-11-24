@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import '../enums.dart';
+import 'invoices.dart';
 
 class FixedAssets extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -7,6 +8,18 @@ class FixedAssets extends Table {
       textEnum<AssetKind>().withDefault(Constant(AssetKind.general.name))();
   TextColumn get assetName => text()();
   IntColumn get costExclVat => integer()();
+
+  // BTW on the purchase, counted in the return as an expense's is. The rate
+  // is null when the purchase year has no rules in Florin and the amount was
+  // entered.
+  TextColumn get vatRate => textEnum<VatRate>().nullable()();
+  TextColumn get purchaseVat => textEnum<PurchaseVat>().withDefault(
+    Constant(PurchaseVat.domestic.name),
+  )();
+  IntColumn get vatAmount => integer().withDefault(const Constant(0))();
+  BoolColumn get vatReclaimable =>
+      boolean().withDefault(const Constant(true))();
+  IntColumn get vatToReclaim => integer().withDefault(const Constant(0))();
 
   /// Depreciation stops at this value.
   IntColumn get residualValue => integer()();
@@ -35,9 +48,19 @@ class FixedAssets extends Table {
       textEnum<ZeroEmission>().withDefault(Constant(ZeroEmission.none.name))();
   IntColumn get marketValue => integer().nullable()();
   BoolColumn get keepsTripLog => boolean().withDefault(const Constant(false))();
-  IntColumn get vatDeductedOnPurchase =>
-      integer().withDefault(const Constant(0))();
   TextColumn get notes => text().nullable()();
   DateTimeColumn get disposalDate => dateTime().nullable()();
   IntColumn get disposalProceeds => integer().nullable()();
+
+  /// The issued invoice for the sale, which then carries its BTW.
+  IntColumn get disposalInvoiceId => integer().nullable().references(
+    Invoices,
+    #id,
+    onDelete: KeyAction.restrict,
+  )();
+
+  /// BTW on a sale or withdrawal without an invoice in Florin, over the
+  /// business share of the proceeds.
+  TextColumn get disposalVatRate => textEnum<VatRate>().nullable()();
+  IntColumn get disposalVatAmount => integer().nullable()();
 }
