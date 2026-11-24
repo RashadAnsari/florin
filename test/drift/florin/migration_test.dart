@@ -9,6 +9,7 @@ import 'generated/schema.dart';
 import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
+import 'generated/schema_v4.dart' as v4;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -321,6 +322,54 @@ void main() {
           // An expense without a car keeps its share and amounts.
           newExpense(3, null, 1, share: 0.6, deductible: 6000, vatBack: 1260),
         ]);
+      },
+    );
+  });
+
+  test('migration from v3 to v4 keeps the year inputs and starts without a '
+      'job', () async {
+    const oldInputs = v3.TaxYearInputsData(
+      year: 2026,
+      partnerHours: 900,
+      hasSoVerklaring: 1,
+      soStarter: 0,
+      businessCeased: 0,
+      stakingsaftrekUsedBefore: 0,
+      disabilityBenefit: 0,
+      disabilityStartersUsed: 0,
+      unrealisedZelfstandigenaftrek: 50000,
+      lossCarryForward: 100000,
+    );
+    const newInputs = v4.TaxYearInputsData(
+      year: 2026,
+      partnerHours: 900,
+      hasSoVerklaring: 1,
+      soStarter: 0,
+      businessCeased: 0,
+      stakingsaftrekUsedBefore: 0,
+      disabilityBenefit: 0,
+      disabilityStartersUsed: 0,
+      unrealisedZelfstandigenaftrek: 50000,
+      lossCarryForward: 100000,
+      employed: 0,
+      wages: 0,
+      wageTaxWithheld: 0,
+      zvwWages: 0,
+      employmentHours: 0,
+      notOndernemerBefore: 0,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 3,
+      newVersion: 4,
+      createOld: v3.DatabaseAtV3.new,
+      createNew: v4.DatabaseAtV4.new,
+      openTestedDatabase: AppDatabase.new,
+      createItems: (batch, oldDb) {
+        batch.insert(oldDb.taxYearInputs, oldInputs);
+      },
+      validateItems: (newDb) async {
+        expect(await newDb.select(newDb.taxYearInputs).get(), [newInputs]);
       },
     );
   });

@@ -26,11 +26,11 @@ Florin keeps your invoices, expenses, BTW returns, hours, mileage, assets and pe
 ## Why Florin
 
 - **Built on Dutch tax law, with the sources.** Every rate, threshold and invoice rule in Florin is checked against the statute on wetten.overheid.nl or the Belastingdienst, and the quote and link are in [`docs/legal.md`](docs/legal.md) and [`docs/tax-years/`](docs/tax-years/).
-- **Know your numbers all year.** The dashboard shows revenue, costs, BTW to pay and an estimate of your income tax as you add invoices and expenses. Every estimate is marked as one.
+- **Know your numbers all year.** The dashboard shows revenue, costs, BTW to pay and an estimate of your income tax as you add invoices and expenses, including wages from a job next to your business. Every estimate is marked as one.
 - **Explained as you go.** Every field and every tax term has a short explanation one hover away.
 - **Invoices built from the BTW rules.** PDF invoices include the items listed in article 35a of the Wet op de omzetbelasting, with btw verlegd, intra-Community supplies, services outside the EU and credit notes that name the invoice they correct.
-- **Your data stays yours.** One local database file, in a folder you choose. Keep it in iCloud Drive, OneDrive or Dropbox for backup.
-- **Ready for your returns and your accountant.** Export a full year to CSV files in one click, into a new folder named after the export date: every record, the BTW return of each quarter by rubriek in whole euros as the form asks, the ICP list of each quarter and the estimated income tax.
+- **Your data stays yours.** One local database file, `florin.db`, with your receipts in a folder next to it, in a folder you choose. Keep that folder in iCloud Drive, OneDrive or Dropbox for backup, or copy it somewhere safe while Florin is closed. Settings copies the database and receipts to another folder, and choosing a folder that already holds `florin.db` on first start opens it. Florin never connects to the internet: the fonts are built in.
+- **Ready for your returns and your accountant.** Export a full year to CSV files in one click, into a new folder named after the export date: every record, the BTW return of each quarter by rubriek in whole euros as the form asks, the ICP list of each quarter, the estimated income tax and your receipts. Florin prepares the figures; you file them in Mijn Belastingdienst Zakelijk, or your accountant does.
 - **Free and open source** under the MIT license.
 
 ## Features
@@ -42,12 +42,12 @@ Florin keeps your invoices, expenses, BTW returns, hours, mileage, assets and pe
 | **Expenses** | Costs by category with BTW reclaim, business use percentage and receipt tracking, including purchases where the BTW is shifted to you. Food, drinks and representation use whichever of the 80% rule and the € 5.700 threshold deducts more, and BTW on restaurant meals is not reclaimed. |
 | **BTW return** | Each quarter pre-filled from your records: rubrieken 1a, 1b, 1d, 1e, 2a, 3a, 3b, 4a, 4b, 5a and 5b, plus the supplies for the ICP-opgaaf. Filing and payment tracked per quarter, with the deadline shown. |
 | **Kleineondernemersregeling** | Enter when your KOR started and Florin follows it: KOR invoices without BTW, no BTW reclaimed on purchases, no regular return for quarters the KOR covers, an incidental return when BTW is shifted to you, and your turnover against the € 20.000 limit. Without the KOR, Florin expects a return every quarter, a nil return included. The invoice that passes the limit carries BTW again and Florin ends the KOR from there. |
-| **Income tax estimate** | Zelfstandigenaftrek, startersaftrek, S&O-aftrek, meewerkaftrek, stakingsaftrek, startersaftrek bij arbeidsongeschiktheid, mkb-winstvrijstelling, KIA, EIA, MIA, desinvesteringsbijtelling, herinvesteringsreserve, depreciation, gains on sold assets, lijfrente, disability insurance, losses from earlier years, algemene heffingskorting, arbeidskorting and the Zvw contribution. |
-| **Urencriterium** | Hours per client and project, with progress towards the 1,225 hours you need for the zelfstandigenaftrek. |
+| **Income tax estimate** | For a business owner under the AOW age, with or without a job next to the business. Wages from your jaaropgaaf are taxed together with your profit, the loonheffing already withheld is subtracted, and the loon Zvw lowers the Zvw contribution on your profit. Zelfstandigenaftrek, startersaftrek, S&O-aftrek, meewerkaftrek, stakingsaftrek, startersaftrek bij arbeidsongeschiktheid, mkb-winstvrijstelling, KIA, EIA, MIA, desinvesteringsbijtelling, herinvesteringsreserve, depreciation, gains on sold assets, lijfrente, disability insurance, losses from earlier years, algemene heffingskorting, arbeidskorting and the Zvw contribution. A fiscal partner, other work, benefits, box 2 and box 3 are not included; [`docs/legal.md`](docs/legal.md) lists what Florin does not model. |
+| **Urencriterium** | Hours per client and project, with progress towards the 1,225 hours you need for the zelfstandigenaftrek. With a job, Florin also checks that you spend more hours on the business than in employment, unless you were not a business owner in one or more of the five previous years. |
 | **Mileage** | Business and commuting trips with odometer readings and purpose, deducted at the Belastingdienst rate for the year. |
 | **Fixed assets** | Straight-line depreciation by day down to the residual value, business use percentage, KIA, EIA, MIA and the herinvesteringsreserve. The BTW on the purchase and on a sale goes into your BTW return, and BTW you cannot reclaim, such as under the KOR, counts as part of the cost. |
 | **Business car** | The private-use addition (bijtelling) with the zero-emission reduction and the 500 km rule, and the BTW on private use in the last return of the year. |
-| **Pension** | Your jaarruimte from last year's income, AOW-franchise and factor A, plus reserveringsruimte. |
+| **Pension** | Your jaarruimte from last year's profit and wages, AOW-franchise and factor A, plus reserveringsruimte, and premiums for disability insurance (AOV). |
 | **Clients** | Contact details, BTW and KvK numbers, and the Wet DBA risk per client. |
 
 Florin covers the **2026** tax year. Only covered years can be selected and booked into; a new year arrives in an update once its figures are published and checked.
@@ -87,23 +87,6 @@ For a portable version without installing, unzip `florin-windows-x64.zip` and ru
 On Ubuntu, Debian, Linux Mint and other Debian-based systems, download `florin-linux-amd64.deb` and open it to install. Florin then appears in your app menu.
 
 On other distributions, extract `florin-linux-x64.tar.gz` to a folder and run `./florin`.
-
-## FAQ
-
-**Where is my data stored?**
-In a single file, `florin.db`, including your business details. You pick its folder when you first start Florin and can copy it to another folder later in Settings. Choosing a folder that already holds `florin.db` on first start opens it.
-
-**How do I back up my data?**
-Keep the database folder inside a synced or backed-up folder, or copy `florin.db` somewhere safe. Close Florin before copying it.
-
-**Can Florin file my BTW return or income tax return?**
-No. Florin prepares the figures; you file them yourself in Mijn Belastingdienst Zakelijk, or your accountant does.
-
-**Which situations does the income tax estimate cover?**
-One business owner under the AOW age with no other income. Wages, a fiscal partner, box 2 and box 3 are not included. [`docs/legal.md`](docs/legal.md) lists what Florin does not model.
-
-**Does Florin need an internet connection?**
-No. Florin never connects to the internet: your data stays on your computer and the fonts are built in.
 
 ## Build from source
 

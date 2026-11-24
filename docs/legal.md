@@ -619,19 +619,110 @@ income tax export. The rate is a yearly figure (`tariefaanpassingRate`); the
 threshold is where the top bracket starts. Florin has no eigen woning or
 persoonsgebonden aftrek (lid 3 d and e), so only a and b apply.
 
+## Income from employment
+
+A user who also works as an employee enters the year's figures from the
+jaaropgaven under Employment on the P&L screen (`TaxYearInputs`): the loon,
+the loonheffing withheld, the loon Zvw and the hours in employment.
+
+> 2 Inkomen uit werk en woning is het gezamenlijke bedrag van: a. de belastbare winst uit onderneming (afdeling 3.2); b. het belastbare loon (afdeling 3.3);
+
+[Wet inkomstenbelasting 2001, artikel 3.1 lid 2](https://wetten.overheid.nl/BWBR0011353/2026-06-01), read 2026-11-24
+
+> Belastbaar loon is loon verminderd met de reisaftrek (paragraaf 3.3.2).
+
+[Wet inkomstenbelasting 2001, artikel 3.80](https://wetten.overheid.nl/BWBR0011353/2026-06-01), read 2026-11-24
+
+> Werkt u in loondienst of hebt u een ziektewetuitkering? Dan krijgt u van uw werkgever of uitkeringsinstantie een jaaropgaaf. Hierop staan de bedragen die u moet invullen in uw aangifte.
+
+[Belastingdienst, Fiscale informatie 2026, Loon, pensioen, uitkeringen en afkoopsommen, 2.2](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2026/loon_pensioen_uitkeringen_en_afkoopsommen), read 2026-11-24
+
+Florin adds the loon to the belastbare winst in box 1, so the brackets, the
+tariefaanpassing and the algemene heffingskorting (on the verzamelinkomen,
+artikel 2.18) apply to both together. Florin has no reisaftrek: leaving it
+out overstates the tax.
+
+> e. arbeidsinkomen: het gezamenlijke bedrag van hetgeen door de belastingplichtige met tegenwoordige arbeid is genoten als winst uit een of meer ondernemingen, loon en resultaat uit een of meer werkzaamheden.
+
+[Wet inkomstenbelasting 2001, artikel 8.1 lid 1](https://wetten.overheid.nl/BWBR0011353/2026-06-01), read 2026-11-24
+
+The arbeidskorting is computed on the profit and the loon together. Artikel
+8.11 lid 2 also sets a minimum: the arbeidskorting the employer applied.
+Florin does not apply that minimum, which can only overstate the tax.
+
+> 1 De voorheffingen zijn: a. de geheven loonbelasting met uitzondering van de als eindheffing geheven loonbelasting;
+
+> 6 Indien artikel 9.1, derde lid, toepassing vindt, wordt ook als voorheffing aangemerkt de bij wijze van inhouding geheven premie voor de volksverzekeringen met uitzondering van de bij wijze van eindheffing geheven premie voor de volksverzekeringen.
+
+[Wet inkomstenbelasting 2001, artikel 9.2 leden 1 en 6](https://wetten.overheid.nl/BWBR0011353/2026-06-01), read 2026-11-24
+
+> Loonheffing wordt door uw werkgever of uitkeringsinstantie ingehouden op uw loon, pensioen en sommige uitkeringen en afkoopsommen. Deze wordt verrekend met de inkomstenbelasting die u moet betalen. U vult zowel uw loon als de ingehouden loonheffing in uw aangifte in.
+
+[Belastingdienst, Fiscale informatie 2026, Te verrekenen belasting, 24.2](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2026/te_verrekenen_belasting), read 2026-11-24
+
+Florin subtracts the loonheffing withheld from the estimated tax and shows
+what is left to pay, or the refund. Payments on a voorlopige aanslag are also
+settled in the return; Florin does not record them and says so.
+
+> 5 Ingeval de inkomensafhankelijke bijdrage ingevolge artikel 49, derde lid, bij wege van aanslag wordt geheven, wordt daarbij als bijdrage-inkomen ten hoogste in aanmerking genomen een bedrag gelijk aan het in het derde lid bedoelde bedrag, verminderd met het loon, bedoeld in artikel 42, van de verzekeringsplichtige en met het door de verzekeringsplichtige van een inhoudingsplichtige genoten loon, bedoeld in het tweede lid, onderdeel a.
+
+[Zorgverzekeringswet, artikel 43 lid 5](https://wetten.overheid.nl/BWBR0018450/2026-01-01), read 2026-11-24
+
+> Hebt u loon, pensioen of een uitkering waarover de werkgever of uitkeringsinstantie al werkgeversheffing of bijdrage Zvw inhoudt? En hebt u ook andere inkomsten, bijvoorbeeld als freelancer? Dan berekenen wij de bijdrage Zvw van 4,85% alleen nog over uw andere inkomsten.
+
+> Het loon Zorgverzekeringswet staat op de jaaropgaaf die u krijgt van uw werkgever of uitkeringsinstantie.
+
+[Belastingdienst, Fiscale informatie 2026, Inkomensafhankelijke bijdrage Zorgverzekeringswet, 28.2](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2026/inkomensafhankelijke_bijdrage_zorgverzekeringswet), read 2026-11-24
+
+Florin levies the Zvw contribution on the belastbare winst up to the maximum
+bijdrage-inkomen minus the loon Zvw the user enters. The employer pays the
+werkgeversheffing on the loon itself.
+
+Where Florin implements it: `TaxService.calculate` (wages, arbeidskorting,
+Zvw, `wageTaxWithheld`, `taxToPay`), the P&L screen rows and Employment
+inputs, the dashboard's estimated tax, and the income tax export rows "Loon
+uit dienstbetrekking", "Ingehouden loonheffing" and "Te betalen (negatief:
+terug te ontvangen)". The estimated net profit after tax and the effective
+rate subtract only the tax the business adds: the total tax minus the box 1
+tax on the loon alone after its own heffingskortingen
+(`TaxService.wageOnlyTax`). That split is Florin's arithmetic, not a rule of
+law.
+
+## Urencriterium with a job
+
+> 1 In deze afdeling en de daarop berustende bepalingen wordt verstaan onder urencriterium: het gedurende het kalenderjaar besteden van ten minste 1225 uren aan werkzaamheden voor een of meer ondernemingen waaruit de belastingplichtige als ondernemer winst geniet, indien: a. de tijd die in totaal wordt besteed aan die ondernemingen en het verrichten van werkzaamheden in de zin van de afdelingen 3.3 en 3.4, grotendeels wordt besteed aan die ondernemingen of b. de ondernemer in een of meer van de vijf voorafgaande kalenderjaren geen ondernemer was.
+
+[Wet inkomstenbelasting 2001, artikel 3.6 lid 1](https://wetten.overheid.nl/BWBR0011353/2026-06-01), read 2026-11-24
+
+> U besteedt meer tijd aan uw onderneming dan aan andere werkzaamheden (bijvoorbeeld in loondienst). Was u in 1 van de jaren 2021 tot en met 2025 geen ondernemer? Dan hoeft u niet te voldoen aan deze voorwaarde.
+
+[Belastingdienst, Fiscale informatie 2026, Ondernemersaftrek en investeringsaftrek, 8.9](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2026/ondernemersaftrek_en_investeringsaftrek), read 2026-11-24
+
+With a job, Florin requires the business hours logged to be more than the
+hours in employment the user enters; equal hours do not meet it. The
+condition does not apply when the user ticks that they were not an ondernemer
+in one or more of the five previous years, or is eligible for the
+startersaftrek, whose condition includes that (artikel 3.76 lid 3). The help
+asks for the employment hours of the whole year while only logged business
+hours count, so during the year the estimate leaves the deductions out rather
+than assume them (AGENTS.md rule 5). Hours of other work under afdeling 3.4
+are not asked for.
+
+Where Florin implements it: `TaxService.meetsUrencriterium` and
+`TaxService.timeTestHours`, the P&L banner, and `UrencriteriumProgress` on
+the dashboard and the Hours screen.
+
 ## Income tax estimate scope
 
-The estimate covers one ondernemer under the AOW age with no other income.
-The urencriterium's second condition (Wet IB 2001 artikel 3.6 lid 1: most
-working time goes to the business, unless the user was not an ondernemer in one
-of the five previous years) only matters with other work, which the estimate
-excludes.
+The estimate covers one ondernemer under the AOW age, with wages from
+employment when the user enters them.
 
 Facts the bookkeeping cannot show are entered per year in the P&L screen
 (`TaxYearInputs`): the partner's hours, an S&O-verklaring, stopping the
-business, a disability benefit, unused zelfstandigenaftrek and losses from
-earlier years.
+business, a disability benefit, unused zelfstandigenaftrek, losses from
+earlier years and employment.
 
-Florin does not collect income outside the business: wages, a fiscal
-partner's income, box 2, box 3, or an oudedagsreserve built up before 2023.
-The estimate leaves them out and says so.
+Florin does not collect other income outside the business: a fiscal
+partner's income, resultaat uit overige werkzaamheden, benefits and pensions,
+box 2, box 3, or an oudedagsreserve built up before 2023. The estimate leaves
+them out and says so.

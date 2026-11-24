@@ -8304,6 +8304,81 @@ class $TaxYearInputsTable extends TaxYearInputs
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _employedMeta = const VerificationMeta(
+    'employed',
+  );
+  @override
+  late final GeneratedColumn<bool> employed = GeneratedColumn<bool>(
+    'employed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("employed" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _wagesMeta = const VerificationMeta('wages');
+  @override
+  late final GeneratedColumn<int> wages = GeneratedColumn<int>(
+    'wages',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _wageTaxWithheldMeta = const VerificationMeta(
+    'wageTaxWithheld',
+  );
+  @override
+  late final GeneratedColumn<int> wageTaxWithheld = GeneratedColumn<int>(
+    'wage_tax_withheld',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _zvwWagesMeta = const VerificationMeta(
+    'zvwWages',
+  );
+  @override
+  late final GeneratedColumn<int> zvwWages = GeneratedColumn<int>(
+    'zvw_wages',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _employmentHoursMeta = const VerificationMeta(
+    'employmentHours',
+  );
+  @override
+  late final GeneratedColumn<int> employmentHours = GeneratedColumn<int>(
+    'employment_hours',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _notOndernemerBeforeMeta =
+      const VerificationMeta('notOndernemerBefore');
+  @override
+  late final GeneratedColumn<bool> notOndernemerBefore = GeneratedColumn<bool>(
+    'not_ondernemer_before',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("not_ondernemer_before" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     year,
@@ -8316,6 +8391,12 @@ class $TaxYearInputsTable extends TaxYearInputs
     disabilityStartersUsed,
     unrealisedZelfstandigenaftrek,
     lossCarryForward,
+    employed,
+    wages,
+    wageTaxWithheld,
+    zvwWages,
+    employmentHours,
+    notOndernemerBefore,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -8413,6 +8494,51 @@ class $TaxYearInputsTable extends TaxYearInputs
         ),
       );
     }
+    if (data.containsKey('employed')) {
+      context.handle(
+        _employedMeta,
+        employed.isAcceptableOrUnknown(data['employed']!, _employedMeta),
+      );
+    }
+    if (data.containsKey('wages')) {
+      context.handle(
+        _wagesMeta,
+        wages.isAcceptableOrUnknown(data['wages']!, _wagesMeta),
+      );
+    }
+    if (data.containsKey('wage_tax_withheld')) {
+      context.handle(
+        _wageTaxWithheldMeta,
+        wageTaxWithheld.isAcceptableOrUnknown(
+          data['wage_tax_withheld']!,
+          _wageTaxWithheldMeta,
+        ),
+      );
+    }
+    if (data.containsKey('zvw_wages')) {
+      context.handle(
+        _zvwWagesMeta,
+        zvwWages.isAcceptableOrUnknown(data['zvw_wages']!, _zvwWagesMeta),
+      );
+    }
+    if (data.containsKey('employment_hours')) {
+      context.handle(
+        _employmentHoursMeta,
+        employmentHours.isAcceptableOrUnknown(
+          data['employment_hours']!,
+          _employmentHoursMeta,
+        ),
+      );
+    }
+    if (data.containsKey('not_ondernemer_before')) {
+      context.handle(
+        _notOndernemerBeforeMeta,
+        notOndernemerBefore.isAcceptableOrUnknown(
+          data['not_ondernemer_before']!,
+          _notOndernemerBeforeMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -8462,6 +8588,30 @@ class $TaxYearInputsTable extends TaxYearInputs
         DriftSqlType.int,
         data['${effectivePrefix}loss_carry_forward'],
       )!,
+      employed: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}employed'],
+      )!,
+      wages: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}wages'],
+      )!,
+      wageTaxWithheld: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}wage_tax_withheld'],
+      )!,
+      zvwWages: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}zvw_wages'],
+      )!,
+      employmentHours: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}employment_hours'],
+      )!,
+      notOndernemerBefore: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}not_ondernemer_before'],
+      )!,
     );
   }
 
@@ -8498,6 +8648,29 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
 
   /// Box 1 losses from earlier years still to offset.
   final int lossCarryForward;
+
+  /// Also working as an employee this year. The fields below are kept at 0
+  /// while this is off.
+  final bool employed;
+
+  /// Loon from every jaaropgaaf of the year, in cents.
+  final int wages;
+
+  /// Loonheffing the employers withheld, a voorheffing (art. 9.2 lid 1 a).
+  final int wageTaxWithheld;
+
+  /// Loon Zorgverzekeringswet, on which the employers paid the
+  /// werkgeversheffing; it lowers the maximum bijdrage-inkomen (Zvw art. 43
+  /// lid 5).
+  final int zvwWages;
+
+  /// Hours worked as an employee in the year, for the urencriterium's
+  /// condition that most working time goes to the business (art. 3.6 lid 1 a).
+  final int employmentHours;
+
+  /// Not an ondernemer in one or more of the five previous years, which
+  /// lifts that condition (art. 3.6 lid 1 b).
+  final bool notOndernemerBefore;
   const TaxYearInput({
     required this.year,
     required this.partnerHours,
@@ -8509,6 +8682,12 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     required this.disabilityStartersUsed,
     required this.unrealisedZelfstandigenaftrek,
     required this.lossCarryForward,
+    required this.employed,
+    required this.wages,
+    required this.wageTaxWithheld,
+    required this.zvwWages,
+    required this.employmentHours,
+    required this.notOndernemerBefore,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -8525,6 +8704,12 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
       unrealisedZelfstandigenaftrek,
     );
     map['loss_carry_forward'] = Variable<int>(lossCarryForward);
+    map['employed'] = Variable<bool>(employed);
+    map['wages'] = Variable<int>(wages);
+    map['wage_tax_withheld'] = Variable<int>(wageTaxWithheld);
+    map['zvw_wages'] = Variable<int>(zvwWages);
+    map['employment_hours'] = Variable<int>(employmentHours);
+    map['not_ondernemer_before'] = Variable<bool>(notOndernemerBefore);
     return map;
   }
 
@@ -8540,6 +8725,12 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
       disabilityStartersUsed: Value(disabilityStartersUsed),
       unrealisedZelfstandigenaftrek: Value(unrealisedZelfstandigenaftrek),
       lossCarryForward: Value(lossCarryForward),
+      employed: Value(employed),
+      wages: Value(wages),
+      wageTaxWithheld: Value(wageTaxWithheld),
+      zvwWages: Value(zvwWages),
+      employmentHours: Value(employmentHours),
+      notOndernemerBefore: Value(notOndernemerBefore),
     );
   }
 
@@ -8565,6 +8756,14 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
         json['unrealisedZelfstandigenaftrek'],
       ),
       lossCarryForward: serializer.fromJson<int>(json['lossCarryForward']),
+      employed: serializer.fromJson<bool>(json['employed']),
+      wages: serializer.fromJson<int>(json['wages']),
+      wageTaxWithheld: serializer.fromJson<int>(json['wageTaxWithheld']),
+      zvwWages: serializer.fromJson<int>(json['zvwWages']),
+      employmentHours: serializer.fromJson<int>(json['employmentHours']),
+      notOndernemerBefore: serializer.fromJson<bool>(
+        json['notOndernemerBefore'],
+      ),
     );
   }
   @override
@@ -8585,6 +8784,12 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
         unrealisedZelfstandigenaftrek,
       ),
       'lossCarryForward': serializer.toJson<int>(lossCarryForward),
+      'employed': serializer.toJson<bool>(employed),
+      'wages': serializer.toJson<int>(wages),
+      'wageTaxWithheld': serializer.toJson<int>(wageTaxWithheld),
+      'zvwWages': serializer.toJson<int>(zvwWages),
+      'employmentHours': serializer.toJson<int>(employmentHours),
+      'notOndernemerBefore': serializer.toJson<bool>(notOndernemerBefore),
     };
   }
 
@@ -8599,6 +8804,12 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     int? disabilityStartersUsed,
     int? unrealisedZelfstandigenaftrek,
     int? lossCarryForward,
+    bool? employed,
+    int? wages,
+    int? wageTaxWithheld,
+    int? zvwWages,
+    int? employmentHours,
+    bool? notOndernemerBefore,
   }) => TaxYearInput(
     year: year ?? this.year,
     partnerHours: partnerHours ?? this.partnerHours,
@@ -8613,6 +8824,12 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     unrealisedZelfstandigenaftrek:
         unrealisedZelfstandigenaftrek ?? this.unrealisedZelfstandigenaftrek,
     lossCarryForward: lossCarryForward ?? this.lossCarryForward,
+    employed: employed ?? this.employed,
+    wages: wages ?? this.wages,
+    wageTaxWithheld: wageTaxWithheld ?? this.wageTaxWithheld,
+    zvwWages: zvwWages ?? this.zvwWages,
+    employmentHours: employmentHours ?? this.employmentHours,
+    notOndernemerBefore: notOndernemerBefore ?? this.notOndernemerBefore,
   );
   TaxYearInput copyWithCompanion(TaxYearInputsCompanion data) {
     return TaxYearInput(
@@ -8642,6 +8859,18 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
       lossCarryForward: data.lossCarryForward.present
           ? data.lossCarryForward.value
           : this.lossCarryForward,
+      employed: data.employed.present ? data.employed.value : this.employed,
+      wages: data.wages.present ? data.wages.value : this.wages,
+      wageTaxWithheld: data.wageTaxWithheld.present
+          ? data.wageTaxWithheld.value
+          : this.wageTaxWithheld,
+      zvwWages: data.zvwWages.present ? data.zvwWages.value : this.zvwWages,
+      employmentHours: data.employmentHours.present
+          ? data.employmentHours.value
+          : this.employmentHours,
+      notOndernemerBefore: data.notOndernemerBefore.present
+          ? data.notOndernemerBefore.value
+          : this.notOndernemerBefore,
     );
   }
 
@@ -8659,7 +8888,13 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
           ..write(
             'unrealisedZelfstandigenaftrek: $unrealisedZelfstandigenaftrek, ',
           )
-          ..write('lossCarryForward: $lossCarryForward')
+          ..write('lossCarryForward: $lossCarryForward, ')
+          ..write('employed: $employed, ')
+          ..write('wages: $wages, ')
+          ..write('wageTaxWithheld: $wageTaxWithheld, ')
+          ..write('zvwWages: $zvwWages, ')
+          ..write('employmentHours: $employmentHours, ')
+          ..write('notOndernemerBefore: $notOndernemerBefore')
           ..write(')'))
         .toString();
   }
@@ -8676,6 +8911,12 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     disabilityStartersUsed,
     unrealisedZelfstandigenaftrek,
     lossCarryForward,
+    employed,
+    wages,
+    wageTaxWithheld,
+    zvwWages,
+    employmentHours,
+    notOndernemerBefore,
   );
   @override
   bool operator ==(Object other) =>
@@ -8691,7 +8932,13 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
           other.disabilityStartersUsed == this.disabilityStartersUsed &&
           other.unrealisedZelfstandigenaftrek ==
               this.unrealisedZelfstandigenaftrek &&
-          other.lossCarryForward == this.lossCarryForward);
+          other.lossCarryForward == this.lossCarryForward &&
+          other.employed == this.employed &&
+          other.wages == this.wages &&
+          other.wageTaxWithheld == this.wageTaxWithheld &&
+          other.zvwWages == this.zvwWages &&
+          other.employmentHours == this.employmentHours &&
+          other.notOndernemerBefore == this.notOndernemerBefore);
 }
 
 class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
@@ -8705,6 +8952,12 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
   final Value<int> disabilityStartersUsed;
   final Value<int> unrealisedZelfstandigenaftrek;
   final Value<int> lossCarryForward;
+  final Value<bool> employed;
+  final Value<int> wages;
+  final Value<int> wageTaxWithheld;
+  final Value<int> zvwWages;
+  final Value<int> employmentHours;
+  final Value<bool> notOndernemerBefore;
   const TaxYearInputsCompanion({
     this.year = const Value.absent(),
     this.partnerHours = const Value.absent(),
@@ -8716,6 +8969,12 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     this.disabilityStartersUsed = const Value.absent(),
     this.unrealisedZelfstandigenaftrek = const Value.absent(),
     this.lossCarryForward = const Value.absent(),
+    this.employed = const Value.absent(),
+    this.wages = const Value.absent(),
+    this.wageTaxWithheld = const Value.absent(),
+    this.zvwWages = const Value.absent(),
+    this.employmentHours = const Value.absent(),
+    this.notOndernemerBefore = const Value.absent(),
   });
   TaxYearInputsCompanion.insert({
     this.year = const Value.absent(),
@@ -8728,6 +8987,12 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     this.disabilityStartersUsed = const Value.absent(),
     this.unrealisedZelfstandigenaftrek = const Value.absent(),
     this.lossCarryForward = const Value.absent(),
+    this.employed = const Value.absent(),
+    this.wages = const Value.absent(),
+    this.wageTaxWithheld = const Value.absent(),
+    this.zvwWages = const Value.absent(),
+    this.employmentHours = const Value.absent(),
+    this.notOndernemerBefore = const Value.absent(),
   });
   static Insertable<TaxYearInput> custom({
     Expression<int>? year,
@@ -8740,6 +9005,12 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     Expression<int>? disabilityStartersUsed,
     Expression<int>? unrealisedZelfstandigenaftrek,
     Expression<int>? lossCarryForward,
+    Expression<bool>? employed,
+    Expression<int>? wages,
+    Expression<int>? wageTaxWithheld,
+    Expression<int>? zvwWages,
+    Expression<int>? employmentHours,
+    Expression<bool>? notOndernemerBefore,
   }) {
     return RawValuesInsertable({
       if (year != null) 'year': year,
@@ -8755,6 +9026,13 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
       if (unrealisedZelfstandigenaftrek != null)
         'unrealised_zelfstandigenaftrek': unrealisedZelfstandigenaftrek,
       if (lossCarryForward != null) 'loss_carry_forward': lossCarryForward,
+      if (employed != null) 'employed': employed,
+      if (wages != null) 'wages': wages,
+      if (wageTaxWithheld != null) 'wage_tax_withheld': wageTaxWithheld,
+      if (zvwWages != null) 'zvw_wages': zvwWages,
+      if (employmentHours != null) 'employment_hours': employmentHours,
+      if (notOndernemerBefore != null)
+        'not_ondernemer_before': notOndernemerBefore,
     });
   }
 
@@ -8769,6 +9047,12 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     Value<int>? disabilityStartersUsed,
     Value<int>? unrealisedZelfstandigenaftrek,
     Value<int>? lossCarryForward,
+    Value<bool>? employed,
+    Value<int>? wages,
+    Value<int>? wageTaxWithheld,
+    Value<int>? zvwWages,
+    Value<int>? employmentHours,
+    Value<bool>? notOndernemerBefore,
   }) {
     return TaxYearInputsCompanion(
       year: year ?? this.year,
@@ -8784,6 +9068,12 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
       unrealisedZelfstandigenaftrek:
           unrealisedZelfstandigenaftrek ?? this.unrealisedZelfstandigenaftrek,
       lossCarryForward: lossCarryForward ?? this.lossCarryForward,
+      employed: employed ?? this.employed,
+      wages: wages ?? this.wages,
+      wageTaxWithheld: wageTaxWithheld ?? this.wageTaxWithheld,
+      zvwWages: zvwWages ?? this.zvwWages,
+      employmentHours: employmentHours ?? this.employmentHours,
+      notOndernemerBefore: notOndernemerBefore ?? this.notOndernemerBefore,
     );
   }
 
@@ -8826,6 +9116,24 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     if (lossCarryForward.present) {
       map['loss_carry_forward'] = Variable<int>(lossCarryForward.value);
     }
+    if (employed.present) {
+      map['employed'] = Variable<bool>(employed.value);
+    }
+    if (wages.present) {
+      map['wages'] = Variable<int>(wages.value);
+    }
+    if (wageTaxWithheld.present) {
+      map['wage_tax_withheld'] = Variable<int>(wageTaxWithheld.value);
+    }
+    if (zvwWages.present) {
+      map['zvw_wages'] = Variable<int>(zvwWages.value);
+    }
+    if (employmentHours.present) {
+      map['employment_hours'] = Variable<int>(employmentHours.value);
+    }
+    if (notOndernemerBefore.present) {
+      map['not_ondernemer_before'] = Variable<bool>(notOndernemerBefore.value);
+    }
     return map;
   }
 
@@ -8843,7 +9151,13 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
           ..write(
             'unrealisedZelfstandigenaftrek: $unrealisedZelfstandigenaftrek, ',
           )
-          ..write('lossCarryForward: $lossCarryForward')
+          ..write('lossCarryForward: $lossCarryForward, ')
+          ..write('employed: $employed, ')
+          ..write('wages: $wages, ')
+          ..write('wageTaxWithheld: $wageTaxWithheld, ')
+          ..write('zvwWages: $zvwWages, ')
+          ..write('employmentHours: $employmentHours, ')
+          ..write('notOndernemerBefore: $notOndernemerBefore')
           ..write(')'))
         .toString();
   }
@@ -15003,6 +15317,12 @@ typedef $$TaxYearInputsTableCreateCompanionBuilder =
       Value<int> disabilityStartersUsed,
       Value<int> unrealisedZelfstandigenaftrek,
       Value<int> lossCarryForward,
+      Value<bool> employed,
+      Value<int> wages,
+      Value<int> wageTaxWithheld,
+      Value<int> zvwWages,
+      Value<int> employmentHours,
+      Value<bool> notOndernemerBefore,
     });
 typedef $$TaxYearInputsTableUpdateCompanionBuilder =
     TaxYearInputsCompanion Function({
@@ -15016,6 +15336,12 @@ typedef $$TaxYearInputsTableUpdateCompanionBuilder =
       Value<int> disabilityStartersUsed,
       Value<int> unrealisedZelfstandigenaftrek,
       Value<int> lossCarryForward,
+      Value<bool> employed,
+      Value<int> wages,
+      Value<int> wageTaxWithheld,
+      Value<int> zvwWages,
+      Value<int> employmentHours,
+      Value<bool> notOndernemerBefore,
     });
 
 class $$TaxYearInputsTableFilterComposer
@@ -15074,6 +15400,36 @@ class $$TaxYearInputsTableFilterComposer
 
   ColumnFilters<int> get lossCarryForward => $composableBuilder(
     column: $table.lossCarryForward,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get employed => $composableBuilder(
+    column: $table.employed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get wages => $composableBuilder(
+    column: $table.wages,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get wageTaxWithheld => $composableBuilder(
+    column: $table.wageTaxWithheld,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get zvwWages => $composableBuilder(
+    column: $table.zvwWages,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get employmentHours => $composableBuilder(
+    column: $table.employmentHours,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get notOndernemerBefore => $composableBuilder(
+    column: $table.notOndernemerBefore,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -15136,6 +15492,36 @@ class $$TaxYearInputsTableOrderingComposer
     column: $table.lossCarryForward,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get employed => $composableBuilder(
+    column: $table.employed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get wages => $composableBuilder(
+    column: $table.wages,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get wageTaxWithheld => $composableBuilder(
+    column: $table.wageTaxWithheld,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get zvwWages => $composableBuilder(
+    column: $table.zvwWages,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get employmentHours => $composableBuilder(
+    column: $table.employmentHours,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get notOndernemerBefore => $composableBuilder(
+    column: $table.notOndernemerBefore,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$TaxYearInputsTableAnnotationComposer
@@ -15192,6 +15578,30 @@ class $$TaxYearInputsTableAnnotationComposer
     column: $table.lossCarryForward,
     builder: (column) => column,
   );
+
+  GeneratedColumn<bool> get employed =>
+      $composableBuilder(column: $table.employed, builder: (column) => column);
+
+  GeneratedColumn<int> get wages =>
+      $composableBuilder(column: $table.wages, builder: (column) => column);
+
+  GeneratedColumn<int> get wageTaxWithheld => $composableBuilder(
+    column: $table.wageTaxWithheld,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get zvwWages =>
+      $composableBuilder(column: $table.zvwWages, builder: (column) => column);
+
+  GeneratedColumn<int> get employmentHours => $composableBuilder(
+    column: $table.employmentHours,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get notOndernemerBefore => $composableBuilder(
+    column: $table.notOndernemerBefore,
+    builder: (column) => column,
+  );
 }
 
 class $$TaxYearInputsTableTableManager
@@ -15235,6 +15645,12 @@ class $$TaxYearInputsTableTableManager
                 Value<int> disabilityStartersUsed = const Value.absent(),
                 Value<int> unrealisedZelfstandigenaftrek = const Value.absent(),
                 Value<int> lossCarryForward = const Value.absent(),
+                Value<bool> employed = const Value.absent(),
+                Value<int> wages = const Value.absent(),
+                Value<int> wageTaxWithheld = const Value.absent(),
+                Value<int> zvwWages = const Value.absent(),
+                Value<int> employmentHours = const Value.absent(),
+                Value<bool> notOndernemerBefore = const Value.absent(),
               }) => TaxYearInputsCompanion(
                 year: year,
                 partnerHours: partnerHours,
@@ -15246,6 +15662,12 @@ class $$TaxYearInputsTableTableManager
                 disabilityStartersUsed: disabilityStartersUsed,
                 unrealisedZelfstandigenaftrek: unrealisedZelfstandigenaftrek,
                 lossCarryForward: lossCarryForward,
+                employed: employed,
+                wages: wages,
+                wageTaxWithheld: wageTaxWithheld,
+                zvwWages: zvwWages,
+                employmentHours: employmentHours,
+                notOndernemerBefore: notOndernemerBefore,
               ),
           createCompanionCallback:
               ({
@@ -15259,6 +15681,12 @@ class $$TaxYearInputsTableTableManager
                 Value<int> disabilityStartersUsed = const Value.absent(),
                 Value<int> unrealisedZelfstandigenaftrek = const Value.absent(),
                 Value<int> lossCarryForward = const Value.absent(),
+                Value<bool> employed = const Value.absent(),
+                Value<int> wages = const Value.absent(),
+                Value<int> wageTaxWithheld = const Value.absent(),
+                Value<int> zvwWages = const Value.absent(),
+                Value<int> employmentHours = const Value.absent(),
+                Value<bool> notOndernemerBefore = const Value.absent(),
               }) => TaxYearInputsCompanion.insert(
                 year: year,
                 partnerHours: partnerHours,
@@ -15270,6 +15698,12 @@ class $$TaxYearInputsTableTableManager
                 disabilityStartersUsed: disabilityStartersUsed,
                 unrealisedZelfstandigenaftrek: unrealisedZelfstandigenaftrek,
                 lossCarryForward: lossCarryForward,
+                employed: employed,
+                wages: wages,
+                wageTaxWithheld: wageTaxWithheld,
+                zvwWages: zvwWages,
+                employmentHours: employmentHours,
+                notOndernemerBefore: notOndernemerBefore,
               ),
           withReferenceMapper: (p0) => p0
               .map(

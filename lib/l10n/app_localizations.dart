@@ -281,7 +281,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardUrencriteriumHelp.
   ///
   /// In en, this message translates to:
-  /// **'The hours you worked for the business this year against the urencriterium. The zelfstandigenaftrek and most other deductions for business owners require it (Wet IB 2001 art. 3.76). All business hours count, not only billable ones.'**
+  /// **'The hours you worked for the business this year against the urencriterium. The zelfstandigenaftrek and most other deductions for business owners require it (Wet IB 2001 art. 3.76). All business hours count, not only billable ones. With a job, the business must also take more of your time than the job (art. 3.6).'**
   String get dashboardUrencriteriumHelp;
 
   /// No description provided for @dashboardBtwDeadlines.
@@ -1063,6 +1063,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{left} hrs to go'**
   String hoursUrencriteriumLeft(String left);
+
+  /// No description provided for @hoursUrencriteriumJob.
+  ///
+  /// In en, this message translates to:
+  /// **'Not more than {hours} hrs in employment'**
+  String hoursUrencriteriumJob(int hours);
 
   /// No description provided for @hoursFieldDate.
   ///
@@ -1850,16 +1856,52 @@ abstract class AppLocalizations {
   /// **'Estimated total tax'**
   String get plTaxTotalTax;
 
+  /// No description provided for @plTaxWageTaxWithheld.
+  ///
+  /// In en, this message translates to:
+  /// **'Loonheffing withheld'**
+  String get plTaxWageTaxWithheld;
+
+  /// No description provided for @plTaxWageTaxWithheldHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The loonbelasting and premie volksverzekeringen your employers withheld, as you entered below. The return settles it against the tax above.'**
+  String get plTaxWageTaxWithheldHelp;
+
+  /// No description provided for @plTaxToPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated tax to pay'**
+  String get plTaxToPay;
+
+  /// No description provided for @plTaxRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated refund'**
+  String get plTaxRefund;
+
+  /// No description provided for @plTaxToPayHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated: the total tax minus the loonheffing withheld. Payments on a voorlopige aanslag are not subtracted.'**
+  String get plTaxToPayHelp;
+
   /// No description provided for @plTaxNetProfit.
   ///
   /// In en, this message translates to:
   /// **'Estimated net profit after tax'**
   String get plTaxNetProfit;
 
+  /// No description provided for @plTaxNetProfitHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated: gross profit minus the tax the business adds. With wages, that is the total tax minus the tax on the wages alone.'**
+  String get plTaxNetProfitHelp;
+
   /// No description provided for @plTaxEffectiveRate.
   ///
   /// In en, this message translates to:
-  /// **'Effective rate: {rate}%'**
+  /// **'Effective rate on the profit: {rate}%'**
   String plTaxEffectiveRate(String rate);
 
   /// No description provided for @plTaxUrenBanner.
@@ -1879,6 +1921,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'. Until you reach it, the estimate leaves out the zelfstandigenaftrek and the other deductions that need it'**
   String get plTaxUrenBannerSuffixPending;
+
+  /// No description provided for @plTaxUrenJobBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Urencriterium: {hours} hours logged for the business, not more than the {jobHours} hours in employment. The urencriterium needs more time in the business than in other work, so the estimate leaves out the zelfstandigenaftrek and the other deductions that need it.'**
+  String plTaxUrenJobBanner(String hours, int jobHours);
 
   /// No description provided for @settingsLanguageSection.
   ///
@@ -2327,7 +2375,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxEstimateNotice.
   ///
   /// In en, this message translates to:
-  /// **'This is an estimate for a business owner under the AOW age with no other income. Income from employment, a partner, box 2 or box 3 is not included.'**
+  /// **'This is an estimate for a business owner under the AOW age. Wages from employment count when you enter them below. Income of a partner, from other work, box 2 or box 3 is not included.'**
   String get plTaxEstimateNotice;
 
   /// No description provided for @settingsMoved.
@@ -3320,10 +3368,28 @@ abstract class AppLocalizations {
   /// **'Estimated income tax and Zvw contribution on your profit so far. Not a tax assessment.'**
   String get dashboardEstimatedTaxHelp;
 
+  /// No description provided for @dashboardEstimatedTaxToPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated tax to pay'**
+  String get dashboardEstimatedTaxToPay;
+
+  /// No description provided for @dashboardEstimatedRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated refund'**
+  String get dashboardEstimatedRefund;
+
+  /// No description provided for @dashboardEstimatedTaxToPayHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated income tax and Zvw contribution on your profit so far and your wages, minus the loonheffing withheld. Not a tax assessment.'**
+  String get dashboardEstimatedTaxToPayHelp;
+
   /// No description provided for @dashboardNetProfitAfterTaxHelp.
   ///
   /// In en, this message translates to:
-  /// **'Profit minus the estimated tax. An estimate, not a final figure.'**
+  /// **'Profit minus the estimated tax the business adds. An estimate, not a final figure.'**
   String get dashboardNetProfitAfterTaxHelp;
 
   /// No description provided for @expensesFieldCar.
@@ -3397,6 +3463,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Box 1 losses from earlier years still to offset, as stated by the Belastingdienst. Offset against this year\'s income.'**
   String get inputLossCarryForwardHelp;
+
+  /// No description provided for @inputEmployed.
+  ///
+  /// In en, this message translates to:
+  /// **'I also work as an employee this year'**
+  String get inputEmployed;
+
+  /// No description provided for @inputEmployedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Wages count in box 1 together with your profit, and the urencriterium then also compares your hours in the business with your hours in employment.'**
+  String get inputEmployedHelp;
+
+  /// No description provided for @inputWages.
+  ///
+  /// In en, this message translates to:
+  /// **'Wages (loon)'**
+  String get inputWages;
+
+  /// No description provided for @inputWagesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The loon on your jaaropgaven: the wage that is taxed, not the gross salary. It is added to your profit in box 1.'**
+  String get inputWagesHelp;
+
+  /// No description provided for @inputWageTaxWithheld.
+  ///
+  /// In en, this message translates to:
+  /// **'Loonheffing withheld'**
+  String get inputWageTaxWithheld;
+
+  /// No description provided for @inputWageTaxWithheldHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The loonheffing on your jaaropgaven: the loonbelasting and premie volksverzekeringen your employers withheld. The return subtracts it from the tax.'**
+  String get inputWageTaxWithheldHelp;
+
+  /// No description provided for @inputZvwWages.
+  ///
+  /// In en, this message translates to:
+  /// **'Loon Zvw'**
+  String get inputZvwWages;
+
+  /// No description provided for @inputZvwWagesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The loon Zorgverzekeringswet on your jaaropgaven, on which your employer paid the werkgeversheffing Zvw. You pay the Zvw contribution on your profit only up to the maximum bijdrage-inkomen minus this amount.'**
+  String get inputZvwWagesHelp;
+
+  /// No description provided for @inputEmploymentHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours in employment'**
+  String get inputEmploymentHours;
+
+  /// No description provided for @inputEmploymentHoursHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The hours you work as an employee in the whole year. The urencriterium also requires more time in the business than in other work, unless you were not a business owner in one or more of the {years} previous years.'**
+  String inputEmploymentHoursHelp(int years);
+
+  /// No description provided for @inputNotOndernemerBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'I was not a business owner in one or more of the {years} previous years'**
+  String inputNotOndernemerBefore(int years);
+
+  /// No description provided for @inputNotOndernemerBeforeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Then the urencriterium does not require more time in the business than in your job. It already applies when you are eligible for the startersaftrek.'**
+  String get inputNotOndernemerBeforeHelp;
 
   /// No description provided for @inputSoVerklaring.
   ///
@@ -3509,7 +3647,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxArbeidskortingHelp.
   ///
   /// In en, this message translates to:
-  /// **'A tax credit for working people, based on profit before ondernemersaftrek and mkb-winstvrijstelling.'**
+  /// **'A tax credit for working people, based on the profit before ondernemersaftrek and mkb-winstvrijstelling plus your wages.'**
   String get plTaxArbeidskortingHelp;
 
   /// No description provided for @plTaxAovHelp.
@@ -3523,6 +3661,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profit after ondernemersaftrek and mkb-winstvrijstelling. The Zvw contribution is based on it.'**
   String get plTaxBelastbareWinstHelp;
+
+  /// No description provided for @plTaxWages.
+  ///
+  /// In en, this message translates to:
+  /// **'Wages from employment'**
+  String get plTaxWages;
+
+  /// No description provided for @plTaxWagesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The loon you entered below. It is box 1 income like the profit, so it raises the rate on the profit and lowers the algemene heffingskorting.'**
+  String get plTaxWagesHelp;
 
   /// No description provided for @plTaxBox1SectionHelp.
   ///
@@ -3614,6 +3764,18 @@ abstract class AppLocalizations {
   /// **'Facts the bookkeeping cannot show. They change the estimate above.'**
   String get plTaxInputsSectionHelp;
 
+  /// No description provided for @plTaxEmploymentSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Employment in {year}'**
+  String plTaxEmploymentSection(int year);
+
+  /// No description provided for @plTaxEmploymentSectionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'If you also work as an employee. Enter the totals of all your jaaropgaven for the year. During the year, enter what you expect for the whole year.'**
+  String get plTaxEmploymentSectionHelp;
+
   /// No description provided for @plTaxInvestmentSection.
   ///
   /// In en, this message translates to:
@@ -3695,7 +3857,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxProfitHelp.
   ///
   /// In en, this message translates to:
-  /// **'Profit from business before ondernemersaftrek. The arbeidskorting is based on it.'**
+  /// **'Profit from business before ondernemersaftrek. The arbeidskorting is based on it, together with any wages.'**
   String get plTaxProfitHelp;
 
   /// No description provided for @plTaxReserveReleased.
@@ -3743,7 +3905,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxTaxableProfitHelp.
   ///
   /// In en, this message translates to:
-  /// **'The income in box 1 the tax is calculated on.'**
+  /// **'The income in box 1 the tax is calculated on: belastbare winst plus wages, minus the deductions above.'**
   String get plTaxTaxableProfitHelp;
 
   /// No description provided for @plTaxUnrealisedZelfs.
@@ -3767,7 +3929,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxZvwHelp.
   ///
   /// In en, this message translates to:
-  /// **'The income-related contribution to the health care insurance act, on belastbare winst up to a maximum.'**
+  /// **'The income-related contribution to the health care insurance act, on belastbare winst up to a maximum. The loon Zvw your employer paid the werkgeversheffing on lowers that maximum.'**
   String get plTaxZvwHelp;
 
   /// No description provided for @vatReturnIcpSectionHelp.

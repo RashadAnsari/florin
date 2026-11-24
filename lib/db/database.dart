@@ -49,7 +49,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump with every schema change and run `make migration`; see AGENTS.md.
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -120,6 +120,15 @@ class AppDatabase extends _$AppDatabase {
               'CASE WHEN vat_reclaimable = 1 THEN vat_amount ELSE 0 END '
               'WHERE car_asset_id IS NOT NULL',
             );
+          },
+          from3To4: (m, schema) async {
+            final inputs = schema.taxYearInputs;
+            await m.addColumn(inputs, inputs.employed);
+            await m.addColumn(inputs, inputs.wages);
+            await m.addColumn(inputs, inputs.wageTaxWithheld);
+            await m.addColumn(inputs, inputs.zvwWages);
+            await m.addColumn(inputs, inputs.employmentHours);
+            await m.addColumn(inputs, inputs.notOndernemerBefore);
           },
         )(m, from, to),
       );

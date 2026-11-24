@@ -410,6 +410,7 @@ side.
 | A legal rule or legal copy | `docs/legal.md`, and run the `legal-review` skill |
 | A tax year | Only through the `new-tax-year` skill: rules file, `taxYears`, `docs/tax-years/<year>.md` with its table of every field, tests, both READMEs |
 | A field of `TaxYearRules` | Its value in every year's rules file, `docs/tax-years/README.md`, every `docs/tax-years/<year>.md`, and the texts that name it |
+| The dashboard or the demo data | The README screenshots in `docs/screenshots/`, retaken with the `ui-review` skill |
 | A table | `schemaVersion`, `make migration`, the migration step and its test, and `tool/create_demo_database.dart` so `make demo` still runs |
 | An enum in `lib/db/enums.dart` | `lib/l10n/labels.dart`, the Dutch mapping in `csv_export_service.dart`, and a migration if a stored value changed |
 | A shared widget's behaviour | Every screen that uses it, and the table above |

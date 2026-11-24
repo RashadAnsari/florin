@@ -60,13 +60,18 @@ class PlTaxScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.group),
                 if (!estimate.meetsUrencriterium) ...[
                   NoticeBanner(
-                    l.plTaxUrenBanner(
-                      AppFormat.hours(estimate.totalHours),
-                      '${rules.urencriterium}',
-                      estimate.yearOver
-                          ? l.plTaxUrenBannerSuffixDone
-                          : l.plTaxUrenBannerSuffixPending,
-                    ),
+                    estimate.totalHours >= rules.urencriterium
+                        ? l.plTaxUrenJobBanner(
+                            AppFormat.hours(estimate.totalHours),
+                            estimate.timeTestHours!,
+                          )
+                        : l.plTaxUrenBanner(
+                            AppFormat.hours(estimate.totalHours),
+                            '${rules.urencriterium}',
+                            estimate.yearOver
+                                ? l.plTaxUrenBannerSuffixDone
+                                : l.plTaxUrenBannerSuffixPending,
+                          ),
                     tone: estimate.yearOver
                         ? NoticeTone.error
                         : NoticeTone.warning,
@@ -217,6 +222,8 @@ class PlTaxScreen extends ConsumerWidget {
                   bold: true,
                   help: l.plTaxBelastbareWinstHelp,
                 ),
+                if (r.wages > 0)
+                  ValueRow.cents(l.plTaxWages, r.wages, help: l.plTaxWagesHelp),
                 if (r.lijfrenteDeduction > 0)
                   ValueRow.cents(
                     l.plTaxLijrente,
@@ -276,10 +283,24 @@ class PlTaxScreen extends ConsumerWidget {
                 ),
                 const Divider(),
                 ValueRow.cents(l.plTaxTotalTax, r.totalTax, bold: true),
+                if (r.wageTaxWithheld > 0) ...[
+                  ValueRow.cents(
+                    l.plTaxWageTaxWithheld,
+                    -r.wageTaxWithheld,
+                    help: l.plTaxWageTaxWithheldHelp,
+                  ),
+                  ValueRow.cents(
+                    r.taxToPay < 0 ? l.plTaxRefund : l.plTaxToPay,
+                    r.taxToPay.abs(),
+                    bold: true,
+                    help: l.plTaxToPayHelp,
+                  ),
+                ],
                 ValueRow.cents(
                   l.plTaxNetProfit,
                   r.netProfitAfterTax,
                   bold: true,
+                  help: l.plTaxNetProfitHelp,
                 ),
                 const SizedBox(height: AppSpacing.field),
                 Text(
@@ -429,12 +450,95 @@ class _YearInputs extends ConsumerWidget {
                 ),
               ),
             ],
+            const SizedBox(height: AppSpacing.section),
+            SectionLabel(
+              l.plTaxEmploymentSection(year),
+              help: l.plTaxEmploymentSectionHelp,
+            ),
+            const SizedBox(height: AppSpacing.heading),
+            HelpCheckbox(
+              value: i?.employed ?? false,
+              // Turning the job off clears its figures: a hidden option
+              // may not stay set.
+              onChanged: (v) => save(
+                v
+                    ? const TaxYearInputsCompanion(employed: Value(true))
+                    : const TaxYearInputsCompanion(
+                        employed: Value(false),
+                        wages: Value(0),
+                        wageTaxWithheld: Value(0),
+                        zvwWages: Value(0),
+                        employmentHours: Value(0),
+                        notOndernemerBefore: Value(false),
+                      ),
+              ),
+              title: l.inputEmployed,
+              help: l.inputEmployedHelp,
+            ),
+            if (i?.employed ?? false) ...[
+              const SizedBox(height: AppSpacing.field),
+              FormRow(
+                children: [
+                  AmountField(
+                    key: ValueKey('wages_$year'),
+                    label: l.inputWages,
+                    help: l.inputWagesHelp,
+                    initialValueCents: i!.wages,
+                    onChanged: (v) =>
+                        save(TaxYearInputsCompanion(wages: Value(v))),
+                  ),
+                  AmountField(
+                    key: ValueKey('withheld_$year'),
+                    label: l.inputWageTaxWithheld,
+                    help: l.inputWageTaxWithheldHelp,
+                    initialValueCents: i.wageTaxWithheld,
+                    onChanged: (v) =>
+                        save(TaxYearInputsCompanion(wageTaxWithheld: Value(v))),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.field),
+              FormRow(
+                children: [
+                  AmountField(
+                    key: ValueKey('zvw_wages_$year'),
+                    label: l.inputZvwWages,
+                    help: l.inputZvwWagesHelp,
+                    initialValueCents: i.zvwWages,
+                    onChanged: (v) =>
+                        save(TaxYearInputsCompanion(zvwWages: Value(v))),
+                  ),
+                  _WholeNumberField(
+                    key: ValueKey('job_hours_$year'),
+                    label: l.inputEmploymentHours,
+                    help: l.inputEmploymentHoursHelp(
+                      rules.starterLookbackYears,
+                    ),
+                    value: i.employmentHours,
+                    max: _hoursInYear,
+                    onChanged: (v) =>
+                        save(TaxYearInputsCompanion(employmentHours: Value(v))),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.field),
+              HelpCheckbox(
+                value: i.notOndernemerBefore,
+                onChanged: (v) =>
+                    save(TaxYearInputsCompanion(notOndernemerBefore: Value(v))),
+                title: l.inputNotOndernemerBefore(rules.starterLookbackYears),
+                help: l.inputNotOndernemerBeforeHelp,
+              ),
+            ],
           ],
         );
       },
     );
   }
 }
+
+/// The most hours a year can hold: 366 days of 24 hours.
+const _hoursInYear = 366 * 24;
 
 /// A whole-number field saved when it loses focus.
 class _WholeNumberField extends StatefulWidget {

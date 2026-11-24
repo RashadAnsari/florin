@@ -8,6 +8,10 @@ class UrencriteriumProgress extends StatelessWidget {
   final double totalHours;
   final double? billableHours;
   final int target;
+
+  /// Hours in employment the business hours must exceed, or null when that
+  /// condition does not apply (art. 3.6 lid 1 a).
+  final int? jobHours;
   final bool yearOver;
 
   const UrencriteriumProgress({
@@ -15,6 +19,7 @@ class UrencriteriumProgress extends StatelessWidget {
     required this.totalHours,
     this.billableHours,
     required this.target,
+    this.jobHours,
     required this.yearOver,
   });
 
@@ -22,7 +27,9 @@ class UrencriteriumProgress extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final ok = totalHours >= target;
+    final enoughHours = totalHours >= target;
+    final moreThanJob = jobHours == null || totalHours > jobHours!;
+    final ok = enoughHours && moreThanJob;
     final color = ok
         ? context.colors.income
         : yearOver
@@ -36,6 +43,8 @@ class UrencriteriumProgress extends StatelessWidget {
           : l.hoursBillable(AppFormat.hours(billableHours!)),
       badge: ok
           ? l.hoursUrencriteriumOk
+          : enoughHours
+          ? l.hoursUrencriteriumJob(jobHours!)
           : l.hoursUrencriteriumLeft(AppFormat.hours(target - totalHours)),
       fraction: totalHours / target,
       color: color,
