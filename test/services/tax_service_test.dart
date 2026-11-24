@@ -5,6 +5,26 @@ import 'package:florin/services/tax_rules/tax_year_rules.dart';
 import 'package:florin/services/tax_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+const _noInputs = TaxYearInput(
+  year: 2026,
+  partnerHours: 0,
+  hasSoVerklaring: false,
+  soStarter: false,
+  businessCeased: false,
+  stakingsaftrekUsedBefore: 0,
+  disabilityBenefit: false,
+  disabilityStartersUsed: 0,
+  unrealisedZelfstandigenaftrek: 0,
+  lossCarryForward: 0,
+  employed: false,
+  wages: 0,
+  wageTaxWithheld: 0,
+  zvwWages: 0,
+  employmentHours: 0,
+  notOndernemerBefore: false,
+  isStarter: false,
+);
+
 void main() {
   final rules = taxRulesFor(2026)!;
 
@@ -37,8 +57,13 @@ void main() {
     totalHours: hours ?? (uren ? rules.urencriterium.toDouble() : 0),
     soHours: soHours,
     hoursFinal: yearOver,
-    isStarter: starter,
-    inputs: inputs,
+    // A startersaftrek starter was not an ondernemer in a previous year.
+    inputs: starter
+        ? (inputs ?? _noInputs).copyWith(
+            isStarter: true,
+            notOndernemerBefore: true,
+          )
+        : inputs,
     lijfrentePremium: lijfrente,
     aovPremium: aov,
   );
@@ -76,6 +101,7 @@ void main() {
     zvwWages: zvwWages,
     employmentHours: jobHours,
     notOndernemerBefore: notOndernemerBefore,
+    isStarter: false,
   );
 
   TaxYearInput job({
@@ -212,16 +238,10 @@ void main() {
     });
 
     test('the job hours apply only to someone employed', () {
+      expect(TaxService.timeTestHours(job(hours: 500)), 500);
+      expect(TaxService.timeTestHours(inputs()), null);
       expect(
-        TaxService.timeTestHours(isStarter: false, inputs: job(hours: 500)),
-        500,
-      );
-      expect(
-        TaxService.timeTestHours(isStarter: false, inputs: inputs()),
-        null,
-      );
-      expect(
-        TaxService.timeTestHours(isStarter: true, inputs: job(hours: 500)),
+        TaxService.timeTestHours(job(hours: 500).copyWith(isStarter: true)),
         null,
       );
     });
@@ -295,6 +315,21 @@ void main() {
       );
       expect(r.disabilityStartersaftrek, 800000);
       expect(r.zelfstandigenaftrek, 0);
+    });
+
+    test('startersaftrek bij arbeidsongeschiktheid needs only that the user '
+        'was not an ondernemer in a previous year, not the startersaftrek '
+        '(art. 3.78a lid 1)', () {
+      TaxResult r({required bool notBefore}) => calc(
+        revenue: 2000000,
+        uren: false,
+        hours: 800,
+        inputs: inputs(
+          disability: true,
+        ).copyWith(notOndernemerBefore: notBefore),
+      );
+      expect(r(notBefore: true).disabilityStartersaftrek, 1200000);
+      expect(r(notBefore: false).disabilityStartersaftrek, 0);
     });
 
     test('unrealised zelfstandigenaftrek is used up to the profit', () {
@@ -387,6 +422,26 @@ void main() {
         rows.firstWhere((r) => r.first == 'Tariefaanpassing').last,
         (1374760 * 0.1194).round() / 100,
       );
+    });
+
+    test('the income tax export adds up from the profit to box 1 income, '
+        'with the unrealised zelfstandigenaftrek (art. 3.76 lid 7)', () {
+      final r = calc(
+        revenue: 5000000,
+        inputs: inputs(unrealised: 50000, employed: true, wages: 1000000),
+      );
+      expect(r.unrealisedZelfstandigenaftrek, 50000);
+      final rows = CsvExportService.incomeTaxRows(r);
+      final labels = [for (final row in rows) row.first as String];
+      double at(String label) => rows[labels.indexOf(label)].last as double;
+      final from = labels.indexOf('Winst uit onderneming');
+      final to = labels.indexOf('Belastbaar inkomen box 1');
+      var sum = 0.0;
+      for (var k = from; k < to; k++) {
+        if (labels[k] == 'Belastbare winst uit onderneming') continue;
+        sum += rows[k].last as double;
+      }
+      expect(sum, closeTo(at('Belastbaar inkomen box 1'), 0.001));
     });
 
     test('nothing below the top bracket, and it raises box 1 tax', () {

@@ -108,7 +108,10 @@ class TaxYearRules {
   final double gemengdeKostenPct;
   final double jaarruimtePct;
   final int aowFranchise;
-  final int jaarruimteMax;
+
+  /// Most income of the previous year that counts for the premiegrondslag,
+  /// before the [aowFranchise] is subtracted (Wet IB 2001 art. 3.127 lid 3).
+  final int premiegrondslagMaxIncome;
   final int reserveringsruimteMax;
   final double factorAMultiplier;
 
@@ -133,6 +136,14 @@ class TaxYearRules {
   /// Goods to EU businesses in a quarter above which the ICP-opgaaf is due
   /// per month.
   final int icpQuarterlyGoodsMax;
+
+  /// Previous quarters that must also stay at or below
+  /// [icpQuarterlyGoodsMax] for a quarterly ICP-opgaaf (art. 37a lid 3).
+  final int icpGoodsLookbackQuarters;
+
+  /// Months after the end of its period in which the ICP-opgaaf is due
+  /// (art. 37a lid 1).
+  final int icpDueMonths;
 
   /// Gifts to one person in a year at or below which their BTW stays
   /// deductible (Besluit uitsluiting aftrek omzetbelasting 1968 art. 4).
@@ -232,7 +243,7 @@ class TaxYearRules {
     required this.gemengdeKostenPct,
     required this.jaarruimtePct,
     required this.aowFranchise,
-    required this.jaarruimteMax,
+    required this.premiegrondslagMaxIncome,
     required this.reserveringsruimteMax,
     required this.factorAMultiplier,
     required this.vatRates,
@@ -240,6 +251,8 @@ class TaxYearRules {
     required this.invoiceDueDay,
     required this.retentionYears,
     required this.icpQuarterlyGoodsMax,
+    required this.icpGoodsLookbackQuarters,
+    required this.icpDueMonths,
     required this.buaGiftThreshold,
     required this.maxDepreciationRate,
     required this.reinvestmentReserveYears,
@@ -261,6 +274,11 @@ class TaxYearRules {
   /// The BTW on [amountExclVat] at [rate].
   int vatOn(VatRate rate, int amountExclVat) =>
       (amountExclVat * vatRates[rate]!).round();
+
+  /// The most jaarruimte: the share of the highest premiegrondslag
+  /// (art. 3.127 lid 1 and 3).
+  int get jaarruimteMax =>
+      ((premiegrondslagMaxIncome - aowFranchise) * jaarruimtePct).round();
 
   /// The shortest useful life the depreciation limit allows.
   int get minUsefulLifeYears => (1 / maxDepreciationRate).ceil();

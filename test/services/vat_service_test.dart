@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:florin/db/database.dart';
 import 'package:florin/services/tax_rules/tax_year_rules.dart';
 import 'package:florin/services/domain.dart';
@@ -83,6 +84,49 @@ void main() {
     // Services to businesses outside the EU stay out of every rubriek.
     expect(r.revenueOutsideReturn, 70000);
     expect(r.outputVat5a, 21000 - 2100);
+  });
+
+  test(
+    'a service to an EU business counts in the quarter it was supplied, '
+    'goods and corrections by invoice date (Belastingdienst, Opgaaf ICP)',
+    () {
+      final december = DateTime(2026, 3, 20);
+      final service = _invoice(1, VatTreatment.euServices).copyWith(
+        invoiceDate: DateTime(2026, 4, 5),
+        supplyDate: Value(december),
+      );
+      final goods = _invoice(2, VatTreatment.euGoods).copyWith(
+        invoiceDate: DateTime(2026, 4, 5),
+        supplyDate: Value(december),
+      );
+      final credit =
+          _invoice(
+            3,
+            VatTreatment.euServices,
+            type: InvoiceType.creditNote,
+            total: 20000,
+          ).copyWith(
+            invoiceDate: DateTime(2026, 4, 6),
+            supplyDate: Value(december),
+          );
+      VatQuarterResult q(int quarter) => VatService.calculateQuarter(
+        invoices: [service, goods, credit],
+        lines: const [],
+        expenses: const [],
+        year: 2026,
+        quarter: quarter,
+      );
+      expect(q(1).revenue3b, 100000);
+      expect(q(1).icpInvoices.map((i) => i.id), [1]);
+      expect(q(2).revenue3b, 100000 - 20000);
+      expect(q(2).icpInvoices.map((i) => i.id), [2, 3]);
+    },
+  );
+
+  test('the ICP-opgaaf over a quarter is due the last day of the next month '
+      '(Wet OB 1968 art. 37a lid 1)', () {
+    expect(VatService.icpDeadline(2026, 1), DateTime(2026, 4, 30));
+    expect(VatService.icpDeadline(2026, 4), DateTime(2027, 1, 31));
   });
 
   test('filing deadline is the last day of the next month', () {

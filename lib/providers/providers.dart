@@ -233,7 +233,6 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
   year,
 ) {
   final rules = ref.watch(taxRulesProvider(year));
-  final profile = ref.watch(businessProfileProvider);
   final invoices = ref.watch(invoicesProvider(year));
   final expenses = ref.watch(effectiveExpensesProvider(year));
   final hours = ref.watch(hourEntriesProvider(year));
@@ -243,7 +242,6 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
   final pension = ref.watch(pensionProvider(year));
   final inputs = ref.watch(taxYearInputsProvider(year));
   final all = [
-    profile,
     invoices,
     expenses,
     hours,
@@ -258,7 +256,6 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
 
   final totalHours = hours.requireValue.fold(0.0, (s, h) => s + h.hours);
   final yearOver = year < DateTime.now().year;
-  final isStarter = profile.requireValue?.isStarter ?? false;
   final km = TaxService.businessKm(trips.requireValue);
   final assetList = assets.requireValue;
   final every = allAssets.requireValue;
@@ -310,7 +307,6 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
     totalHours: totalHours,
     soHours: soHours,
     hoursFinal: yearOver,
-    isStarter: isStarter,
     inputs: yearInputs,
     lijfrentePremium: PensionService.deductiblePremium(
       rules,
@@ -328,13 +324,9 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
       meetsUrencriterium: TaxService.meetsUrencriterium(
         rules: rules,
         totalHours: totalHours,
-        isStarter: isStarter,
         inputs: yearInputs,
       ),
-      timeTestHours: TaxService.timeTestHours(
-        isStarter: isStarter,
-        inputs: yearInputs,
-      ),
+      timeTestHours: TaxService.timeTestHours(yearInputs),
       yearOver: yearOver,
       businessKm: km,
     ),
@@ -347,7 +339,9 @@ final vatQuarterProvider =
       ref,
       key,
     ) {
-      final invoices = ref.watch(invoicesProvider(key.year));
+      // Every year's invoices: a service is reported in the quarter it was
+      // supplied, which can precede the year of its invoice.
+      final invoices = ref.watch(allInvoicesProvider);
       final lines = ref.watch(invoiceLinesProvider(key.year));
       final expenses = ref.watch(effectiveExpensesProvider(key.year));
       final trips = ref.watch(mileageTripsProvider(key.year));

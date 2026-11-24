@@ -213,6 +213,10 @@ class CsvExportService {
     ['Winst uit onderneming', _euro(t.profit)],
     ['Zelfstandigenaftrek', _euro(-t.zelfstandigenaftrek)],
     ['Startersaftrek', _euro(-t.startersaftrek)],
+    [
+      'Verrekende niet-gerealiseerde zelfstandigenaftrek',
+      _euro(-t.unrealisedZelfstandigenaftrek),
+    ],
     ['S&O-aftrek', _euro(-t.soAftrek)],
     ['Meewerkaftrek', _euro(-t.meewerkaftrek)],
     [

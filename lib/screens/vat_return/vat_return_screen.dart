@@ -236,7 +236,9 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                     ),
                     Text(
                       l.vatReturnIcpNote(
+                        AppFormat.date(VatService.icpDeadline(year, _quarter)),
                         AppFormat.euros(rules.icpQuarterlyGoodsMax),
+                        rules.icpGoodsLookbackQuarters,
                       ),
                       style: theme.textTheme.bodySmall,
                     ),

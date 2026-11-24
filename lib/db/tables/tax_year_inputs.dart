@@ -5,13 +5,13 @@ class TaxYearInputs extends Table {
   IntColumn get year => integer()();
 
   /// Hours the fiscal partner worked in the business unpaid or for less than
-  /// € 5.000 (meewerkaftrek).
+  /// the pay the rules allow (meewerkaftrek).
   IntColumn get partnerHours => integer().withDefault(const Constant(0))();
   BoolColumn get hasSoVerklaring =>
       boolean().withDefault(const Constant(false))();
 
-  /// Not an ondernemer in one of the five previous years and at most two
-  /// S&O-verklaringen in that period (art. 3.77 lid 2).
+  /// Not an ondernemer in one of the previous years the rules name and at
+  /// most the S&O-verklaringen they allow in that period (art. 3.77 lid 2).
   BoolColumn get soStarter => boolean().withDefault(const Constant(false))();
 
   /// The whole business stopped this year (stakingsaftrek).
@@ -24,7 +24,8 @@ class TaxYearInputs extends Table {
   BoolColumn get disabilityBenefit =>
       boolean().withDefault(const Constant(false))();
 
-  /// Years in the previous five this startersaftrek was used: 0 to 3.
+  /// Years in the previous ones the rules name in which this startersaftrek
+  /// was used, up to the number of its amounts, which means none is left.
   IntColumn get disabilityStartersUsed =>
       integer().withDefault(const Constant(0))();
 
@@ -54,10 +55,18 @@ class TaxYearInputs extends Table {
   /// condition that most working time goes to the business (art. 3.6 lid 1 a).
   IntColumn get employmentHours => integer().withDefault(const Constant(0))();
 
-  /// Not an ondernemer in one or more of the five previous years, which
-  /// lifts that condition (art. 3.6 lid 1 b).
+  /// Not an ondernemer in one or more of the previous years the rules name,
+  /// which lifts the time condition of the urencriterium (art. 3.6 lid 1 b)
+  /// and is a condition of the startersaftrek bij arbeidsongeschiktheid
+  /// (art. 3.78a lid 1).
   BoolColumn get notOndernemerBefore =>
       boolean().withDefault(const Constant(false))();
+
+  /// Eligible for the startersaftrek this year: [notOndernemerBefore] and
+  /// the zelfstandigenaftrek applied at most the times the rules allow in
+  /// those years (art. 3.76 lid 3). Kept false while [notOndernemerBefore]
+  /// is off.
+  BoolColumn get isStarter => boolean().withDefault(const Constant(false))();
 
   @override
   Set<Column> get primaryKey => {year};

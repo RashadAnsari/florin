@@ -243,10 +243,37 @@ Where Florin implements it: `ReceiptStore` and `ReceiptService`.
 
 [Wet op de omzetbelasting 1968, artikel 37a](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-23 from the official XML of the version in force on 1 January 2026
 
-Florin lists the EU supplies per quarter. It states no ICP deadline: the
-Belastingdienst pages read for this review do not give one for Dutch filers.
-Supplies dated while the KOR applies are left off the list: lid 1 exempts the
-ondernemer of artikel 25a, eerste lid. They stay in rubriek 3b.
+> 3 In afwijking in zoverre van het eerste lid geldt als tijdvak in plaats van een kalendermaand naar keus van de ondernemer een kalenderkwartaal indien het totaalbedrag van de in het eerste lid, onderdelen a en b genoemde leveringen noch voor het desbetreffende kalenderkwartaal, noch in één van de vier daaraan voorafgaande kalenderkwartalen, hoger is dan het daartoe bij ministeriële regeling vastgestelde bedrag.
+
+[Wet op de omzetbelasting 1968, artikel 37a lid 3](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-24 from the official XML of the version in force on 1 January 2026
+
+> U mag uw opgaaf ICP per kwartaal doen, als u in het kwartaal waarover u opgaaf ICP wilt doen, en in elk van de vorige 4 kwartalen het drempelbedrag niet hebt overschreden.
+
+[Belastingdienst, Tijdvak opgaaf ICP](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/zakendoen_met_het_buitenland/goederen_en_diensten_naar_andere_eu_landen/opgaaf_icp/tijdvak_opgaaf_icp/tijdvak_opgaaf_icp), read 2026-11-24
+
+> Intracommunautaire leveringen geeft u aan in het tijdvak van de factuurdatum. Intracommunautaire diensten geeft u aan in het tijdvak waarin u de dienst hebt geleverd.
+
+> Het totaal van de opgaaf ICP moet dus gelijk zijn aan het bedrag dat u over dezelfde periode invult in uw btw-aangifte bij Rubriek 3b 'Leveringen naar/diensten in landen binnen de EU'.
+
+> Hebt u een fout gemaakt? U corrigeert die door in de volgende opgaaf ICP de juiste gegevens in te vullen.
+
+[Belastingdienst, Opgaaf ICP](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/zakendoen_met_het_buitenland/goederen_en_diensten_naar_andere_eu_landen/opgaaf_icp/opgaaf_icp), read 2026-11-24
+
+Where Florin implements it: `VatService.calculateQuarter`, `VatService.icpDeadline`
+and the ICP section of the BTW return screen.
+
+- Florin lists the EU supplies per quarter, goods by invoice date and
+  services by supply date, or by invoice date when the invoice gives none
+  (`InvoiceDomain.vatDate`). A credit note counts by its own date, in the
+  next opgaaf. Rubriek 3b uses the same date, so it equals the ICP total of
+  the quarter.
+- The BTW return screen gives the deadline of a quarterly opgaaf, the last
+  day of the month after the quarter (`icpDueMonths`), and states when goods
+  must be reported per month instead (`icpQuarterlyGoodsMax` over the
+  quarter or one of the `icpGoodsLookbackQuarters` before it). Florin does
+  not check the earlier quarters or make monthly lists.
+- Supplies dated while the KOR applies are left off the list: lid 1 exempts
+  the ondernemer of artikel 25a, eerste lid. They stay in rubriek 3b.
 
 ## BTW rates
 
@@ -564,7 +591,10 @@ cars first registered in that year (`car_reductions.dart`):
 [Belastingdienst, Fiscale informatie 2026, Winst uit onderneming, 6.4.1.2](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2026/winst_uit_onderneming)
 
 Where Florin implements it: `CarService.privateUseAddition`, day by day over
-the days the car is in the business, capped at the costs linked to the car
+the days the car is in the business. A car is "meer dan vijftien" or "meer
+dan 16 jaar" old from the day after that anniversary of its first
+registration; on the anniversary itself exactly that many years have passed.
+The addition is capped at the costs linked to the car
 plus its depreciation. As the addition is how private use counts, a car and
 the costs linked to it count in full: the asset and expense forms store a
 business share of 100% for them and hide the slider. The 500 km test uses the trips logged in that car,
@@ -572,7 +602,7 @@ annualised, and only when the user keeps a complete trip log for it.
 
 ## BTW on private use of a business car
 
-> Hebt u geen administratie waaruit het privégebruik van de auto blijkt? Dan stelt u de btw die u moet betalen voor het privégebruik vast op 2,7% van de catalogusprijs van de auto, inclusief btw en bpm. […] Als u de auto in de loop van het jaar koopt, kunt u het percentage van 2,7% naar evenredigheid verlagen. […] U betaalt de btw voor het privégebruik auto via de laatste btw-aangifte van het boekjaar. […] En vindt het privégebruik plaats later dan 4 jaar na het jaar waarin u de auto in gebruik hebt genomen? Dan neemt u 1,5% in plaats van 2,7% […] Hebt u bij aankoop van een auto geen btw afgetrokken […]? Dan gebruikt u […] 1,5% in plaats van 2,7%. […] Dan is de correctie voor privégebruik niet hoger dan de som van de volgende 2 bedragen: het btw-bedrag voor onderhoud en gebruik dat u in dat jaar hebt afgetrokken; 1/5 deel van de afgetrokken btw bij aankoop
+> Hebt u geen administratie waaruit het privégebruik van de auto blijkt? Dan stelt u de btw die u moet betalen voor het privégebruik vast op 2,7% van de catalogusprijs van de auto, inclusief btw en bpm. […] Als u de auto in de loop van het jaar koopt, kunt u het percentage van 2,7% naar evenredigheid verlagen. […] U betaalt de btw voor het privégebruik auto via de laatste btw-aangifte van het boekjaar. […] En vindt het privégebruik plaats later dan 4 jaar na het jaar waarin u de auto in gebruik hebt genomen? Dan neemt u 1,5% in plaats van 2,7% […] Hebt u bij aankoop van een auto geen btw afgetrokken […]? Dan gebruikt u […] 1,5% in plaats van 2,7%. […] Dan is de correctie voor privégebruik niet hoger dan de som van de volgende 2 bedragen: het btw-bedrag voor onderhoud en gebruik dat u in dat jaar hebt afgetrokken 1/5 deel van de afgetrokken btw bij aankoop
 
 [Belastingdienst, Btw en privégebruik auto van de zaak](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/btw_aftrekken/btw_en_de_auto/privegebruik_auto_van_de_zaak/privegebruik_auto_van_de_zaak)
 
@@ -606,6 +636,26 @@ the estimate leaves out the zelfstandigenaftrek and the other deductions that
 need it, and the P&L screen says so (AGENTS.md rule 5). The startersaftrek bij
 arbeidsongeschiktheid (artikel 3.78a) needs the urencriterium not to be met,
 so Florin applies it only once the year is over.
+
+## Starters
+
+> 3 Indien de ondernemer in een of meer van de vijf voorafgaande kalenderjaren geen ondernemer was en bij hem in die periode niet meer dan tweemaal zelfstandigenaftrek is toegepast, wordt de zelfstandigenaftrek verhoogd met € 2123.
+
+[Wet inkomstenbelasting 2001, artikel 3.76 lid 3](https://wetten.overheid.nl/BWBR0011353/2026-01-01), read 2026-11-24 from the official XML of the version in force on 1 January 2026
+
+> 1 De startersaftrek bij arbeidsongeschiktheid geldt voor de ondernemer die in een of meer van de vijf voorafgaande kalenderjaren geen ondernemer was, in het kalenderjaar recht heeft op een arbeidsongeschiktheidsuitkering als bedoeld in het tweede lid, of in het kalenderjaar recht heeft op arbeidsondersteuning op grond van de Wet arbeidsongeschiktheidsvoorziening jonggehandicapten, niet voldoet aan het urencriterium maar wel aan het verlaagde-urencriterium, bedoeld in het derde lid, en bij het begin van het kalenderjaar de pensioengerechtigde leeftijd, bedoeld in artikel 7a, eerste lid, van de Algemene Ouderdomswet, nog niet heeft bereikt.
+
+[Wet inkomstenbelasting 2001, artikel 3.78a lid 1](https://wetten.overheid.nl/BWBR0011353/2026-01-01), read 2026-11-24 from the official XML of the version in force on 1 January 2026
+
+Both conditions look back from the year itself, so they hold for some years
+and not for later ones. Florin asks them per year under Your situation on the
+P&L screen (`TaxYearInputs.notOndernemerBefore` and `isStarter`), never once
+for the business: the startersaftrek of one year does not carry into the
+next. The startersaftrek can only be ticked when the user was not an
+ondernemer in one of the previous years. That fact alone lifts the time
+condition of the urencriterium (artikel 3.6 lid 1 b) and is the starter
+condition of the startersaftrek bij arbeidsongeschiktheid
+(`TaxService.notOndernemerBefore`).
 
 ## Tariefaanpassing
 
@@ -700,9 +750,9 @@ law.
 
 With a job, Florin requires the business hours logged to be more than the
 hours in employment the user enters; equal hours do not meet it. The
-condition does not apply when the user ticks that they were not an ondernemer
-in one or more of the five previous years, or is eligible for the
-startersaftrek, whose condition includes that (artikel 3.76 lid 3). The help
+condition does not apply when the user ticks for the year that they were not
+an ondernemer in one or more of the five previous years, which eligibility
+for the startersaftrek includes (artikel 3.76 lid 3; see Starters). The help
 asks for the employment hours of the whole year while only logged business
 hours count, so during the year the estimate leaves the deductions out rather
 than assume them (AGENTS.md rule 5). Hours of other work under afdeling 3.4
@@ -718,9 +768,10 @@ The estimate covers one ondernemer under the AOW age, with wages from
 employment when the user enters them.
 
 Facts the bookkeeping cannot show are entered per year in the P&L screen
-(`TaxYearInputs`): the partner's hours, an S&O-verklaring, stopping the
-business, a disability benefit, unused zelfstandigenaftrek, losses from
-earlier years and employment.
+(`TaxYearInputs`): whether the user was an ondernemer before and is a
+starter, the partner's hours, an S&O-verklaring, stopping the business, a
+disability benefit, unused zelfstandigenaftrek, losses from earlier years and
+employment.
 
 Florin does not collect other income outside the business: a fiscal
 partner's income, resultaat uit overige werkzaamheden, benefits and pensions,

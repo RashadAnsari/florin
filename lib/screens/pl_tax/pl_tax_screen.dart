@@ -96,7 +96,7 @@ class PlTaxScreen extends ConsumerWidget {
                     ),
                     -TaxService.gemengdeKostenDeductible(food, rules),
                     help: l.plTaxFoodLimitedHelp(
-                      AppFormat.percent(rules.gemengdeKostenPct, 0),
+                      AppFormat.percentLabel(rules.gemengdeKostenPct),
                       AppFormat.cents(rules.gemengdeKostenDrempel),
                     ),
                   ),
@@ -347,6 +347,32 @@ class _YearInputs extends ConsumerWidget {
               help: l.plTaxInputsSectionHelp,
             ),
             const SizedBox(height: AppSpacing.heading),
+            HelpCheckbox(
+              value: i?.notOndernemerBefore ?? false,
+              // Turning it off clears the startersaftrek, which needs it: a
+              // hidden option may not stay set.
+              onChanged: (v) => save(
+                v
+                    ? const TaxYearInputsCompanion(
+                        notOndernemerBefore: Value(true),
+                      )
+                    : const TaxYearInputsCompanion(
+                        notOndernemerBefore: Value(false),
+                        isStarter: Value(false),
+                      ),
+              ),
+              title: l.inputNotOndernemerBefore(rules.starterLookbackYears),
+              help: l.inputNotOndernemerBeforeHelp,
+            ),
+            if (i?.notOndernemerBefore ?? false)
+              HelpCheckbox(
+                value: i?.isStarter ?? false,
+                onChanged: (v) =>
+                    save(TaxYearInputsCompanion(isStarter: Value(v))),
+                title: l.inputStarter(rules.starterMaxZelfstandigenaftrek),
+                help: l.inputStarterHelp(AppFormat.euros(rules.startersaftrek)),
+              ),
+            const SizedBox(height: AppSpacing.field),
             FormRow(
               children: [
                 _WholeNumberField(
@@ -438,13 +464,13 @@ class _YearInputs extends ConsumerWidget {
               const SizedBox(height: AppSpacing.field),
               _WholeNumberField(
                 key: ValueKey('disability_$year'),
-                label: l.inputDisabilityUsed,
+                label: l.inputDisabilityUsed(rules.starterLookbackYears),
                 help: l.inputDisabilityUsedHelp(
                   rules.starterLookbackYears,
                   rules.disabilityStartersaftrek.length,
                 ),
                 value: i?.disabilityStartersUsed ?? 0,
-                max: 3,
+                max: rules.disabilityStartersaftrek.length,
                 onChanged: (v) => save(
                   TaxYearInputsCompanion(disabilityStartersUsed: Value(v)),
                 ),
@@ -469,7 +495,6 @@ class _YearInputs extends ConsumerWidget {
                         wageTaxWithheld: Value(0),
                         zvwWages: Value(0),
                         employmentHours: Value(0),
-                        notOndernemerBefore: Value(false),
                       ),
               ),
               title: l.inputEmployed,
@@ -520,14 +545,6 @@ class _YearInputs extends ConsumerWidget {
                         save(TaxYearInputsCompanion(employmentHours: Value(v))),
                   ),
                 ],
-              ),
-              const SizedBox(height: AppSpacing.field),
-              HelpCheckbox(
-                value: i.notOndernemerBefore,
-                onChanged: (v) =>
-                    save(TaxYearInputsCompanion(notOndernemerBefore: Value(v))),
-                title: l.inputNotOndernemerBefore(rules.starterLookbackYears),
-                help: l.inputNotOndernemerBeforeHelp,
               ),
             ],
           ],

@@ -19,7 +19,6 @@ class BusinessProfileFields {
   final TextEditingController kvkNumber;
   final TextEditingController address;
   final TextEditingController iban;
-  bool isStarter;
   DateTime? korStart;
   DateTime? korEnd;
 
@@ -29,7 +28,6 @@ class BusinessProfileFields {
       kvkNumber = TextEditingController(text: p?.kvkNumber),
       address = TextEditingController(text: p?.address),
       iban = TextEditingController(text: p?.iban),
-      isStarter = p?.isStarter ?? false,
       korStart = p?.korStart,
       korEnd = p?.korEnd;
 
@@ -40,7 +38,6 @@ class BusinessProfileFields {
     kvkNumber: Value(normalizeId(kvkNumber.text)),
     address: Value(address.text.trim()),
     iban: Value(normalizeId(iban.text)),
-    isStarter: Value(isStarter),
     korStart: Value(korStart),
     korEnd: Value(korStart == null ? null : korEnd),
   );
@@ -144,20 +141,6 @@ class _BusinessProfileFormState extends State<BusinessProfileForm> {
             empty: l.settingsValidateIban,
             valid: isValidIban,
             invalid: l.settingsValidateIbanFormat,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.field),
-        HelpCheckbox(
-          value: f.isStarter,
-          onChanged: (v) => setState(() => f.isStarter = v),
-          title: l.settingsStartersaftrek,
-          help: l.settingsStartersaftrekHelp(
-            widget.rules.starterLookbackYears,
-            widget.rules.starterMaxZelfstandigenaftrek,
-          ),
-          subtitle: l.firstLaunchStartersSubtitle(
-            widget.rules.starterLookbackYears,
-            widget.rules.starterMaxZelfstandigenaftrek,
           ),
         ),
         const SizedBox(height: AppSpacing.group),

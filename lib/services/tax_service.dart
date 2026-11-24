@@ -185,28 +185,26 @@ abstract final class TaxService {
   static bool meetsUrencriterium({
     required TaxYearRules rules,
     required double totalHours,
-    required bool isStarter,
     required TaxYearInput? inputs,
   }) {
-    final job = timeTestHours(isStarter: isStarter, inputs: inputs);
+    final job = timeTestHours(inputs);
     return totalHours >= rules.urencriterium &&
         (job == null || totalHours > job);
   }
 
   /// The hours in employment the business hours must exceed (art. 3.6 lid 1
   /// a), or null without a job or when the user was not an ondernemer in
-  /// one of the previous years (lid 1 b). A startersaftrek starter was not
-  /// (art. 3.76 lid 3), so the condition does not apply to them either.
-  static int? timeTestHours({
-    required bool isStarter,
-    required TaxYearInput? inputs,
-  }) {
+  /// one of the previous years (lid 1 b).
+  static int? timeTestHours(TaxYearInput? inputs) {
     final i = inputs;
-    if (i == null || !i.employed || isStarter || i.notOndernemerBefore) {
-      return null;
-    }
+    if (i == null || !i.employed || notOndernemerBefore(i)) return null;
     return i.employmentHours;
   }
+
+  /// Not an ondernemer in one or more of the previous years. A startersaftrek
+  /// starter was not (art. 3.76 lid 3), so that counts too.
+  static bool notOndernemerBefore(TaxYearInput? inputs) =>
+      (inputs?.notOndernemerBefore ?? false) || (inputs?.isStarter ?? false);
 
   /// Box 1 tax on [wages] alone, after the heffingskortingen.
   static int wageOnlyTax(int wages, TaxYearRules rules) {
@@ -235,7 +233,6 @@ abstract final class TaxService {
     required double soHours,
     // Whether the year is over, so the hours logged are all there will be.
     required bool hoursFinal,
-    required bool isStarter,
     required TaxYearInput? inputs,
     required int lijfrentePremium,
     required int aovPremium,
@@ -256,9 +253,9 @@ abstract final class TaxService {
     final uren = meetsUrencriterium(
       rules: rules,
       totalHours: totalHours,
-      isStarter: isStarter,
       inputs: i,
     );
+    final isStarter = i?.isStarter ?? false;
     final employed = i?.employed ?? false;
     final wages = employed ? i!.wages : 0;
 
@@ -291,7 +288,8 @@ abstract final class TaxService {
             .round();
       }
     } else if (hoursFinal &&
-        isStarter &&
+        // Art. 3.78a lid 1: not an ondernemer in one of the previous years.
+        notOndernemerBefore(i) &&
         (i?.disabilityBenefit ?? false) &&
         totalHours >= rules.reducedUrencriterium) {
       final used = i?.disabilityStartersUsed ?? 0;

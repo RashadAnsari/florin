@@ -84,7 +84,10 @@ class PensionScreen extends ConsumerWidget {
                 SectionLabel(l.pensionJaarruimte),
                 ValueRow.cents(
                   l.pensionPriorYearIncome(year - 1),
-                  entry?.priorYearIncome ?? 0,
+                  PensionService.countedIncome(rules, entry),
+                  help: l.pensionCountedIncomeHelp(
+                    AppFormat.euros(rules.premiegrondslagMaxIncome),
+                  ),
                 ),
                 ValueRow.cents(
                   l.pensionAowFranchise,

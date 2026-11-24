@@ -1051,9 +1051,6 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsIban => 'IBAN';
 
   @override
-  String get settingsStartersaftrek => 'Recht op startersaftrek';
-
-  @override
   String get settingsValidateName => 'Voer je bedrijfsnaam in';
 
   @override
@@ -1162,11 +1159,6 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get firstLaunchChooseFolder => 'Map kiezen';
-
-  @override
-  String firstLaunchStartersSubtitle(int years, int max) {
-    return 'Voor ondernemers die in een of meer van de $years voorgaande jaren geen ondernemer waren en in die periode hoogstens $max keer zelfstandigenaftrek hadden';
-  }
 
   @override
   String get firstLaunchGetStarted => 'Aan de slag';
@@ -1332,8 +1324,8 @@ class AppLocalizationsNl extends AppLocalizations {
       'Goederen aan EU-ondernemer (intracommunautaire levering, 0%)';
 
   @override
-  String vatReturnIcpNote(String amount) {
-    return 'Geef deze prestaties op in de ICP-opgaaf. Lever je in een kwartaal meer dan $amount aan goederen aan EU-ondernemers, dan doe je de opgaaf per maand.';
+  String vatReturnIcpNote(String date, String amount, int quarters) {
+    return 'Geef deze prestaties uiterlijk $date op in de ICP-opgaaf over dit kwartaal. Leverde je in dit kwartaal of in een van de $quarters kwartalen ervoor voor meer dan $amount aan goederen aan EU-ondernemers, dan geef je goederen per maand op (Wet OB 1968 art. 37a).';
   }
 
   @override
@@ -1633,8 +1625,8 @@ class AppLocalizationsNl extends AppLocalizations {
       'Wanneer je leverde, als dat afwijkt van de factuurdatum. De wet vereist het dan op de factuur.';
 
   @override
-  String invoiceLateNotice(String date) {
-    return 'Een factuur reik je uit uiterlijk de 15e van de maand na de levering (Wet OB 1968 art. 34g): voor deze levering uiterlijk $date.';
+  String invoiceLateNotice(int day, String date) {
+    return 'Een factuur reik je uit uiterlijk op dag $day van de maand na de levering (Wet OB 1968 art. 34g): voor deze levering uiterlijk $date.';
   }
 
   @override
@@ -1729,7 +1721,12 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get pensionPriorYearIncomeHelp =>
-      'Je winst uit onderneming en loon van vorig jaar, uit de aangifte van dat jaar. De jaarruimte gaat hiervan uit.';
+      'Je winst uit onderneming van vorig jaar vóór de ondernemersaftrek, plus belastbaar loon, belastbaar resultaat uit overige werkzaamheden en belastbare periodieke uitkeringen, uit de aangifte van dat jaar (Wet IB 2001 art. 3.127 lid 3). De jaarruimte gaat hiervan uit.';
+
+  @override
+  String pensionCountedIncomeHelp(String max) {
+    return 'Het inkomen zoals het meetelt voor de premiegrondslag: hoogstens $max (Wet IB 2001 art. 3.127 lid 3).';
+  }
 
   @override
   String get pensionReserveringsruimteLabelHelp =>
@@ -1750,11 +1747,6 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get settingsKvkNumberHelp =>
       'Je KvK-nummer van 8 cijfers. Het staat op elke factuur.';
-
-  @override
-  String settingsStartersaftrekHelp(int years, int max) {
-    return 'Je krijgt de startersaftrek als je in minstens één van de $years voorgaande jaren geen ondernemer was en in die periode hoogstens $max keer zelfstandigenaftrek had.';
-  }
 
   @override
   String get settingsVatNumberHelp =>
@@ -2029,7 +2021,17 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get inputNotOndernemerBeforeHelp =>
-      'Dan vraagt het urencriterium niet meer tijd in de onderneming dan in je baan. Dat geldt al als je recht hebt op startersaftrek.';
+      'Dan telt dit jaar als startjaar: het urencriterium vraagt niet meer tijd in de onderneming dan in een baan (Wet IB 2001 art. 3.6 lid 1 b), en de startersaftrek bij arbeidsongeschiktheid kan gelden (art. 3.78a). Beantwoord het voor elk jaar opnieuw.';
+
+  @override
+  String inputStarter(int max) {
+    return 'Ik had in die jaren hoogstens $max keer zelfstandigenaftrek';
+  }
+
+  @override
+  String inputStarterHelp(String amount) {
+    return 'Dan krijg je de startersaftrek van $amount bovenop de zelfstandigenaftrek, als je aan het urencriterium voldoet (Wet IB 2001 art. 3.76 lid 3). Die stopt zodra je vaker zelfstandigenaftrek hebt gehad, dus controleer het voor elk jaar.';
+  }
 
   @override
   String get inputSoVerklaring => 'Ik heb een S&O-verklaring voor dit jaar';
@@ -2073,7 +2075,9 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get inputDisabilityUsed => 'Jaren gebruikt in de vorige 5';
+  String inputDisabilityUsed(int years) {
+    return 'Jaren gebruikt in de vorige $years';
+  }
 
   @override
   String inputDisabilityUsedHelp(int years, int max) {
@@ -2176,7 +2180,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String plTaxFoodLimitedHelp(String pct, String drempel) {
-    return 'Voedsel, drank, representatie, congressen, seminars en studiereizen zijn voor $pct% aftrekbaar, of boven de eerste $drempel (Wet IB 2001 art. 3.15). Florin neemt wat de grootste aftrek geeft.';
+    return 'Voedsel, drank, representatie, congressen, seminars en studiereizen zijn voor $pct aftrekbaar, of boven de eerste $drempel (Wet IB 2001 art. 3.15). Florin neemt wat de grootste aftrek geeft.';
   }
 
   @override

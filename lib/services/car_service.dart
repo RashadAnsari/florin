@@ -68,11 +68,10 @@ abstract final class CarService {
     TaxYearRules rules,
   ) {
     final reg = car.firstRegistration ?? car.purchaseDate;
-    final ageYears = _fullYears(reg, day);
-    final value = ageYears >= rules.carMarketValueAfterYears
+    final value = _moreThanYearsAgo(reg, day, rules.carMarketValueAfterYears)
         ? (car.marketValue ?? car.catalogueValue ?? 0)
         : (car.catalogueValue ?? 0);
-    final rate = ageYears >= rules.carOldAfterYears
+    final rate = _moreThanYearsAgo(reg, day, rules.carOldAfterYears)
         ? rules.carOldBijtellingRate
         : rules.carBijtellingRate;
     var addition = value * rate;
@@ -99,14 +98,11 @@ abstract final class CarService {
     return addition < 0 ? 0 : addition;
   }
 
-  static int _fullYears(DateTime from, DateTime to) {
-    var years = to.year - from.year;
-    if (to.month < from.month ||
-        (to.month == from.month && to.day < from.day)) {
-      years--;
-    }
-    return years;
-  }
+  /// Whether [from] lies more than [years] years before [day]: "meer dan
+  /// vijftien jaar geleden" (art. 3.20 lid 1 and 5 b). On the anniversary
+  /// itself exactly that many years have passed, not more.
+  static bool _moreThanYearsAgo(DateTime from, DateTime day, int years) =>
+      day.isAfter(DateTime(from.year + years, from.month, from.day));
 
   /// The income tax addition for private use of all business cars in [year].
   static int privateUseAddition({

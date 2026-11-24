@@ -70,21 +70,6 @@ class $BusinessProfilesTable extends BusinessProfiles
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _isStarterMeta = const VerificationMeta(
-    'isStarter',
-  );
-  @override
-  late final GeneratedColumn<bool> isStarter = GeneratedColumn<bool>(
-    'is_starter',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_starter" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
   static const VerificationMeta _korStartMeta = const VerificationMeta(
     'korStart',
   );
@@ -113,7 +98,6 @@ class $BusinessProfilesTable extends BusinessProfiles
     kvkNumber,
     address,
     iban,
-    isStarter,
     korStart,
     korEnd,
   ];
@@ -172,12 +156,6 @@ class $BusinessProfilesTable extends BusinessProfiles
     } else if (isInserting) {
       context.missing(_ibanMeta);
     }
-    if (data.containsKey('is_starter')) {
-      context.handle(
-        _isStarterMeta,
-        isStarter.isAcceptableOrUnknown(data['is_starter']!, _isStarterMeta),
-      );
-    }
     if (data.containsKey('kor_start')) {
       context.handle(
         _korStartMeta,
@@ -223,10 +201,6 @@ class $BusinessProfilesTable extends BusinessProfiles
         DriftSqlType.string,
         data['${effectivePrefix}iban'],
       )!,
-      isStarter: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_starter'],
-      )!,
       korStart: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}kor_start'],
@@ -251,7 +225,6 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
   final String kvkNumber;
   final String address;
   final String iban;
-  final bool isStarter;
 
   /// The first day the kleineondernemersregeling applies, as the
   /// Belastingdienst confirmed it (Wet OB 1968 art. 25a lid 5).
@@ -267,7 +240,6 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
     required this.kvkNumber,
     required this.address,
     required this.iban,
-    required this.isStarter,
     this.korStart,
     this.korEnd,
   });
@@ -280,7 +252,6 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
     map['kvk_number'] = Variable<String>(kvkNumber);
     map['address'] = Variable<String>(address);
     map['iban'] = Variable<String>(iban);
-    map['is_starter'] = Variable<bool>(isStarter);
     if (!nullToAbsent || korStart != null) {
       map['kor_start'] = Variable<DateTime>(korStart);
     }
@@ -298,7 +269,6 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
       kvkNumber: Value(kvkNumber),
       address: Value(address),
       iban: Value(iban),
-      isStarter: Value(isStarter),
       korStart: korStart == null && nullToAbsent
           ? const Value.absent()
           : Value(korStart),
@@ -320,7 +290,6 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
       kvkNumber: serializer.fromJson<String>(json['kvkNumber']),
       address: serializer.fromJson<String>(json['address']),
       iban: serializer.fromJson<String>(json['iban']),
-      isStarter: serializer.fromJson<bool>(json['isStarter']),
       korStart: serializer.fromJson<DateTime?>(json['korStart']),
       korEnd: serializer.fromJson<DateTime?>(json['korEnd']),
     );
@@ -335,7 +304,6 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
       'kvkNumber': serializer.toJson<String>(kvkNumber),
       'address': serializer.toJson<String>(address),
       'iban': serializer.toJson<String>(iban),
-      'isStarter': serializer.toJson<bool>(isStarter),
       'korStart': serializer.toJson<DateTime?>(korStart),
       'korEnd': serializer.toJson<DateTime?>(korEnd),
     };
@@ -348,7 +316,6 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
     String? kvkNumber,
     String? address,
     String? iban,
-    bool? isStarter,
     Value<DateTime?> korStart = const Value.absent(),
     Value<DateTime?> korEnd = const Value.absent(),
   }) => BusinessProfile(
@@ -358,7 +325,6 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
     kvkNumber: kvkNumber ?? this.kvkNumber,
     address: address ?? this.address,
     iban: iban ?? this.iban,
-    isStarter: isStarter ?? this.isStarter,
     korStart: korStart.present ? korStart.value : this.korStart,
     korEnd: korEnd.present ? korEnd.value : this.korEnd,
   );
@@ -370,7 +336,6 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
       kvkNumber: data.kvkNumber.present ? data.kvkNumber.value : this.kvkNumber,
       address: data.address.present ? data.address.value : this.address,
       iban: data.iban.present ? data.iban.value : this.iban,
-      isStarter: data.isStarter.present ? data.isStarter.value : this.isStarter,
       korStart: data.korStart.present ? data.korStart.value : this.korStart,
       korEnd: data.korEnd.present ? data.korEnd.value : this.korEnd,
     );
@@ -385,7 +350,6 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
           ..write('kvkNumber: $kvkNumber, ')
           ..write('address: $address, ')
           ..write('iban: $iban, ')
-          ..write('isStarter: $isStarter, ')
           ..write('korStart: $korStart, ')
           ..write('korEnd: $korEnd')
           ..write(')'))
@@ -400,7 +364,6 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
     kvkNumber,
     address,
     iban,
-    isStarter,
     korStart,
     korEnd,
   );
@@ -414,7 +377,6 @@ class BusinessProfile extends DataClass implements Insertable<BusinessProfile> {
           other.kvkNumber == this.kvkNumber &&
           other.address == this.address &&
           other.iban == this.iban &&
-          other.isStarter == this.isStarter &&
           other.korStart == this.korStart &&
           other.korEnd == this.korEnd);
 }
@@ -426,7 +388,6 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
   final Value<String> kvkNumber;
   final Value<String> address;
   final Value<String> iban;
-  final Value<bool> isStarter;
   final Value<DateTime?> korStart;
   final Value<DateTime?> korEnd;
   const BusinessProfilesCompanion({
@@ -436,7 +397,6 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
     this.kvkNumber = const Value.absent(),
     this.address = const Value.absent(),
     this.iban = const Value.absent(),
-    this.isStarter = const Value.absent(),
     this.korStart = const Value.absent(),
     this.korEnd = const Value.absent(),
   });
@@ -447,7 +407,6 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
     required String kvkNumber,
     required String address,
     required String iban,
-    this.isStarter = const Value.absent(),
     this.korStart = const Value.absent(),
     this.korEnd = const Value.absent(),
   }) : name = Value(name),
@@ -462,7 +421,6 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
     Expression<String>? kvkNumber,
     Expression<String>? address,
     Expression<String>? iban,
-    Expression<bool>? isStarter,
     Expression<DateTime>? korStart,
     Expression<DateTime>? korEnd,
   }) {
@@ -473,7 +431,6 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
       if (kvkNumber != null) 'kvk_number': kvkNumber,
       if (address != null) 'address': address,
       if (iban != null) 'iban': iban,
-      if (isStarter != null) 'is_starter': isStarter,
       if (korStart != null) 'kor_start': korStart,
       if (korEnd != null) 'kor_end': korEnd,
     });
@@ -486,7 +443,6 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
     Value<String>? kvkNumber,
     Value<String>? address,
     Value<String>? iban,
-    Value<bool>? isStarter,
     Value<DateTime?>? korStart,
     Value<DateTime?>? korEnd,
   }) {
@@ -497,7 +453,6 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
       kvkNumber: kvkNumber ?? this.kvkNumber,
       address: address ?? this.address,
       iban: iban ?? this.iban,
-      isStarter: isStarter ?? this.isStarter,
       korStart: korStart ?? this.korStart,
       korEnd: korEnd ?? this.korEnd,
     );
@@ -524,9 +479,6 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
     if (iban.present) {
       map['iban'] = Variable<String>(iban.value);
     }
-    if (isStarter.present) {
-      map['is_starter'] = Variable<bool>(isStarter.value);
-    }
     if (korStart.present) {
       map['kor_start'] = Variable<DateTime>(korStart.value);
     }
@@ -545,7 +497,6 @@ class BusinessProfilesCompanion extends UpdateCompanion<BusinessProfile> {
           ..write('kvkNumber: $kvkNumber, ')
           ..write('address: $address, ')
           ..write('iban: $iban, ')
-          ..write('isStarter: $isStarter, ')
           ..write('korStart: $korStart, ')
           ..write('korEnd: $korEnd')
           ..write(')'))
@@ -8379,6 +8330,21 @@ class $TaxYearInputsTable extends TaxYearInputs
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _isStarterMeta = const VerificationMeta(
+    'isStarter',
+  );
+  @override
+  late final GeneratedColumn<bool> isStarter = GeneratedColumn<bool>(
+    'is_starter',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_starter" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     year,
@@ -8397,6 +8363,7 @@ class $TaxYearInputsTable extends TaxYearInputs
     zvwWages,
     employmentHours,
     notOndernemerBefore,
+    isStarter,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -8539,6 +8506,12 @@ class $TaxYearInputsTable extends TaxYearInputs
         ),
       );
     }
+    if (data.containsKey('is_starter')) {
+      context.handle(
+        _isStarterMeta,
+        isStarter.isAcceptableOrUnknown(data['is_starter']!, _isStarterMeta),
+      );
+    }
     return context;
   }
 
@@ -8612,6 +8585,10 @@ class $TaxYearInputsTable extends TaxYearInputs
         DriftSqlType.bool,
         data['${effectivePrefix}not_ondernemer_before'],
       )!,
+      isStarter: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_starter'],
+      )!,
     );
   }
 
@@ -8625,12 +8602,12 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
   final int year;
 
   /// Hours the fiscal partner worked in the business unpaid or for less than
-  /// € 5.000 (meewerkaftrek).
+  /// the pay the rules allow (meewerkaftrek).
   final int partnerHours;
   final bool hasSoVerklaring;
 
-  /// Not an ondernemer in one of the five previous years and at most two
-  /// S&O-verklaringen in that period (art. 3.77 lid 2).
+  /// Not an ondernemer in one of the previous years the rules name and at
+  /// most the S&O-verklaringen they allow in that period (art. 3.77 lid 2).
   final bool soStarter;
 
   /// The whole business stopped this year (stakingsaftrek).
@@ -8640,7 +8617,8 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
   /// A disability benefit this year (startersaftrek bij arbeidsongeschiktheid).
   final bool disabilityBenefit;
 
-  /// Years in the previous five this startersaftrek was used: 0 to 3.
+  /// Years in the previous ones the rules name in which this startersaftrek
+  /// was used, up to the number of its amounts, which means none is left.
   final int disabilityStartersUsed;
 
   /// Niet-gerealiseerde zelfstandigenaftrek from earlier years.
@@ -8668,9 +8646,17 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
   /// condition that most working time goes to the business (art. 3.6 lid 1 a).
   final int employmentHours;
 
-  /// Not an ondernemer in one or more of the five previous years, which
-  /// lifts that condition (art. 3.6 lid 1 b).
+  /// Not an ondernemer in one or more of the previous years the rules name,
+  /// which lifts the time condition of the urencriterium (art. 3.6 lid 1 b)
+  /// and is a condition of the startersaftrek bij arbeidsongeschiktheid
+  /// (art. 3.78a lid 1).
   final bool notOndernemerBefore;
+
+  /// Eligible for the startersaftrek this year: [notOndernemerBefore] and
+  /// the zelfstandigenaftrek applied at most the times the rules allow in
+  /// those years (art. 3.76 lid 3). Kept false while [notOndernemerBefore]
+  /// is off.
+  final bool isStarter;
   const TaxYearInput({
     required this.year,
     required this.partnerHours,
@@ -8688,6 +8674,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     required this.zvwWages,
     required this.employmentHours,
     required this.notOndernemerBefore,
+    required this.isStarter,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -8710,6 +8697,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     map['zvw_wages'] = Variable<int>(zvwWages);
     map['employment_hours'] = Variable<int>(employmentHours);
     map['not_ondernemer_before'] = Variable<bool>(notOndernemerBefore);
+    map['is_starter'] = Variable<bool>(isStarter);
     return map;
   }
 
@@ -8731,6 +8719,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
       zvwWages: Value(zvwWages),
       employmentHours: Value(employmentHours),
       notOndernemerBefore: Value(notOndernemerBefore),
+      isStarter: Value(isStarter),
     );
   }
 
@@ -8764,6 +8753,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
       notOndernemerBefore: serializer.fromJson<bool>(
         json['notOndernemerBefore'],
       ),
+      isStarter: serializer.fromJson<bool>(json['isStarter']),
     );
   }
   @override
@@ -8790,6 +8780,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
       'zvwWages': serializer.toJson<int>(zvwWages),
       'employmentHours': serializer.toJson<int>(employmentHours),
       'notOndernemerBefore': serializer.toJson<bool>(notOndernemerBefore),
+      'isStarter': serializer.toJson<bool>(isStarter),
     };
   }
 
@@ -8810,6 +8801,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     int? zvwWages,
     int? employmentHours,
     bool? notOndernemerBefore,
+    bool? isStarter,
   }) => TaxYearInput(
     year: year ?? this.year,
     partnerHours: partnerHours ?? this.partnerHours,
@@ -8830,6 +8822,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     zvwWages: zvwWages ?? this.zvwWages,
     employmentHours: employmentHours ?? this.employmentHours,
     notOndernemerBefore: notOndernemerBefore ?? this.notOndernemerBefore,
+    isStarter: isStarter ?? this.isStarter,
   );
   TaxYearInput copyWithCompanion(TaxYearInputsCompanion data) {
     return TaxYearInput(
@@ -8871,6 +8864,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
       notOndernemerBefore: data.notOndernemerBefore.present
           ? data.notOndernemerBefore.value
           : this.notOndernemerBefore,
+      isStarter: data.isStarter.present ? data.isStarter.value : this.isStarter,
     );
   }
 
@@ -8894,7 +8888,8 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
           ..write('wageTaxWithheld: $wageTaxWithheld, ')
           ..write('zvwWages: $zvwWages, ')
           ..write('employmentHours: $employmentHours, ')
-          ..write('notOndernemerBefore: $notOndernemerBefore')
+          ..write('notOndernemerBefore: $notOndernemerBefore, ')
+          ..write('isStarter: $isStarter')
           ..write(')'))
         .toString();
   }
@@ -8917,6 +8912,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     zvwWages,
     employmentHours,
     notOndernemerBefore,
+    isStarter,
   );
   @override
   bool operator ==(Object other) =>
@@ -8938,7 +8934,8 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
           other.wageTaxWithheld == this.wageTaxWithheld &&
           other.zvwWages == this.zvwWages &&
           other.employmentHours == this.employmentHours &&
-          other.notOndernemerBefore == this.notOndernemerBefore);
+          other.notOndernemerBefore == this.notOndernemerBefore &&
+          other.isStarter == this.isStarter);
 }
 
 class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
@@ -8958,6 +8955,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
   final Value<int> zvwWages;
   final Value<int> employmentHours;
   final Value<bool> notOndernemerBefore;
+  final Value<bool> isStarter;
   const TaxYearInputsCompanion({
     this.year = const Value.absent(),
     this.partnerHours = const Value.absent(),
@@ -8975,6 +8973,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     this.zvwWages = const Value.absent(),
     this.employmentHours = const Value.absent(),
     this.notOndernemerBefore = const Value.absent(),
+    this.isStarter = const Value.absent(),
   });
   TaxYearInputsCompanion.insert({
     this.year = const Value.absent(),
@@ -8993,6 +8992,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     this.zvwWages = const Value.absent(),
     this.employmentHours = const Value.absent(),
     this.notOndernemerBefore = const Value.absent(),
+    this.isStarter = const Value.absent(),
   });
   static Insertable<TaxYearInput> custom({
     Expression<int>? year,
@@ -9011,6 +9011,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     Expression<int>? zvwWages,
     Expression<int>? employmentHours,
     Expression<bool>? notOndernemerBefore,
+    Expression<bool>? isStarter,
   }) {
     return RawValuesInsertable({
       if (year != null) 'year': year,
@@ -9033,6 +9034,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
       if (employmentHours != null) 'employment_hours': employmentHours,
       if (notOndernemerBefore != null)
         'not_ondernemer_before': notOndernemerBefore,
+      if (isStarter != null) 'is_starter': isStarter,
     });
   }
 
@@ -9053,6 +9055,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     Value<int>? zvwWages,
     Value<int>? employmentHours,
     Value<bool>? notOndernemerBefore,
+    Value<bool>? isStarter,
   }) {
     return TaxYearInputsCompanion(
       year: year ?? this.year,
@@ -9074,6 +9077,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
       zvwWages: zvwWages ?? this.zvwWages,
       employmentHours: employmentHours ?? this.employmentHours,
       notOndernemerBefore: notOndernemerBefore ?? this.notOndernemerBefore,
+      isStarter: isStarter ?? this.isStarter,
     );
   }
 
@@ -9134,6 +9138,9 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     if (notOndernemerBefore.present) {
       map['not_ondernemer_before'] = Variable<bool>(notOndernemerBefore.value);
     }
+    if (isStarter.present) {
+      map['is_starter'] = Variable<bool>(isStarter.value);
+    }
     return map;
   }
 
@@ -9157,7 +9164,8 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
           ..write('wageTaxWithheld: $wageTaxWithheld, ')
           ..write('zvwWages: $zvwWages, ')
           ..write('employmentHours: $employmentHours, ')
-          ..write('notOndernemerBefore: $notOndernemerBefore')
+          ..write('notOndernemerBefore: $notOndernemerBefore, ')
+          ..write('isStarter: $isStarter')
           ..write(')'))
         .toString();
   }
@@ -10118,7 +10126,6 @@ typedef $$BusinessProfilesTableCreateCompanionBuilder =
       required String kvkNumber,
       required String address,
       required String iban,
-      Value<bool> isStarter,
       Value<DateTime?> korStart,
       Value<DateTime?> korEnd,
     });
@@ -10130,7 +10137,6 @@ typedef $$BusinessProfilesTableUpdateCompanionBuilder =
       Value<String> kvkNumber,
       Value<String> address,
       Value<String> iban,
-      Value<bool> isStarter,
       Value<DateTime?> korStart,
       Value<DateTime?> korEnd,
     });
@@ -10171,11 +10177,6 @@ class $$BusinessProfilesTableFilterComposer
 
   ColumnFilters<String> get iban => $composableBuilder(
     column: $table.iban,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get isStarter => $composableBuilder(
-    column: $table.isStarter,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -10229,11 +10230,6 @@ class $$BusinessProfilesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<bool> get isStarter => $composableBuilder(
-    column: $table.isStarter,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<DateTime> get korStart => $composableBuilder(
     column: $table.korStart,
     builder: (column) => ColumnOrderings(column),
@@ -10271,9 +10267,6 @@ class $$BusinessProfilesTableAnnotationComposer
 
   GeneratedColumn<String> get iban =>
       $composableBuilder(column: $table.iban, builder: (column) => column);
-
-  GeneratedColumn<bool> get isStarter =>
-      $composableBuilder(column: $table.isStarter, builder: (column) => column);
 
   GeneratedColumn<DateTime> get korStart =>
       $composableBuilder(column: $table.korStart, builder: (column) => column);
@@ -10325,7 +10318,6 @@ class $$BusinessProfilesTableTableManager
                 Value<String> kvkNumber = const Value.absent(),
                 Value<String> address = const Value.absent(),
                 Value<String> iban = const Value.absent(),
-                Value<bool> isStarter = const Value.absent(),
                 Value<DateTime?> korStart = const Value.absent(),
                 Value<DateTime?> korEnd = const Value.absent(),
               }) => BusinessProfilesCompanion(
@@ -10335,7 +10327,6 @@ class $$BusinessProfilesTableTableManager
                 kvkNumber: kvkNumber,
                 address: address,
                 iban: iban,
-                isStarter: isStarter,
                 korStart: korStart,
                 korEnd: korEnd,
               ),
@@ -10347,7 +10338,6 @@ class $$BusinessProfilesTableTableManager
                 required String kvkNumber,
                 required String address,
                 required String iban,
-                Value<bool> isStarter = const Value.absent(),
                 Value<DateTime?> korStart = const Value.absent(),
                 Value<DateTime?> korEnd = const Value.absent(),
               }) => BusinessProfilesCompanion.insert(
@@ -10357,7 +10347,6 @@ class $$BusinessProfilesTableTableManager
                 kvkNumber: kvkNumber,
                 address: address,
                 iban: iban,
-                isStarter: isStarter,
                 korStart: korStart,
                 korEnd: korEnd,
               ),
@@ -15323,6 +15312,7 @@ typedef $$TaxYearInputsTableCreateCompanionBuilder =
       Value<int> zvwWages,
       Value<int> employmentHours,
       Value<bool> notOndernemerBefore,
+      Value<bool> isStarter,
     });
 typedef $$TaxYearInputsTableUpdateCompanionBuilder =
     TaxYearInputsCompanion Function({
@@ -15342,6 +15332,7 @@ typedef $$TaxYearInputsTableUpdateCompanionBuilder =
       Value<int> zvwWages,
       Value<int> employmentHours,
       Value<bool> notOndernemerBefore,
+      Value<bool> isStarter,
     });
 
 class $$TaxYearInputsTableFilterComposer
@@ -15430,6 +15421,11 @@ class $$TaxYearInputsTableFilterComposer
 
   ColumnFilters<bool> get notOndernemerBefore => $composableBuilder(
     column: $table.notOndernemerBefore,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isStarter => $composableBuilder(
+    column: $table.isStarter,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -15522,6 +15518,11 @@ class $$TaxYearInputsTableOrderingComposer
     column: $table.notOndernemerBefore,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get isStarter => $composableBuilder(
+    column: $table.isStarter,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$TaxYearInputsTableAnnotationComposer
@@ -15602,6 +15603,9 @@ class $$TaxYearInputsTableAnnotationComposer
     column: $table.notOndernemerBefore,
     builder: (column) => column,
   );
+
+  GeneratedColumn<bool> get isStarter =>
+      $composableBuilder(column: $table.isStarter, builder: (column) => column);
 }
 
 class $$TaxYearInputsTableTableManager
@@ -15651,6 +15655,7 @@ class $$TaxYearInputsTableTableManager
                 Value<int> zvwWages = const Value.absent(),
                 Value<int> employmentHours = const Value.absent(),
                 Value<bool> notOndernemerBefore = const Value.absent(),
+                Value<bool> isStarter = const Value.absent(),
               }) => TaxYearInputsCompanion(
                 year: year,
                 partnerHours: partnerHours,
@@ -15668,6 +15673,7 @@ class $$TaxYearInputsTableTableManager
                 zvwWages: zvwWages,
                 employmentHours: employmentHours,
                 notOndernemerBefore: notOndernemerBefore,
+                isStarter: isStarter,
               ),
           createCompanionCallback:
               ({
@@ -15687,6 +15693,7 @@ class $$TaxYearInputsTableTableManager
                 Value<int> zvwWages = const Value.absent(),
                 Value<int> employmentHours = const Value.absent(),
                 Value<bool> notOndernemerBefore = const Value.absent(),
+                Value<bool> isStarter = const Value.absent(),
               }) => TaxYearInputsCompanion.insert(
                 year: year,
                 partnerHours: partnerHours,
@@ -15704,6 +15711,7 @@ class $$TaxYearInputsTableTableManager
                 zvwWages: zvwWages,
                 employmentHours: employmentHours,
                 notOndernemerBefore: notOndernemerBefore,
+                isStarter: isStarter,
               ),
           withReferenceMapper: (p0) => p0
               .map(

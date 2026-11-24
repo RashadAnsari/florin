@@ -124,4 +124,17 @@ void main() {
     );
     expect(assets.any((a) => a.disposalInvoiceId != null), isTrue);
   });
+
+  test('an EU service is reported in the quarter it was supplied, before '
+      'the quarter of its invoice', () async {
+    final invoices = await db.select(db.invoices).get();
+    expect(
+      invoices.where(
+        (i) =>
+            i.vatTreatment == VatTreatment.euServices &&
+            quarterOf(i.vatDate) < quarterOf(i.invoiceDate),
+      ),
+      isNotEmpty,
+    );
+  });
 }
