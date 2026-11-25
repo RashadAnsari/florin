@@ -333,6 +333,34 @@ class PlTaxScreen extends ConsumerWidget {
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: AppSpacing.section),
+                SectionLabel(
+                  l.plTaxProvisionalSection,
+                  help: l.plTaxProvisionalSectionHelp,
+                ),
+                ValueRow.cents(
+                  l.plTaxProvisionalProfit,
+                  r.belastbareWinst,
+                  help: l.plTaxProvisionalProfitHelp,
+                ),
+                ValueRow.cents(
+                  l.plTaxProvisionalIncome,
+                  r.taxableIncome,
+                  help: l.plTaxProvisionalIncomeHelp,
+                ),
+                ValueRow.cents(
+                  l.plTaxProvisionalTax,
+                  r.taxToPay,
+                  help: l.plTaxProvisionalTaxHelp,
+                ),
+                const SizedBox(height: AppSpacing.heading),
+                Text(
+                  l.plTaxProvisionalDeadline(
+                    year,
+                    AppFormat.date(rules.provisionalAssessmentDeadline),
+                  ),
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: AppSpacing.section),
                 _YearInputs(year: year),
               ],
             ),

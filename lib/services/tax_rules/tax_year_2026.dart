@@ -87,6 +87,7 @@ const taxYear2026 = TaxYearRules(
   },
   vatReturnDueMonths: 1,
   invoiceDueDay: 15,
+  provisionalAssessmentMonth: 5,
   retentionYears: 7,
   navorderingYears: 5,
   navorderingForeignYears: 12,

@@ -134,6 +134,11 @@ class TaxYearRules {
   /// (Wet OB 1968 art. 34g).
   final int invoiceDueDay;
 
+  /// Month of the next year on whose first day a voorlopige aanslag for
+  /// this year can last be asked for or changed, without a letter asking
+  /// for a return (Belastingdienst).
+  final int provisionalAssessmentMonth;
+
   /// Years invoices and receipts are kept (AWR art. 52 lid 4).
   final int retentionYears;
 
@@ -261,6 +266,7 @@ class TaxYearRules {
     required this.vatRates,
     required this.vatReturnDueMonths,
     required this.invoiceDueDay,
+    required this.provisionalAssessmentMonth,
     required this.retentionYears,
     required this.navorderingYears,
     required this.navorderingForeignYears,
@@ -300,6 +306,12 @@ class TaxYearRules {
   /// The last day to issue the invoice for a supply on [supply].
   DateTime latestInvoiceDate(DateTime supply) =>
       DateTime(supply.year, supply.month + 1, invoiceDueDay);
+
+  /// The last day to ask for or change a voorlopige aanslag for this year
+  /// without a letter asking for a return; such a letter or uitstel sets
+  /// its own date.
+  DateTime get provisionalAssessmentDeadline =>
+      DateTime(year + 1, provisionalAssessmentMonth);
 
   /// The last day records of the bookkeeping [year] must be kept: the end
   /// of the retention term after that year, the cautious reading of when

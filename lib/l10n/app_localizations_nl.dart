@@ -1020,6 +1020,40 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
+  String get plTaxProvisionalSection =>
+      'Voorlopige aanslag en toeslagen (geschat)';
+
+  @override
+  String get plTaxProvisionalSectionHelp =>
+      'Geschatte cijfers uit uw administratie voor het inkomen dat u tijdens het jaar aan de Belastingdienst doorgeeft: als u een voorlopige aanslag aanvraagt of wijzigt, en als u uw inkomen voor toeslagen schat. Het zijn schattingen en ze bevatten alleen wat Florin heeft.';
+
+  @override
+  String get plTaxProvisionalProfit => 'Geschatte belastbare winst';
+
+  @override
+  String get plTaxProvisionalProfitHelp =>
+      'De winst na de ondernemersaftrek en de mkb-winstvrijstelling, zoals hierboven geschat. De Belastingdienst laat u de ondernemersaftrek waar u recht op hebt aftrekken als u uw inkomen voor toeslagen schat.';
+
+  @override
+  String get plTaxProvisionalIncome => 'Geschat belastbaar inkomen box 1';
+
+  @override
+  String get plTaxProvisionalIncomeHelp =>
+      'Voor toeslagen gebruikt de Belastingdienst uw toetsingsinkomen: uw verzamelinkomen, niet uw winst, plus dat van een toeslagpartner. Dit cijfer is alleen box 1 uit uw administratie; inkomen dat Florin niet heeft, zoals box 3, zit er niet in. De Belastingdienst raadt aan iets te hoog te schatten, want een te laag inkomen kan betekenen dat u toeslag moet terugbetalen.';
+
+  @override
+  String get plTaxProvisionalTax => 'Geschatte belasting over het jaar';
+
+  @override
+  String get plTaxProvisionalTaxHelp =>
+      'Belasting box 1 en de Zvw-bijdrage, min de al ingehouden loonheffing, zoals hierboven geschat. Een voorlopige aanslag spreidt dit over het jaar, zodat de definitieve aanslag geen grote rekening brengt.';
+
+  @override
+  String plTaxProvisionalDeadline(int year, String date) {
+    return 'U kunt een voorlopige aanslag over $year aanvragen of wijzigen tot $date. Hebt u een aangiftebrief gekregen, dan geldt de datum in die brief of uw uitsteldatum; als u aangifte hebt gedaan, kan het niet meer.';
+  }
+
+  @override
   String plTaxUrenBanner(String hours, String target, String suffix) {
     return 'Urencriterium: $hours van $target uur gelogd$suffix.';
   }

@@ -1934,6 +1934,60 @@ abstract class AppLocalizations {
   /// **'Effective rate on the profit: {rate}%'**
   String plTaxEffectiveRate(String rate);
 
+  /// No description provided for @plTaxProvisionalSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Voorlopige aanslag and toeslagen (estimated)'**
+  String get plTaxProvisionalSection;
+
+  /// No description provided for @plTaxProvisionalSectionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated figures from your records for the income you give the Belastingdienst during the year: when you ask for or change a voorlopige aanslag, and when you estimate your income for toeslagen. They are estimates and include only what Florin holds.'**
+  String get plTaxProvisionalSectionHelp;
+
+  /// No description provided for @plTaxProvisionalProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated belastbare winst'**
+  String get plTaxProvisionalProfit;
+
+  /// No description provided for @plTaxProvisionalProfitHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The profit after the ondernemersaftrek and the mkb-winstvrijstelling, as estimated above. The Belastingdienst lets you deduct the ondernemersaftrek you are entitled to when you estimate your income for toeslagen.'**
+  String get plTaxProvisionalProfitHelp;
+
+  /// No description provided for @plTaxProvisionalIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated taxable income box 1'**
+  String get plTaxProvisionalIncome;
+
+  /// No description provided for @plTaxProvisionalIncomeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'For toeslagen the Belastingdienst uses your toetsingsinkomen: your verzamelinkomen, not your profit, plus that of a toeslagpartner. This figure is box 1 from your records only; income Florin does not hold, such as box 3, is not in it. The Belastingdienst advises estimating a little high, because too low an income can mean paying toeslag back.'**
+  String get plTaxProvisionalIncomeHelp;
+
+  /// No description provided for @plTaxProvisionalTax.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated tax to pay for the year'**
+  String get plTaxProvisionalTax;
+
+  /// No description provided for @plTaxProvisionalTaxHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Box 1 tax and the Zvw contribution, minus loonheffing already withheld, as estimated above. A voorlopige aanslag spreads this over the year so the final assessment brings no large bill.'**
+  String get plTaxProvisionalTaxHelp;
+
+  /// No description provided for @plTaxProvisionalDeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'You can ask for or change a voorlopige aanslag for {year} until {date}. With a letter asking you to file a return, the date in that letter or your uitstel applies; once you have filed the return, you can no longer.'**
+  String plTaxProvisionalDeadline(int year, String date);
+
   /// No description provided for @plTaxUrenBanner.
   ///
   /// In en, this message translates to:

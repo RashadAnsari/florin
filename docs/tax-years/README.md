@@ -89,6 +89,7 @@ the statute version of 1 January of the new year, its transitional articles
 | `buaGiftThreshold` | Gifts to one person a year at or below which their BTW stays deductible | Besluit uitsluiting aftrek omzetbelasting 1968 art. 4 | Statute |
 | `invoiceDueDay` | Day of the next month by which an invoice is due | Wet OB 1968 art. 34g | Statute |
 | `vatReturnDueMonths` | Months after a quarter in which its return and payment are due | AWR art. 19 lid 1 | Statute; Belastingdienst, Uiterste aangifte- en betaaldatums |
+| `provisionalAssessmentMonth` | Month of the next year on whose first day a voorlopige aanslag can last be asked for or changed without a letter asking for a return | Belastingdienst practice | Belastingdienst, Tot wanneer kan ik een voorlopige aanslag aanvragen of wijzigen? |
 | `retentionYears` | Years records are kept | AWR art. 52 lid 4 | Statute |
 | `navorderingYears` | Years after the tax became due in which the Belastingdienst can raise it afterwards | AWR art. 16 lid 3 | Statute |
 | `navorderingForeignYears` | The same for income or assets abroad | AWR art. 16 lid 4 | Statute |

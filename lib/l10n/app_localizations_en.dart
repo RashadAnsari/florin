@@ -1017,6 +1017,40 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get plTaxProvisionalSection =>
+      'Voorlopige aanslag and toeslagen (estimated)';
+
+  @override
+  String get plTaxProvisionalSectionHelp =>
+      'Estimated figures from your records for the income you give the Belastingdienst during the year: when you ask for or change a voorlopige aanslag, and when you estimate your income for toeslagen. They are estimates and include only what Florin holds.';
+
+  @override
+  String get plTaxProvisionalProfit => 'Estimated belastbare winst';
+
+  @override
+  String get plTaxProvisionalProfitHelp =>
+      'The profit after the ondernemersaftrek and the mkb-winstvrijstelling, as estimated above. The Belastingdienst lets you deduct the ondernemersaftrek you are entitled to when you estimate your income for toeslagen.';
+
+  @override
+  String get plTaxProvisionalIncome => 'Estimated taxable income box 1';
+
+  @override
+  String get plTaxProvisionalIncomeHelp =>
+      'For toeslagen the Belastingdienst uses your toetsingsinkomen: your verzamelinkomen, not your profit, plus that of a toeslagpartner. This figure is box 1 from your records only; income Florin does not hold, such as box 3, is not in it. The Belastingdienst advises estimating a little high, because too low an income can mean paying toeslag back.';
+
+  @override
+  String get plTaxProvisionalTax => 'Estimated tax to pay for the year';
+
+  @override
+  String get plTaxProvisionalTaxHelp =>
+      'Box 1 tax and the Zvw contribution, minus loonheffing already withheld, as estimated above. A voorlopige aanslag spreads this over the year so the final assessment brings no large bill.';
+
+  @override
+  String plTaxProvisionalDeadline(int year, String date) {
+    return 'You can ask for or change a voorlopige aanslag for $year until $date. With a letter asking you to file a return, the date in that letter or your uitstel applies; once you have filed the return, you can no longer.';
+  }
+
+  @override
   String plTaxUrenBanner(String hours, String target, String suffix) {
     return 'Urencriterium: $hours of $target hours logged$suffix.';
   }
