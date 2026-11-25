@@ -1700,6 +1700,42 @@ abstract class AppLocalizations {
   /// **'VAT return'**
   String get vatReturnTitle;
 
+  /// No description provided for @vatFilingQuarterly.
+  ///
+  /// In en, this message translates to:
+  /// **'Per quarter'**
+  String get vatFilingQuarterly;
+
+  /// No description provided for @vatFilingMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Per month'**
+  String get vatFilingMonthly;
+
+  /// No description provided for @vatFilingYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Per year'**
+  String get vatFilingYearly;
+
+  /// No description provided for @vatReturnFilingPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Filing period'**
+  String get vatReturnFilingPeriod;
+
+  /// No description provided for @vatReturnFilingPeriodHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The period of your BTW returns, as in your aangiftebrief. Most businesses file per quarter. The Belastingdienst lets you file per month on request, and per year on request when you pay less than {vat} BTW a year, are an eenmanszaak and have less than {eu} a year of each kind of EU supply or purchase; it can also require monthly returns after late returns or payments. Choose the period the Belastingdienst confirmed.'**
+  String vatReturnFilingPeriodHelp(String vat, String eu);
+
+  /// No description provided for @vatReturnYearlyNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'This year\'s figures do not meet the conditions for a yearly return: BTW to pay of {vat} or more, or EU supplies or purchases of {eu} or more. The Belastingdienst then changes your filing period and tells you so by letter. Florin adds goods and services together, so it may flag a year that still meets the conditions.'**
+  String vatReturnYearlyNotAllowed(String vat, String eu);
+
   /// No description provided for @vatReturnRevenueSection.
   ///
   /// In en, this message translates to:

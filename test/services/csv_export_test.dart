@@ -31,13 +31,13 @@ Invoice _invoice(
   totalInclVat: total,
 );
 
-VatQuarterResult _quarter({
+VatReturnResult _quarter({
   int revenue1a = 0,
   int vat1a = 0,
   int vat2a = 0,
   int input5b = 0,
   List<Invoice> icp = const [],
-}) => VatQuarterResult(
+}) => VatReturnResult(
   revenue1a: revenue1a,
   vat1a: vat1a,
   revenue1b: 0,

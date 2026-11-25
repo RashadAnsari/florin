@@ -15,6 +15,7 @@ import 'generated/schema_v6.dart' as v6;
 import 'generated/schema_v7.dart' as v7;
 import 'generated/schema_v8.dart' as v8;
 import 'generated/schema_v9.dart' as v9;
+import 'generated/schema_v10.dart' as v10;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -704,6 +705,36 @@ void main() {
       validateItems: (newDb) async {
         final rows = await newDb.select(newDb.hourEntries).get();
         expect(rows.map((h) => h.clientId).toList(), [1, null, null, null]);
+      },
+    );
+  });
+
+  test('migration from v9 to v10 keeps each return as a quarter\'s', () async {
+    const oldReturn = v9.VatReturnsData(
+      year: 2026,
+      quarter: 2,
+      filed: 1,
+      paid: 0,
+    );
+    const newReturn = v10.VatReturnsData(
+      year: 2026,
+      kind: 'quarterly',
+      number: 2,
+      filed: 1,
+      paid: 0,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 9,
+      newVersion: 10,
+      createOld: v9.DatabaseAtV9.new,
+      createNew: v10.DatabaseAtV10.new,
+      openTestedDatabase: AppDatabase.new,
+      createItems: (batch, oldDb) {
+        batch.insert(oldDb.vatReturns, oldReturn);
+      },
+      validateItems: (newDb) async {
+        expect(await newDb.select(newDb.vatReturns).get(), [newReturn]);
       },
     );
   });

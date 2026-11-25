@@ -120,7 +120,7 @@ class CsvExportService {
   static int _reclaim(int cents) => (cents / 100).ceil();
 
   /// The rows of one quarterly BTW return, in the order of the form.
-  static List<List<Object>> btwReturnRows(VatQuarterResult r) {
+  static List<List<Object>> btwReturnRows(VatReturnResult r) {
     final vat = [r.vat1a, r.vat1b, r.vat1d, r.vat2a, r.vat4a, r.vat4b];
     final owed5a = vat.fold(0, (s, v) => s + _owed(v));
     final input5b = _reclaim(r.inputVat5b);
@@ -186,7 +186,7 @@ class CsvExportService {
   /// The supplies to EU businesses of one quarter, totalled per customer BTW
   /// number with goods and services apart, as the ICP-opgaaf lists them.
   static List<List<Object>> icpRows(
-    VatQuarterResult r,
+    VatReturnResult r,
     Map<int, Client> clients,
   ) {
     final totals = <String, ({String country, int goods, int services})>{};
@@ -257,11 +257,11 @@ class CsvExportService {
     ['Te betalen (negatief: terug te ontvangen)', _euro(t.taxToPay)],
   ];
 
-  /// The BTW on assets to repay in the last return of the year because the
+  /// The BTW on assets to repay in [last], the year's last return, because the
   /// KOR lowered their taxed use, per asset in euros and cents.
-  static List<List<Object>> revisionRows(VatQuarterResult q4) => [
+  static List<List<Object>> revisionRows(VatReturnResult last) => [
     ['Bedrijfsmiddel', 'Aankoopdatum', 'Terug te betalen btw (herziening)'],
-    for (final e in q4.vatRevision.entries)
+    for (final e in last.vatRevision.entries)
       [e.key.assetName, _date(e.key.purchaseDate), _euro(e.value)],
   ];
 
@@ -323,18 +323,21 @@ class CsvExportService {
     ['Recht op startersaftrek', _yesNo(i?.isStarter ?? false)],
   ];
 
-  /// Whether each quarter's BTW return was filed and paid, as the user
+  /// Whether each BTW return of [periods] was filed and paid, as the user
   /// marked it, with its last day.
-  static List<List<Object>> vatStatusRows(int year, List<VatReturn> filed) {
-    final byQuarter = {for (final v in filed) v.quarter: v};
+  static List<List<Object>> vatStatusRows(
+    List<VatPeriod> periods,
+    List<VatReturn> filed,
+  ) {
+    final byPeriod = {for (final v in filed) (v.kind, v.number): v};
     return [
-      ['Kwartaal', 'Uiterste datum', 'Aangifte gedaan', 'Betaald'],
-      for (var q = 1; q <= 4; q++)
+      ['Tijdvak', 'Uiterste datum', 'Aangifte gedaan', 'Betaald'],
+      for (final p in periods)
         [
-          'Q$q',
-          _date(VatService.filingDeadline(year, q)),
-          _yesNo(byQuarter[q]?.filed ?? false),
-          _yesNo(byQuarter[q]?.paid ?? false),
+          p.code,
+          _date(VatService.filingDeadline(p)),
+          _yesNo(byPeriod[(p.kind, p.number)]?.filed ?? false),
+          _yesNo(byPeriod[(p.kind, p.number)]?.paid ?? false),
         ],
     ];
   }
@@ -404,13 +407,15 @@ class CsvExportService {
     return '$folder/${stem}_${r.id.substring(0, 8)}.${r.type.extension}';
   }
 
-  /// Writes the year's files. [quarters] holds the BTW returns for Q1 to Q4;
-  /// every quarter gets its files, empty or not. The receipts of the year's
+  /// Writes the year's files. [periods] holds the BTW returns of the year's
+  /// filing period and [quarters] those of Q1 to Q4 for the ICP-opgaaf;
+  /// every period gets its files, empty or not. The receipts of the year's
   /// expenses, invoices and the assets in use are copied from [receipts].
   Future<String?> exportYear(
     int year, {
     required String dialogTitle,
-    required List<VatQuarterResult> quarters,
+    required List<(VatPeriod, VatReturnResult)> periods,
+    required List<VatReturnResult> quarters,
     required TaxResult? incomeTax,
     required ReceiptStore receipts,
   }) async {
@@ -421,6 +426,7 @@ class CsvExportService {
     return writeYear(
       year,
       parent: parent,
+      periods: periods,
       quarters: quarters,
       incomeTax: incomeTax,
       receipts: receipts,
@@ -432,11 +438,12 @@ class CsvExportService {
   Future<String> writeYear(
     int year, {
     required String parent,
-    required List<VatQuarterResult> quarters,
+    required List<(VatPeriod, VatReturnResult)> periods,
+    required List<VatReturnResult> quarters,
     required TaxResult? incomeTax,
     required ReceiptStore receipts,
   }) async {
-    assert(quarters.length == 4);
+    assert(quarters.length == 4 && periods.isNotEmpty);
     final rules = taxRulesFor(year)!;
     final dir = (await createExportFolder(parent, year, DateTime.now())).path;
 
@@ -835,12 +842,17 @@ class CsvExportService {
     final filed = await (db.select(
       db.vatReturns,
     )..where((v) => v.year.equals(year))).get();
-    await write('btw_aangiften', vatStatusRows(year, filed));
+    await write(
+      'btw_aangiften',
+      vatStatusRows([for (final (p, _) in periods) p], filed),
+    );
 
-    await write('btw_herziening', revisionRows(quarters[3]));
+    await write('btw_herziening', revisionRows(periods.last.$2));
 
+    for (final (p, r) in periods) {
+      await write('btw_${p.code}', btwReturnRows(r));
+    }
     for (var q = 1; q <= 4; q++) {
-      await write('btw_Q$q', btwReturnRows(quarters[q - 1]));
       await write('icp_Q$q', icpRows(quarters[q - 1], clientsById));
     }
     if (incomeTax != null) {

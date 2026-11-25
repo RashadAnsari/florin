@@ -883,6 +883,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vatReturnTitle => 'VAT return';
 
   @override
+  String get vatFilingQuarterly => 'Per quarter';
+
+  @override
+  String get vatFilingMonthly => 'Per month';
+
+  @override
+  String get vatFilingYearly => 'Per year';
+
+  @override
+  String get vatReturnFilingPeriod => 'Filing period';
+
+  @override
+  String vatReturnFilingPeriodHelp(String vat, String eu) {
+    return 'The period of your BTW returns, as in your aangiftebrief. Most businesses file per quarter. The Belastingdienst lets you file per month on request, and per year on request when you pay less than $vat BTW a year, are an eenmanszaak and have less than $eu a year of each kind of EU supply or purchase; it can also require monthly returns after late returns or payments. Choose the period the Belastingdienst confirmed.';
+  }
+
+  @override
+  String vatReturnYearlyNotAllowed(String vat, String eu) {
+    return 'This year\'s figures do not meet the conditions for a yearly return: BTW to pay of $vat or more, or EU supplies or purchases of $eu or more. The Belastingdienst then changes your filing period and tells you so by letter. Florin adds goods and services together, so it may flag a year that still meets the conditions.';
+  }
+
+  @override
   String get vatReturnRevenueSection => 'Revenue';
 
   @override

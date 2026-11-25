@@ -8055,15 +8055,23 @@ class $VatReturnsTable extends VatReturns
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _quarterMeta = const VerificationMeta(
-    'quarter',
-  );
   @override
-  late final GeneratedColumn<int> quarter = GeneratedColumn<int>(
-    'quarter',
+  late final GeneratedColumnWithTypeConverter<VatFilingPeriod, String> kind =
+      GeneratedColumn<String>(
+        'kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(VatFilingPeriod.quarterly.name),
+      ).withConverter<VatFilingPeriod>($VatReturnsTable.$converterkind);
+  static const VerificationMeta _numberMeta = const VerificationMeta('number');
+  @override
+  late final GeneratedColumn<int> number = GeneratedColumn<int>(
+    'number',
     aliasedName,
     false,
-    check: () => ComparableExpr(quarter).isBetweenValues(1, 4),
+    check: () => ComparableExpr(number).isBetweenValues(1, 12),
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
@@ -8094,7 +8102,7 @@ class $VatReturnsTable extends VatReturns
     defaultValue: const Constant(false),
   );
   @override
-  List<GeneratedColumn> get $columns => [year, quarter, filed, paid];
+  List<GeneratedColumn> get $columns => [year, kind, number, filed, paid];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -8115,13 +8123,13 @@ class $VatReturnsTable extends VatReturns
     } else if (isInserting) {
       context.missing(_yearMeta);
     }
-    if (data.containsKey('quarter')) {
+    if (data.containsKey('number')) {
       context.handle(
-        _quarterMeta,
-        quarter.isAcceptableOrUnknown(data['quarter']!, _quarterMeta),
+        _numberMeta,
+        number.isAcceptableOrUnknown(data['number']!, _numberMeta),
       );
     } else if (isInserting) {
-      context.missing(_quarterMeta);
+      context.missing(_numberMeta);
     }
     if (data.containsKey('filed')) {
       context.handle(
@@ -8139,7 +8147,7 @@ class $VatReturnsTable extends VatReturns
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {year, quarter};
+  Set<GeneratedColumn> get $primaryKey => {year, kind, number};
   @override
   VatReturn map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
@@ -8148,9 +8156,15 @@ class $VatReturnsTable extends VatReturns
         DriftSqlType.int,
         data['${effectivePrefix}year'],
       )!,
-      quarter: attachedDatabase.typeMapping.read(
+      kind: $VatReturnsTable.$converterkind.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}kind'],
+        )!,
+      ),
+      number: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}quarter'],
+        data['${effectivePrefix}number'],
       )!,
       filed: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
@@ -8167,16 +8181,25 @@ class $VatReturnsTable extends VatReturns
   $VatReturnsTable createAlias(String alias) {
     return $VatReturnsTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<VatFilingPeriod, String, String> $converterkind =
+      const EnumNameConverter<VatFilingPeriod>(VatFilingPeriod.values);
 }
 
 class VatReturn extends DataClass implements Insertable<VatReturn> {
   final int year;
-  final int quarter;
+
+  /// The kind of period: a month, a quarter or the year.
+  final VatFilingPeriod kind;
+
+  /// The month (1 to 12) or quarter (1 to 4), or 1 for the year.
+  final int number;
   final bool filed;
   final bool paid;
   const VatReturn({
     required this.year,
-    required this.quarter,
+    required this.kind,
+    required this.number,
     required this.filed,
     required this.paid,
   });
@@ -8184,7 +8207,12 @@ class VatReturn extends DataClass implements Insertable<VatReturn> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['year'] = Variable<int>(year);
-    map['quarter'] = Variable<int>(quarter);
+    {
+      map['kind'] = Variable<String>(
+        $VatReturnsTable.$converterkind.toSql(kind),
+      );
+    }
+    map['number'] = Variable<int>(number);
     map['filed'] = Variable<bool>(filed);
     map['paid'] = Variable<bool>(paid);
     return map;
@@ -8193,7 +8221,8 @@ class VatReturn extends DataClass implements Insertable<VatReturn> {
   VatReturnsCompanion toCompanion(bool nullToAbsent) {
     return VatReturnsCompanion(
       year: Value(year),
-      quarter: Value(quarter),
+      kind: Value(kind),
+      number: Value(number),
       filed: Value(filed),
       paid: Value(paid),
     );
@@ -8206,7 +8235,10 @@ class VatReturn extends DataClass implements Insertable<VatReturn> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return VatReturn(
       year: serializer.fromJson<int>(json['year']),
-      quarter: serializer.fromJson<int>(json['quarter']),
+      kind: $VatReturnsTable.$converterkind.fromJson(
+        serializer.fromJson<String>(json['kind']),
+      ),
+      number: serializer.fromJson<int>(json['number']),
       filed: serializer.fromJson<bool>(json['filed']),
       paid: serializer.fromJson<bool>(json['paid']),
     );
@@ -8216,23 +8248,33 @@ class VatReturn extends DataClass implements Insertable<VatReturn> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'year': serializer.toJson<int>(year),
-      'quarter': serializer.toJson<int>(quarter),
+      'kind': serializer.toJson<String>(
+        $VatReturnsTable.$converterkind.toJson(kind),
+      ),
+      'number': serializer.toJson<int>(number),
       'filed': serializer.toJson<bool>(filed),
       'paid': serializer.toJson<bool>(paid),
     };
   }
 
-  VatReturn copyWith({int? year, int? quarter, bool? filed, bool? paid}) =>
-      VatReturn(
-        year: year ?? this.year,
-        quarter: quarter ?? this.quarter,
-        filed: filed ?? this.filed,
-        paid: paid ?? this.paid,
-      );
+  VatReturn copyWith({
+    int? year,
+    VatFilingPeriod? kind,
+    int? number,
+    bool? filed,
+    bool? paid,
+  }) => VatReturn(
+    year: year ?? this.year,
+    kind: kind ?? this.kind,
+    number: number ?? this.number,
+    filed: filed ?? this.filed,
+    paid: paid ?? this.paid,
+  );
   VatReturn copyWithCompanion(VatReturnsCompanion data) {
     return VatReturn(
       year: data.year.present ? data.year.value : this.year,
-      quarter: data.quarter.present ? data.quarter.value : this.quarter,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      number: data.number.present ? data.number.value : this.number,
       filed: data.filed.present ? data.filed.value : this.filed,
       paid: data.paid.present ? data.paid.value : this.paid,
     );
@@ -8242,7 +8284,8 @@ class VatReturn extends DataClass implements Insertable<VatReturn> {
   String toString() {
     return (StringBuffer('VatReturn(')
           ..write('year: $year, ')
-          ..write('quarter: $quarter, ')
+          ..write('kind: $kind, ')
+          ..write('number: $number, ')
           ..write('filed: $filed, ')
           ..write('paid: $paid')
           ..write(')'))
@@ -8250,48 +8293,54 @@ class VatReturn extends DataClass implements Insertable<VatReturn> {
   }
 
   @override
-  int get hashCode => Object.hash(year, quarter, filed, paid);
+  int get hashCode => Object.hash(year, kind, number, filed, paid);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is VatReturn &&
           other.year == this.year &&
-          other.quarter == this.quarter &&
+          other.kind == this.kind &&
+          other.number == this.number &&
           other.filed == this.filed &&
           other.paid == this.paid);
 }
 
 class VatReturnsCompanion extends UpdateCompanion<VatReturn> {
   final Value<int> year;
-  final Value<int> quarter;
+  final Value<VatFilingPeriod> kind;
+  final Value<int> number;
   final Value<bool> filed;
   final Value<bool> paid;
   final Value<int> rowid;
   const VatReturnsCompanion({
     this.year = const Value.absent(),
-    this.quarter = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.number = const Value.absent(),
     this.filed = const Value.absent(),
     this.paid = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   VatReturnsCompanion.insert({
     required int year,
-    required int quarter,
+    this.kind = const Value.absent(),
+    required int number,
     this.filed = const Value.absent(),
     this.paid = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : year = Value(year),
-       quarter = Value(quarter);
+       number = Value(number);
   static Insertable<VatReturn> custom({
     Expression<int>? year,
-    Expression<int>? quarter,
+    Expression<String>? kind,
+    Expression<int>? number,
     Expression<bool>? filed,
     Expression<bool>? paid,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (year != null) 'year': year,
-      if (quarter != null) 'quarter': quarter,
+      if (kind != null) 'kind': kind,
+      if (number != null) 'number': number,
       if (filed != null) 'filed': filed,
       if (paid != null) 'paid': paid,
       if (rowid != null) 'rowid': rowid,
@@ -8300,14 +8349,16 @@ class VatReturnsCompanion extends UpdateCompanion<VatReturn> {
 
   VatReturnsCompanion copyWith({
     Value<int>? year,
-    Value<int>? quarter,
+    Value<VatFilingPeriod>? kind,
+    Value<int>? number,
     Value<bool>? filed,
     Value<bool>? paid,
     Value<int>? rowid,
   }) {
     return VatReturnsCompanion(
       year: year ?? this.year,
-      quarter: quarter ?? this.quarter,
+      kind: kind ?? this.kind,
+      number: number ?? this.number,
       filed: filed ?? this.filed,
       paid: paid ?? this.paid,
       rowid: rowid ?? this.rowid,
@@ -8320,8 +8371,13 @@ class VatReturnsCompanion extends UpdateCompanion<VatReturn> {
     if (year.present) {
       map['year'] = Variable<int>(year.value);
     }
-    if (quarter.present) {
-      map['quarter'] = Variable<int>(quarter.value);
+    if (kind.present) {
+      map['kind'] = Variable<String>(
+        $VatReturnsTable.$converterkind.toSql(kind.value),
+      );
+    }
+    if (number.present) {
+      map['number'] = Variable<int>(number.value);
     }
     if (filed.present) {
       map['filed'] = Variable<bool>(filed.value);
@@ -8339,7 +8395,8 @@ class VatReturnsCompanion extends UpdateCompanion<VatReturn> {
   String toString() {
     return (StringBuffer('VatReturnsCompanion(')
           ..write('year: $year, ')
-          ..write('quarter: $quarter, ')
+          ..write('kind: $kind, ')
+          ..write('number: $number, ')
           ..write('filed: $filed, ')
           ..write('paid: $paid, ')
           ..write('rowid: $rowid')
@@ -8585,6 +8642,19 @@ class $TaxYearInputsTable extends TaxYearInputs
     defaultValue: const Constant(false),
   );
   @override
+  late final GeneratedColumnWithTypeConverter<VatFilingPeriod, String>
+  vatFilingPeriod =
+      GeneratedColumn<String>(
+        'vat_filing_period',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(VatFilingPeriod.quarterly.name),
+      ).withConverter<VatFilingPeriod>(
+        $TaxYearInputsTable.$convertervatFilingPeriod,
+      );
+  @override
   List<GeneratedColumn> get $columns => [
     year,
     partnerHours,
@@ -8604,6 +8674,7 @@ class $TaxYearInputsTable extends TaxYearInputs
     employmentHours,
     notOndernemerBefore,
     isStarter,
+    vatFilingPeriod,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -8839,6 +8910,12 @@ class $TaxYearInputsTable extends TaxYearInputs
         DriftSqlType.bool,
         data['${effectivePrefix}is_starter'],
       )!,
+      vatFilingPeriod: $TaxYearInputsTable.$convertervatFilingPeriod.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}vat_filing_period'],
+        )!,
+      ),
     );
   }
 
@@ -8846,6 +8923,11 @@ class $TaxYearInputsTable extends TaxYearInputs
   $TaxYearInputsTable createAlias(String alias) {
     return $TaxYearInputsTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<VatFilingPeriod, String, String>
+  $convertervatFilingPeriod = const EnumNameConverter<VatFilingPeriod>(
+    VatFilingPeriod.values,
+  );
 }
 
 class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
@@ -8913,6 +8995,9 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
   /// those years (art. 3.76 lid 3). Kept false while [notOndernemerBefore]
   /// is off.
   final bool isStarter;
+
+  /// The period of the year's BTW returns.
+  final VatFilingPeriod vatFilingPeriod;
   const TaxYearInput({
     required this.year,
     required this.partnerHours,
@@ -8932,6 +9017,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     required this.employmentHours,
     required this.notOndernemerBefore,
     required this.isStarter,
+    required this.vatFilingPeriod,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -8956,6 +9042,11 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     map['employment_hours'] = Variable<int>(employmentHours);
     map['not_ondernemer_before'] = Variable<bool>(notOndernemerBefore);
     map['is_starter'] = Variable<bool>(isStarter);
+    {
+      map['vat_filing_period'] = Variable<String>(
+        $TaxYearInputsTable.$convertervatFilingPeriod.toSql(vatFilingPeriod),
+      );
+    }
     return map;
   }
 
@@ -8979,6 +9070,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
       employmentHours: Value(employmentHours),
       notOndernemerBefore: Value(notOndernemerBefore),
       isStarter: Value(isStarter),
+      vatFilingPeriod: Value(vatFilingPeriod),
     );
   }
 
@@ -9014,6 +9106,9 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
         json['notOndernemerBefore'],
       ),
       isStarter: serializer.fromJson<bool>(json['isStarter']),
+      vatFilingPeriod: $TaxYearInputsTable.$convertervatFilingPeriod.fromJson(
+        serializer.fromJson<String>(json['vatFilingPeriod']),
+      ),
     );
   }
   @override
@@ -9042,6 +9137,9 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
       'employmentHours': serializer.toJson<int>(employmentHours),
       'notOndernemerBefore': serializer.toJson<bool>(notOndernemerBefore),
       'isStarter': serializer.toJson<bool>(isStarter),
+      'vatFilingPeriod': serializer.toJson<String>(
+        $TaxYearInputsTable.$convertervatFilingPeriod.toJson(vatFilingPeriod),
+      ),
     };
   }
 
@@ -9064,6 +9162,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     int? employmentHours,
     bool? notOndernemerBefore,
     bool? isStarter,
+    VatFilingPeriod? vatFilingPeriod,
   }) => TaxYearInput(
     year: year ?? this.year,
     partnerHours: partnerHours ?? this.partnerHours,
@@ -9086,6 +9185,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     employmentHours: employmentHours ?? this.employmentHours,
     notOndernemerBefore: notOndernemerBefore ?? this.notOndernemerBefore,
     isStarter: isStarter ?? this.isStarter,
+    vatFilingPeriod: vatFilingPeriod ?? this.vatFilingPeriod,
   );
   TaxYearInput copyWithCompanion(TaxYearInputsCompanion data) {
     return TaxYearInput(
@@ -9131,6 +9231,9 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
           ? data.notOndernemerBefore.value
           : this.notOndernemerBefore,
       isStarter: data.isStarter.present ? data.isStarter.value : this.isStarter,
+      vatFilingPeriod: data.vatFilingPeriod.present
+          ? data.vatFilingPeriod.value
+          : this.vatFilingPeriod,
     );
   }
 
@@ -9156,7 +9259,8 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
           ..write('zvwWages: $zvwWages, ')
           ..write('employmentHours: $employmentHours, ')
           ..write('notOndernemerBefore: $notOndernemerBefore, ')
-          ..write('isStarter: $isStarter')
+          ..write('isStarter: $isStarter, ')
+          ..write('vatFilingPeriod: $vatFilingPeriod')
           ..write(')'))
         .toString();
   }
@@ -9181,6 +9285,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     employmentHours,
     notOndernemerBefore,
     isStarter,
+    vatFilingPeriod,
   );
   @override
   bool operator ==(Object other) =>
@@ -9204,7 +9309,8 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
           other.zvwWages == this.zvwWages &&
           other.employmentHours == this.employmentHours &&
           other.notOndernemerBefore == this.notOndernemerBefore &&
-          other.isStarter == this.isStarter);
+          other.isStarter == this.isStarter &&
+          other.vatFilingPeriod == this.vatFilingPeriod);
 }
 
 class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
@@ -9226,6 +9332,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
   final Value<int> employmentHours;
   final Value<bool> notOndernemerBefore;
   final Value<bool> isStarter;
+  final Value<VatFilingPeriod> vatFilingPeriod;
   const TaxYearInputsCompanion({
     this.year = const Value.absent(),
     this.partnerHours = const Value.absent(),
@@ -9245,6 +9352,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     this.employmentHours = const Value.absent(),
     this.notOndernemerBefore = const Value.absent(),
     this.isStarter = const Value.absent(),
+    this.vatFilingPeriod = const Value.absent(),
   });
   TaxYearInputsCompanion.insert({
     this.year = const Value.absent(),
@@ -9265,6 +9373,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     this.employmentHours = const Value.absent(),
     this.notOndernemerBefore = const Value.absent(),
     this.isStarter = const Value.absent(),
+    this.vatFilingPeriod = const Value.absent(),
   });
   static Insertable<TaxYearInput> custom({
     Expression<int>? year,
@@ -9285,6 +9394,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     Expression<int>? employmentHours,
     Expression<bool>? notOndernemerBefore,
     Expression<bool>? isStarter,
+    Expression<String>? vatFilingPeriod,
   }) {
     return RawValuesInsertable({
       if (year != null) 'year': year,
@@ -9309,6 +9419,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
       if (notOndernemerBefore != null)
         'not_ondernemer_before': notOndernemerBefore,
       if (isStarter != null) 'is_starter': isStarter,
+      if (vatFilingPeriod != null) 'vat_filing_period': vatFilingPeriod,
     });
   }
 
@@ -9331,6 +9442,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     Value<int>? employmentHours,
     Value<bool>? notOndernemerBefore,
     Value<bool>? isStarter,
+    Value<VatFilingPeriod>? vatFilingPeriod,
   }) {
     return TaxYearInputsCompanion(
       year: year ?? this.year,
@@ -9354,6 +9466,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
       employmentHours: employmentHours ?? this.employmentHours,
       notOndernemerBefore: notOndernemerBefore ?? this.notOndernemerBefore,
       isStarter: isStarter ?? this.isStarter,
+      vatFilingPeriod: vatFilingPeriod ?? this.vatFilingPeriod,
     );
   }
 
@@ -9420,6 +9533,13 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     if (isStarter.present) {
       map['is_starter'] = Variable<bool>(isStarter.value);
     }
+    if (vatFilingPeriod.present) {
+      map['vat_filing_period'] = Variable<String>(
+        $TaxYearInputsTable.$convertervatFilingPeriod.toSql(
+          vatFilingPeriod.value,
+        ),
+      );
+    }
     return map;
   }
 
@@ -9445,7 +9565,8 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
           ..write('zvwWages: $zvwWages, ')
           ..write('employmentHours: $employmentHours, ')
           ..write('notOndernemerBefore: $notOndernemerBefore, ')
-          ..write('isStarter: $isStarter')
+          ..write('isStarter: $isStarter, ')
+          ..write('vatFilingPeriod: $vatFilingPeriod')
           ..write(')'))
         .toString();
   }
@@ -15677,7 +15798,8 @@ typedef $$PensionEntriesTableProcessedTableManager =
 typedef $$VatReturnsTableCreateCompanionBuilder =
     VatReturnsCompanion Function({
       required int year,
-      required int quarter,
+      Value<VatFilingPeriod> kind,
+      required int number,
       Value<bool> filed,
       Value<bool> paid,
       Value<int> rowid,
@@ -15685,7 +15807,8 @@ typedef $$VatReturnsTableCreateCompanionBuilder =
 typedef $$VatReturnsTableUpdateCompanionBuilder =
     VatReturnsCompanion Function({
       Value<int> year,
-      Value<int> quarter,
+      Value<VatFilingPeriod> kind,
+      Value<int> number,
       Value<bool> filed,
       Value<bool> paid,
       Value<int> rowid,
@@ -15705,8 +15828,14 @@ class $$VatReturnsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get quarter => $composableBuilder(
-    column: $table.quarter,
+  ColumnWithTypeConverterFilters<VatFilingPeriod, VatFilingPeriod, String>
+  get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<int> get number => $composableBuilder(
+    column: $table.number,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -15735,8 +15864,13 @@ class $$VatReturnsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get quarter => $composableBuilder(
-    column: $table.quarter,
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get number => $composableBuilder(
+    column: $table.number,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -15763,8 +15897,11 @@ class $$VatReturnsTableAnnotationComposer
   GeneratedColumn<int> get year =>
       $composableBuilder(column: $table.year, builder: (column) => column);
 
-  GeneratedColumn<int> get quarter =>
-      $composableBuilder(column: $table.quarter, builder: (column) => column);
+  GeneratedColumnWithTypeConverter<VatFilingPeriod, String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<int> get number =>
+      $composableBuilder(column: $table.number, builder: (column) => column);
 
   GeneratedColumn<bool> get filed =>
       $composableBuilder(column: $table.filed, builder: (column) => column);
@@ -15805,13 +15942,15 @@ class $$VatReturnsTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> year = const Value.absent(),
-                Value<int> quarter = const Value.absent(),
+                Value<VatFilingPeriod> kind = const Value.absent(),
+                Value<int> number = const Value.absent(),
                 Value<bool> filed = const Value.absent(),
                 Value<bool> paid = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => VatReturnsCompanion(
                 year: year,
-                quarter: quarter,
+                kind: kind,
+                number: number,
                 filed: filed,
                 paid: paid,
                 rowid: rowid,
@@ -15819,13 +15958,15 @@ class $$VatReturnsTableTableManager
           createCompanionCallback:
               ({
                 required int year,
-                required int quarter,
+                Value<VatFilingPeriod> kind = const Value.absent(),
+                required int number,
                 Value<bool> filed = const Value.absent(),
                 Value<bool> paid = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => VatReturnsCompanion.insert(
                 year: year,
-                quarter: quarter,
+                kind: kind,
+                number: number,
                 filed: filed,
                 paid: paid,
                 rowid: rowid,
@@ -15881,6 +16022,7 @@ typedef $$TaxYearInputsTableCreateCompanionBuilder =
       Value<int> employmentHours,
       Value<bool> notOndernemerBefore,
       Value<bool> isStarter,
+      Value<VatFilingPeriod> vatFilingPeriod,
     });
 typedef $$TaxYearInputsTableUpdateCompanionBuilder =
     TaxYearInputsCompanion Function({
@@ -15902,6 +16044,7 @@ typedef $$TaxYearInputsTableUpdateCompanionBuilder =
       Value<int> employmentHours,
       Value<bool> notOndernemerBefore,
       Value<bool> isStarter,
+      Value<VatFilingPeriod> vatFilingPeriod,
     });
 
 class $$TaxYearInputsTableFilterComposer
@@ -16001,6 +16144,12 @@ class $$TaxYearInputsTableFilterComposer
   ColumnFilters<bool> get isStarter => $composableBuilder(
     column: $table.isStarter,
     builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<VatFilingPeriod, VatFilingPeriod, String>
+  get vatFilingPeriod => $composableBuilder(
+    column: $table.vatFilingPeriod,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 }
 
@@ -16102,6 +16251,11 @@ class $$TaxYearInputsTableOrderingComposer
     column: $table.isStarter,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get vatFilingPeriod => $composableBuilder(
+    column: $table.vatFilingPeriod,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$TaxYearInputsTableAnnotationComposer
@@ -16190,6 +16344,12 @@ class $$TaxYearInputsTableAnnotationComposer
 
   GeneratedColumn<bool> get isStarter =>
       $composableBuilder(column: $table.isStarter, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<VatFilingPeriod, String>
+  get vatFilingPeriod => $composableBuilder(
+    column: $table.vatFilingPeriod,
+    builder: (column) => column,
+  );
 }
 
 class $$TaxYearInputsTableTableManager
@@ -16241,6 +16401,7 @@ class $$TaxYearInputsTableTableManager
                 Value<int> employmentHours = const Value.absent(),
                 Value<bool> notOndernemerBefore = const Value.absent(),
                 Value<bool> isStarter = const Value.absent(),
+                Value<VatFilingPeriod> vatFilingPeriod = const Value.absent(),
               }) => TaxYearInputsCompanion(
                 year: year,
                 partnerHours: partnerHours,
@@ -16260,6 +16421,7 @@ class $$TaxYearInputsTableTableManager
                 employmentHours: employmentHours,
                 notOndernemerBefore: notOndernemerBefore,
                 isStarter: isStarter,
+                vatFilingPeriod: vatFilingPeriod,
               ),
           createCompanionCallback:
               ({
@@ -16281,6 +16443,7 @@ class $$TaxYearInputsTableTableManager
                 Value<int> employmentHours = const Value.absent(),
                 Value<bool> notOndernemerBefore = const Value.absent(),
                 Value<bool> isStarter = const Value.absent(),
+                Value<VatFilingPeriod> vatFilingPeriod = const Value.absent(),
               }) => TaxYearInputsCompanion.insert(
                 year: year,
                 partnerHours: partnerHours,
@@ -16300,6 +16463,7 @@ class $$TaxYearInputsTableTableManager
                 employmentHours: employmentHours,
                 notOndernemerBefore: notOndernemerBefore,
                 isStarter: isStarter,
+                vatFilingPeriod: vatFilingPeriod,
               ),
           withReferenceMapper: (p0) => p0
               .map(

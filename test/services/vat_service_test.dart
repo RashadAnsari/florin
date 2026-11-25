@@ -109,7 +109,7 @@ void main() {
             invoiceDate: DateTime(2026, 4, 6),
             supplyDate: Value(december),
           );
-      VatQuarterResult q(int quarter) => VatService.calculateQuarter(
+      VatReturnResult q(int quarter) => VatService.calculateQuarter(
         invoices: [service, goods, credit],
         lines: const [],
         expenses: const [],
@@ -129,10 +129,57 @@ void main() {
     expect(VatService.icpDeadline(2026, 4), DateTime(2027, 1, 31));
   });
 
-  test('filing deadline is the last day of the next month', () {
-    expect(VatService.filingDeadline(2026, 1), DateTime(2026, 4, 30));
-    expect(VatService.filingDeadline(2026, 3), DateTime(2026, 10, 31));
-    expect(VatService.filingDeadline(2026, 4), DateTime(2027, 1, 31));
+  VatPeriod period(VatFilingPeriod kind, int n) =>
+      (year: 2026, kind: kind, number: n);
+
+  test('filing deadline is the last day of the next month, and three months '
+      'after a yearly period (Belastingdienst)', () {
+    const q = VatFilingPeriod.quarterly;
+    expect(VatService.filingDeadline(period(q, 1)), DateTime(2026, 4, 30));
+    expect(VatService.filingDeadline(period(q, 3)), DateTime(2026, 10, 31));
+    expect(VatService.filingDeadline(period(q, 4)), DateTime(2027, 1, 31));
+    const m = VatFilingPeriod.monthly;
+    expect(VatService.filingDeadline(period(m, 1)), DateTime(2026, 2, 28));
+    expect(VatService.filingDeadline(period(m, 12)), DateTime(2027, 1, 31));
+    expect(
+      VatService.filingDeadline(period(VatFilingPeriod.yearly, 1)),
+      DateTime(2027, 3, 31),
+    );
+  });
+
+  test('a period holds its days and the last one carries the year', () {
+    final march = period(VatFilingPeriod.monthly, 3);
+    expect(march.contains(DateTime(2026, 3, 31, 23)), isTrue);
+    expect(march.contains(DateTime(2026, 4, 1)), isFalse);
+    expect(march.isLastOfYear, isFalse);
+    expect(period(VatFilingPeriod.yearly, 1).isLastOfYear, isTrue);
+    expect(vatPeriodsOf(2026, VatFilingPeriod.monthly), hasLength(12));
+    expect(period(VatFilingPeriod.monthly, 3).code, 'M03');
+  });
+
+  test('a year breaks the yearly return conditions at the limits', () {
+    final rules = taxRulesFor(2026)!;
+    VatReturnResult year({int vat1a = 0, int r3b = 0}) => VatReturnResult(
+      revenue1a: 0,
+      vat1a: vat1a,
+      revenue1b: 0,
+      vat1b: 0,
+      revenue1e: 0,
+      vat1d: 0,
+      revenue3a: 0,
+      revenue3b: r3b,
+      base2a: 0,
+      vat2a: 0,
+      base4a: 0,
+      vat4a: 0,
+      base4b: 0,
+      vat4b: 0,
+      inputVat5b: 0,
+      icpInvoices: const [],
+    );
+    expect(VatService.yearlyFilingIssue(year(vat1a: 188299), rules), isFalse);
+    expect(VatService.yearlyFilingIssue(year(vat1a: 188300), rules), isTrue);
+    expect(VatService.yearlyFilingIssue(year(r3b: 1000000), rules), isTrue);
   });
 
   test('BTW shifted to you goes in 2a, 4a or 4b and 5b (Belastingdienst)', () {

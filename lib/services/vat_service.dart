@@ -16,9 +16,9 @@ enum ReturnDuty {
   none,
 }
 
-/// One quarter of the BTW return, by rubriek. Amounts are in cents, signed
+/// One period of the BTW return, by rubriek. Amounts are in cents, signed
 /// so that credit notes reduce them.
-class VatQuarterResult {
+class VatReturnResult {
   final int revenue1a;
   final int vat1a;
   final int revenue1b;
@@ -60,7 +60,7 @@ class VatQuarterResult {
 
   int get vatRevisionTotal => vatRevision.values.fold(0, (s, v) => s + v);
 
-  const VatQuarterResult({
+  const VatReturnResult({
     required this.revenue1a,
     required this.vat1a,
     required this.revenue1b,
@@ -111,7 +111,7 @@ abstract final class VatService {
   /// outside the EU are not reported. [expenses] and [assets] are as they
   /// count, with the KOR applied: an asset's purchase counts like an
   /// expense, and its sale without an invoice like a supply at its rate.
-  static VatQuarterResult calculateQuarter({
+  static VatReturnResult calculateQuarter({
     required List<Invoice> invoices,
     required List<InvoiceLine> lines,
     required List<Expense> expenses,
@@ -121,8 +121,29 @@ abstract final class VatService {
     int privateUseVat = 0,
     KorStatus kor = KorStatus.none,
     Map<FixedAsset, int> vatRevision = const {},
+  }) => calculatePeriod(
+    invoices: invoices,
+    lines: lines,
+    expenses: expenses,
+    assets: assets,
+    period: (year: year, kind: VatFilingPeriod.quarterly, number: quarter),
+    privateUseVat: privateUseVat,
+    kor: kor,
+    vatRevision: vatRevision,
+  );
+
+  /// The return of one [period], as [calculateQuarter] describes.
+  static VatReturnResult calculatePeriod({
+    required List<Invoice> invoices,
+    required List<InvoiceLine> lines,
+    required List<Expense> expenses,
+    List<FixedAsset> assets = const [],
+    required VatPeriod period,
+    int privateUseVat = 0,
+    KorStatus kor = KorStatus.none,
+    Map<FixedAsset, int> vatRevision = const {},
   }) {
-    bool inQuarter(DateTime d) => d.year == year && quarterOf(d) == quarter;
+    bool inQuarter(DateTime d) => period.contains(d);
     final linesByInvoice = <int, List<InvoiceLine>>{};
     for (final line in lines) {
       linesByInvoice.putIfAbsent(line.invoiceId, () => []).add(line);
@@ -209,13 +230,13 @@ abstract final class VatService {
         vat(PurchaseVat.reverseChargeNl) +
         vat(PurchaseVat.fromOutsideEu) +
         vat(PurchaseVat.fromEu);
-    final duty = !kor.coversQuarter(year, quarter)
+    final duty = !kor.covers(period.first, period.last)
         ? ReturnDuty.regular
         : owed != 0
         ? ReturnDuty.incidental
         : ReturnDuty.none;
 
-    return VatQuarterResult(
+    return VatReturnResult(
       revenue1a: r1a,
       vat1a: v1a + vatRevision.values.fold(0, (s, v) => s + v),
       revenue1b: r1b,
@@ -257,13 +278,27 @@ abstract final class VatService {
       )
       .fold(0, (s, i) => s + i.signedExclVat);
 
-  /// The last day of the term after the quarter that the rules of [year]
-  /// give: the last day of the month after it.
-  static DateTime filingDeadline(int year, int quarter) => DateTime(
-    year,
-    quarter * 3 + taxRulesFor(year)!.vatReturnDueMonths + 1,
-    0,
-  );
+  /// The last day of the term after [period] that the rules of its year
+  /// give: the last day of the month after a month or quarter, and the
+  /// later term for a yearly return.
+  static DateTime filingDeadline(VatPeriod period) {
+    final rules = taxRulesFor(period.year)!;
+    final months = period.kind == VatFilingPeriod.yearly
+        ? rules.vatYearlyReturnDueMonths
+        : rules.vatReturnDueMonths;
+    final end = period.last;
+    return DateTime(end.year, end.month + months + 1, 0);
+  }
+
+  /// Whether a year's figures break a condition for a yearly return: BTW to
+  /// pay of at least the limit, or EU supplies or EU purchases of at least
+  /// their limit. Florin keeps goods and services together where the
+  /// Belastingdienst counts them apart, so it flags sooner: the cautious
+  /// side.
+  static bool yearlyFilingIssue(VatReturnResult year, TaxYearRules rules) =>
+      year.netVat >= rules.yearlyFilingMaxVat ||
+      year.revenue3b >= rules.yearlyFilingMaxEu ||
+      year.base4b >= rules.yearlyFilingMaxEu;
 
   /// The last day of the ICP-opgaaf over a quarter: the last day of the
   /// month after it (Wet OB 1968 art. 37a lid 1 and 3).

@@ -1,4 +1,6 @@
+import 'package:intl/intl.dart';
 import '../db/enums.dart';
+import '../services/domain.dart';
 import '../theme/app_theme.dart';
 import '../services/tax_rules/tax_year_rules.dart';
 import 'app_localizations.dart';
@@ -149,5 +151,22 @@ extension WetDbaRiskLabel on WetDbaRisk {
     WetDbaRisk.low => l.clientsRiskLow,
     WetDbaRisk.medium => l.clientsRiskMedium,
     WetDbaRisk.high => l.clientsRiskHigh,
+  };
+}
+
+extension VatFilingPeriodLabel on VatFilingPeriod {
+  String label(AppLocalizations l) => switch (this) {
+    VatFilingPeriod.quarterly => l.vatFilingQuarterly,
+    VatFilingPeriod.monthly => l.vatFilingMonthly,
+    VatFilingPeriod.yearly => l.vatFilingYearly,
+  };
+}
+
+extension VatPeriodLabel on VatPeriod {
+  /// The name of the period on screen: a month, `Q1`, or the year.
+  String label(AppLocalizations l) => switch (kind) {
+    VatFilingPeriod.monthly => DateFormat.MMM(l.localeName).format(first),
+    VatFilingPeriod.quarterly => 'Q$number',
+    VatFilingPeriod.yearly => '$year',
   };
 }

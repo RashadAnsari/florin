@@ -65,9 +65,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       final dir = await CsvExportService(ref.read(databaseProvider)).exportYear(
         year,
         dialogTitle: l.csvExportChooseFolderDialog,
+        periods: ref.read(vatYearProvider(year)).requireValue,
         quarters: [
           for (var q = 1; q <= 4; q++)
-            ref.read(vatQuarterProvider((year: year, quarter: q))).requireValue,
+            ref
+                .read(
+                  vatPeriodProvider((
+                    year: year,
+                    kind: VatFilingPeriod.quarterly,
+                    number: q,
+                  )),
+                )
+                .requireValue,
         ],
         incomeTax: ref.read(taxEstimateProvider(year)).valueOrNull?.result,
         receipts: ref.read(receiptServiceProvider).store,
@@ -93,8 +102,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final rules = ref.watch(taxRulesProvider(year));
     // Keeps the figures the export writes loaded; the button waits for them.
     final figures = [
+      ref.watch(vatYearProvider(year)),
       for (var q = 1; q <= 4; q++)
-        ref.watch(vatQuarterProvider((year: year, quarter: q))),
+        ref.watch(
+          vatPeriodProvider((
+            year: year,
+            kind: VatFilingPeriod.quarterly,
+            number: q,
+          )),
+        ),
       ref.watch(taxEstimateProvider(year)),
     ];
     final figuresReady = figures.every((f) => f.hasValue);

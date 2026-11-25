@@ -1036,7 +1036,7 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
   await vatReturns.save(
     const VatReturnsCompanion(
       year: Value(_year),
-      quarter: Value(1),
+      number: Value(1),
       filed: Value(true),
       paid: Value(true),
     ),
@@ -1044,7 +1044,7 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
   await vatReturns.save(
     const VatReturnsCompanion(
       year: Value(_year),
-      quarter: Value(2),
+      number: Value(2),
       filed: Value(true),
       paid: Value(true),
     ),
@@ -1052,7 +1052,7 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
   await vatReturns.save(
     const VatReturnsCompanion(
       year: Value(_year),
-      quarter: Value(3),
+      number: Value(3),
       filed: Value(true),
     ),
   );
