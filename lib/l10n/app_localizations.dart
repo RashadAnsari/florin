@@ -2150,6 +2150,192 @@ abstract class AppLocalizations {
   /// **'You can ask for or change a voorlopige aanslag for {year} until {date}. With a letter asking you to file a return, the date in that letter or your uitstel applies; once you have filed the return, you can no longer.'**
   String plTaxProvisionalDeadline(int year, String date);
 
+  /// No description provided for @balanceSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance sheet on 31 December {year} (estimated)'**
+  String balanceSection(int year);
+
+  /// No description provided for @balanceSectionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The income tax return asks for the balance sheet: what the business owns and owes on 1 January and 31 December, and the private withdrawals and deposits, from which it works out the profit (vraag 19). Florin takes the assets, open invoices and open BTW from your records; you enter the rest from your bank statements and loan papers.'**
+  String get balanceSectionHelp;
+
+  /// No description provided for @balancePaperNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone running a business must keep records from which their rights and obligations always appear, and make the balance sheet and the statement of income and expenses within six months after the year and put them on paper (BW 3:15i with 2:10). Florin computes the figures; keeping them on paper is up to you.'**
+  String get balancePaperNotice;
+
+  /// No description provided for @balanceBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Business bank balance'**
+  String get balanceBank;
+
+  /// No description provided for @balanceBankHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The balance of the business bank account on 31 December, as on the bank\'s year statement.'**
+  String get balanceBankHelp;
+
+  /// No description provided for @balanceCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Business cash'**
+  String get balanceCash;
+
+  /// No description provided for @balanceCashHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash the business held on 31 December.'**
+  String get balanceCashHelp;
+
+  /// No description provided for @balanceUnpaidPurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpaid supplier invoices'**
+  String get balanceUnpaidPurchases;
+
+  /// No description provided for @balanceUnpaidPurchasesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices from suppliers you had not paid on 31 December, incl. BTW. They are kortlopende schulden.'**
+  String get balanceUnpaidPurchasesHelp;
+
+  /// No description provided for @balanceLoans.
+  ///
+  /// In en, this message translates to:
+  /// **'Loans longer than a year'**
+  String get balanceLoans;
+
+  /// No description provided for @balanceLoansHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Money the business borrowed, from a bank or from family or friends, for more than a year: langlopende schulden.'**
+  String get balanceLoansHelp;
+
+  /// No description provided for @balanceEquityStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Ondernemingsvermogen on 1 January'**
+  String get balanceEquityStart;
+
+  /// No description provided for @balanceEquityStartHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The ondernemingsvermogen at the end of last year, from last year\'s return (vraag 19a). The return asks you to explain a difference.'**
+  String get balanceEquityStartHelp;
+
+  /// No description provided for @balanceWithdrawals.
+  ///
+  /// In en, this message translates to:
+  /// **'Private withdrawals'**
+  String get balanceWithdrawals;
+
+  /// No description provided for @balanceWithdrawalsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Money and goods you took from the business for yourself in the year, including the private use of a business car Florin adds to the profit (vraag 19b).'**
+  String get balanceWithdrawalsHelp;
+
+  /// No description provided for @balanceDeposits.
+  ///
+  /// In en, this message translates to:
+  /// **'Private deposits'**
+  String get balanceDeposits;
+
+  /// No description provided for @balanceDepositsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Private money and goods you put into the business in the year, such as business costs paid from a private account (vraag 19e).'**
+  String get balanceDepositsHelp;
+
+  /// No description provided for @balanceFixedAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed assets'**
+  String get balanceFixedAssets;
+
+  /// No description provided for @balanceReceivables.
+  ///
+  /// In en, this message translates to:
+  /// **'Receivables'**
+  String get balanceReceivables;
+
+  /// No description provided for @balanceReceivablesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices not paid on 31 December, incl. BTW, and BTW still to get back.'**
+  String get balanceReceivablesHelp;
+
+  /// No description provided for @balanceLiquid.
+  ///
+  /// In en, this message translates to:
+  /// **'Liquide middelen'**
+  String get balanceLiquid;
+
+  /// No description provided for @balanceTotalAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Total assets'**
+  String get balanceTotalAssets;
+
+  /// No description provided for @balanceShortTermDebts.
+  ///
+  /// In en, this message translates to:
+  /// **'Kortlopende schulden'**
+  String get balanceShortTermDebts;
+
+  /// No description provided for @balanceShortTermDebtsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpaid supplier invoices and BTW still to pay over the year. The last return of the year falls due after 31 December, so its BTW counts here.'**
+  String get balanceShortTermDebtsHelp;
+
+  /// No description provided for @balanceLongTermDebts.
+  ///
+  /// In en, this message translates to:
+  /// **'Langlopende schulden'**
+  String get balanceLongTermDebts;
+
+  /// No description provided for @balanceEquityEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Ondernemingsvermogen on 31 December (19a)'**
+  String get balanceEquityEnd;
+
+  /// No description provided for @balanceEquityEndHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'What the business owns minus what it owes on 31 December: vraag 19a of the return.'**
+  String get balanceEquityEndHelp;
+
+  /// No description provided for @balanceEquityProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Saldo fiscale winstberekening (19g)'**
+  String get balanceEquityProfit;
+
+  /// No description provided for @balanceEquityProfitHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'19a plus the private withdrawals, minus the ondernemingsvermogen on 1 January and the private deposits, as vraag 19 of the return computes it.'**
+  String get balanceEquityProfitHelp;
+
+  /// No description provided for @balanceEstimateProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Profit in the estimate, before investeringsaftrek'**
+  String get balanceEstimateProfit;
+
+  /// No description provided for @balanceDifferenceNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'The equity comparison differs from the estimate by {amount}. A difference usually means a balance or a private movement is missing or a record is not in Florin. Check the figures above against your bank statements.'**
+  String balanceDifferenceNotice(String amount);
+
   /// No description provided for @plTaxUrenBanner.
   ///
   /// In en, this message translates to:

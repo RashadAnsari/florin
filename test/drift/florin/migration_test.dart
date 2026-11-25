@@ -17,6 +17,7 @@ import 'generated/schema_v8.dart' as v8;
 import 'generated/schema_v9.dart' as v9;
 import 'generated/schema_v10.dart' as v10;
 import 'generated/schema_v11.dart' as v11;
+import 'generated/schema_v12.dart' as v12;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -769,6 +770,72 @@ void main() {
       validateItems: (newDb) async {
         expect(await newDb.select(newDb.vatReturns).get(), [kept]);
         expect(await newDb.select(newDb.vatFiledFigures).get(), isEmpty);
+      },
+    );
+  });
+
+  test('migration from v11 to v12 starts the balance inputs at zero', () async {
+    const oldInputs = v11.TaxYearInputsData(
+      year: 2026,
+      partnerHours: 0,
+      partnerPay: 0,
+      hasSoVerklaring: 0,
+      soStarter: 0,
+      businessCeased: 0,
+      stakingsaftrekUsedBefore: 0,
+      disabilityBenefit: 0,
+      disabilityStartersUsed: 0,
+      unrealisedZelfstandigenaftrek: 0,
+      lossCarryForward: 0,
+      employed: 0,
+      wages: 0,
+      wageTaxWithheld: 0,
+      zvwWages: 0,
+      employmentHours: 0,
+      notOndernemerBefore: 0,
+      isStarter: 0,
+      vatFilingPeriod: 'monthly',
+    );
+    const newInputs = v12.TaxYearInputsData(
+      year: 2026,
+      partnerHours: 0,
+      partnerPay: 0,
+      hasSoVerklaring: 0,
+      soStarter: 0,
+      businessCeased: 0,
+      stakingsaftrekUsedBefore: 0,
+      disabilityBenefit: 0,
+      disabilityStartersUsed: 0,
+      unrealisedZelfstandigenaftrek: 0,
+      lossCarryForward: 0,
+      employed: 0,
+      wages: 0,
+      wageTaxWithheld: 0,
+      zvwWages: 0,
+      employmentHours: 0,
+      notOndernemerBefore: 0,
+      isStarter: 0,
+      equityStart: 0,
+      bankBalance: 0,
+      cashBalance: 0,
+      unpaidPurchases: 0,
+      longTermLoans: 0,
+      privateWithdrawals: 0,
+      privateDeposits: 0,
+      vatFilingPeriod: 'monthly',
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 11,
+      newVersion: 12,
+      createOld: v11.DatabaseAtV11.new,
+      createNew: v12.DatabaseAtV12.new,
+      openTestedDatabase: AppDatabase.new,
+      createItems: (batch, oldDb) {
+        batch.insert(oldDb.taxYearInputs, oldInputs);
+      },
+      validateItems: (newDb) async {
+        expect(await newDb.select(newDb.taxYearInputs).get(), [newInputs]);
       },
     );
   });

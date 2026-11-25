@@ -1153,6 +1153,116 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String balanceSection(int year) {
+    return 'Balance sheet on 31 December $year (estimated)';
+  }
+
+  @override
+  String get balanceSectionHelp =>
+      'The income tax return asks for the balance sheet: what the business owns and owes on 1 January and 31 December, and the private withdrawals and deposits, from which it works out the profit (vraag 19). Florin takes the assets, open invoices and open BTW from your records; you enter the rest from your bank statements and loan papers.';
+
+  @override
+  String get balancePaperNotice =>
+      'Everyone running a business must keep records from which their rights and obligations always appear, and make the balance sheet and the statement of income and expenses within six months after the year and put them on paper (BW 3:15i with 2:10). Florin computes the figures; keeping them on paper is up to you.';
+
+  @override
+  String get balanceBank => 'Business bank balance';
+
+  @override
+  String get balanceBankHelp =>
+      'The balance of the business bank account on 31 December, as on the bank\'s year statement.';
+
+  @override
+  String get balanceCash => 'Business cash';
+
+  @override
+  String get balanceCashHelp => 'Cash the business held on 31 December.';
+
+  @override
+  String get balanceUnpaidPurchases => 'Unpaid supplier invoices';
+
+  @override
+  String get balanceUnpaidPurchasesHelp =>
+      'Invoices from suppliers you had not paid on 31 December, incl. BTW. They are kortlopende schulden.';
+
+  @override
+  String get balanceLoans => 'Loans longer than a year';
+
+  @override
+  String get balanceLoansHelp =>
+      'Money the business borrowed, from a bank or from family or friends, for more than a year: langlopende schulden.';
+
+  @override
+  String get balanceEquityStart => 'Ondernemingsvermogen on 1 January';
+
+  @override
+  String get balanceEquityStartHelp =>
+      'The ondernemingsvermogen at the end of last year, from last year\'s return (vraag 19a). The return asks you to explain a difference.';
+
+  @override
+  String get balanceWithdrawals => 'Private withdrawals';
+
+  @override
+  String get balanceWithdrawalsHelp =>
+      'Money and goods you took from the business for yourself in the year, including the private use of a business car Florin adds to the profit (vraag 19b).';
+
+  @override
+  String get balanceDeposits => 'Private deposits';
+
+  @override
+  String get balanceDepositsHelp =>
+      'Private money and goods you put into the business in the year, such as business costs paid from a private account (vraag 19e).';
+
+  @override
+  String get balanceFixedAssets => 'Fixed assets';
+
+  @override
+  String get balanceReceivables => 'Receivables';
+
+  @override
+  String get balanceReceivablesHelp =>
+      'Invoices not paid on 31 December, incl. BTW, and BTW still to get back.';
+
+  @override
+  String get balanceLiquid => 'Liquide middelen';
+
+  @override
+  String get balanceTotalAssets => 'Total assets';
+
+  @override
+  String get balanceShortTermDebts => 'Kortlopende schulden';
+
+  @override
+  String get balanceShortTermDebtsHelp =>
+      'Unpaid supplier invoices and BTW still to pay over the year. The last return of the year falls due after 31 December, so its BTW counts here.';
+
+  @override
+  String get balanceLongTermDebts => 'Langlopende schulden';
+
+  @override
+  String get balanceEquityEnd => 'Ondernemingsvermogen on 31 December (19a)';
+
+  @override
+  String get balanceEquityEndHelp =>
+      'What the business owns minus what it owes on 31 December: vraag 19a of the return.';
+
+  @override
+  String get balanceEquityProfit => 'Saldo fiscale winstberekening (19g)';
+
+  @override
+  String get balanceEquityProfitHelp =>
+      '19a plus the private withdrawals, minus the ondernemingsvermogen on 1 January and the private deposits, as vraag 19 of the return computes it.';
+
+  @override
+  String get balanceEstimateProfit =>
+      'Profit in the estimate, before investeringsaftrek';
+
+  @override
+  String balanceDifferenceNotice(String amount) {
+    return 'The equity comparison differs from the estimate by $amount. A difference usually means a balance or a private movement is missing or a record is not in Florin. Check the figures above against your bank statements.';
+  }
+
+  @override
   String plTaxUrenBanner(String hours, String target, String suffix) {
     return 'Urencriterium: $hours of $target hours logged$suffix.';
   }

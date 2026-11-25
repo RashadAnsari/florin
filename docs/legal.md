@@ -1133,6 +1133,54 @@ amount that applies first, and a figure Florin cannot source stays out.
 The criteria the Belastingdienst uses to assess a relationship (authority,
 personal work, pay) are not modelled.
 
+## Balance sheet
+
+> 1 Een ieder die een bedrijf of zelfstandig een beroep uitoefent, is verplicht van zijn vermogenstoestand en van alles betreffende zijn bedrijf of beroep, naar de eisen van dat bedrijf of beroep, op zodanige wijze een administratie te voeren en de daartoe behorende boeken, bescheiden en andere gegevensdragers op zodanige wijze te bewaren, dat te allen tijde zijn rechten en verplichtingen kunnen worden gekend. 2 De leden 2 tot en met 4 van artikel 10 van Boek 2 zijn van overeenkomstige toepassing.
+
+[Burgerlijk Wetboek Boek 3, artikel 15i](https://wetten.overheid.nl/BWBR0005291/2025-07-01), read 2026-11-25 from the official XML
+
+> 2 Onverminderd het bepaalde in de volgende titels is het bestuur verplicht jaarlijks binnen zes maanden na afloop van het boekjaar de balans en de staat van baten en lasten van de rechtspersoon te maken en op papier te stellen.
+
+[Burgerlijk Wetboek Boek 2, artikel 10 lid 2](https://wetten.overheid.nl/BWBR0003045/2026-07-01), read 2026-11-25
+
+> Als u ondernemer bent voor de inkomstenbelasting berekent u de fiscale winst aan de hand van de winst-en-verliesrekening en balans van uw onderneming.
+
+> Bedrijfsmiddelen en andere bezittingen waardeert u tegen de aanschafprijs min de afschrijving: de boekwaarde.
+
+[Belastingdienst, Fiscale informatie 2026, Winst-en-verliesrekening en balans](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2026/winst_en_verliesrekening_en_balans), read 2026-11-25
+
+> Vorderingen Openstaande verkoopfacturen en eventueel btw die u nog moest terugkrijgen. Liquide middelen Banksaldo van uw bedrijf en de kas van uw bedrijf.
+
+> Ondernemingsvermogen Het eigen vermogen van uw bedrijf, plus de reserves, op 1 januari en 31 december van het afgelopen jaar.
+
+> Langlopende schulden Bedragen die u hebt geleend, bij de bank of bij familie of vrienden, met een looptijd langer dan 1 jaar. Kortlopende schulden Openstaande facturen van uw leveranciers en belasting die u nog moet betalen.
+
+[Belastingdienst, Ondernemer: bekijk welke cijfers u nodig hebt voor uw aangifte inkomstenbelasting](https://www.belastingdienst.nl/wps/wcm/connect/nl/belastingaangifte/content/ondernemer-bekijk-welke-cijfers-u-nodig-hebt-voor-uw-aangifte-inkomstenbelasting), read 2026-11-25
+
+The paper return for 2025 (M-biljet, version 0.90, read 2026-11-25 as PDF)
+asks in vraag 19 for the ondernemingsvermogen at the end of the year (19a),
+the privéonttrekkingen (19b), the ondernemingsvermogen at the start (19d)
+and the privéstortingen (19e), and computes 19g as 19a plus 19b, minus the sum of 19d and 19e: the saldo
+fiscale winstberekening.
+
+Where Florin implements it: `BalanceService.yearEnd` and the balance sheet
+section of the P&L and tax screen, exported as `balans_schatting`. Florin
+takes the book value of the assets still in the business, the invoices open
+on 31 December incl. BTW (`openReceivables`), and the BTW of the year's
+periods not settled then: the last period of the year always, as it falls
+due after 31 December, and earlier ones the user did not mark paid. The user
+enters the bank and cash balances, unpaid supplier invoices, loans longer
+than a year, the ondernemingsvermogen on 1 January and the private
+withdrawals and deposits (`TaxYearInputs`). Florin compares 19g with the
+estimate's profit before investeringsaftrek and warns on a difference,
+labelled as an estimate.
+
+Not modelled: stock, financial assets, provisions and the egalisatiereserve;
+the herinvesteringsreserve is part of the equity Florin computes but is not
+shown apart. Whether a PDF or printed export counts as "op papier gesteld"
+was not checked, so Florin leaves putting the balance on paper to the user.
+The online return may number the questions differently from the paper one.
+
 ## Income tax estimate scope
 
 The estimate covers one ondernemer under the AOW age, with wages from

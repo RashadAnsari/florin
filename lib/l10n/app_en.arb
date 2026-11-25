@@ -648,6 +648,51 @@
       }
     }
   },
+  "balanceSection": "Balance sheet on 31 December {year} (estimated)",
+  "@balanceSection": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "balanceSectionHelp": "The income tax return asks for the balance sheet: what the business owns and owes on 1 January and 31 December, and the private withdrawals and deposits, from which it works out the profit (vraag 19). Florin takes the assets, open invoices and open BTW from your records; you enter the rest from your bank statements and loan papers.",
+  "balancePaperNotice": "Everyone running a business must keep records from which their rights and obligations always appear, and make the balance sheet and the statement of income and expenses within six months after the year and put them on paper (BW 3:15i with 2:10). Florin computes the figures; keeping them on paper is up to you.",
+  "balanceBank": "Business bank balance",
+  "balanceBankHelp": "The balance of the business bank account on 31 December, as on the bank's year statement.",
+  "balanceCash": "Business cash",
+  "balanceCashHelp": "Cash the business held on 31 December.",
+  "balanceUnpaidPurchases": "Unpaid supplier invoices",
+  "balanceUnpaidPurchasesHelp": "Invoices from suppliers you had not paid on 31 December, incl. BTW. They are kortlopende schulden.",
+  "balanceLoans": "Loans longer than a year",
+  "balanceLoansHelp": "Money the business borrowed, from a bank or from family or friends, for more than a year: langlopende schulden.",
+  "balanceEquityStart": "Ondernemingsvermogen on 1 January",
+  "balanceEquityStartHelp": "The ondernemingsvermogen at the end of last year, from last year's return (vraag 19a). The return asks you to explain a difference.",
+  "balanceWithdrawals": "Private withdrawals",
+  "balanceWithdrawalsHelp": "Money and goods you took from the business for yourself in the year, including the private use of a business car Florin adds to the profit (vraag 19b).",
+  "balanceDeposits": "Private deposits",
+  "balanceDepositsHelp": "Private money and goods you put into the business in the year, such as business costs paid from a private account (vraag 19e).",
+  "balanceFixedAssets": "Fixed assets",
+  "balanceReceivables": "Receivables",
+  "balanceReceivablesHelp": "Invoices not paid on 31 December, incl. BTW, and BTW still to get back.",
+  "balanceLiquid": "Liquide middelen",
+  "balanceTotalAssets": "Total assets",
+  "balanceShortTermDebts": "Kortlopende schulden",
+  "balanceShortTermDebtsHelp": "Unpaid supplier invoices and BTW still to pay over the year. The last return of the year falls due after 31 December, so its BTW counts here.",
+  "balanceLongTermDebts": "Langlopende schulden",
+  "balanceEquityEnd": "Ondernemingsvermogen on 31 December (19a)",
+  "balanceEquityEndHelp": "What the business owns minus what it owes on 31 December: vraag 19a of the return.",
+  "balanceEquityProfit": "Saldo fiscale winstberekening (19g)",
+  "balanceEquityProfitHelp": "19a plus the private withdrawals, minus the ondernemingsvermogen on 1 January and the private deposits, as vraag 19 of the return computes it.",
+  "balanceEstimateProfit": "Profit in the estimate, before investeringsaftrek",
+  "balanceDifferenceNotice": "The equity comparison differs from the estimate by {amount}. A difference usually means a balance or a private movement is missing or a record is not in Florin. Check the figures above against your bank statements.",
+  "@balanceDifferenceNotice": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "plTaxUrenBanner": "Urencriterium: {hours} of {target} hours logged{suffix}.",
   "@plTaxUrenBanner": {
     "placeholders": {

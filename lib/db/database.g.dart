@@ -8641,6 +8641,89 @@ class $TaxYearInputsTable extends TaxYearInputs
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _equityStartMeta = const VerificationMeta(
+    'equityStart',
+  );
+  @override
+  late final GeneratedColumn<int> equityStart = GeneratedColumn<int>(
+    'equity_start',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _bankBalanceMeta = const VerificationMeta(
+    'bankBalance',
+  );
+  @override
+  late final GeneratedColumn<int> bankBalance = GeneratedColumn<int>(
+    'bank_balance',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _cashBalanceMeta = const VerificationMeta(
+    'cashBalance',
+  );
+  @override
+  late final GeneratedColumn<int> cashBalance = GeneratedColumn<int>(
+    'cash_balance',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _unpaidPurchasesMeta = const VerificationMeta(
+    'unpaidPurchases',
+  );
+  @override
+  late final GeneratedColumn<int> unpaidPurchases = GeneratedColumn<int>(
+    'unpaid_purchases',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _longTermLoansMeta = const VerificationMeta(
+    'longTermLoans',
+  );
+  @override
+  late final GeneratedColumn<int> longTermLoans = GeneratedColumn<int>(
+    'long_term_loans',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _privateWithdrawalsMeta =
+      const VerificationMeta('privateWithdrawals');
+  @override
+  late final GeneratedColumn<int> privateWithdrawals = GeneratedColumn<int>(
+    'private_withdrawals',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _privateDepositsMeta = const VerificationMeta(
+    'privateDeposits',
+  );
+  @override
+  late final GeneratedColumn<int> privateDeposits = GeneratedColumn<int>(
+    'private_deposits',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   @override
   late final GeneratedColumnWithTypeConverter<VatFilingPeriod, String>
   vatFilingPeriod =
@@ -8674,6 +8757,13 @@ class $TaxYearInputsTable extends TaxYearInputs
     employmentHours,
     notOndernemerBefore,
     isStarter,
+    equityStart,
+    bankBalance,
+    cashBalance,
+    unpaidPurchases,
+    longTermLoans,
+    privateWithdrawals,
+    privateDeposits,
     vatFilingPeriod,
   ];
   @override
@@ -8829,6 +8919,69 @@ class $TaxYearInputsTable extends TaxYearInputs
         isStarter.isAcceptableOrUnknown(data['is_starter']!, _isStarterMeta),
       );
     }
+    if (data.containsKey('equity_start')) {
+      context.handle(
+        _equityStartMeta,
+        equityStart.isAcceptableOrUnknown(
+          data['equity_start']!,
+          _equityStartMeta,
+        ),
+      );
+    }
+    if (data.containsKey('bank_balance')) {
+      context.handle(
+        _bankBalanceMeta,
+        bankBalance.isAcceptableOrUnknown(
+          data['bank_balance']!,
+          _bankBalanceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('cash_balance')) {
+      context.handle(
+        _cashBalanceMeta,
+        cashBalance.isAcceptableOrUnknown(
+          data['cash_balance']!,
+          _cashBalanceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('unpaid_purchases')) {
+      context.handle(
+        _unpaidPurchasesMeta,
+        unpaidPurchases.isAcceptableOrUnknown(
+          data['unpaid_purchases']!,
+          _unpaidPurchasesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('long_term_loans')) {
+      context.handle(
+        _longTermLoansMeta,
+        longTermLoans.isAcceptableOrUnknown(
+          data['long_term_loans']!,
+          _longTermLoansMeta,
+        ),
+      );
+    }
+    if (data.containsKey('private_withdrawals')) {
+      context.handle(
+        _privateWithdrawalsMeta,
+        privateWithdrawals.isAcceptableOrUnknown(
+          data['private_withdrawals']!,
+          _privateWithdrawalsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('private_deposits')) {
+      context.handle(
+        _privateDepositsMeta,
+        privateDeposits.isAcceptableOrUnknown(
+          data['private_deposits']!,
+          _privateDepositsMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -8909,6 +9062,34 @@ class $TaxYearInputsTable extends TaxYearInputs
       isStarter: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_starter'],
+      )!,
+      equityStart: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}equity_start'],
+      )!,
+      bankBalance: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}bank_balance'],
+      )!,
+      cashBalance: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}cash_balance'],
+      )!,
+      unpaidPurchases: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}unpaid_purchases'],
+      )!,
+      longTermLoans: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}long_term_loans'],
+      )!,
+      privateWithdrawals: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}private_withdrawals'],
+      )!,
+      privateDeposits: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}private_deposits'],
       )!,
       vatFilingPeriod: $TaxYearInputsTable.$convertervatFilingPeriod.fromSql(
         attachedDatabase.typeMapping.read(
@@ -8996,6 +9177,27 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
   /// is off.
   final bool isStarter;
 
+  /// Ondernemingsvermogen at the start of the year: the end of last year's.
+  final int equityStart;
+
+  /// Business bank balance on 31 December.
+  final int bankBalance;
+
+  /// Business cash on 31 December.
+  final int cashBalance;
+
+  /// Supplier invoices not paid on 31 December.
+  final int unpaidPurchases;
+
+  /// Loans of the business longer than a year.
+  final int longTermLoans;
+
+  /// Money and goods taken from the business for private use in the year.
+  final int privateWithdrawals;
+
+  /// Private money and goods put into the business in the year.
+  final int privateDeposits;
+
   /// The period of the year's BTW returns.
   final VatFilingPeriod vatFilingPeriod;
   const TaxYearInput({
@@ -9017,6 +9219,13 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     required this.employmentHours,
     required this.notOndernemerBefore,
     required this.isStarter,
+    required this.equityStart,
+    required this.bankBalance,
+    required this.cashBalance,
+    required this.unpaidPurchases,
+    required this.longTermLoans,
+    required this.privateWithdrawals,
+    required this.privateDeposits,
     required this.vatFilingPeriod,
   });
   @override
@@ -9042,6 +9251,13 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     map['employment_hours'] = Variable<int>(employmentHours);
     map['not_ondernemer_before'] = Variable<bool>(notOndernemerBefore);
     map['is_starter'] = Variable<bool>(isStarter);
+    map['equity_start'] = Variable<int>(equityStart);
+    map['bank_balance'] = Variable<int>(bankBalance);
+    map['cash_balance'] = Variable<int>(cashBalance);
+    map['unpaid_purchases'] = Variable<int>(unpaidPurchases);
+    map['long_term_loans'] = Variable<int>(longTermLoans);
+    map['private_withdrawals'] = Variable<int>(privateWithdrawals);
+    map['private_deposits'] = Variable<int>(privateDeposits);
     {
       map['vat_filing_period'] = Variable<String>(
         $TaxYearInputsTable.$convertervatFilingPeriod.toSql(vatFilingPeriod),
@@ -9070,6 +9286,13 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
       employmentHours: Value(employmentHours),
       notOndernemerBefore: Value(notOndernemerBefore),
       isStarter: Value(isStarter),
+      equityStart: Value(equityStart),
+      bankBalance: Value(bankBalance),
+      cashBalance: Value(cashBalance),
+      unpaidPurchases: Value(unpaidPurchases),
+      longTermLoans: Value(longTermLoans),
+      privateWithdrawals: Value(privateWithdrawals),
+      privateDeposits: Value(privateDeposits),
       vatFilingPeriod: Value(vatFilingPeriod),
     );
   }
@@ -9106,6 +9329,13 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
         json['notOndernemerBefore'],
       ),
       isStarter: serializer.fromJson<bool>(json['isStarter']),
+      equityStart: serializer.fromJson<int>(json['equityStart']),
+      bankBalance: serializer.fromJson<int>(json['bankBalance']),
+      cashBalance: serializer.fromJson<int>(json['cashBalance']),
+      unpaidPurchases: serializer.fromJson<int>(json['unpaidPurchases']),
+      longTermLoans: serializer.fromJson<int>(json['longTermLoans']),
+      privateWithdrawals: serializer.fromJson<int>(json['privateWithdrawals']),
+      privateDeposits: serializer.fromJson<int>(json['privateDeposits']),
       vatFilingPeriod: $TaxYearInputsTable.$convertervatFilingPeriod.fromJson(
         serializer.fromJson<String>(json['vatFilingPeriod']),
       ),
@@ -9137,6 +9367,13 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
       'employmentHours': serializer.toJson<int>(employmentHours),
       'notOndernemerBefore': serializer.toJson<bool>(notOndernemerBefore),
       'isStarter': serializer.toJson<bool>(isStarter),
+      'equityStart': serializer.toJson<int>(equityStart),
+      'bankBalance': serializer.toJson<int>(bankBalance),
+      'cashBalance': serializer.toJson<int>(cashBalance),
+      'unpaidPurchases': serializer.toJson<int>(unpaidPurchases),
+      'longTermLoans': serializer.toJson<int>(longTermLoans),
+      'privateWithdrawals': serializer.toJson<int>(privateWithdrawals),
+      'privateDeposits': serializer.toJson<int>(privateDeposits),
       'vatFilingPeriod': serializer.toJson<String>(
         $TaxYearInputsTable.$convertervatFilingPeriod.toJson(vatFilingPeriod),
       ),
@@ -9162,6 +9399,13 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     int? employmentHours,
     bool? notOndernemerBefore,
     bool? isStarter,
+    int? equityStart,
+    int? bankBalance,
+    int? cashBalance,
+    int? unpaidPurchases,
+    int? longTermLoans,
+    int? privateWithdrawals,
+    int? privateDeposits,
     VatFilingPeriod? vatFilingPeriod,
   }) => TaxYearInput(
     year: year ?? this.year,
@@ -9185,6 +9429,13 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     employmentHours: employmentHours ?? this.employmentHours,
     notOndernemerBefore: notOndernemerBefore ?? this.notOndernemerBefore,
     isStarter: isStarter ?? this.isStarter,
+    equityStart: equityStart ?? this.equityStart,
+    bankBalance: bankBalance ?? this.bankBalance,
+    cashBalance: cashBalance ?? this.cashBalance,
+    unpaidPurchases: unpaidPurchases ?? this.unpaidPurchases,
+    longTermLoans: longTermLoans ?? this.longTermLoans,
+    privateWithdrawals: privateWithdrawals ?? this.privateWithdrawals,
+    privateDeposits: privateDeposits ?? this.privateDeposits,
     vatFilingPeriod: vatFilingPeriod ?? this.vatFilingPeriod,
   );
   TaxYearInput copyWithCompanion(TaxYearInputsCompanion data) {
@@ -9231,6 +9482,27 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
           ? data.notOndernemerBefore.value
           : this.notOndernemerBefore,
       isStarter: data.isStarter.present ? data.isStarter.value : this.isStarter,
+      equityStart: data.equityStart.present
+          ? data.equityStart.value
+          : this.equityStart,
+      bankBalance: data.bankBalance.present
+          ? data.bankBalance.value
+          : this.bankBalance,
+      cashBalance: data.cashBalance.present
+          ? data.cashBalance.value
+          : this.cashBalance,
+      unpaidPurchases: data.unpaidPurchases.present
+          ? data.unpaidPurchases.value
+          : this.unpaidPurchases,
+      longTermLoans: data.longTermLoans.present
+          ? data.longTermLoans.value
+          : this.longTermLoans,
+      privateWithdrawals: data.privateWithdrawals.present
+          ? data.privateWithdrawals.value
+          : this.privateWithdrawals,
+      privateDeposits: data.privateDeposits.present
+          ? data.privateDeposits.value
+          : this.privateDeposits,
       vatFilingPeriod: data.vatFilingPeriod.present
           ? data.vatFilingPeriod.value
           : this.vatFilingPeriod,
@@ -9260,13 +9532,20 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
           ..write('employmentHours: $employmentHours, ')
           ..write('notOndernemerBefore: $notOndernemerBefore, ')
           ..write('isStarter: $isStarter, ')
+          ..write('equityStart: $equityStart, ')
+          ..write('bankBalance: $bankBalance, ')
+          ..write('cashBalance: $cashBalance, ')
+          ..write('unpaidPurchases: $unpaidPurchases, ')
+          ..write('longTermLoans: $longTermLoans, ')
+          ..write('privateWithdrawals: $privateWithdrawals, ')
+          ..write('privateDeposits: $privateDeposits, ')
           ..write('vatFilingPeriod: $vatFilingPeriod')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     year,
     partnerHours,
     partnerPay,
@@ -9285,8 +9564,15 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     employmentHours,
     notOndernemerBefore,
     isStarter,
+    equityStart,
+    bankBalance,
+    cashBalance,
+    unpaidPurchases,
+    longTermLoans,
+    privateWithdrawals,
+    privateDeposits,
     vatFilingPeriod,
-  );
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -9310,6 +9596,13 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
           other.employmentHours == this.employmentHours &&
           other.notOndernemerBefore == this.notOndernemerBefore &&
           other.isStarter == this.isStarter &&
+          other.equityStart == this.equityStart &&
+          other.bankBalance == this.bankBalance &&
+          other.cashBalance == this.cashBalance &&
+          other.unpaidPurchases == this.unpaidPurchases &&
+          other.longTermLoans == this.longTermLoans &&
+          other.privateWithdrawals == this.privateWithdrawals &&
+          other.privateDeposits == this.privateDeposits &&
           other.vatFilingPeriod == this.vatFilingPeriod);
 }
 
@@ -9332,6 +9625,13 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
   final Value<int> employmentHours;
   final Value<bool> notOndernemerBefore;
   final Value<bool> isStarter;
+  final Value<int> equityStart;
+  final Value<int> bankBalance;
+  final Value<int> cashBalance;
+  final Value<int> unpaidPurchases;
+  final Value<int> longTermLoans;
+  final Value<int> privateWithdrawals;
+  final Value<int> privateDeposits;
   final Value<VatFilingPeriod> vatFilingPeriod;
   const TaxYearInputsCompanion({
     this.year = const Value.absent(),
@@ -9352,6 +9652,13 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     this.employmentHours = const Value.absent(),
     this.notOndernemerBefore = const Value.absent(),
     this.isStarter = const Value.absent(),
+    this.equityStart = const Value.absent(),
+    this.bankBalance = const Value.absent(),
+    this.cashBalance = const Value.absent(),
+    this.unpaidPurchases = const Value.absent(),
+    this.longTermLoans = const Value.absent(),
+    this.privateWithdrawals = const Value.absent(),
+    this.privateDeposits = const Value.absent(),
     this.vatFilingPeriod = const Value.absent(),
   });
   TaxYearInputsCompanion.insert({
@@ -9373,6 +9680,13 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     this.employmentHours = const Value.absent(),
     this.notOndernemerBefore = const Value.absent(),
     this.isStarter = const Value.absent(),
+    this.equityStart = const Value.absent(),
+    this.bankBalance = const Value.absent(),
+    this.cashBalance = const Value.absent(),
+    this.unpaidPurchases = const Value.absent(),
+    this.longTermLoans = const Value.absent(),
+    this.privateWithdrawals = const Value.absent(),
+    this.privateDeposits = const Value.absent(),
     this.vatFilingPeriod = const Value.absent(),
   });
   static Insertable<TaxYearInput> custom({
@@ -9394,6 +9708,13 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     Expression<int>? employmentHours,
     Expression<bool>? notOndernemerBefore,
     Expression<bool>? isStarter,
+    Expression<int>? equityStart,
+    Expression<int>? bankBalance,
+    Expression<int>? cashBalance,
+    Expression<int>? unpaidPurchases,
+    Expression<int>? longTermLoans,
+    Expression<int>? privateWithdrawals,
+    Expression<int>? privateDeposits,
     Expression<String>? vatFilingPeriod,
   }) {
     return RawValuesInsertable({
@@ -9419,6 +9740,13 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
       if (notOndernemerBefore != null)
         'not_ondernemer_before': notOndernemerBefore,
       if (isStarter != null) 'is_starter': isStarter,
+      if (equityStart != null) 'equity_start': equityStart,
+      if (bankBalance != null) 'bank_balance': bankBalance,
+      if (cashBalance != null) 'cash_balance': cashBalance,
+      if (unpaidPurchases != null) 'unpaid_purchases': unpaidPurchases,
+      if (longTermLoans != null) 'long_term_loans': longTermLoans,
+      if (privateWithdrawals != null) 'private_withdrawals': privateWithdrawals,
+      if (privateDeposits != null) 'private_deposits': privateDeposits,
       if (vatFilingPeriod != null) 'vat_filing_period': vatFilingPeriod,
     });
   }
@@ -9442,6 +9770,13 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     Value<int>? employmentHours,
     Value<bool>? notOndernemerBefore,
     Value<bool>? isStarter,
+    Value<int>? equityStart,
+    Value<int>? bankBalance,
+    Value<int>? cashBalance,
+    Value<int>? unpaidPurchases,
+    Value<int>? longTermLoans,
+    Value<int>? privateWithdrawals,
+    Value<int>? privateDeposits,
     Value<VatFilingPeriod>? vatFilingPeriod,
   }) {
     return TaxYearInputsCompanion(
@@ -9466,6 +9801,13 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
       employmentHours: employmentHours ?? this.employmentHours,
       notOndernemerBefore: notOndernemerBefore ?? this.notOndernemerBefore,
       isStarter: isStarter ?? this.isStarter,
+      equityStart: equityStart ?? this.equityStart,
+      bankBalance: bankBalance ?? this.bankBalance,
+      cashBalance: cashBalance ?? this.cashBalance,
+      unpaidPurchases: unpaidPurchases ?? this.unpaidPurchases,
+      longTermLoans: longTermLoans ?? this.longTermLoans,
+      privateWithdrawals: privateWithdrawals ?? this.privateWithdrawals,
+      privateDeposits: privateDeposits ?? this.privateDeposits,
       vatFilingPeriod: vatFilingPeriod ?? this.vatFilingPeriod,
     );
   }
@@ -9533,6 +9875,27 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     if (isStarter.present) {
       map['is_starter'] = Variable<bool>(isStarter.value);
     }
+    if (equityStart.present) {
+      map['equity_start'] = Variable<int>(equityStart.value);
+    }
+    if (bankBalance.present) {
+      map['bank_balance'] = Variable<int>(bankBalance.value);
+    }
+    if (cashBalance.present) {
+      map['cash_balance'] = Variable<int>(cashBalance.value);
+    }
+    if (unpaidPurchases.present) {
+      map['unpaid_purchases'] = Variable<int>(unpaidPurchases.value);
+    }
+    if (longTermLoans.present) {
+      map['long_term_loans'] = Variable<int>(longTermLoans.value);
+    }
+    if (privateWithdrawals.present) {
+      map['private_withdrawals'] = Variable<int>(privateWithdrawals.value);
+    }
+    if (privateDeposits.present) {
+      map['private_deposits'] = Variable<int>(privateDeposits.value);
+    }
     if (vatFilingPeriod.present) {
       map['vat_filing_period'] = Variable<String>(
         $TaxYearInputsTable.$convertervatFilingPeriod.toSql(
@@ -9566,6 +9929,13 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
           ..write('employmentHours: $employmentHours, ')
           ..write('notOndernemerBefore: $notOndernemerBefore, ')
           ..write('isStarter: $isStarter, ')
+          ..write('equityStart: $equityStart, ')
+          ..write('bankBalance: $bankBalance, ')
+          ..write('cashBalance: $cashBalance, ')
+          ..write('unpaidPurchases: $unpaidPurchases, ')
+          ..write('longTermLoans: $longTermLoans, ')
+          ..write('privateWithdrawals: $privateWithdrawals, ')
+          ..write('privateDeposits: $privateDeposits, ')
           ..write('vatFilingPeriod: $vatFilingPeriod')
           ..write(')'))
         .toString();
@@ -16442,6 +16812,13 @@ typedef $$TaxYearInputsTableCreateCompanionBuilder =
       Value<int> employmentHours,
       Value<bool> notOndernemerBefore,
       Value<bool> isStarter,
+      Value<int> equityStart,
+      Value<int> bankBalance,
+      Value<int> cashBalance,
+      Value<int> unpaidPurchases,
+      Value<int> longTermLoans,
+      Value<int> privateWithdrawals,
+      Value<int> privateDeposits,
       Value<VatFilingPeriod> vatFilingPeriod,
     });
 typedef $$TaxYearInputsTableUpdateCompanionBuilder =
@@ -16464,6 +16841,13 @@ typedef $$TaxYearInputsTableUpdateCompanionBuilder =
       Value<int> employmentHours,
       Value<bool> notOndernemerBefore,
       Value<bool> isStarter,
+      Value<int> equityStart,
+      Value<int> bankBalance,
+      Value<int> cashBalance,
+      Value<int> unpaidPurchases,
+      Value<int> longTermLoans,
+      Value<int> privateWithdrawals,
+      Value<int> privateDeposits,
       Value<VatFilingPeriod> vatFilingPeriod,
     });
 
@@ -16563,6 +16947,41 @@ class $$TaxYearInputsTableFilterComposer
 
   ColumnFilters<bool> get isStarter => $composableBuilder(
     column: $table.isStarter,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get equityStart => $composableBuilder(
+    column: $table.equityStart,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get bankBalance => $composableBuilder(
+    column: $table.bankBalance,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get cashBalance => $composableBuilder(
+    column: $table.cashBalance,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get unpaidPurchases => $composableBuilder(
+    column: $table.unpaidPurchases,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get longTermLoans => $composableBuilder(
+    column: $table.longTermLoans,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get privateWithdrawals => $composableBuilder(
+    column: $table.privateWithdrawals,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get privateDeposits => $composableBuilder(
+    column: $table.privateDeposits,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -16672,6 +17091,41 @@ class $$TaxYearInputsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get equityStart => $composableBuilder(
+    column: $table.equityStart,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get bankBalance => $composableBuilder(
+    column: $table.bankBalance,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get cashBalance => $composableBuilder(
+    column: $table.cashBalance,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get unpaidPurchases => $composableBuilder(
+    column: $table.unpaidPurchases,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get longTermLoans => $composableBuilder(
+    column: $table.longTermLoans,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get privateWithdrawals => $composableBuilder(
+    column: $table.privateWithdrawals,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get privateDeposits => $composableBuilder(
+    column: $table.privateDeposits,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get vatFilingPeriod => $composableBuilder(
     column: $table.vatFilingPeriod,
     builder: (column) => ColumnOrderings(column),
@@ -16765,6 +17219,41 @@ class $$TaxYearInputsTableAnnotationComposer
   GeneratedColumn<bool> get isStarter =>
       $composableBuilder(column: $table.isStarter, builder: (column) => column);
 
+  GeneratedColumn<int> get equityStart => $composableBuilder(
+    column: $table.equityStart,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get bankBalance => $composableBuilder(
+    column: $table.bankBalance,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get cashBalance => $composableBuilder(
+    column: $table.cashBalance,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get unpaidPurchases => $composableBuilder(
+    column: $table.unpaidPurchases,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get longTermLoans => $composableBuilder(
+    column: $table.longTermLoans,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get privateWithdrawals => $composableBuilder(
+    column: $table.privateWithdrawals,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get privateDeposits => $composableBuilder(
+    column: $table.privateDeposits,
+    builder: (column) => column,
+  );
+
   GeneratedColumnWithTypeConverter<VatFilingPeriod, String>
   get vatFilingPeriod => $composableBuilder(
     column: $table.vatFilingPeriod,
@@ -16821,6 +17310,13 @@ class $$TaxYearInputsTableTableManager
                 Value<int> employmentHours = const Value.absent(),
                 Value<bool> notOndernemerBefore = const Value.absent(),
                 Value<bool> isStarter = const Value.absent(),
+                Value<int> equityStart = const Value.absent(),
+                Value<int> bankBalance = const Value.absent(),
+                Value<int> cashBalance = const Value.absent(),
+                Value<int> unpaidPurchases = const Value.absent(),
+                Value<int> longTermLoans = const Value.absent(),
+                Value<int> privateWithdrawals = const Value.absent(),
+                Value<int> privateDeposits = const Value.absent(),
                 Value<VatFilingPeriod> vatFilingPeriod = const Value.absent(),
               }) => TaxYearInputsCompanion(
                 year: year,
@@ -16841,6 +17337,13 @@ class $$TaxYearInputsTableTableManager
                 employmentHours: employmentHours,
                 notOndernemerBefore: notOndernemerBefore,
                 isStarter: isStarter,
+                equityStart: equityStart,
+                bankBalance: bankBalance,
+                cashBalance: cashBalance,
+                unpaidPurchases: unpaidPurchases,
+                longTermLoans: longTermLoans,
+                privateWithdrawals: privateWithdrawals,
+                privateDeposits: privateDeposits,
                 vatFilingPeriod: vatFilingPeriod,
               ),
           createCompanionCallback:
@@ -16863,6 +17366,13 @@ class $$TaxYearInputsTableTableManager
                 Value<int> employmentHours = const Value.absent(),
                 Value<bool> notOndernemerBefore = const Value.absent(),
                 Value<bool> isStarter = const Value.absent(),
+                Value<int> equityStart = const Value.absent(),
+                Value<int> bankBalance = const Value.absent(),
+                Value<int> cashBalance = const Value.absent(),
+                Value<int> unpaidPurchases = const Value.absent(),
+                Value<int> longTermLoans = const Value.absent(),
+                Value<int> privateWithdrawals = const Value.absent(),
+                Value<int> privateDeposits = const Value.absent(),
                 Value<VatFilingPeriod> vatFilingPeriod = const Value.absent(),
               }) => TaxYearInputsCompanion.insert(
                 year: year,
@@ -16883,6 +17393,13 @@ class $$TaxYearInputsTableTableManager
                 employmentHours: employmentHours,
                 notOndernemerBefore: notOndernemerBefore,
                 isStarter: isStarter,
+                equityStart: equityStart,
+                bankBalance: bankBalance,
+                cashBalance: cashBalance,
+                unpaidPurchases: unpaidPurchases,
+                longTermLoans: longTermLoans,
+                privateWithdrawals: privateWithdrawals,
+                privateDeposits: privateDeposits,
                 vatFilingPeriod: vatFilingPeriod,
               ),
           withReferenceMapper: (p0) => p0

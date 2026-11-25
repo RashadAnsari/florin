@@ -24,6 +24,13 @@ const _noInputs = TaxYearInput(
   employmentHours: 0,
   notOndernemerBefore: false,
   isStarter: false,
+  equityStart: 0,
+  bankBalance: 0,
+  cashBalance: 0,
+  unpaidPurchases: 0,
+  longTermLoans: 0,
+  privateWithdrawals: 0,
+  privateDeposits: 0,
   vatFilingPeriod: VatFilingPeriod.quarterly,
 );
 
@@ -108,6 +115,13 @@ void main() {
     notOndernemerBefore: notOndernemerBefore,
     vatFilingPeriod: VatFilingPeriod.quarterly,
     isStarter: false,
+    equityStart: 0,
+    bankBalance: 0,
+    cashBalance: 0,
+    unpaidPurchases: 0,
+    longTermLoans: 0,
+    privateWithdrawals: 0,
+    privateDeposits: 0,
   );
 
   TaxYearInput job({

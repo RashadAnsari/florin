@@ -15,6 +15,7 @@ import '../db/daos/tax_year_inputs_dao.dart';
 import '../db/daos/vat_filed_figures_dao.dart';
 import '../db/daos/vat_return_dao.dart';
 import '../db/database.dart';
+import '../services/balance_service.dart';
 import '../services/domain.dart';
 import '../services/gift_service.dart';
 import '../services/asset_service.dart';
@@ -486,6 +487,35 @@ final vatYearProvider =
               (periods[i], results[i].requireValue),
           ]);
     });
+
+/// The business on 31 December of [year] and the equity comparison.
+final balanceSheetProvider = Provider.family<AsyncValue<BalanceSheet>, int>((
+  ref,
+  year,
+) {
+  final assets = ref.watch(effectiveAssetsProvider);
+  final invoices = ref.watch(allInvoicesProvider);
+  final periods = ref.watch(vatYearProvider(year));
+  final returns = ref.watch(vatReturnsProvider(year));
+  final inputs = ref.watch(taxYearInputsProvider(year));
+  return waitForAll<BalanceSheet>([
+        assets,
+        invoices,
+        periods,
+        returns,
+        inputs,
+      ]) ??
+      AsyncData(
+        BalanceService.yearEnd(
+          year: year,
+          assets: assets.requireValue,
+          invoices: invoices.requireValue,
+          vatPeriods: periods.requireValue,
+          vatReturns: returns.requireValue,
+          inputs: inputs.requireValue,
+        ),
+      );
+});
 
 class TaxEstimate {
   final TaxYearRules rules;
