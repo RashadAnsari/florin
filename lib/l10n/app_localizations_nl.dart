@@ -895,6 +895,22 @@ class AppLocalizationsNl extends AppLocalizations {
   String get vatReturnIcpSection => 'ICP-opgaaf';
 
   @override
+  String get vatReturnRevisionSection =>
+      'Herziening: btw op bedrijfsmiddelen terug te betalen (geschat)';
+
+  @override
+  String vatReturnRevisionSectionHelp(int years, String shift, String min) {
+    return 'Btw die je op een bedrijfsmiddel aftrok wordt $years jaar gevolgd: het jaar van ingebruikname en de jaren daarna. De KOR maakt je prestaties vrijgesteld, dus een deel van die aftrek betaal je terug. In het jaar van aankoop volgt de hele aftrek het aandeel belaste prestaties; in elk later jaar volgt één deel de verandering ten opzichte van het eerste jaar, en een verkoop onder de KOR verwerkt de resterende jaren in één keer. Alleen een verandering van meer dan $shift van het aandeel in het eerste jaar telt, en in latere jaren betaal je niets terug zolang het totaal van het jaar onder $min blijft (Belastingdienst, herziening vanwege de KOR). Florin schat het belaste aandeel uit je facturen.';
+  }
+
+  @override
+  String get vatReturnRevisionTotal => 'Terug te betalen';
+
+  @override
+  String get vatReturnRevisionNotice =>
+      'Florin telt dit op bij de btw van rubriek 1a in de laatste aangifte van het jaar, zoals de Belastingdienst aangeeft, en zet het per bedrijfsmiddel in btw_herziening in de export. Doe je mee aan de KOR, dan vraag je de Belastingdienst schriftelijk om een aangifte om het te betalen. Btw die je terug kunt krijgen als je uit de KOR stapt, berekent Florin niet.';
+
+  @override
   String get vatReturnStatusSection => 'Afhandelstatus';
 
   @override

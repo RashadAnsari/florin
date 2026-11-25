@@ -244,6 +244,17 @@ class TaxYearRules {
   /// (art. 3.20 lid 11).
   final int carReductionFreezeMonths;
 
+  /// Years the BTW deducted on an asset is followed: the year it came into
+  /// use and the years after (Belastingdienst, herziening vanwege de KOR).
+  final int vatRevisionYears;
+
+  /// Change in the taxed share of use above which deducted BTW is revised.
+  final double vatRevisionMinShift;
+
+  /// A year's revision because the KOR starts or ends, on assets in use
+  /// since earlier years, below which nothing is revised.
+  final int korRevisionMin;
+
   /// BTW on private use: the reduced rate from this many years after the
   /// year the car came into use (Belastingdienst).
   final int btwPrivateCarReducedAfterYears;
@@ -323,6 +334,9 @@ class TaxYearRules {
     required this.carMarketValueAfterYears,
     required this.carOldAfterYears,
     required this.carReductionFreezeMonths,
+    required this.vatRevisionYears,
+    required this.vatRevisionMinShift,
+    required this.korRevisionMin,
     required this.btwPrivateCarReducedAfterYears,
     required this.btwPrivateCarPurchaseYears,
   });

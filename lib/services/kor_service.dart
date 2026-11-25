@@ -211,4 +211,109 @@ abstract final class KorService {
     }
     return counted;
   }
+
+  /// The share of supplies from [from] to [to], both included, that is
+  /// taxed rather than exempt under the scheme: by turnover when the period
+  /// has any, else by the days the scheme does not cover.
+  static double taxedShare(
+    KorStatus status,
+    List<Invoice> invoices,
+    DateTime from,
+    DateTime to,
+  ) {
+    final end = DateTime(to.year, to.month, to.day + 1);
+    var taxed = 0, exempt = 0;
+    for (final i in invoices) {
+      if (!i.isIssued ||
+          i.invoiceDate.isBefore(from) ||
+          !i.invoiceDate.isBefore(end)) {
+        continue;
+      }
+      if (i.vatTreatment == VatTreatment.kor) {
+        exempt += i.signedExclVat;
+      } else {
+        taxed += i.signedExclVat;
+      }
+    }
+    if (taxed + exempt > 0) return taxed / (taxed + exempt);
+    var days = 0, free = 0;
+    for (
+      var d = DateTime(from.year, from.month, from.day);
+      d.isBefore(end);
+      d = DateTime(d.year, d.month, d.day + 1)
+    ) {
+      days++;
+      if (!status.appliesOn(d)) free++;
+    }
+    return days == 0 ? 1 : free / days;
+  }
+
+  /// The days of [year] in which [asset] is in the business.
+  static (DateTime, DateTime) _useIn(FixedAsset asset, int year) {
+    final start = asset.purchaseDate.year == year
+        ? asset.purchaseDate
+        : DateTime(year);
+    final sold = asset.disposalDate;
+    final end = sold != null && sold.year == year
+        ? sold
+        : DateTime(year, 12, 31);
+    return (start, end);
+  }
+
+  /// The BTW to repay in [year] on assets whose purchase BTW was deducted,
+  /// because the scheme lowers the taxed share of their use (herziening,
+  /// `docs/legal.md`). In the year of purchase the whole deduction follows
+  /// that year's share; in the later years of the period one part a year
+  /// follows the change from the first year's share, and a sale while the
+  /// scheme applies settles the remaining years at once as exempt use. Only
+  /// a change above [TaxYearRules.vatRevisionMinShift] of the first year's
+  /// share counts, and the later years' total below
+  /// [TaxYearRules.korRevisionMin] is not revised. BTW the user may
+  /// get back on leaving the scheme is not computed: the cautious side.
+  static Map<FixedAsset, int> revision({
+    required KorStatus status,
+    required List<FixedAsset> assets,
+    required List<Invoice> invoices,
+    required int year,
+    required TaxYearRules rules,
+  }) {
+    if (!status.participates) return const {};
+    final firstYear = <FixedAsset, int>{};
+    final laterYears = <FixedAsset, int>{};
+    for (final a in assets) {
+      final bought = a.purchaseDate.year;
+      if (a.vatToReclaim <= 0 ||
+          year < bought ||
+          year >= bought + rules.vatRevisionYears ||
+          (a.disposalDate != null && a.disposalDate!.year < year)) {
+        continue;
+      }
+      // The share over the days the asset is in use; the deduction was
+      // made for full taxed use.
+      final (from, to) = _useIn(a, year);
+      final share = taxedShare(status, invoices, from, to);
+      final (firstFrom, firstTo) = _useIn(a, bought);
+      final first = year == bought
+          ? 1.0
+          : taxedShare(status, invoices, firstFrom, firstTo).clamp(0.0, 1.0);
+      final sold = a.disposalDate;
+      final soldExempt =
+          sold != null && sold.year == year && status.appliesOn(sold);
+      final shift = first - (soldExempt ? 0.0 : share);
+      if (shift <= rules.vatRevisionMinShift * first) continue;
+      if (year == bought) {
+        firstYear[a] = (a.vatToReclaim * shift).round();
+      } else if (soldExempt) {
+        final remaining = bought + rules.vatRevisionYears - year;
+        firstYear[a] =
+            (a.vatToReclaim * remaining / rules.vatRevisionYears * shift)
+                .round();
+      } else {
+        laterYears[a] = (a.vatToReclaim / rules.vatRevisionYears * shift)
+            .round();
+      }
+    }
+    final later = laterYears.values.fold(0, (s, v) => s + v);
+    return {...firstYear, if (later >= rules.korRevisionMin) ...laterYears};
+  }
 }

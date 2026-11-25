@@ -257,6 +257,14 @@ class CsvExportService {
     ['Te betalen (negatief: terug te ontvangen)', _euro(t.taxToPay)],
   ];
 
+  /// The BTW on assets to repay in the last return of the year because the
+  /// KOR lowered their taxed use, per asset in euros and cents.
+  static List<List<Object>> revisionRows(VatQuarterResult q4) => [
+    ['Bedrijfsmiddel', 'Aankoopdatum', 'Terug te betalen btw (herziening)'],
+    for (final e in q4.vatRevision.entries)
+      [e.key.assetName, _date(e.key.purchaseDate), _euro(e.value)],
+  ];
+
   /// The seller details printed on invoices, and the KOR dates.
   static List<List<Object>> profileRows(BusinessProfile? b) => [
     ['Gegeven', 'Waarde'],
@@ -828,6 +836,8 @@ class CsvExportService {
       db.vatReturns,
     )..where((v) => v.year.equals(year))).get();
     await write('btw_aangiften', vatStatusRows(year, filed));
+
+    await write('btw_herziening', revisionRows(quarters[3]));
 
     for (var q = 1; q <= 4; q++) {
       await write('btw_Q$q', btwReturnRows(quarters[q - 1]));

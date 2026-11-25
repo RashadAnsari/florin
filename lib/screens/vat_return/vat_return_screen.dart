@@ -228,6 +228,29 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                         ? theme.colorScheme.error
                         : context.colors.income,
                   ),
+                  if (r.vatRevisionTotal > 0) ...[
+                    const SizedBox(height: AppSpacing.section),
+                    SectionLabel(
+                      l.vatReturnRevisionSection,
+                      help: l.vatReturnRevisionSectionHelp(
+                        rules.vatRevisionYears,
+                        AppFormat.percentLabel(rules.vatRevisionMinShift),
+                        AppFormat.euros(rules.korRevisionMin),
+                      ),
+                    ),
+                    for (final e in r.vatRevision.entries)
+                      ValueRow.cents(e.key.assetName, e.value),
+                    ValueRow.cents(
+                      l.vatReturnRevisionTotal,
+                      r.vatRevisionTotal,
+                      bold: true,
+                    ),
+                    const SizedBox(height: AppSpacing.heading),
+                    NoticeBanner(
+                      l.vatReturnRevisionNotice,
+                      tone: NoticeTone.warning,
+                    ),
+                  ],
                   if (r.icpInvoices.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.section),
                     SectionLabel(

@@ -892,6 +892,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vatReturnIcpSection => 'ICP report';
 
   @override
+  String get vatReturnRevisionSection =>
+      'Herziening: BTW on assets to repay (estimated)';
+
+  @override
+  String vatReturnRevisionSectionHelp(int years, String shift, String min) {
+    return 'BTW you deducted on an asset is followed for $years years: the year it came into use and the years after. The KOR makes your supplies exempt, so part of that deduction is repaid. In the year of purchase the whole deduction follows the share of taxed supplies; in each later year one part follows the change from the first year, and a sale under the KOR settles the remaining years at once. Only a change of more than $shift of the first year\'s share counts, and in later years nothing is repaid while the year\'s total stays below $min (Belastingdienst, herziening vanwege de KOR). Florin estimates the taxed share from your invoices.';
+  }
+
+  @override
+  String get vatReturnRevisionTotal => 'To repay';
+
+  @override
+  String get vatReturnRevisionNotice =>
+      'Florin adds this to the BTW of rubriek 1a in the last return of the year, as the Belastingdienst instructs, and lists it per asset in btw_herziening in the export. While you take part in the KOR, you ask the Belastingdienst in writing for a return to pay it. BTW you may get back when you leave the KOR is not computed.';
+
+  @override
   String get vatReturnStatusSection => 'Processing status';
 
   @override

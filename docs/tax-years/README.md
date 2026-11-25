@@ -78,6 +78,9 @@ the statute version of 1 January of the new year, its transitional articles
 | `jaarruimtePct` | Share of the premiegrondslag | Wet IB 2001 art. 3.127 lid 1 | Statute |
 | `factorAMultiplier` | Factor A multiplier of the transitional jaarruimte rule | Wet IB 2001 art. 10a.25 lid 1 with art. 3.127 lid 4 as of 31 December 2023 | Statute; Overzicht cijfers leven `<year>` |
 | `vatRates` | BTW rate per category | Wet OB 1968 art. 9 | Statute |
+| `vatRevisionYears` | Years deducted BTW on a movable asset is followed | Belastingdienst, Herziening btw-aftrek bij investeringsdiensten | That page |
+| `vatRevisionMinShift` | Share of the first year's taxed use a change must exceed for a revision | Same | That page |
+| `korRevisionMin` | Yearly revision below which joining or leaving the KOR revises nothing on older assets | Belastingdienst, herziening vanwege de KOR | That page |
 | `btwPrivateCarRate` | BTW on private use of a car without a trip log | Belastingdienst, Btw en privégebruik auto van de zaak | That page |
 | `btwPrivateCarReducedRate` | The reduced rate of the same rule | Same | That page |
 | `btwPrivateCarReducedAfterYears` | Years after the year in use before the reduced rate | Same | That page |

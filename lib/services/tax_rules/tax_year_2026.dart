@@ -115,6 +115,9 @@ const taxYear2026 = TaxYearRules(
   carMarketValueAfterYears: 15,
   carOldAfterYears: 16,
   carReductionFreezeMonths: 60,
+  vatRevisionYears: 5,
+  vatRevisionMinShift: 0.10,
+  korRevisionMin: 50000,
   btwPrivateCarReducedAfterYears: 4,
   btwPrivateCarPurchaseYears: 5,
 );

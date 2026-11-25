@@ -1,6 +1,7 @@
 import 'package:florin/db/database.dart';
 import 'package:florin/services/domain.dart';
 import 'package:florin/services/kor_service.dart';
+import 'package:florin/services/tax_rules/tax_year_rules.dart';
 import 'package:florin/services/vat_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -239,6 +240,113 @@ void main() {
       );
       expect(quarter(invoices: [services], status: kor).icpInvoices, isEmpty);
       expect(quarter(invoices: [services]).icpInvoices, [services]);
+    });
+  });
+
+  group('herziening because of the KOR (Belastingdienst examples)', () {
+    final rules = taxRulesFor(2026)!;
+    FixedAsset car(DateTime bought, int vat, {DateTime? sold}) => FixedAsset(
+      id: 1,
+      kind: AssetKind.car,
+      assetName: 'Auto',
+      costExclVat: 2000000,
+      purchaseVat: PurchaseVat.domestic,
+      vatAmount: vat,
+      vatReclaimable: true,
+      vatToReclaim: vat,
+      residualValue: 0,
+      purchaseDate: bought,
+      businessUsePct: 1,
+      usefulLifeYears: 5,
+      kiaEligible: false,
+      eiaEligible: false,
+      reinvestmentReserveApplied: 0,
+      reserveGain: false,
+      zeroEmission: ZeroEmission.none,
+      keepsTripLog: false,
+      disposalDate: sold,
+    );
+    KorStatus from(DateTime start) => KorStatus(
+      start: start,
+      end: null,
+      exceededOn: const {},
+      turnover: const {},
+    );
+
+    test('a later year under the KOR repays one fifth', () {
+      final r = KorService.revision(
+        status: from(DateTime(2025)),
+        assets: [car(DateTime(2024), 450000)],
+        invoices: [_invoice(1, DateTime(2026, 3, 1), 100000)],
+        year: 2026,
+        rules: rules,
+      );
+      expect(r.values.single, 90000);
+    });
+
+    test('joining in the year of purchase revises the whole deduction by '
+        'the taxed share; later years below EUR 500 are not revised', () {
+      final kor = from(DateTime(2025, 7));
+      final invoices = [
+        _invoice(
+          1,
+          DateTime(2025, 3, 1),
+          100000,
+          treatment: VatTreatment.standard,
+        ),
+        _invoice(2, DateTime(2025, 9, 1), 100000),
+        _invoice(3, DateTime(2026, 3, 1), 100000),
+      ];
+      final asset = car(DateTime(2025), 450000);
+      expect(
+        KorService.revision(
+          status: kor,
+          assets: [asset],
+          invoices: invoices,
+          year: 2025,
+          rules: rules,
+        ).values.single,
+        225000,
+      );
+      expect(
+        KorService.revision(
+          status: kor,
+          assets: [asset],
+          invoices: invoices,
+          year: 2026,
+          rules: rules,
+        ),
+        isEmpty,
+      );
+    });
+
+    test('a sale under the KOR settles the remaining years at once', () {
+      final r = KorService.revision(
+        status: from(DateTime(2025)),
+        assets: [car(DateTime(2024), 450000, sold: DateTime(2026, 6, 1))],
+        invoices: const [],
+        year: 2026,
+        rules: rules,
+      );
+      // 2026, 2027 and 2028 remain of the five years.
+      expect(r.values.single, 270000);
+    });
+
+    test('the revision goes into the BTW of rubriek 1a and makes the KOR '
+        'quarter need a return', () {
+      final asset = car(DateTime(2024), 450000);
+      final q4 = VatService.calculateQuarter(
+        invoices: const [],
+        lines: const [],
+        expenses: const [],
+        year: 2026,
+        quarter: 4,
+        kor: from(DateTime(2025)),
+        vatRevision: {asset: 90000},
+      );
+      expect(q4.vat1a, 90000);
+      expect(q4.netVat, 90000);
+      expect(q4.duty, ReturnDuty.incidental);
     });
   });
 }
