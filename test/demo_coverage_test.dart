@@ -4,6 +4,9 @@ import 'package:drift/native.dart';
 import 'package:florin/db/database.dart';
 import 'package:florin/services/car_service.dart';
 import 'package:florin/services/domain.dart';
+import 'package:florin/providers/providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../tool/create_demo_database.dart';
@@ -155,4 +158,33 @@ void main() {
     final hours = await db.select(db.hourEntries).get();
     expect(hours.any((h) => h.byPartner), isTrue);
   });
+
+  test(
+    'the demo\'s equity comparison closes on its estimated profit',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      final container = ProviderContainer(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(
+            await SharedPreferences.getInstance(),
+          ),
+          databaseProvider.overrideWithValue(db),
+        ],
+      );
+      addTearDown(container.dispose);
+      final balance = container.listen(balanceSheetProvider(2026), (_, _) {});
+      final estimate = container.listen(taxEstimateProvider(2026), (_, _) {});
+      for (
+        var i = 0;
+        i < 300 && !(balance.read().hasValue && estimate.read().hasValue);
+        i++
+      ) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+      }
+      expect(
+        balance.read().requireValue.equityProfit,
+        estimate.read().requireValue.result.grossProfit,
+      );
+    },
+  );
 }
