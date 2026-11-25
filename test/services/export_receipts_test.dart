@@ -71,6 +71,31 @@ void main() {
       ).readAsString();
       expect(expensesCsv, contains('Papieren origineel bewaard'));
       expect(expensesCsv, contains('bonnen/2026-03-04_Hardware Voorbeeld_'));
+
+      // Everything the estimate and the invoices rest on is in the export.
+      for (final name in [
+        'bedrijfsgegevens',
+        'pensioen',
+        'fiscale_gegevens',
+        'btw_aangiften',
+      ]) {
+        expect(
+          await File(p.join(dir, 'florin_2026_$name.csv')).exists(),
+          isTrue,
+          reason: name,
+        );
+      }
+      final profile = await db.select(db.businessProfiles).getSingle();
+      expect(
+        await File(
+          p.join(dir, 'florin_2026_bedrijfsgegevens.csv'),
+        ).readAsString(),
+        contains(profile.kvkNumber),
+      );
+      final status = const CsvToListConverter(eol: '\r\n').convert(
+        await File(p.join(dir, 'florin_2026_btw_aangiften.csv')).readAsString(),
+      );
+      expect(status.skip(1).map((r) => r.first), ['Q1', 'Q2', 'Q3', 'Q4']);
     },
   );
 }
