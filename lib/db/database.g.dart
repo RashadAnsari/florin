@@ -6268,6 +6268,20 @@ class $HourEntriesTable extends HourEntries
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _clientIdMeta = const VerificationMeta(
+    'clientId',
+  );
+  @override
+  late final GeneratedColumn<int> clientId = GeneratedColumn<int>(
+    'client_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES clients (id) ON DELETE RESTRICT',
+    ),
+  );
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   @override
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
@@ -6300,6 +6314,7 @@ class $HourEntriesTable extends HourEntries
     workType,
     hours,
     clientProject,
+    clientId,
     notes,
     byPartner,
   ];
@@ -6354,6 +6369,12 @@ class $HourEntriesTable extends HourEntries
         ),
       );
     }
+    if (data.containsKey('client_id')) {
+      context.handle(
+        _clientIdMeta,
+        clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta),
+      );
+    }
     if (data.containsKey('notes')) {
       context.handle(
         _notesMeta,
@@ -6401,6 +6422,10 @@ class $HourEntriesTable extends HourEntries
         DriftSqlType.string,
         data['${effectivePrefix}client_project'],
       ),
+      clientId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}client_id'],
+      ),
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
@@ -6428,6 +6453,9 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
   final WorkType workType;
   final double hours;
   final String? clientProject;
+
+  /// The client the hours were for, which links them to its invoices.
+  final int? clientId;
   final String? notes;
 
   /// Worked by the fiscal partner in the business, for the meewerkaftrek
@@ -6440,6 +6468,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
     required this.workType,
     required this.hours,
     this.clientProject,
+    this.clientId,
     this.notes,
     required this.byPartner,
   });
@@ -6458,6 +6487,9 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
     if (!nullToAbsent || clientProject != null) {
       map['client_project'] = Variable<String>(clientProject);
     }
+    if (!nullToAbsent || clientId != null) {
+      map['client_id'] = Variable<int>(clientId);
+    }
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
@@ -6475,6 +6507,9 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
       clientProject: clientProject == null && nullToAbsent
           ? const Value.absent()
           : Value(clientProject),
+      clientId: clientId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clientId),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
@@ -6496,6 +6531,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
       ),
       hours: serializer.fromJson<double>(json['hours']),
       clientProject: serializer.fromJson<String?>(json['clientProject']),
+      clientId: serializer.fromJson<int?>(json['clientId']),
       notes: serializer.fromJson<String?>(json['notes']),
       byPartner: serializer.fromJson<bool>(json['byPartner']),
     );
@@ -6512,6 +6548,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
       ),
       'hours': serializer.toJson<double>(hours),
       'clientProject': serializer.toJson<String?>(clientProject),
+      'clientId': serializer.toJson<int?>(clientId),
       'notes': serializer.toJson<String?>(notes),
       'byPartner': serializer.toJson<bool>(byPartner),
     };
@@ -6524,6 +6561,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
     WorkType? workType,
     double? hours,
     Value<String?> clientProject = const Value.absent(),
+    Value<int?> clientId = const Value.absent(),
     Value<String?> notes = const Value.absent(),
     bool? byPartner,
   }) => HourEntry(
@@ -6535,6 +6573,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
     clientProject: clientProject.present
         ? clientProject.value
         : this.clientProject,
+    clientId: clientId.present ? clientId.value : this.clientId,
     notes: notes.present ? notes.value : this.notes,
     byPartner: byPartner ?? this.byPartner,
   );
@@ -6550,6 +6589,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
       clientProject: data.clientProject.present
           ? data.clientProject.value
           : this.clientProject,
+      clientId: data.clientId.present ? data.clientId.value : this.clientId,
       notes: data.notes.present ? data.notes.value : this.notes,
       byPartner: data.byPartner.present ? data.byPartner.value : this.byPartner,
     );
@@ -6564,6 +6604,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
           ..write('workType: $workType, ')
           ..write('hours: $hours, ')
           ..write('clientProject: $clientProject, ')
+          ..write('clientId: $clientId, ')
           ..write('notes: $notes, ')
           ..write('byPartner: $byPartner')
           ..write(')'))
@@ -6578,6 +6619,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
     workType,
     hours,
     clientProject,
+    clientId,
     notes,
     byPartner,
   );
@@ -6591,6 +6633,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
           other.workType == this.workType &&
           other.hours == this.hours &&
           other.clientProject == this.clientProject &&
+          other.clientId == this.clientId &&
           other.notes == this.notes &&
           other.byPartner == this.byPartner);
 }
@@ -6602,6 +6645,7 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
   final Value<WorkType> workType;
   final Value<double> hours;
   final Value<String?> clientProject;
+  final Value<int?> clientId;
   final Value<String?> notes;
   final Value<bool> byPartner;
   const HourEntriesCompanion({
@@ -6611,6 +6655,7 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
     this.workType = const Value.absent(),
     this.hours = const Value.absent(),
     this.clientProject = const Value.absent(),
+    this.clientId = const Value.absent(),
     this.notes = const Value.absent(),
     this.byPartner = const Value.absent(),
   });
@@ -6621,6 +6666,7 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
     required WorkType workType,
     required double hours,
     this.clientProject = const Value.absent(),
+    this.clientId = const Value.absent(),
     this.notes = const Value.absent(),
     this.byPartner = const Value.absent(),
   }) : date = Value(date),
@@ -6634,6 +6680,7 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
     Expression<String>? workType,
     Expression<double>? hours,
     Expression<String>? clientProject,
+    Expression<int>? clientId,
     Expression<String>? notes,
     Expression<bool>? byPartner,
   }) {
@@ -6644,6 +6691,7 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
       if (workType != null) 'work_type': workType,
       if (hours != null) 'hours': hours,
       if (clientProject != null) 'client_project': clientProject,
+      if (clientId != null) 'client_id': clientId,
       if (notes != null) 'notes': notes,
       if (byPartner != null) 'by_partner': byPartner,
     });
@@ -6656,6 +6704,7 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
     Value<WorkType>? workType,
     Value<double>? hours,
     Value<String?>? clientProject,
+    Value<int?>? clientId,
     Value<String?>? notes,
     Value<bool>? byPartner,
   }) {
@@ -6666,6 +6715,7 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
       workType: workType ?? this.workType,
       hours: hours ?? this.hours,
       clientProject: clientProject ?? this.clientProject,
+      clientId: clientId ?? this.clientId,
       notes: notes ?? this.notes,
       byPartner: byPartner ?? this.byPartner,
     );
@@ -6694,6 +6744,9 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
     if (clientProject.present) {
       map['client_project'] = Variable<String>(clientProject.value);
     }
+    if (clientId.present) {
+      map['client_id'] = Variable<int>(clientId.value);
+    }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
@@ -6712,6 +6765,7 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
           ..write('workType: $workType, ')
           ..write('hours: $hours, ')
           ..write('clientProject: $clientProject, ')
+          ..write('clientId: $clientId, ')
           ..write('notes: $notes, ')
           ..write('byPartner: $byPartner')
           ..write(')'))
@@ -10671,6 +10725,24 @@ final class $$ClientsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$HourEntriesTable, List<HourEntry>>
+  _hourEntriesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.hourEntries,
+    aliasName: 'clients__id__hour_entries__client_id',
+  );
+
+  $$HourEntriesTableProcessedTableManager get hourEntriesRefs {
+    final manager = $$HourEntriesTableTableManager(
+      $_db,
+      $_db.hourEntries,
+    ).filter((f) => f.clientId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_hourEntriesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$ClientsTableFilterComposer
@@ -10779,6 +10851,31 @@ class $$ClientsTableFilterComposer
           }) => $$InvoicesTableFilterComposer(
             $db: $db,
             $table: $db.invoices,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> hourEntriesRefs(
+    Expression<bool> Function($$HourEntriesTableFilterComposer f) f,
+  ) {
+    final $$HourEntriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.hourEntries,
+      getReferencedColumn: (t) => t.clientId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HourEntriesTableFilterComposer(
+            $db: $db,
+            $table: $db.hourEntries,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -10973,6 +11070,31 @@ class $$ClientsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> hourEntriesRefs<T extends Object>(
+    Expression<T> Function($$HourEntriesTableAnnotationComposer a) f,
+  ) {
+    final $$HourEntriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.hourEntries,
+      getReferencedColumn: (t) => t.clientId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HourEntriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.hourEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ClientsTableTableManager
@@ -10988,7 +11110,7 @@ class $$ClientsTableTableManager
           $$ClientsTableUpdateCompanionBuilder,
           (Client, $$ClientsTableReferences),
           Client,
-          PrefetchHooks Function({bool invoicesRefs})
+          PrefetchHooks Function({bool invoicesRefs, bool hourEntriesRefs})
         > {
   $$ClientsTableTableManager(_$AppDatabase db, $ClientsTable table)
     : super(
@@ -11081,33 +11203,61 @@ class $$ClientsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({invoicesRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (invoicesRefs) db.invoices],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (invoicesRefs)
-                    await $_getPrefetchedDataByColumns<
-                      Client,
-                      $ClientsTable,
-                      Invoice,
-                      $InvoicesTable
-                    >(
-                      currentTable: table,
-                      referencedTable: $$ClientsTableReferences
-                          ._invoicesRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$ClientsTableReferences(db, table, p0).invoicesRefs,
-                      currentColumn: 'id',
-                      referencedColumn: 'client_id',
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({invoicesRefs = false, hourEntriesRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (invoicesRefs) db.invoices,
+                    if (hourEntriesRefs) db.hourEntries,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (invoicesRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Client,
+                          $ClientsTable,
+                          Invoice,
+                          $InvoicesTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ClientsTableReferences
+                              ._invoicesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ClientsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).invoicesRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'client_id',
+                          typedResults: items,
+                        ),
+                      if (hourEntriesRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Client,
+                          $ClientsTable,
+                          HourEntry,
+                          $HourEntriesTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ClientsTableReferences
+                              ._hourEntriesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ClientsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).hourEntriesRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'client_id',
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -11124,7 +11274,7 @@ typedef $$ClientsTableProcessedTableManager =
       $$ClientsTableUpdateCompanionBuilder,
       (Client, $$ClientsTableReferences),
       Client,
-      PrefetchHooks Function({bool invoicesRefs})
+      PrefetchHooks Function({bool invoicesRefs, bool hourEntriesRefs})
     >;
 typedef $$InvoicesTableCreateCompanionBuilder =
     InvoicesCompanion Function({
@@ -14409,6 +14559,7 @@ typedef $$HourEntriesTableCreateCompanionBuilder =
       required WorkType workType,
       required double hours,
       Value<String?> clientProject,
+      Value<int?> clientId,
       Value<String?> notes,
       Value<bool> byPartner,
     });
@@ -14420,9 +14571,32 @@ typedef $$HourEntriesTableUpdateCompanionBuilder =
       Value<WorkType> workType,
       Value<double> hours,
       Value<String?> clientProject,
+      Value<int?> clientId,
       Value<String?> notes,
       Value<bool> byPartner,
     });
+
+final class $$HourEntriesTableReferences
+    extends BaseReferences<_$AppDatabase, $HourEntriesTable, HourEntry> {
+  $$HourEntriesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $ClientsTable _clientIdTable(_$AppDatabase db) =>
+      db.clients.createAlias('hour_entries__client_id__clients__id');
+
+  $$ClientsTableProcessedTableManager? get clientId {
+    final $_column = $_itemColumn<int>('client_id');
+    if ($_column == null) return null;
+    final manager = $$ClientsTableTableManager(
+      $_db,
+      $_db.clients,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_clientIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
 
 class $$HourEntriesTableFilterComposer
     extends Composer<_$AppDatabase, $HourEntriesTable> {
@@ -14473,6 +14647,29 @@ class $$HourEntriesTableFilterComposer
     column: $table.byPartner,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$ClientsTableFilterComposer get clientId {
+    final $$ClientsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableFilterComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$HourEntriesTableOrderingComposer
@@ -14523,6 +14720,29 @@ class $$HourEntriesTableOrderingComposer
     column: $table.byPartner,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$ClientsTableOrderingComposer get clientId {
+    final $$ClientsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableOrderingComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$HourEntriesTableAnnotationComposer
@@ -14561,6 +14781,29 @@ class $$HourEntriesTableAnnotationComposer
 
   GeneratedColumn<bool> get byPartner =>
       $composableBuilder(column: $table.byPartner, builder: (column) => column);
+
+  $$ClientsTableAnnotationComposer get clientId {
+    final $$ClientsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$HourEntriesTableTableManager
@@ -14574,12 +14817,9 @@ class $$HourEntriesTableTableManager
           $$HourEntriesTableAnnotationComposer,
           $$HourEntriesTableCreateCompanionBuilder,
           $$HourEntriesTableUpdateCompanionBuilder,
-          (
-            HourEntry,
-            BaseReferences<_$AppDatabase, $HourEntriesTable, HourEntry>,
-          ),
+          (HourEntry, $$HourEntriesTableReferences),
           HourEntry,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool clientId})
         > {
   $$HourEntriesTableTableManager(_$AppDatabase db, $HourEntriesTable table)
     : super(
@@ -14600,6 +14840,7 @@ class $$HourEntriesTableTableManager
                 Value<WorkType> workType = const Value.absent(),
                 Value<double> hours = const Value.absent(),
                 Value<String?> clientProject = const Value.absent(),
+                Value<int?> clientId = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<bool> byPartner = const Value.absent(),
               }) => HourEntriesCompanion(
@@ -14609,6 +14850,7 @@ class $$HourEntriesTableTableManager
                 workType: workType,
                 hours: hours,
                 clientProject: clientProject,
+                clientId: clientId,
                 notes: notes,
                 byPartner: byPartner,
               ),
@@ -14620,6 +14862,7 @@ class $$HourEntriesTableTableManager
                 required WorkType workType,
                 required double hours,
                 Value<String?> clientProject = const Value.absent(),
+                Value<int?> clientId = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<bool> byPartner = const Value.absent(),
               }) => HourEntriesCompanion.insert(
@@ -14629,6 +14872,7 @@ class $$HourEntriesTableTableManager
                 workType: workType,
                 hours: hours,
                 clientProject: clientProject,
+                clientId: clientId,
                 notes: notes,
                 byPartner: byPartner,
               ),
@@ -14636,15 +14880,51 @@ class $$HourEntriesTableTableManager
               .map(
                 (e) => (
                   e.readTable<$HourEntriesTable, HourEntry>(table),
-                  BaseReferences<_$AppDatabase, $HourEntriesTable, HourEntry>(
-                    db,
-                    table,
-                    e,
-                  ),
+                  $$HourEntriesTableReferences(db, table, e),
                 ),
               )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({clientId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (clientId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.clientId,
+                                referencedTable: $$HourEntriesTableReferences
+                                    ._clientIdTable(db),
+                                referencedColumn: $$HourEntriesTableReferences
+                                    ._clientIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
         ),
       );
 }
@@ -14659,9 +14939,9 @@ typedef $$HourEntriesTableProcessedTableManager =
       $$HourEntriesTableAnnotationComposer,
       $$HourEntriesTableCreateCompanionBuilder,
       $$HourEntriesTableUpdateCompanionBuilder,
-      (HourEntry, BaseReferences<_$AppDatabase, $HourEntriesTable, HourEntry>),
+      (HourEntry, $$HourEntriesTableReferences),
       HourEntry,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool clientId})
     >;
 typedef $$MileageTripsTableCreateCompanionBuilder =
     MileageTripsCompanion Function({

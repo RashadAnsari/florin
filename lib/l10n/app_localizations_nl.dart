@@ -394,7 +394,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get clientsDeleteBlockedTooltip =>
-      'Klant heeft facturen en kan niet worden verwijderd';
+      'Klant heeft facturen of uren en kan niet worden verwijderd';
 
   @override
   String get expensesTitle => 'Uitgaven';
@@ -584,7 +584,17 @@ class AppLocalizationsNl extends AppLocalizations {
   String get hoursFieldWorkType => 'Type werk';
 
   @override
-  String get hoursFieldClientProject => 'Klant / project';
+  String get hoursFieldClientProject => 'Project';
+
+  @override
+  String get hoursFieldClient => 'Klant';
+
+  @override
+  String get hoursFieldClientHelp =>
+      'De klant voor wie de uren waren. Gekoppelde uren geven elke klant een geschat uurtarief en laten zien hoeveel van je tijd elke klant kost, feiten die meetellen als een arbeidsrelatie onder de Wet DBA wordt beoordeeld.';
+
+  @override
+  String get hoursNoClient => 'Geen klant';
 
   @override
   String get hoursFieldNotes => 'Notities';
@@ -1568,6 +1578,31 @@ class AppLocalizationsNl extends AppLocalizations {
       'Vink aan als jij en de klant een schriftelijke overeenkomst hebben getekend.';
 
   @override
+  String clientsRateSection(int year) {
+    return 'Uren en tarief in $year (geschat)';
+  }
+
+  @override
+  String get clientsRateSectionHelp =>
+      'Je eigen uren gekoppeld aan deze klant en wat je de klant in het jaar factureerde, excl. btw. Sinds 1 januari 2025 handhaaft de Belastingdienst de regels voor arbeidsrelaties weer; wat je per uur verdient en hoeveel van je tijd één klant kost zijn feiten in zo\'n beoordeling. Florin toont ze en beoordeelt de relatie niet.';
+
+  @override
+  String get clientsRateHours => 'Vastgelegde uren';
+
+  @override
+  String get clientsRateInvoiced => 'Gefactureerd excl. btw';
+
+  @override
+  String get clientsRateEstimate => 'Geschat uurtarief';
+
+  @override
+  String get clientsRateEstimateHelp =>
+      'Wat je factureerde gedeeld door je uren: een schatting, want facturen en uren hoeven niet in dezelfde periode te vallen. Vanaf 31 december 2026 vermoedt de wet een arbeidsovereenkomst als een bedrijf iemand voor werk ten hoogste een bedrag per uur betaalt (BW 7:610aa, Stb. 2026, 158 en 207). Het bedrag voor de eerste toepassing wordt bij ministeriële regeling vastgesteld, die Florin niet heeft gelezen, dus noemt het geen bedrag.';
+
+  @override
+  String get clientsRateNoHours => 'Geen uren gekoppeld';
+
+  @override
   String get clientsFieldActiveHelp =>
       'Inactieve klanten blijven in je administratie, maar staan niet in de keuzelijst voor nieuwe facturen.';
 
@@ -1656,7 +1691,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get hoursFieldClientProjectHelp =>
-      'De klant of het project waarvoor de uren waren.';
+      'Het project of de opdracht waarvoor de uren waren, in je eigen woorden.';
 
   @override
   String get hoursFieldDateHelp => 'De dag waarop je werkte.';

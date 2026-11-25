@@ -1,4 +1,6 @@
 import 'package:drift/drift.dart';
+
+import 'clients.dart';
 import '../enums.dart';
 
 @TableIndex(name: 'hour_entries_date', columns: {#date})
@@ -9,6 +11,13 @@ class HourEntries extends Table {
   TextColumn get workType => textEnum<WorkType>()();
   RealColumn get hours => real()();
   TextColumn get clientProject => text().nullable()();
+
+  /// The client the hours were for, which links them to its invoices.
+  IntColumn get clientId => integer().nullable().references(
+    Clients,
+    #id,
+    onDelete: KeyAction.restrict,
+  )();
   TextColumn get notes => text().nullable()();
 
   /// Worked by the fiscal partner in the business, for the meewerkaftrek

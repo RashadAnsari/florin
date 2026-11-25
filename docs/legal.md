@@ -987,6 +987,37 @@ lid 6, so it states the rule instead of applying it. A claim against a
 private person for the price of consumer goods lapses sooner (BW 7:28);
 Florin shows the general term of artikel 307 only.
 
+## Wet DBA
+
+> Sinds 1 januari 2025 hanteren we weer de normale regels. Dit betekent dat we geen aanwijzingen meer geven. Stellen we schijnzelfstandigheid vast? Dan kunnen we dus direct correctieverplichtingen en naheffingsaanslagen loonheffingen opleggen. In 2025 legden we nog geen verzuim- en vergrijpboetes op. Vanaf 1 januari 2026 kunnen we wel vergrijpboetes opleggen. We leggen in 2026 nog geen verzuimboetes op.
+
+[Belastingdienst, Arbeidsrelaties en handhaving door de Belastingdienst](https://www.belastingdienst.nl/wps/wcm/connect/nl/arbeidsrelaties/content/handhaving), read 2026-11-25
+
+> 1. Hij die ten behoeve van een ander tegen een beloning door die ander van ten hoogste € 36,– per uur, arbeid verricht, wordt vermoed deze arbeid te verrichten krachtens arbeidsovereenkomst.
+
+> 3. Dit artikel is niet van toepassing indien de ander een natuurlijke persoon is die niet handelt in de uitoefening van een beroep of bedrijf.
+
+> 2. Voor de eerste toepassing na inwerkingtreding van deze wet wordt, in afwijking van het in artikel I, onderdeel B, voorgestelde artikel 610aa van Boek 7 van het Burgerlijk wetboek, eerste lid, bij ministeriële regeling het toepasselijke bedrag gegeven.
+
+[Staatsblad 2026, 158](https://zoek.officielebekendmakingen.nl/stb-2026-158.html), artikel I onderdeel B and artikel III, read 2026-11-25
+
+> treedt in werking met ingang van 31 december 2026.
+
+[Staatsblad 2026, 207](https://zoek.officielebekendmakingen.nl/stb-2026-207.html), read 2026-11-25
+
+Where Florin implements it: the Wet DBA risk on a client is the user's own
+assessment, shown as such; Florin does not assess a working relationship.
+Hours can be linked to a client (`HourEntries.clientId`), and a client's page
+shows the year's own hours for it, what it was invoiced excl. BTW and the
+hourly rate that follows, labelled as an estimate.
+
+Not modelled: the ministerial regulation that sets the amount for the first
+application of artikel 7:610aa was not found, so Florin names no hourly
+amount and compares the rate with nothing. The statute's € 36 is not the
+amount that applies first, and a figure Florin cannot source stays out.
+The criteria the Belastingdienst uses to assess a relationship (authority,
+personal work, pay) are not modelled.
+
 ## Income tax estimate scope
 
 The estimate covers one ondernemer under the AOW age, with wages from

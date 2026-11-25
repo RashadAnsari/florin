@@ -1,11 +1,12 @@
 import 'package:drift/drift.dart';
 import '../database.dart';
 import '../tables/clients.dart';
+import '../tables/hour_entries.dart';
 import '../tables/invoices.dart';
 
 part 'client_dao.g.dart';
 
-@DriftAccessor(tables: [Clients, Invoices])
+@DriftAccessor(tables: [Clients, Invoices, HourEntries])
 class ClientDao extends DatabaseAccessor<AppDatabase>
     with _$ClientDaoMixin, Crud<$ClientsTable, Client> {
   ClientDao(super.db);
@@ -19,10 +20,17 @@ class ClientDao extends DatabaseAccessor<AppDatabase>
   Future<Client?> getById(int id) =>
       (select(clients)..where((c) => c.id.equals(id))).getSingleOrNull();
 
-  Future<bool> hasInvoices(int clientId) async =>
+  /// Whether invoices or hours refer to the client, which then cannot be
+  /// deleted.
+  Future<bool> isReferenced(int clientId) async =>
       await (select(invoices)
-            ..where((i) => i.clientId.equals(clientId))
-            ..limit(1))
-          .getSingleOrNull() !=
-      null;
+                ..where((i) => i.clientId.equals(clientId))
+                ..limit(1))
+              .getSingleOrNull() !=
+          null ||
+      await (select(hourEntries)
+                ..where((h) => h.clientId.equals(clientId))
+                ..limit(1))
+              .getSingleOrNull() !=
+          null;
 }

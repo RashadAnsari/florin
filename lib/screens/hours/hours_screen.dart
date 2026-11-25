@@ -106,6 +106,7 @@ class _HourDetailPageState extends ConsumerState<HourDetailPage> {
   );
   late final _notes = TextEditingController(text: widget.entry?.notes);
   late bool _byPartner = widget.entry?.byPartner ?? false;
+  late int? _clientId = widget.entry?.clientId;
 
   @override
   void dispose() {
@@ -133,6 +134,7 @@ class _HourDetailPageState extends ConsumerState<HourDetailPage> {
               clientProject: Value(optionalText(_clientProject.text)),
               notes: Value(optionalText(_notes.text)),
               byPartner: Value(_byPartner),
+              clientId: Value(_clientId),
             ),
           ),
     );
@@ -184,6 +186,9 @@ class _HourDetailPageState extends ConsumerState<HourDetailPage> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
+    final clients = (ref.watch(clientsProvider).valueOrNull ?? <Client>[])
+        .where((c) => c.isActive || c.id == _clientId)
+        .toList();
     return DetailScaffold(
       title: widget.entry == null ? l.hoursNewEntry : widget.entry!.description,
       onBack: () => context.pop(),
@@ -241,12 +246,31 @@ class _HourDetailPageState extends ConsumerState<HourDetailPage> {
               required: true,
             ),
             const SizedBox(height: AppSpacing.field),
-            TextFormField(
-              controller: _clientProject,
-              decoration: fieldDecoration(
-                label: l.hoursFieldClientProject,
-                help: l.hoursFieldClientProjectHelp,
-              ),
+            FormRow(
+              children: [
+                DropdownButtonFormField<int?>(
+                  style: fieldTextStyle(context),
+                  initialValue: _clientId,
+                  isExpanded: true,
+                  decoration: fieldDecoration(
+                    label: l.hoursFieldClient,
+                    help: l.hoursFieldClientHelp,
+                  ),
+                  items: [
+                    DropdownMenuItem(value: null, child: Text(l.hoursNoClient)),
+                    for (final c in clients)
+                      DropdownMenuItem(value: c.id, child: Text(c.name)),
+                  ],
+                  onChanged: (v) => setState(() => _clientId = v),
+                ),
+                TextFormField(
+                  controller: _clientProject,
+                  decoration: fieldDecoration(
+                    label: l.hoursFieldClientProject,
+                    help: l.hoursFieldClientProjectHelp,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: AppSpacing.field),
             HelpCheckbox(

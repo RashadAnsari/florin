@@ -918,8 +918,9 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
         workType: Value(type),
         hours: const Value(6.0),
         clientProject: Value(
-          type == WorkType.billable ? 'Voorbeeld Media' : null,
+          type == WorkType.billable ? 'Website en huisstijl' : null,
         ),
+        clientId: Value(type == WorkType.billable ? dutch : null),
         notes: Value(d.day == 1 ? 'Begin van de maand' : null),
       ),
     );

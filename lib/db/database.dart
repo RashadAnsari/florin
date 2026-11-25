@@ -49,7 +49,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump with every schema change and run `make migration`; see AGENTS.md.
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -161,6 +161,21 @@ class AppDatabase extends _$AppDatabase {
               schema.taxYearInputs,
               schema.taxYearInputs.partnerPay,
             );
+          },
+          from8To9: (m, schema) async {
+            await m.addColumn(schema.hourEntries, schema.hourEntries.clientId);
+            // Hours whose client / project text is exactly one client's name
+            // are linked to that client.
+            await customStatement('''
+              UPDATE hour_entries SET client_id = (
+                SELECT c.id FROM clients c
+                WHERE lower(trim(c.name)) = lower(trim(hour_entries.client_project))
+              )
+              WHERE client_project IS NOT NULL AND (
+                SELECT COUNT(*) FROM clients c
+                WHERE lower(trim(c.name)) = lower(trim(hour_entries.client_project))
+              ) = 1
+            ''');
           },
         )(m, from, to),
       );

@@ -173,7 +173,7 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
   late bool _isActive = widget.client?.isActive ?? true;
   late bool _isMerchantOfRecord = widget.client?.isMerchantOfRecord ?? false;
   late bool _isConsumer = widget.client?.isConsumer ?? false;
-  bool _hasInvoices = false;
+  bool _referenced = false;
 
   /// A reseller is a business, so the option is off for a consumer: a
   /// hidden option may not stay set.
@@ -187,13 +187,13 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
       // When the check fails, deleting stays blocked: the cautious answer.
       ref
           .read(clientDaoProvider)
-          .hasInvoices(c.id)
+          .isReferenced(c.id)
           .then(
             (has) {
-              if (mounted) setState(() => _hasInvoices = has);
+              if (mounted) setState(() => _referenced = has);
             },
             onError: (Object _) {
-              if (mounted) setState(() => _hasInvoices = true);
+              if (mounted) setState(() => _referenced = true);
             },
           );
     }
@@ -295,13 +295,13 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
       title: widget.client == null ? l.clientsNewHeader : widget.client!.name,
       onBack: () => context.pop(),
       actions: [
-        if (widget.client != null && _hasInvoices)
+        if (widget.client != null && _referenced)
           DeleteIconButton(
             tooltip: l.clientsDeleteBlockedTooltip,
             onPressed: null,
           ),
       ],
-      onDelete: widget.client == null || _hasInvoices ? null : _delete,
+      onDelete: widget.client == null || _referenced ? null : _delete,
       onSave: _save,
       body: Form(
         key: _formKey,
@@ -468,6 +468,7 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
                 title: l.clientsContractSigned,
                 help: l.clientsContractSignedHelp,
               ),
+              if (widget.client != null) _ClientRate(client: widget.client!),
             ],
             HelpCheckbox(
               value: _isActive,
@@ -487,6 +488,50 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// The hours logged for [client] in the selected year against what it was
+/// invoiced: an estimated hourly rate, a fact a Wet DBA assessment weighs.
+class _ClientRate extends ConsumerWidget {
+  final Client client;
+
+  const _ClientRate({required this.client});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context)!;
+    final year = ref.watch(fiscalYearProvider);
+    final hours = ownHours(
+      (ref.watch(hourEntriesProvider(year)).valueOrNull ?? const <HourEntry>[])
+          .where((h) => h.clientId == client.id),
+    );
+    final invoiced =
+        (ref.watch(invoicesProvider(year)).valueOrNull ?? const <Invoice>[])
+            .where((i) => i.clientId == client.id && i.isIssued)
+            .fold(0, (s, i) => s + i.signedExclVat);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: AppSpacing.field),
+        SectionLabel(
+          l.clientsRateSection(year),
+          help: l.clientsRateSectionHelp,
+        ),
+        ValueRow(
+          label: l.clientsRateHours,
+          value: '${AppFormat.hours(hours)} ${l.hoursUnitShort}',
+        ),
+        ValueRow.cents(l.clientsRateInvoiced, invoiced),
+        ValueRow(
+          label: l.clientsRateEstimate,
+          help: l.clientsRateEstimateHelp,
+          value: hours > 0
+              ? AppFormat.cents((invoiced / hours).round())
+              : l.clientsRateNoHours,
+        ),
+      ],
     );
   }
 }

@@ -394,7 +394,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clientsDeleteBlockedTooltip =>
-      'Client has invoices and cannot be deleted';
+      'Client has invoices or hours and cannot be deleted';
 
   @override
   String get expensesTitle => 'Expenses';
@@ -583,7 +583,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hoursFieldWorkType => 'Work type';
 
   @override
-  String get hoursFieldClientProject => 'Client / project';
+  String get hoursFieldClientProject => 'Project';
+
+  @override
+  String get hoursFieldClient => 'Client';
+
+  @override
+  String get hoursFieldClientHelp =>
+      'The client the hours were for. Linked hours give each client an estimated hourly rate and show how much of your time each client takes, facts that count when a working relationship is assessed under the Wet DBA.';
+
+  @override
+  String get hoursNoClient => 'No client';
 
   @override
   String get hoursFieldNotes => 'Notes';
@@ -1565,6 +1575,31 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tick when you and the client have signed a written agreement.';
 
   @override
+  String clientsRateSection(int year) {
+    return 'Hours and rate in $year (estimated)';
+  }
+
+  @override
+  String get clientsRateSectionHelp =>
+      'Your own hours linked to this client and what you invoiced it in the year, excl. BTW. Since 1 January 2025 the Belastingdienst enforces the rules on working relationships again; how much you earn per hour and how much of your time one client takes are facts in such an assessment. Florin shows them and does not assess the relationship.';
+
+  @override
+  String get clientsRateHours => 'Hours logged';
+
+  @override
+  String get clientsRateInvoiced => 'Invoiced excl. BTW';
+
+  @override
+  String get clientsRateEstimate => 'Estimated hourly rate';
+
+  @override
+  String get clientsRateEstimateHelp =>
+      'What you invoiced divided by your hours: an estimate, as invoices and hours need not fall in the same period. From 31 December 2026 the law presumes an employment contract when a business pays someone at most an hourly amount for work (BW 7:610aa, Stb. 2026, 158 and 207). The amount for its first application is set by ministerial regulation, which Florin has not read, so it names no figure.';
+
+  @override
+  String get clientsRateNoHours => 'No hours linked';
+
+  @override
   String get clientsFieldActiveHelp =>
       'Inactive clients stay in your records but are not offered on new invoices.';
 
@@ -1653,7 +1688,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hoursFieldClientProjectHelp =>
-      'The client or project the hours were for.';
+      'The project or assignment the hours were for, in your own words.';
 
   @override
   String get hoursFieldDateHelp => 'The day you worked.';
