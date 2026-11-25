@@ -14,6 +14,7 @@ import 'generated/schema_v5.dart' as v5;
 import 'generated/schema_v6.dart' as v6;
 import 'generated/schema_v7.dart' as v7;
 import 'generated/schema_v8.dart' as v8;
+import 'generated/schema_v9.dart' as v9;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -633,6 +634,76 @@ void main() {
       validateItems: (newDb) async {
         expect(await newDb.select(newDb.hourEntries).get(), [newHours]);
         expect(await newDb.select(newDb.taxYearInputs).get(), [newInputs]);
+      },
+    );
+  });
+
+  test('migration from v8 to v9 links hours to the one client named in '
+      'their client / project', () async {
+    const date = 1781524800;
+    const clients = [
+      v8.ClientsData(
+        id: 1,
+        name: 'Voorbeeld BV',
+        country: 'NL',
+        address: 'A',
+        wetDbaRisk: 'low',
+        contractSigned: 0,
+        isActive: 1,
+        isMerchantOfRecord: 0,
+        isConsumer: 0,
+      ),
+      v8.ClientsData(
+        id: 2,
+        name: 'Dubbel',
+        country: 'NL',
+        address: 'A',
+        wetDbaRisk: 'low',
+        contractSigned: 0,
+        isActive: 1,
+        isMerchantOfRecord: 0,
+        isConsumer: 0,
+      ),
+      v8.ClientsData(
+        id: 3,
+        name: 'dubbel ',
+        country: 'NL',
+        address: 'A',
+        wetDbaRisk: 'low',
+        contractSigned: 0,
+        isActive: 1,
+        isMerchantOfRecord: 0,
+        isConsumer: 0,
+      ),
+    ];
+    v8.HourEntriesData hour(int id, String? project) => v8.HourEntriesData(
+      id: id,
+      date: date,
+      description: 'Werk',
+      workType: 'billable',
+      hours: 2,
+      clientProject: project,
+      byPartner: 0,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 8,
+      newVersion: 9,
+      createOld: v8.DatabaseAtV8.new,
+      createNew: v9.DatabaseAtV9.new,
+      openTestedDatabase: AppDatabase.new,
+      createItems: (batch, oldDb) {
+        batch.insertAll(oldDb.clients, clients);
+        batch.insertAll(oldDb.hourEntries, [
+          hour(1, ' voorbeeld bv'),
+          hour(2, 'Dubbel'),
+          hour(3, 'Iets anders'),
+          hour(4, null),
+        ]);
+      },
+      validateItems: (newDb) async {
+        final rows = await newDb.select(newDb.hourEntries).get();
+        expect(rows.map((h) => h.clientId).toList(), [1, null, null, null]);
       },
     );
   });

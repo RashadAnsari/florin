@@ -6,6 +6,7 @@ part of 'client_dao.dart';
 mixin _$ClientDaoMixin on DatabaseAccessor<AppDatabase> {
   $ClientsTable get clients => attachedDatabase.clients;
   $InvoicesTable get invoices => attachedDatabase.invoices;
+  $HourEntriesTable get hourEntries => attachedDatabase.hourEntries;
   ClientDaoManager get managers => ClientDaoManager(this);
 }
 
@@ -16,4 +17,6 @@ class ClientDaoManager {
       $$ClientsTableTableManager(_db.attachedDatabase, _db.clients);
   $$InvoicesTableTableManager get invoices =>
       $$InvoicesTableTableManager(_db.attachedDatabase, _db.invoices);
+  $$HourEntriesTableTableManager get hourEntries =>
+      $$HourEntriesTableTableManager(_db.attachedDatabase, _db.hourEntries);
 }

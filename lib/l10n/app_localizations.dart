@@ -803,7 +803,7 @@ abstract class AppLocalizations {
   /// No description provided for @clientsDeleteBlockedTooltip.
   ///
   /// In en, this message translates to:
-  /// **'Client has invoices and cannot be deleted'**
+  /// **'Client has invoices or hours and cannot be deleted'**
   String get clientsDeleteBlockedTooltip;
 
   /// No description provided for @expensesTitle.
@@ -1151,8 +1151,26 @@ abstract class AppLocalizations {
   /// No description provided for @hoursFieldClientProject.
   ///
   /// In en, this message translates to:
-  /// **'Client / project'**
+  /// **'Project'**
   String get hoursFieldClientProject;
+
+  /// No description provided for @hoursFieldClient.
+  ///
+  /// In en, this message translates to:
+  /// **'Client'**
+  String get hoursFieldClient;
+
+  /// No description provided for @hoursFieldClientHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The client the hours were for. Linked hours give each client an estimated hourly rate and show how much of your time each client takes, facts that count when a working relationship is assessed under the Wet DBA.'**
+  String get hoursFieldClientHelp;
+
+  /// No description provided for @hoursNoClient.
+  ///
+  /// In en, this message translates to:
+  /// **'No client'**
+  String get hoursNoClient;
 
   /// No description provided for @hoursFieldNotes.
   ///
@@ -2810,6 +2828,48 @@ abstract class AppLocalizations {
   /// **'Tick when you and the client have signed a written agreement.'**
   String get clientsContractSignedHelp;
 
+  /// No description provided for @clientsRateSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours and rate in {year} (estimated)'**
+  String clientsRateSection(int year);
+
+  /// No description provided for @clientsRateSectionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your own hours linked to this client and what you invoiced it in the year, excl. BTW. Since 1 January 2025 the Belastingdienst enforces the rules on working relationships again; how much you earn per hour and how much of your time one client takes are facts in such an assessment. Florin shows them and does not assess the relationship.'**
+  String get clientsRateSectionHelp;
+
+  /// No description provided for @clientsRateHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours logged'**
+  String get clientsRateHours;
+
+  /// No description provided for @clientsRateInvoiced.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoiced excl. BTW'**
+  String get clientsRateInvoiced;
+
+  /// No description provided for @clientsRateEstimate.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated hourly rate'**
+  String get clientsRateEstimate;
+
+  /// No description provided for @clientsRateEstimateHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'What you invoiced divided by your hours: an estimate, as invoices and hours need not fall in the same period. From 31 December 2026 the law presumes an employment contract when a business pays someone at most an hourly amount for work (BW 7:610aa, Stb. 2026, 158 and 207). The amount for its first application is set by ministerial regulation, which Florin has not read, so it names no figure.'**
+  String get clientsRateEstimateHelp;
+
+  /// No description provided for @clientsRateNoHours.
+  ///
+  /// In en, this message translates to:
+  /// **'No hours linked'**
+  String get clientsRateNoHours;
+
   /// No description provided for @clientsFieldActiveHelp.
   ///
   /// In en, this message translates to:
@@ -2945,7 +3005,7 @@ abstract class AppLocalizations {
   /// No description provided for @hoursFieldClientProjectHelp.
   ///
   /// In en, this message translates to:
-  /// **'The client or project the hours were for.'**
+  /// **'The project or assignment the hours were for, in your own words.'**
   String get hoursFieldClientProjectHelp;
 
   /// No description provided for @hoursFieldDateHelp.

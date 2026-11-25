@@ -183,7 +183,7 @@
       }
     }
   },
-  "clientsDeleteBlockedTooltip": "Client has invoices and cannot be deleted",
+  "clientsDeleteBlockedTooltip": "Client has invoices or hours and cannot be deleted",
   "expensesTitle": "Expenses",
   "expensesNewTooltip": "New expense",
   "expensesNone": "No expenses",
@@ -279,7 +279,10 @@
   "hoursFieldHours": "Hours",
   "hoursFieldDescription": "Description",
   "hoursFieldWorkType": "Work type",
-  "hoursFieldClientProject": "Client / project",
+  "hoursFieldClientProject": "Project",
+  "hoursFieldClient": "Client",
+  "hoursFieldClientHelp": "The client the hours were for. Linked hours give each client an estimated hourly rate and show how much of your time each client takes, facts that count when a working relationship is assessed under the Wet DBA.",
+  "hoursNoClient": "No client",
   "hoursFieldNotes": "Notes",
   "hoursNewEntry": "New entry",
   "hoursDeleteTitle": "Delete hour entry",
@@ -929,6 +932,20 @@
   "assetsSaleKorNotice": "You take part in the KOR on the sale date, so there is no VAT on the sale.",
   "clientsContractExpiryHelp": "When the agreement with this client ends.",
   "clientsContractSignedHelp": "Tick when you and the client have signed a written agreement.",
+  "clientsRateSection": "Hours and rate in {year} (estimated)",
+  "@clientsRateSection": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "clientsRateSectionHelp": "Your own hours linked to this client and what you invoiced it in the year, excl. BTW. Since 1 January 2025 the Belastingdienst enforces the rules on working relationships again; how much you earn per hour and how much of your time one client takes are facts in such an assessment. Florin shows them and does not assess the relationship.",
+  "clientsRateHours": "Hours logged",
+  "clientsRateInvoiced": "Invoiced excl. BTW",
+  "clientsRateEstimate": "Estimated hourly rate",
+  "clientsRateEstimateHelp": "What you invoiced divided by your hours: an estimate, as invoices and hours need not fall in the same period. From 31 December 2026 the law presumes an employment contract when a business pays someone at most an hourly amount for work (BW 7:610aa, Stb. 2026, 158 and 207). The amount for its first application is set by ministerial regulation, which Florin has not read, so it names no figure.",
+  "clientsRateNoHours": "No hours linked",
   "clientsFieldActiveHelp": "Inactive clients stay in your records but are not offered on new invoices.",
   "clientsFieldAddressHelp": "The client's full business address. It is printed on every invoice.",
   "clientsFieldContactHelp": "The person you deal with at this client.",
@@ -968,7 +985,7 @@
       }
     }
   },
-  "hoursFieldClientProjectHelp": "The client or project the hours were for.",
+  "hoursFieldClientProjectHelp": "The project or assignment the hours were for, in your own words.",
   "hoursFieldDateHelp": "The day you worked.",
   "hoursFieldDescriptionHelp": "What you did. All hours spent on the business count towards the urencriterium, not only billable ones.",
   "hoursFieldHoursHelp": "How many hours you worked that day, such as 7,5.",
