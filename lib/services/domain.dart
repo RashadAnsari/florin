@@ -44,7 +44,30 @@ extension InvoiceDomain on Invoice {
 
   bool get isOverdue =>
       status == InvoiceStatus.sent && dueDate.isBefore(DateTime.now());
+
+  /// Issued on or before [day] and not paid by the end of it: a receivable
+  /// on that day, or for a credit note an amount owed back.
+  bool isOpenOn(DateTime day) {
+    final end = DateTime(day.year, day.month, day.day + 1);
+    return isIssued &&
+        invoiceDate.isBefore(end) &&
+        (paidDate == null || !paidDate!.isBefore(end));
+  }
+
+  /// The last day the claim can be brought to court: the limitation term
+  /// runs from the day after the due date (BW 3:307 lid 1).
+  DateTime claimLapsesOn(TaxYearRules rules) => DateTime(
+    dueDate.year + rules.claimLimitationYears,
+    dueDate.month,
+    dueDate.day,
+  );
 }
+
+/// What clients owe on [day], incl. BTW: issued invoices not yet paid, less
+/// credit notes not yet refunded.
+int openReceivables(Iterable<Invoice> invoices, DateTime day) => invoices
+    .where((i) => i.isOpenOn(day))
+    .fold(0, (s, i) => s + i.signedInclVat);
 
 /// The 27 EU member states by ISO 3166 code, as listed by the EU
 /// (`docs/legal.md`, EU member states). Greece's BTW prefix EL counts too.

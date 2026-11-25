@@ -12,6 +12,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/choice_chips.dart';
 import '../../widgets/invoice_status_badge.dart';
 import '../../widgets/list_scaffold.dart';
+import '../../widgets/summary_bar.dart';
 
 /// Status filter: an [InvoiceStatus], `overdue`, or null for all.
 typedef _Filter = Object?;
@@ -56,9 +57,15 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
       for (final c in ref.watch(clientsProvider).valueOrNull ?? <Client>[])
         c.id: c.name,
     };
-    final invoices = ref
-        .watch(invoicesProvider(year))
-        .whenData((all) => all.where((i) => _matches(i, clients)).toList());
+    final yearInvoices = ref.watch(invoicesProvider(year));
+    final invoices = yearInvoices.whenData(
+      (all) => all.where((i) => _matches(i, clients)).toList(),
+    );
+    final all = yearInvoices.valueOrNull ?? const <Invoice>[];
+    final open = openReceivables(all, DateTime.now());
+    final overdue = all
+        .where((i) => i.isOverdue)
+        .fold(0, (s, i) => s + i.signedInclVat);
 
     return ListScaffold<Invoice>(
       title: l.invoicesTitle,
@@ -69,6 +76,15 @@ class _InvoicesScreenState extends ConsumerState<InvoicesScreen> {
       controls: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SummaryBar([
+            SummaryStat(l.invoicesOpenTotal, AppFormat.cents(open)),
+            SummaryStat(
+              l.invoicesOverdueTotal,
+              AppFormat.cents(overdue),
+              color: overdue > 0 ? Theme.of(context).colorScheme.error : null,
+            ),
+          ]),
+          const SizedBox(height: AppSpacing.field),
           SearchField(
             controller: _search,
             hint: l.labelSearch,

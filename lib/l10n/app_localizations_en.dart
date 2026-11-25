@@ -155,6 +155,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoicesFilterOverdue => 'Overdue';
 
   @override
+  String get invoicesOpenTotal => 'Open';
+
+  @override
+  String get invoicesOverdueTotal => 'Overdue';
+
+  @override
   String get invoiceStatusConcept => 'Draft';
 
   @override
@@ -1663,8 +1669,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'A unique number in an unbroken sequence, as the law requires. Florin suggests the next one.';
 
   @override
-  String get invoiceFieldPaymentTermHelp =>
-      'How many days the client has to pay.';
+  String invoiceFieldPaymentTermHelp(int max, int statutory) {
+    return 'How many days the client has to pay. Between businesses, a term of more than $max days needs to be agreed explicitly and must not be clearly unfair to you; without an agreed term, statutory commercial interest is due from $statutory days after the client received the invoice (BW 6:119a).';
+  }
 
   @override
   String get invoiceFieldPriceHelp => 'The price per unit without VAT.';
@@ -1684,6 +1691,21 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String invoiceLateNotice(int day, String date) {
     return 'An invoice is due by day $day of the month after the supply (Wet OB 1968 art. 34g): for this supply by $date.';
+  }
+
+  @override
+  String invoiceLongTermNotice(int max, int large) {
+    return 'Between businesses, a payment term of more than $max days holds only when it is agreed explicitly and is not clearly unfair to you, and a large company may not agree more than $large days with a small supplier (BW 6:119a lid 5 and 6).';
+  }
+
+  @override
+  String invoiceOverdueBusinessNotice(String due, String min, String lapses) {
+    return 'This invoice was due on $due. Between businesses, statutory commercial interest runs from the day after that (BW 6:119a lid 1), and you may claim collection costs of at least $min without sending a reminder first (BW 6:96 lid 4). The claim can be brought to court until $lapses (BW 3:307). Florin does not compute the interest.';
+  }
+
+  @override
+  String invoiceOverdueConsumerNotice(String due, int days, String lapses) {
+    return 'This invoice was due on $due. A private person owes collection costs only after a reminder that gives $days days to pay and states the costs that will be claimed (BW 6:96 lid 6); send one reminder for all open invoices of this client (lid 7). The claim can be brought to court until $lapses (BW 3:307).';
   }
 
   @override

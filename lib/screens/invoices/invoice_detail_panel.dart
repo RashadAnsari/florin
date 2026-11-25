@@ -496,6 +496,28 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
     );
   }
 
+  /// What the law gives the user on an unpaid invoice past its due date:
+  /// interest and collection costs (BW 6:119a, 6:96), and the date the claim
+  /// lapses (BW 3:307).
+  Widget _overdueNotice(Invoice inv, Client client, AppLocalizations l) {
+    final rules = _rulesOf(inv.invoiceDate);
+    final lapses = AppFormat.date(inv.claimLapsesOn(rules));
+    return NoticeBanner(
+      client.isConsumer
+          ? l.invoiceOverdueConsumerNotice(
+              AppFormat.date(inv.dueDate),
+              rules.consumerReminderDays,
+              lapses,
+            )
+          : l.invoiceOverdueBusinessNotice(
+              AppFormat.date(inv.dueDate),
+              AppFormat.euros(rules.minCollectionCosts),
+              lapses,
+            ),
+      tone: NoticeTone.warning,
+    );
+  }
+
   /// A credit note reverses at most what is left of the corrected invoice.
   String? _creditLimitError(AppLocalizations l) {
     final c = _corrected;
@@ -620,6 +642,12 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                     NoticeBanner(l.invoiceCorrects(_corrected!.invoiceNumber)),
                     const SizedBox(height: AppSpacing.group),
                   ],
+                  if (!isCredit &&
+                      (_original?.isOverdue ?? false) &&
+                      client != null) ...[
+                    _overdueNotice(_original!, client, l),
+                    const SizedBox(height: AppSpacing.group),
+                  ],
                   if (client != null && client.isMerchantOfRecord) ...[
                     NoticeBanner(l.invoiceMerchantOfRecordNotice(client.name)),
                     const SizedBox(height: AppSpacing.group),
@@ -696,7 +724,10 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                         controller: _paymentTerm,
                         decoration: fieldDecoration(
                           label: l.invoiceFieldPaymentTerm,
-                          help: l.invoiceFieldPaymentTermHelp,
+                          help: l.invoiceFieldPaymentTermHelp(
+                            _rulesOf(_invoiceDate).maxAgreedPaymentDays,
+                            _rulesOf(_invoiceDate).statutoryPaymentDays,
+                          ),
                           required: true,
                         ),
                         keyboardType: TextInputType.number,
@@ -719,6 +750,20 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                       ),
                     ],
                   ),
+                  if (_isEditable &&
+                      client != null &&
+                      !client.isConsumer &&
+                      (parseWholeNumber(_paymentTerm.text) ?? 0) >
+                          _rulesOf(_invoiceDate).maxAgreedPaymentDays) ...[
+                    const SizedBox(height: AppSpacing.field),
+                    NoticeBanner(
+                      l.invoiceLongTermNotice(
+                        _rulesOf(_invoiceDate).maxAgreedPaymentDays,
+                        _rulesOf(_invoiceDate).largeDebtorMaxPaymentDays,
+                      ),
+                      tone: NoticeTone.warning,
+                    ),
+                  ],
                   if (_isEditable &&
                       _supplyDate != null &&
                       _invoiceDate.isAfter(

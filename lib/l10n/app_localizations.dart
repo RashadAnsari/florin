@@ -356,6 +356,18 @@ abstract class AppLocalizations {
   /// **'Overdue'**
   String get invoicesFilterOverdue;
 
+  /// No description provided for @invoicesOpenTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get invoicesOpenTotal;
+
+  /// No description provided for @invoicesOverdueTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get invoicesOverdueTotal;
+
   /// No description provided for @invoiceStatusConcept.
   ///
   /// In en, this message translates to:
@@ -2957,8 +2969,8 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceFieldPaymentTermHelp.
   ///
   /// In en, this message translates to:
-  /// **'How many days the client has to pay.'**
-  String get invoiceFieldPaymentTermHelp;
+  /// **'How many days the client has to pay. Between businesses, a term of more than {max} days needs to be agreed explicitly and must not be clearly unfair to you; without an agreed term, statutory commercial interest is due from {statutory} days after the client received the invoice (BW 6:119a).'**
+  String invoiceFieldPaymentTermHelp(int max, int statutory);
 
   /// No description provided for @invoiceFieldPriceHelp.
   ///
@@ -2989,6 +3001,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An invoice is due by day {day} of the month after the supply (Wet OB 1968 art. 34g): for this supply by {date}.'**
   String invoiceLateNotice(int day, String date);
+
+  /// No description provided for @invoiceLongTermNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Between businesses, a payment term of more than {max} days holds only when it is agreed explicitly and is not clearly unfair to you, and a large company may not agree more than {large} days with a small supplier (BW 6:119a lid 5 and 6).'**
+  String invoiceLongTermNotice(int max, int large);
+
+  /// No description provided for @invoiceOverdueBusinessNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'This invoice was due on {due}. Between businesses, statutory commercial interest runs from the day after that (BW 6:119a lid 1), and you may claim collection costs of at least {min} without sending a reminder first (BW 6:96 lid 4). The claim can be brought to court until {lapses} (BW 3:307). Florin does not compute the interest.'**
+  String invoiceOverdueBusinessNotice(String due, String min, String lapses);
+
+  /// No description provided for @invoiceOverdueConsumerNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'This invoice was due on {due}. A private person owes collection costs only after a reminder that gives {days} days to pay and states the costs that will be claimed (BW 6:96 lid 6); send one reminder for all open invoices of this client (lid 7). The claim can be brought to court until {lapses} (BW 3:307).'**
+  String invoiceOverdueConsumerNotice(String due, int days, String lapses);
 
   /// No description provided for @invoiceFieldUnitHelp.
   ///

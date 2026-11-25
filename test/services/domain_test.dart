@@ -98,4 +98,49 @@ void main() {
     expect(VatService.euConsumerSales(invoices, clients, 2025), 700000);
     expect(taxRulesFor(2026)!.euConsumerSalesThreshold, 1000000);
   });
+
+  Invoice sale(
+    int id,
+    DateTime date, {
+    DateTime? paid,
+    InvoiceType type = InvoiceType.invoice,
+    InvoiceStatus status = InvoiceStatus.sent,
+  }) => Invoice(
+    id: id,
+    invoiceNumber: '$id',
+    invoiceType: type,
+    invoiceDate: date,
+    clientId: 1,
+    vatTreatment: VatTreatment.standard,
+    selfBilled: false,
+    sellerName: 'S',
+    sellerVatNumber: 'V',
+    sellerKvkNumber: 'K',
+    sellerAddress: 'A',
+    sellerIban: 'I',
+    paymentTermDays: 30,
+    status: paid == null ? status : InvoiceStatus.paid,
+    paidDate: paid,
+    totalExclVat: 10000,
+    totalVat: 2100,
+    totalInclVat: 12100,
+  );
+
+  test('receivables on a day: issued by then and not paid by its end', () {
+    final day = DateTime(2026, 12, 31);
+    final invoices = [
+      sale(1, DateTime(2026, 11, 1)),
+      sale(2, DateTime(2026, 11, 1), paid: DateTime(2026, 12, 31, 15)),
+      sale(3, DateTime(2026, 11, 1), paid: DateTime(2027, 1, 5)),
+      sale(4, DateTime(2027, 1, 2)),
+      sale(5, DateTime(2026, 12, 1), status: InvoiceStatus.draft),
+      sale(6, DateTime(2026, 12, 10), type: InvoiceType.creditNote),
+    ];
+    expect(openReceivables(invoices, day), 12100 + 12100 - 12100);
+  });
+
+  test('a claim lapses five years after it fell due (BW 3:307 lid 1)', () {
+    final inv = sale(1, DateTime(2026, 3, 1));
+    expect(inv.claimLapsesOn(taxRulesFor(2026)!), DateTime(2031, 3, 31));
+  });
 }

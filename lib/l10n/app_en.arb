@@ -78,6 +78,8 @@
   "invoicesNewHeader": "New invoice",
   "invoicesFilterAll": "All",
   "invoicesFilterOverdue": "Overdue",
+  "invoicesOpenTotal": "Open",
+  "invoicesOverdueTotal": "Overdue",
   "invoiceStatusConcept": "Draft",
   "invoiceStatusSent": "Sent",
   "invoiceStatusPaid": "Paid",
@@ -957,7 +959,17 @@
   "invoiceFieldDueDateHelp": "The last day for payment: the invoice date plus the payment term.",
   "invoiceFieldInvoiceDateHelp": "The date the invoice is issued. It decides the year and quarter the revenue and VAT belong to.",
   "invoiceFieldNumberHelp": "A unique number in an unbroken sequence, as the law requires. Florin suggests the next one.",
-  "invoiceFieldPaymentTermHelp": "How many days the client has to pay.",
+  "invoiceFieldPaymentTermHelp": "How many days the client has to pay. Between businesses, a term of more than {max} days needs to be agreed explicitly and must not be clearly unfair to you; without an agreed term, statutory commercial interest is due from {statutory} days after the client received the invoice (BW 6:119a).",
+  "@invoiceFieldPaymentTermHelp": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      },
+      "statutory": {
+        "type": "int"
+      }
+    }
+  },
   "invoiceFieldPriceHelp": "The price per unit without VAT.",
   "invoiceFieldQuantityHelp": "How many units, such as hours or pieces.",
   "invoiceFieldRemarksHelp": "Extra text printed at the bottom of the invoice.",
@@ -969,6 +981,45 @@
         "type": "int"
       },
       "date": {
+        "type": "String"
+      }
+    }
+  },
+  "invoiceLongTermNotice": "Between businesses, a payment term of more than {max} days holds only when it is agreed explicitly and is not clearly unfair to you, and a large company may not agree more than {large} days with a small supplier (BW 6:119a lid 5 and 6).",
+  "@invoiceLongTermNotice": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      },
+      "large": {
+        "type": "int"
+      }
+    }
+  },
+  "invoiceOverdueBusinessNotice": "This invoice was due on {due}. Between businesses, statutory commercial interest runs from the day after that (BW 6:119a lid 1), and you may claim collection costs of at least {min} without sending a reminder first (BW 6:96 lid 4). The claim can be brought to court until {lapses} (BW 3:307). Florin does not compute the interest.",
+  "@invoiceOverdueBusinessNotice": {
+    "placeholders": {
+      "due": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      },
+      "lapses": {
+        "type": "String"
+      }
+    }
+  },
+  "invoiceOverdueConsumerNotice": "This invoice was due on {due}. A private person owes collection costs only after a reminder that gives {days} days to pay and states the costs that will be claimed (BW 6:96 lid 6); send one reminder for all open invoices of this client (lid 7). The claim can be brought to court until {lapses} (BW 3:307).",
+  "@invoiceOverdueConsumerNotice": {
+    "placeholders": {
+      "due": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      },
+      "lapses": {
         "type": "String"
       }
     }
