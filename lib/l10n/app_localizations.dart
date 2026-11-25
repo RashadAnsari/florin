@@ -4709,8 +4709,8 @@ abstract class AppLocalizations {
   /// No description provided for @receiptsKeepUntilHelp.
   ///
   /// In en, this message translates to:
-  /// **'The Belastingdienst asks you to keep invoices and receipts for {years} years. Florin counts them from the end of the year they belong to and never deletes them.'**
-  String receiptsKeepUntilHelp(int years);
+  /// **'The Belastingdienst asks you to keep invoices and receipts for {years} years. Florin counts them from the end of the year they belong to and never deletes them. The Belastingdienst can raise a year\'s tax afterwards for {navordering} years after the tax became due, longer when you had extra time to file, and for {foreign} years for income or assets held abroad (AWR art. 16), so keep the records of such a year at least that long.'**
+  String receiptsKeepUntilHelp(int years, int navordering, int foreign);
 
   /// No description provided for @receiptsKeepWhileInUse.
   ///

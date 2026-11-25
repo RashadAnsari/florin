@@ -2784,8 +2784,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get receiptsKeepUntil => 'Keep until';
 
   @override
-  String receiptsKeepUntilHelp(int years) {
-    return 'The Belastingdienst asks you to keep invoices and receipts for $years years. Florin counts them from the end of the year they belong to and never deletes them.';
+  String receiptsKeepUntilHelp(int years, int navordering, int foreign) {
+    return 'The Belastingdienst asks you to keep invoices and receipts for $years years. Florin counts them from the end of the year they belong to and never deletes them. The Belastingdienst can raise a year\'s tax afterwards for $navordering years after the tax became due, longer when you had extra time to file, and for $foreign years for income or assets held abroad (AWR art. 16), so keep the records of such a year at least that long.';
   }
 
   @override

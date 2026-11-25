@@ -2794,8 +2794,8 @@ class AppLocalizationsNl extends AppLocalizations {
   String get receiptsKeepUntil => 'Bewaren tot';
 
   @override
-  String receiptsKeepUntilHelp(int years) {
-    return 'De Belastingdienst vraagt facturen en bonnen $years jaar te bewaren. Florin telt vanaf het einde van het jaar waar ze bij horen en verwijdert ze nooit.';
+  String receiptsKeepUntilHelp(int years, int navordering, int foreign) {
+    return 'De Belastingdienst vraagt facturen en bonnen $years jaar te bewaren. Florin telt vanaf het einde van het jaar waar ze bij horen en verwijdert ze nooit. De Belastingdienst kan over een jaar nog belasting navorderen tot $navordering jaar nadat de belasting verschuldigd werd, langer als u uitstel had voor de aangifte, en tot $foreign jaar voor inkomen of vermogen in het buitenland (AWR art. 16). Bewaar de administratie van zo\'n jaar dus minstens zo lang.';
   }
 
   @override

@@ -88,6 +88,8 @@ const taxYear2026 = TaxYearRules(
   vatReturnDueMonths: 1,
   invoiceDueDay: 15,
   retentionYears: 7,
+  navorderingYears: 5,
+  navorderingForeignYears: 12,
   icpQuarterlyGoodsMax: 5000000,
   icpGoodsLookbackQuarters: 4,
   icpDueMonths: 1,
