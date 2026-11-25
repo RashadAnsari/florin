@@ -92,6 +92,9 @@ the statute version of 1 January of the new year, its transitional articles
 | `icpDueMonths` | Months after its period in which the ICP-opgaaf is due | Wet OB 1968 art. 37a lid 1 | Statute |
 | `buaGiftThreshold` | Gifts to one person a year at or below which their BTW stays deductible | Besluit uitsluiting aftrek omzetbelasting 1968 art. 4 | Statute |
 | `invoiceDueDay` | Day of the next month by which an invoice is due | Wet OB 1968 art. 34g | Statute |
+| `correctionNextReturnMax` | A change to a filed return at most this much BTW goes into the next return | Belastingdienst practice, AWR art. 10a | Belastingdienst, Btw-aangifte corrigeren |
+| `suppletieWeeks` | Weeks after finding a larger error in which the suppletie is due | Same | Same page |
+| `correctionYears` | Years after the year in which a return can be corrected | Same | Same page |
 | `vatYearlyReturnDueMonths` | Months after the year in which a yearly return and payment are due | Belastingdienst practice | Belastingdienst, Uiterste aangifte- en betaaldatums |
 | `yearlyFilingMaxVat` | BTW a year below which a yearly return may be asked for | Belastingdienst practice | Belastingdienst, Over welk tijdvak moet ik btw-aangifte doen? |
 | `yearlyFilingMaxEu` | Each kind of EU transaction a year below which a yearly return may be asked for | Belastingdienst practice | Same page |

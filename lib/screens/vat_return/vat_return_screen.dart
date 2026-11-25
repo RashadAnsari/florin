@@ -50,6 +50,41 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
         ),
   );
 
+  /// Marking a return filed keeps its own figures and settles the earlier
+  /// corrections it carries; unmarking forgets what was kept.
+  Future<void> _setFiled(
+    VatPeriod period,
+    VatReturn? current,
+    VatReturnResult? result,
+    bool filed,
+  ) async {
+    final own = ref.read(vatOwnPeriodProvider(period)).valueOrNull;
+    if (filed && (own == null || result == null)) return;
+    await guardSave(
+      context,
+      () => ref
+          .read(vatFiledFiguresDaoProvider)
+          .setFiled(
+            period,
+            filed: filed,
+            paid: current?.paid ?? false,
+            figures: own?.rubrieken ?? const {},
+            carried: result?.carriedFrom ?? const {},
+          ),
+    );
+  }
+
+  /// The user filed a suppletie for [period]: its figures now count as
+  /// filed.
+  Future<void> _settle(VatPeriod period) async {
+    final own = ref.read(vatOwnPeriodProvider(period)).valueOrNull;
+    if (own == null) return;
+    await guardSave(
+      context,
+      () => ref.read(vatFiledFiguresDaoProvider).settle(period, own.rubrieken),
+    );
+  }
+
   Future<void> _setKind(int year, VatFilingPeriod kind) async {
     final saved = await guardSave(
       context,
@@ -333,12 +368,49 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                 ],
               ),
             ),
+            if (result.valueOrNull case final r?
+                when r.changedSinceFiled.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.section),
+              _CorrectionSection(
+                change: r.changedSinceFiled,
+                fitsNext: VatService.fitsNextReturn(r.changedSinceFiled, rules),
+                onSettled: () => _settle(period),
+              ),
+            ],
+            if (result.valueOrNull case final r?
+                when r.carriedCorrections.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.section),
+              SectionLabel(
+                l.vatReturnCarriedSection,
+                help: l.vatReturnCarriedSectionHelp(
+                  AppFormat.euros(rules.correctionNextReturnMax),
+                ),
+              ),
+              Text(
+                l.vatReturnCarriedFrom(
+                  r.carriedFrom.keys.map((p) => p.label(l)).join(', '),
+                ),
+                style: theme.textTheme.bodySmall,
+              ),
+              const SizedBox(height: AppSpacing.heading),
+              for (final e in r.carriedCorrections.entries)
+                ValueRow(
+                  label: l.vatReturnRubriek(e.key),
+                  value: l.vatBaseAndVat(
+                    AppFormat.cents(e.value.$1),
+                    AppFormat.cents(e.value.$2),
+                  ),
+                ),
+            ],
             const SizedBox(height: AppSpacing.section),
             SectionLabel(l.vatReturnStatusSection),
             const SizedBox(height: AppSpacing.heading),
             HelpCheckbox(
               value: status?.filed ?? false,
-              onChanged: (v) => _setStatus(period, status, filed: v),
+              // Filing keeps the figures, so it waits for them.
+              onChanged: result.hasValue
+                  ? (v) => _setFiled(period, status, result.valueOrNull, v)
+                  : null,
               title: l.vatReturnFiled,
               help: l.vatReturnFiledHelp,
             ),
@@ -351,6 +423,66 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// How a filed return's records changed since it was filed, and what the
+/// Belastingdienst asks for that change.
+class _CorrectionSection extends ConsumerWidget {
+  final Map<String, (int, int)> change;
+  final bool fitsNext;
+  final VoidCallback onSettled;
+
+  const _CorrectionSection({
+    required this.change,
+    required this.fitsNext,
+    required this.onSettled,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context)!;
+    final rules = ref.watch(taxRulesProvider(ref.watch(fiscalYearProvider)));
+    final net = VatService.netVatOf(change);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionLabel(
+          l.vatReturnChangedSection,
+          help: l.vatReturnChangedSectionHelp,
+        ),
+        for (final e in change.entries)
+          ValueRow(
+            label: l.vatReturnRubriek(e.key),
+            value: l.vatBaseAndVat(
+              AppFormat.cents(e.value.$1),
+              AppFormat.cents(e.value.$2),
+            ),
+          ),
+        ValueRow.cents(l.vatReturnChangedNet, net, bold: true),
+        const SizedBox(height: AppSpacing.heading),
+        NoticeBanner(
+          fitsNext
+              ? l.vatReturnChangedNextNotice(
+                  AppFormat.euros(rules.correctionNextReturnMax),
+                )
+              : l.vatReturnChangedSuppletieNotice(
+                  AppFormat.euros(rules.correctionNextReturnMax),
+                  rules.suppletieWeeks,
+                  rules.correctionYears,
+                ),
+          tone: fitsNext ? NoticeTone.info : NoticeTone.warning,
+        ),
+        if (!fitsNext) ...[
+          const SizedBox(height: AppSpacing.heading),
+          OutlinedButton.icon(
+            icon: const Icon(Icons.check, size: 16),
+            label: Text(l.vatReturnSuppletieFiled),
+            onPressed: onSettled,
+          ),
+        ],
+      ],
     );
   }
 }

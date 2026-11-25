@@ -10431,6 +10431,422 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
   }
 }
 
+class $VatFiledFiguresTable extends VatFiledFigures
+    with TableInfo<$VatFiledFiguresTable, VatFiledFigure> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $VatFiledFiguresTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _yearMeta = const VerificationMeta('year');
+  @override
+  late final GeneratedColumn<int> year = GeneratedColumn<int>(
+    'year',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<VatFilingPeriod, String> kind =
+      GeneratedColumn<String>(
+        'kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<VatFilingPeriod>($VatFiledFiguresTable.$converterkind);
+  static const VerificationMeta _numberMeta = const VerificationMeta('number');
+  @override
+  late final GeneratedColumn<int> number = GeneratedColumn<int>(
+    'number',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _rubriekMeta = const VerificationMeta(
+    'rubriek',
+  );
+  @override
+  late final GeneratedColumn<String> rubriek = GeneratedColumn<String>(
+    'rubriek',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _baseMeta = const VerificationMeta('base');
+  @override
+  late final GeneratedColumn<int> base = GeneratedColumn<int>(
+    'base',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _vatMeta = const VerificationMeta('vat');
+  @override
+  late final GeneratedColumn<int> vat = GeneratedColumn<int>(
+    'vat',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    year,
+    kind,
+    number,
+    rubriek,
+    base,
+    vat,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'vat_filed_figures';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<VatFiledFigure> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('year')) {
+      context.handle(
+        _yearMeta,
+        year.isAcceptableOrUnknown(data['year']!, _yearMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_yearMeta);
+    }
+    if (data.containsKey('number')) {
+      context.handle(
+        _numberMeta,
+        number.isAcceptableOrUnknown(data['number']!, _numberMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_numberMeta);
+    }
+    if (data.containsKey('rubriek')) {
+      context.handle(
+        _rubriekMeta,
+        rubriek.isAcceptableOrUnknown(data['rubriek']!, _rubriekMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_rubriekMeta);
+    }
+    if (data.containsKey('base')) {
+      context.handle(
+        _baseMeta,
+        base.isAcceptableOrUnknown(data['base']!, _baseMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_baseMeta);
+    }
+    if (data.containsKey('vat')) {
+      context.handle(
+        _vatMeta,
+        vat.isAcceptableOrUnknown(data['vat']!, _vatMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_vatMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {year, kind, number, rubriek};
+  @override
+  VatFiledFigure map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return VatFiledFigure(
+      year: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year'],
+      )!,
+      kind: $VatFiledFiguresTable.$converterkind.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}kind'],
+        )!,
+      ),
+      number: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}number'],
+      )!,
+      rubriek: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rubriek'],
+      )!,
+      base: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}base'],
+      )!,
+      vat: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}vat'],
+      )!,
+    );
+  }
+
+  @override
+  $VatFiledFiguresTable createAlias(String alias) {
+    return $VatFiledFiguresTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<VatFilingPeriod, String, String> $converterkind =
+      const EnumNameConverter<VatFilingPeriod>(VatFilingPeriod.values);
+}
+
+class VatFiledFigure extends DataClass implements Insertable<VatFiledFigure> {
+  final int year;
+  final VatFilingPeriod kind;
+  final int number;
+
+  /// The rubriek's code on the form, such as `1a` or `5b`.
+  final String rubriek;
+
+  /// The amount the BTW is calculated over, in cents; 0 where the rubriek
+  /// has none.
+  final int base;
+  final int vat;
+  const VatFiledFigure({
+    required this.year,
+    required this.kind,
+    required this.number,
+    required this.rubriek,
+    required this.base,
+    required this.vat,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['year'] = Variable<int>(year);
+    {
+      map['kind'] = Variable<String>(
+        $VatFiledFiguresTable.$converterkind.toSql(kind),
+      );
+    }
+    map['number'] = Variable<int>(number);
+    map['rubriek'] = Variable<String>(rubriek);
+    map['base'] = Variable<int>(base);
+    map['vat'] = Variable<int>(vat);
+    return map;
+  }
+
+  VatFiledFiguresCompanion toCompanion(bool nullToAbsent) {
+    return VatFiledFiguresCompanion(
+      year: Value(year),
+      kind: Value(kind),
+      number: Value(number),
+      rubriek: Value(rubriek),
+      base: Value(base),
+      vat: Value(vat),
+    );
+  }
+
+  factory VatFiledFigure.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return VatFiledFigure(
+      year: serializer.fromJson<int>(json['year']),
+      kind: $VatFiledFiguresTable.$converterkind.fromJson(
+        serializer.fromJson<String>(json['kind']),
+      ),
+      number: serializer.fromJson<int>(json['number']),
+      rubriek: serializer.fromJson<String>(json['rubriek']),
+      base: serializer.fromJson<int>(json['base']),
+      vat: serializer.fromJson<int>(json['vat']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'year': serializer.toJson<int>(year),
+      'kind': serializer.toJson<String>(
+        $VatFiledFiguresTable.$converterkind.toJson(kind),
+      ),
+      'number': serializer.toJson<int>(number),
+      'rubriek': serializer.toJson<String>(rubriek),
+      'base': serializer.toJson<int>(base),
+      'vat': serializer.toJson<int>(vat),
+    };
+  }
+
+  VatFiledFigure copyWith({
+    int? year,
+    VatFilingPeriod? kind,
+    int? number,
+    String? rubriek,
+    int? base,
+    int? vat,
+  }) => VatFiledFigure(
+    year: year ?? this.year,
+    kind: kind ?? this.kind,
+    number: number ?? this.number,
+    rubriek: rubriek ?? this.rubriek,
+    base: base ?? this.base,
+    vat: vat ?? this.vat,
+  );
+  VatFiledFigure copyWithCompanion(VatFiledFiguresCompanion data) {
+    return VatFiledFigure(
+      year: data.year.present ? data.year.value : this.year,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      number: data.number.present ? data.number.value : this.number,
+      rubriek: data.rubriek.present ? data.rubriek.value : this.rubriek,
+      base: data.base.present ? data.base.value : this.base,
+      vat: data.vat.present ? data.vat.value : this.vat,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VatFiledFigure(')
+          ..write('year: $year, ')
+          ..write('kind: $kind, ')
+          ..write('number: $number, ')
+          ..write('rubriek: $rubriek, ')
+          ..write('base: $base, ')
+          ..write('vat: $vat')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(year, kind, number, rubriek, base, vat);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is VatFiledFigure &&
+          other.year == this.year &&
+          other.kind == this.kind &&
+          other.number == this.number &&
+          other.rubriek == this.rubriek &&
+          other.base == this.base &&
+          other.vat == this.vat);
+}
+
+class VatFiledFiguresCompanion extends UpdateCompanion<VatFiledFigure> {
+  final Value<int> year;
+  final Value<VatFilingPeriod> kind;
+  final Value<int> number;
+  final Value<String> rubriek;
+  final Value<int> base;
+  final Value<int> vat;
+  final Value<int> rowid;
+  const VatFiledFiguresCompanion({
+    this.year = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.number = const Value.absent(),
+    this.rubriek = const Value.absent(),
+    this.base = const Value.absent(),
+    this.vat = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  VatFiledFiguresCompanion.insert({
+    required int year,
+    required VatFilingPeriod kind,
+    required int number,
+    required String rubriek,
+    required int base,
+    required int vat,
+    this.rowid = const Value.absent(),
+  }) : year = Value(year),
+       kind = Value(kind),
+       number = Value(number),
+       rubriek = Value(rubriek),
+       base = Value(base),
+       vat = Value(vat);
+  static Insertable<VatFiledFigure> custom({
+    Expression<int>? year,
+    Expression<String>? kind,
+    Expression<int>? number,
+    Expression<String>? rubriek,
+    Expression<int>? base,
+    Expression<int>? vat,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (year != null) 'year': year,
+      if (kind != null) 'kind': kind,
+      if (number != null) 'number': number,
+      if (rubriek != null) 'rubriek': rubriek,
+      if (base != null) 'base': base,
+      if (vat != null) 'vat': vat,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  VatFiledFiguresCompanion copyWith({
+    Value<int>? year,
+    Value<VatFilingPeriod>? kind,
+    Value<int>? number,
+    Value<String>? rubriek,
+    Value<int>? base,
+    Value<int>? vat,
+    Value<int>? rowid,
+  }) {
+    return VatFiledFiguresCompanion(
+      year: year ?? this.year,
+      kind: kind ?? this.kind,
+      number: number ?? this.number,
+      rubriek: rubriek ?? this.rubriek,
+      base: base ?? this.base,
+      vat: vat ?? this.vat,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (year.present) {
+      map['year'] = Variable<int>(year.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(
+        $VatFiledFiguresTable.$converterkind.toSql(kind.value),
+      );
+    }
+    if (number.present) {
+      map['number'] = Variable<int>(number.value);
+    }
+    if (rubriek.present) {
+      map['rubriek'] = Variable<String>(rubriek.value);
+    }
+    if (base.present) {
+      map['base'] = Variable<int>(base.value);
+    }
+    if (vat.present) {
+      map['vat'] = Variable<int>(vat.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VatFiledFiguresCompanion(')
+          ..write('year: $year, ')
+          ..write('kind: $kind, ')
+          ..write('number: $number, ')
+          ..write('rubriek: $rubriek, ')
+          ..write('base: $base, ')
+          ..write('vat: $vat, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -10448,6 +10864,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $VatReturnsTable vatReturns = $VatReturnsTable(this);
   late final $TaxYearInputsTable taxYearInputs = $TaxYearInputsTable(this);
   late final $ReceiptsTable receipts = $ReceiptsTable(this);
+  late final $VatFiledFiguresTable vatFiledFigures = $VatFiledFiguresTable(
+    this,
+  );
   late final Index invoicesInvoiceDate = Index(
     'invoices_invoice_date',
     'CREATE INDEX invoices_invoice_date ON invoices (invoice_date)',
@@ -10481,6 +10900,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     vatReturns,
     taxYearInputs,
     receipts,
+    vatFiledFigures,
     invoicesInvoiceDate,
     expensesDate,
     hourEntriesDate,
@@ -17171,6 +17591,241 @@ typedef $$ReceiptsTableProcessedTableManager =
       Receipt,
       PrefetchHooks Function({bool expenseId, bool assetId, bool invoiceId})
     >;
+typedef $$VatFiledFiguresTableCreateCompanionBuilder =
+    VatFiledFiguresCompanion Function({
+      required int year,
+      required VatFilingPeriod kind,
+      required int number,
+      required String rubriek,
+      required int base,
+      required int vat,
+      Value<int> rowid,
+    });
+typedef $$VatFiledFiguresTableUpdateCompanionBuilder =
+    VatFiledFiguresCompanion Function({
+      Value<int> year,
+      Value<VatFilingPeriod> kind,
+      Value<int> number,
+      Value<String> rubriek,
+      Value<int> base,
+      Value<int> vat,
+      Value<int> rowid,
+    });
+
+class $$VatFiledFiguresTableFilterComposer
+    extends Composer<_$AppDatabase, $VatFiledFiguresTable> {
+  $$VatFiledFiguresTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<VatFilingPeriod, VatFilingPeriod, String>
+  get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<int> get number => $composableBuilder(
+    column: $table.number,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rubriek => $composableBuilder(
+    column: $table.rubriek,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get base => $composableBuilder(
+    column: $table.base,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get vat => $composableBuilder(
+    column: $table.vat,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$VatFiledFiguresTableOrderingComposer
+    extends Composer<_$AppDatabase, $VatFiledFiguresTable> {
+  $$VatFiledFiguresTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get number => $composableBuilder(
+    column: $table.number,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rubriek => $composableBuilder(
+    column: $table.rubriek,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get base => $composableBuilder(
+    column: $table.base,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get vat => $composableBuilder(
+    column: $table.vat,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$VatFiledFiguresTableAnnotationComposer
+    extends Composer<_$AppDatabase, $VatFiledFiguresTable> {
+  $$VatFiledFiguresTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get year =>
+      $composableBuilder(column: $table.year, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<VatFilingPeriod, String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<int> get number =>
+      $composableBuilder(column: $table.number, builder: (column) => column);
+
+  GeneratedColumn<String> get rubriek =>
+      $composableBuilder(column: $table.rubriek, builder: (column) => column);
+
+  GeneratedColumn<int> get base =>
+      $composableBuilder(column: $table.base, builder: (column) => column);
+
+  GeneratedColumn<int> get vat =>
+      $composableBuilder(column: $table.vat, builder: (column) => column);
+}
+
+class $$VatFiledFiguresTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $VatFiledFiguresTable,
+          VatFiledFigure,
+          $$VatFiledFiguresTableFilterComposer,
+          $$VatFiledFiguresTableOrderingComposer,
+          $$VatFiledFiguresTableAnnotationComposer,
+          $$VatFiledFiguresTableCreateCompanionBuilder,
+          $$VatFiledFiguresTableUpdateCompanionBuilder,
+          (
+            VatFiledFigure,
+            BaseReferences<
+              _$AppDatabase,
+              $VatFiledFiguresTable,
+              VatFiledFigure
+            >,
+          ),
+          VatFiledFigure,
+          PrefetchHooks Function()
+        > {
+  $$VatFiledFiguresTableTableManager(
+    _$AppDatabase db,
+    $VatFiledFiguresTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$VatFiledFiguresTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$VatFiledFiguresTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$VatFiledFiguresTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> year = const Value.absent(),
+                Value<VatFilingPeriod> kind = const Value.absent(),
+                Value<int> number = const Value.absent(),
+                Value<String> rubriek = const Value.absent(),
+                Value<int> base = const Value.absent(),
+                Value<int> vat = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => VatFiledFiguresCompanion(
+                year: year,
+                kind: kind,
+                number: number,
+                rubriek: rubriek,
+                base: base,
+                vat: vat,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required int year,
+                required VatFilingPeriod kind,
+                required int number,
+                required String rubriek,
+                required int base,
+                required int vat,
+                Value<int> rowid = const Value.absent(),
+              }) => VatFiledFiguresCompanion.insert(
+                year: year,
+                kind: kind,
+                number: number,
+                rubriek: rubriek,
+                base: base,
+                vat: vat,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$VatFiledFiguresTable, VatFiledFigure>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $VatFiledFiguresTable,
+                    VatFiledFigure
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$VatFiledFiguresTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $VatFiledFiguresTable,
+      VatFiledFigure,
+      $$VatFiledFiguresTableFilterComposer,
+      $$VatFiledFiguresTableOrderingComposer,
+      $$VatFiledFiguresTableAnnotationComposer,
+      $$VatFiledFiguresTableCreateCompanionBuilder,
+      $$VatFiledFiguresTableUpdateCompanionBuilder,
+      (
+        VatFiledFigure,
+        BaseReferences<_$AppDatabase, $VatFiledFiguresTable, VatFiledFigure>,
+      ),
+      VatFiledFigure,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -17199,4 +17854,6 @@ class $AppDatabaseManager {
       $$TaxYearInputsTableTableManager(_db, _db.taxYearInputs);
   $$ReceiptsTableTableManager get receipts =>
       $$ReceiptsTableTableManager(_db, _db.receipts);
+  $$VatFiledFiguresTableTableManager get vatFiledFigures =>
+      $$VatFiledFiguresTableTableManager(_db, _db.vatFiledFigures);
 }

@@ -898,6 +898,48 @@ class AppLocalizationsNl extends AppLocalizations {
   String get vatReturnFilingPeriod => 'Aangiftetijdvak';
 
   @override
+  String vatReturnRubriek(String code) {
+    return 'Rubriek $code';
+  }
+
+  @override
+  String get vatReturnChangedSection => 'Gewijzigd sinds je aangifte';
+
+  @override
+  String get vatReturnChangedSectionHelp =>
+      'Gegevens van dit tijdvak zijn gewijzigd nadat je de aangifte als gedaan markeerde. Dit zijn de verschillen per rubriek met wat Florin als aangegeven bewaarde, als grondslag en btw.';
+
+  @override
+  String get vatReturnChangedNet => 'Wijziging in te betalen btw';
+
+  @override
+  String vatReturnChangedNextNotice(String max) {
+    return 'Een correctie van maximaal $max verwerk je in je volgende aangifte, in de rubriek waar die hoort (Belastingdienst, Btw-aangifte corrigeren). Florin telt die op bij de volgende aangifte die je nog niet hebt gedaan.';
+  }
+
+  @override
+  String vatReturnChangedSuppletieNotice(String max, int weeks, int years) {
+    return 'Een correctie van meer dan $max moet je met het formulier Suppletie btw in Mijn Belastingdienst Zakelijk indienen, zo snel mogelijk en uiterlijk $weeks weken nadat je de fout ontdekte; anders is een boete mogelijk. Corrigeren kan tot $years jaar na het jaar. Markeer het hieronder zodra je het hebt ingediend, zodat Florin deze cijfers als aangegeven telt.';
+  }
+
+  @override
+  String get vatReturnSuppletieFiled => 'Ik heb de suppletie ingediend';
+
+  @override
+  String get vatReturnCarriedSection =>
+      'Correcties van eerdere aangiftes meegenomen';
+
+  @override
+  String vatReturnCarriedSectionHelp(String max) {
+    return 'Wijzigingen van maximaal $max in aangiftes die je al deed, horen in deze aangifte, in de rubriek waar ze horen (Belastingdienst, Btw-aangifte corrigeren). Ze zijn opgeteld bij de cijfers hierboven en in de export. Als je deze aangifte als gedaan markeert, telt Florin die eerdere aangiftes als gecorrigeerd.';
+  }
+
+  @override
+  String vatReturnCarriedFrom(String periods) {
+    return 'Van: $periods';
+  }
+
+  @override
   String vatReturnFilingPeriodHelp(String vat, String eu) {
     return 'Het tijdvak van je btw-aangiftes, zoals in je aangiftebrief. De meeste ondernemers doen aangifte per kwartaal. De Belastingdienst laat je op verzoek per maand aangifte doen, en op verzoek per jaar als je minder dan $vat btw per jaar betaalt, een eenmanszaak hebt en per soort EU-levering of -aankoop minder dan $eu per jaar hebt; na te late aangiftes of betalingen kan hij ook maandaangifte verplichten. Kies het tijdvak dat de Belastingdienst heeft bevestigd.';
   }
@@ -1990,7 +2032,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get vatReturnFiledHelp =>
-      'Vink aan zodra je de aangifte van dit kwartaal hebt gedaan in Mijn Belastingdienst Zakelijk.';
+      'Vink aan zodra je deze aangifte hebt gedaan. Florin bewaart de cijfers die je aangaf, zodat een latere wijziging in de gegevens van dit tijdvak als correctie zichtbaar wordt: kleine gaan in je volgende aangifte, grotere vragen om een suppletie.';
 
   @override
   String get vatReturnPaidHelp =>

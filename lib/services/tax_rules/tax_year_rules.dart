@@ -135,6 +135,17 @@ class TaxYearRules {
   /// are due (AWR art. 19 lid 1).
   final int vatReturnDueMonths;
 
+  /// A change to a filed BTW return of at most this much BTW goes into the
+  /// next return; above it a suppletie is due (Belastingdienst).
+  final int correctionNextReturnMax;
+
+  /// Weeks after finding an error above [correctionNextReturnMax] in which
+  /// the suppletie is due (Belastingdienst).
+  final int suppletieWeeks;
+
+  /// Years after the year of the return in which it can be corrected.
+  final int correctionYears;
+
   /// Months after the year in which a yearly BTW return and payment are due
   /// (Belastingdienst, Uiterste aangifte- en betaaldatums).
   final int vatYearlyReturnDueMonths;
@@ -317,6 +328,9 @@ class TaxYearRules {
     required this.factorAMultiplier,
     required this.vatRates,
     required this.vatReturnDueMonths,
+    required this.correctionNextReturnMax,
+    required this.suppletieWeeks,
+    required this.correctionYears,
     required this.vatYearlyReturnDueMonths,
     required this.yearlyFilingMaxVat,
     required this.yearlyFilingMaxEu,

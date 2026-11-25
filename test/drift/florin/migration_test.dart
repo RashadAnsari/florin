@@ -16,6 +16,7 @@ import 'generated/schema_v7.dart' as v7;
 import 'generated/schema_v8.dart' as v8;
 import 'generated/schema_v9.dart' as v9;
 import 'generated/schema_v10.dart' as v10;
+import 'generated/schema_v11.dart' as v11;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -735,6 +736,39 @@ void main() {
       },
       validateItems: (newDb) async {
         expect(await newDb.select(newDb.vatReturns).get(), [newReturn]);
+      },
+    );
+  });
+
+  test('migration from v10 to v11 keeps the returns and starts with no '
+      'filed figures', () async {
+    const filed = v10.VatReturnsData(
+      year: 2026,
+      kind: 'quarterly',
+      number: 1,
+      filed: 1,
+      paid: 1,
+    );
+    const kept = v11.VatReturnsData(
+      year: 2026,
+      kind: 'quarterly',
+      number: 1,
+      filed: 1,
+      paid: 1,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 10,
+      newVersion: 11,
+      createOld: v10.DatabaseAtV10.new,
+      createNew: v11.DatabaseAtV11.new,
+      openTestedDatabase: AppDatabase.new,
+      createItems: (batch, oldDb) {
+        batch.insert(oldDb.vatReturns, filed);
+      },
+      validateItems: (newDb) async {
+        expect(await newDb.select(newDb.vatReturns).get(), [kept]);
+        expect(await newDb.select(newDb.vatFiledFigures).get(), isEmpty);
       },
     );
   });

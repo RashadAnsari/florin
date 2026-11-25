@@ -417,6 +417,40 @@ Where Florin implements it: `VatService.filingDeadline`, the last day of the
 month after the quarter, from `TaxYearRules.vatReturnDueMonths`. For a new
 year, quote its row of the table above.
 
+## Correcting a filed return
+
+> Hebt u bij uw btw-aangifte een bedrag van maximaal €1000 te veel of te weinig ingevuld? Dan geeft u dat bedrag op in uw eerstvolgende btw-aangifte. U verwerkt dat bedrag in uw eerstvolgende btw-aangifte. Dus u corrigeert of vult het in bij de rubriek waar u het normaal ook opgeeft.
+
+> Dan bent u verplicht dit zo snel mogelijk te corrigeren. U doet dit met het correctieformulier Suppletie btw (correctie btw-aangifte).
+
+> U kunt correcties indienen tot en met 5 jaar na het jaar waarop de correctie betrekking heeft.
+
+> Ontdekt u een fout en gaat het om een btw-bedrag van meer dan € 1.000? Verzend het correctieformulier dan zo snel mogelijk, maar in elk geval binnen 8 weken nadat u de fout ontdekte. Komen wij achter de fout, ook binnen de 8 weken-termijn? In dat geval kunt u een boete krijgen.
+
+[Belastingdienst, Btw-aangifte corrigeren](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/btw_aangifte_doen_en_betalen/aangifte_corrigeren/aangifte_corrigeren), read 2026-11-25
+
+> 1 In bij algemene maatregel van bestuur aan te wijzen gevallen kunnen belastingplichtigen of inhoudingsplichtigen worden gehouden de inspecteur eigener beweging mededeling te doen van onjuistheden of onvolledigheden in voor de belastingheffing van belang zijnde gegevens en inlichtingen die hun bekend zijn of zijn geworden.
+
+[Algemene wet inzake rijksbelastingen, artikel 10a lid 1](https://wetten.overheid.nl/BWBR0002320/2026-10-01), read 2026-11-25 from the official XML
+
+Where Florin implements it: marking a return filed keeps its figures per
+rubriek (`VatFiledFigures`). A filed period whose records changed since then
+shows the change per rubriek and its net BTW (`VatService.difference`,
+`netVatOf`). A change within `correctionNextReturnMax` is added to the
+rubrieken of the next return not yet filed, on screen and in the export,
+and filing that return counts the earlier one as corrected. A larger change
+is not carried: the screen names the Suppletie btw form, `suppletieWeeks`
+and `correctionYears`, and "I filed the suppletie" counts the period's
+figures as filed.
+
+Cautious choice: the page does not say how changes in several rubrieken add
+up, so a change goes to the next return only when both its net BTW and the
+BTW of each rubriek stay within the amount (`VatService.fitsNextReturn`).
+Not modelled: when the user found the error, which starts the 8 weeks;
+corrections across a change of year or filing period; belastingrente.
+Returns marked filed before Florin kept figures show no change, as there
+is nothing to compare with. The AMvB under artikel 10a was not read.
+
 ## Filing period
 
 > Btw-aangifte doet u meestal per kwartaal. Maar er zijn uitzonderingen mogelijk.

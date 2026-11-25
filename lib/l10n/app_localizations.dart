@@ -1724,6 +1724,66 @@ abstract class AppLocalizations {
   /// **'Filing period'**
   String get vatReturnFilingPeriod;
 
+  /// No description provided for @vatReturnRubriek.
+  ///
+  /// In en, this message translates to:
+  /// **'Rubriek {code}'**
+  String vatReturnRubriek(String code);
+
+  /// No description provided for @vatReturnChangedSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed since you filed'**
+  String get vatReturnChangedSection;
+
+  /// No description provided for @vatReturnChangedSectionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Records of this period changed after you marked the return filed. These are the differences per rubriek with what Florin kept as filed, as base and BTW.'**
+  String get vatReturnChangedSectionHelp;
+
+  /// No description provided for @vatReturnChangedNet.
+  ///
+  /// In en, this message translates to:
+  /// **'Change in BTW to pay'**
+  String get vatReturnChangedNet;
+
+  /// No description provided for @vatReturnChangedNextNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'A correction of at most {max} goes into your next return, in the rubriek where it belongs (Belastingdienst, Btw-aangifte corrigeren). Florin adds it to the next return you have not filed yet.'**
+  String vatReturnChangedNextNotice(String max);
+
+  /// No description provided for @vatReturnChangedSuppletieNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'A correction of more than {max} must be filed with the form Suppletie btw in Mijn Belastingdienst Zakelijk, as soon as possible and at the latest {weeks} weeks after you found the error; otherwise a fine is possible. Corrections are possible up to {years} years after the year. Mark it below once you filed it, so Florin counts these figures as filed.'**
+  String vatReturnChangedSuppletieNotice(String max, int weeks, int years);
+
+  /// No description provided for @vatReturnSuppletieFiled.
+  ///
+  /// In en, this message translates to:
+  /// **'I filed the suppletie'**
+  String get vatReturnSuppletieFiled;
+
+  /// No description provided for @vatReturnCarriedSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Corrections of earlier returns included'**
+  String get vatReturnCarriedSection;
+
+  /// No description provided for @vatReturnCarriedSectionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes of at most {max} to returns you already filed go into this return, in the rubriek where they belong (Belastingdienst, Btw-aangifte corrigeren). They are added to the figures above and to the export. When you mark this return filed, Florin counts those earlier returns as corrected.'**
+  String vatReturnCarriedSectionHelp(String max);
+
+  /// No description provided for @vatReturnCarriedFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From: {periods}'**
+  String vatReturnCarriedFrom(String periods);
+
   /// No description provided for @vatReturnFilingPeriodHelp.
   ///
   /// In en, this message translates to:
@@ -3425,7 +3485,7 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnFiledHelp.
   ///
   /// In en, this message translates to:
-  /// **'Tick once you have filed this quarter\'s return in Mijn Belastingdienst Zakelijk.'**
+  /// **'Tick once you filed this return. Florin keeps the figures you filed, so a later change to this period\'s records shows as a correction: small ones go into your next return, larger ones need a suppletie.'**
   String get vatReturnFiledHelp;
 
   /// No description provided for @vatReturnPaidHelp.

@@ -12,6 +12,7 @@ import '../db/daos/invoice_dao.dart';
 import '../db/daos/mileage_dao.dart';
 import '../db/daos/pension_dao.dart';
 import '../db/daos/tax_year_inputs_dao.dart';
+import '../db/daos/vat_filed_figures_dao.dart';
 import '../db/daos/vat_return_dao.dart';
 import '../db/database.dart';
 import '../services/domain.dart';
@@ -82,6 +83,9 @@ final taxYearInputsDaoProvider = Provider(
 );
 final vatReturnDaoProvider = Provider(
   (ref) => VatReturnDao(ref.watch(databaseProvider)),
+);
+final vatFiledFiguresDaoProvider = Provider(
+  (ref) => VatFiledFiguresDao(ref.watch(databaseProvider)),
 );
 
 /// Receipt files next to the open database and their rows.
@@ -157,6 +161,26 @@ final pensionProvider = StreamProvider.family<PensionEntry?, int>(
 final vatReturnsProvider = StreamProvider.family<List<VatReturn>, int>(
   (ref, year) => ref.watch(vatReturnDaoProvider).watchYear(year),
 );
+
+/// What was filed per rubriek for each BTW return of [year] marked filed.
+final vatFiledFiguresProvider =
+    StreamProvider.family<Map<VatPeriod, Map<String, (int, int)>>, int>(
+      (ref, year) =>
+          ref.watch(vatFiledFiguresDaoProvider).watchYear(year).map((rows) {
+            final byPeriod = <VatPeriod, Map<String, (int, int)>>{};
+            for (final f in rows) {
+              byPeriod.putIfAbsent((
+                year: f.year,
+                kind: f.kind,
+                number: f.number,
+              ), () => {})[f.rubriek] = (
+                f.base,
+                f.vat,
+              );
+            }
+            return byPeriod;
+          }),
+    );
 
 /// The first error or loading state among [values], or null when all have
 /// data. Providers that combine several streams return this first.
@@ -354,8 +378,63 @@ final vatFilingPeriodProvider =
           .whenData((i) => i?.vatFilingPeriod ?? VatFilingPeriod.quarterly),
     );
 
-/// The BTW return figures for one period.
+/// The BTW return of one period, with the corrections of earlier filed
+/// periods it carries and, once filed, how its records changed since
+/// (`docs/legal.md`, Correcting a filed return).
 final vatPeriodProvider =
+    Provider.family<AsyncValue<VatReturnResult>, VatPeriod>((ref, key) {
+      final own = ref.watch(vatOwnPeriodProvider(key));
+      final returns = ref.watch(vatReturnsProvider(key.year));
+      final filedFigures = ref.watch(vatFiledFiguresProvider(key.year));
+      final pending = waitForAll<VatReturnResult>([own, returns, filedFigures]);
+      if (pending != null) return pending;
+      final rules = ref.watch(taxRulesProvider(key.year));
+      final filed = {
+        for (final v in returns.requireValue)
+          if (v.filed && v.kind == key.kind) v.number,
+      };
+      final figures = filedFigures.requireValue;
+      Map<String, (int, int)>? changeOf(VatPeriod p, VatReturnResult r) {
+        final kept = figures[p];
+        return kept == null ? null : VatService.difference(r.rubrieken, kept);
+      }
+
+      if (filed.contains(key.number)) {
+        return AsyncData(
+          own.requireValue.withCorrections(
+            changed: changeOf(key, own.requireValue) ?? const {},
+          ),
+        );
+      }
+      // Earlier filed periods right before this one, back to the last one
+      // not filed: their small corrections come into this return.
+      final corrections = <String, (int, int)>{};
+      final from = <VatPeriod, Map<String, (int, int)>>{};
+      for (var n = key.number - 1; n >= 1 && filed.contains(n); n--) {
+        final p = (year: key.year, kind: key.kind, number: n);
+        final earlier = ref.watch(vatOwnPeriodProvider(p));
+        if (!earlier.hasValue) {
+          return waitForAll<VatReturnResult>([earlier])!;
+        }
+        final change = changeOf(p, earlier.requireValue);
+        if (change == null ||
+            change.isEmpty ||
+            !VatService.fitsNextReturn(change, rules)) {
+          continue;
+        }
+        from[p] = earlier.requireValue.rubrieken;
+        for (final MapEntry(key: r, value: (b, v)) in change.entries) {
+          final (cb, cv) = corrections[r] ?? (0, 0);
+          corrections[r] = (cb + b, cv + v);
+        }
+      }
+      return AsyncData(
+        own.requireValue.withCorrections(corrections: corrections, from: from),
+      );
+    });
+
+/// The BTW return figures for one period from its own records alone.
+final vatOwnPeriodProvider =
     Provider.family<AsyncValue<VatReturnResult>, VatPeriod>((ref, key) {
       // Every year's invoices: a service is reported in the quarter it was
       // supplied, which can precede the year of its invoice.
@@ -375,33 +454,15 @@ final vatPeriodProvider =
       ]);
       if (pending != null) return pending;
       return AsyncData(
-        VatService.calculatePeriod(
+        VatService.fromRecords(
           invoices: invoices.requireValue,
           lines: lines.requireValue,
           expenses: expenses.requireValue,
           assets: assets.requireValue,
+          trips: trips.requireValue,
           period: key,
           kor: kor.requireValue,
-          // Herziening is settled in the last return of the year.
-          vatRevision: key.isLastOfYear
-              ? KorService.revision(
-                  status: kor.requireValue,
-                  assets: assets.requireValue,
-                  invoices: invoices.requireValue,
-                  year: key.year,
-                  rules: ref.watch(taxRulesProvider(key.year)),
-                )
-              : const {},
-          // Private use of business cars goes in the last return of the year.
-          privateUseVat: key.isLastOfYear
-              ? CarService.btwPrivateUse(
-                  assets: assets.requireValue,
-                  trips: trips.requireValue,
-                  expenses: expenses.requireValue,
-                  year: key.year,
-                  rules: ref.watch(taxRulesProvider(key.year)),
-                )
-              : 0,
+          rules: ref.watch(taxRulesProvider(key.year)),
         ),
       );
     });
