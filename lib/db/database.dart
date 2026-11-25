@@ -49,7 +49,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump with every schema change and run `make migration`; see AGENTS.md.
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -154,6 +154,13 @@ class AppDatabase extends _$AppDatabase {
           },
           from6To7: (m, schema) async {
             await m.addColumn(schema.expenses, schema.expenses.giftRecipient);
+          },
+          from7To8: (m, schema) async {
+            await m.addColumn(schema.hourEntries, schema.hourEntries.byPartner);
+            await m.addColumn(
+              schema.taxYearInputs,
+              schema.taxYearInputs.partnerPay,
+            );
           },
         )(m, from, to),
       );

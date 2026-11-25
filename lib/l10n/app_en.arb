@@ -237,6 +237,7 @@
   "expenseCatOther": "Other",
   "hoursTitle": "Hour registration",
   "hoursNone": "No hours registered",
+  "hoursBadgePartner": "Partner",
   "hoursBillable": "Billable: {hours} hrs",
   "@hoursBillable": {
     "placeholders": {
@@ -972,6 +973,15 @@
   "hoursFieldDescriptionHelp": "What you did. All hours spent on the business count towards the urencriterium, not only billable ones.",
   "hoursFieldHoursHelp": "How many hours you worked that day, such as 7,5.",
   "hoursFieldNotesHelp": "Anything you want to remember about these hours.",
+  "hoursFieldByPartner": "Worked by my fiscal partner",
+  "hoursFieldByPartnerHelp": "Tick for hours your fiscal partner worked in your business. They do not count for your urencriterium; from {hours} partner hours a year they give the meewerkaftrek. The Belastingdienst asks you to make these hours plausible and keep them in your administration, so log them per day like your own.",
+  "@hoursFieldByPartnerHelp": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "hoursFieldWorkTypeHelp": "The kind of work. WBSO hours count towards the {hours} hours needed for the S&O-aftrek.",
   "@hoursFieldWorkTypeHelp": {
     "placeholders": {
@@ -1250,8 +1260,8 @@
   "mileageFieldVehicle": "Vehicle",
   "mileageFieldVehicleHelp": "A private vehicle earns the per-km deduction. Trips in a business car do not; they count for its trip log instead.",
   "mileagePrivateVehicle": "Private vehicle",
-  "inputPartnerHours": "Partner's hours in the business",
-  "inputPartnerHoursHelp": "Hours your fiscal partner worked in your business this year without pay, or for less than {pay}. From {hours} hours you get the meewerkaftrek.",
+  "inputPartnerHours": "Partner's hours not in the hour log",
+  "inputPartnerHoursHelp": "Hours your fiscal partner worked in your business this year that are not logged per day under Hours. Florin adds them to the logged partner hours. From {hours} hours, while the partner works unpaid or for less than {pay}, you get the meewerkaftrek. The Belastingdienst asks you to make the hours plausible, so a day log is the better proof.",
   "@inputPartnerHoursHelp": {
     "placeholders": {
       "pay": {
@@ -1259,6 +1269,15 @@
       },
       "hours": {
         "type": "int"
+      }
+    }
+  },
+  "inputPartnerPay": "Pay to your partner",
+  "inputPartnerPayHelp": "What your business paid your fiscal partner for the work this year. Below {pay} it is not deductible and your partner still counts as unpaid for the meewerkaftrek (Wet IB 2001 art. 3.16 lid 4, art. 3.78); from {pay} Florin deducts it as a cost and gives no meewerkaftrek. Do not also record it as an expense.",
+  "@inputPartnerPayHelp": {
+    "placeholders": {
+      "pay": {
+        "type": "String"
       }
     }
   },

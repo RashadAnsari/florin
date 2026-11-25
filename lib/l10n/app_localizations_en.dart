@@ -542,6 +542,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hoursNone => 'No hours registered';
 
   @override
+  String get hoursBadgePartner => 'Partner';
+
+  @override
   String hoursBillable(String hours) {
     return 'Billable: $hours hrs';
   }
@@ -1668,6 +1671,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Anything you want to remember about these hours.';
 
   @override
+  String get hoursFieldByPartner => 'Worked by my fiscal partner';
+
+  @override
+  String hoursFieldByPartnerHelp(int hours) {
+    return 'Tick for hours your fiscal partner worked in your business. They do not count for your urencriterium; from $hours partner hours a year they give the meewerkaftrek. The Belastingdienst asks you to make these hours plausible and keep them in your administration, so log them per day like your own.';
+  }
+
+  @override
   String hoursFieldWorkTypeHelp(int hours) {
     return 'The kind of work. WBSO hours count towards the $hours hours needed for the S&O-aftrek.';
   }
@@ -2104,11 +2115,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mileagePrivateVehicle => 'Private vehicle';
 
   @override
-  String get inputPartnerHours => 'Partner\'s hours in the business';
+  String get inputPartnerHours => 'Partner\'s hours not in the hour log';
 
   @override
   String inputPartnerHoursHelp(String pay, int hours) {
-    return 'Hours your fiscal partner worked in your business this year without pay, or for less than $pay. From $hours hours you get the meewerkaftrek.';
+    return 'Hours your fiscal partner worked in your business this year that are not logged per day under Hours. Florin adds them to the logged partner hours. From $hours hours, while the partner works unpaid or for less than $pay, you get the meewerkaftrek. The Belastingdienst asks you to make the hours plausible, so a day log is the better proof.';
+  }
+
+  @override
+  String get inputPartnerPay => 'Pay to your partner';
+
+  @override
+  String inputPartnerPayHelp(String pay) {
+    return 'What your business paid your fiscal partner for the work this year. Below $pay it is not deductible and your partner still counts as unpaid for the meewerkaftrek (Wet IB 2001 art. 3.16 lid 4, art. 3.78); from $pay Florin deducts it as a cost and gives no meewerkaftrek. Do not also record it as an expense.';
   }
 
   @override

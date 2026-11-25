@@ -1082,6 +1082,12 @@ abstract class AppLocalizations {
   /// **'No hours registered'**
   String get hoursNone;
 
+  /// No description provided for @hoursBadgePartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner'**
+  String get hoursBadgePartner;
+
   /// No description provided for @hoursBillable.
   ///
   /// In en, this message translates to:
@@ -2966,6 +2972,18 @@ abstract class AppLocalizations {
   /// **'Anything you want to remember about these hours.'**
   String get hoursFieldNotesHelp;
 
+  /// No description provided for @hoursFieldByPartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Worked by my fiscal partner'**
+  String get hoursFieldByPartner;
+
+  /// No description provided for @hoursFieldByPartnerHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Tick for hours your fiscal partner worked in your business. They do not count for your urencriterium; from {hours} partner hours a year they give the meewerkaftrek. The Belastingdienst asks you to make these hours plausible and keep them in your administration, so log them per day like your own.'**
+  String hoursFieldByPartnerHelp(int hours);
+
   /// No description provided for @hoursFieldWorkTypeHelp.
   ///
   /// In en, this message translates to:
@@ -3617,14 +3635,26 @@ abstract class AppLocalizations {
   /// No description provided for @inputPartnerHours.
   ///
   /// In en, this message translates to:
-  /// **'Partner\'s hours in the business'**
+  /// **'Partner\'s hours not in the hour log'**
   String get inputPartnerHours;
 
   /// No description provided for @inputPartnerHoursHelp.
   ///
   /// In en, this message translates to:
-  /// **'Hours your fiscal partner worked in your business this year without pay, or for less than {pay}. From {hours} hours you get the meewerkaftrek.'**
+  /// **'Hours your fiscal partner worked in your business this year that are not logged per day under Hours. Florin adds them to the logged partner hours. From {hours} hours, while the partner works unpaid or for less than {pay}, you get the meewerkaftrek. The Belastingdienst asks you to make the hours plausible, so a day log is the better proof.'**
   String inputPartnerHoursHelp(String pay, int hours);
+
+  /// No description provided for @inputPartnerPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay to your partner'**
+  String get inputPartnerPay;
+
+  /// No description provided for @inputPartnerPayHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'What your business paid your fiscal partner for the work this year. Below {pay} it is not deductible and your partner still counts as unpaid for the meewerkaftrek (Wet IB 2001 art. 3.16 lid 4, art. 3.78); from {pay} Florin deducts it as a cost and gives no meewerkaftrek. Do not also record it as an expense.'**
+  String inputPartnerPayHelp(String pay);
 
   /// No description provided for @inputUnrealisedZelfs.
   ///

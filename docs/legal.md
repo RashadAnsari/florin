@@ -830,6 +830,32 @@ tax on the loon alone after its own heffingskortingen
 (`TaxService.wageOnlyTax`). That split is Florin's arithmetic, not a rule of
 law.
 
+## Meewerkende partner
+
+> 1 De meewerkaftrek geldt voor de ondernemer die aan het urencriterium voldoet en van wie de partner zonder enige vergoeding arbeid verricht in een onderneming waaruit de belastingplichtige als ondernemer winst geniet.
+
+[Wet inkomstenbelasting 2001, artikel 3.78 lid 1](https://wetten.overheid.nl/BWBR0011353/2026-01-01), read 2026-11-25 from the official XML
+
+> 4 Bij het bepalen van de winst komen mede niet in aftrek kosten en lasten die verband houden met vergoeding van arbeid door de partner van de belastingplichtige, indien de vergoeding lager is dan € 5000.
+
+[Wet inkomstenbelasting 2001, artikel 3.16 lid 4](https://wetten.overheid.nl/BWBR0011353/2026-01-01), read 2026-11-25
+
+> Uw fiscale partner werkt 525 uren of meer zonder vergoeding in uw onderneming, of de vergoeding die u hiervoor betaalt is minder dan € 5.000. U moet het aantal meegewerkte uren aannemelijk kunnen maken
+
+[Belastingdienst, Fiscale informatie 2026, 8.7](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2026/ondernemersaftrek_en_investeringsaftrek), read 2026-11-25
+
+The statute says "zonder enige vergoeding"; the Belastingdienst also counts
+pay below € 5.000 as unpaid, the amount below which artikel 3.16 lid 4 makes
+the pay not deductible. Florin follows the Belastingdienst.
+
+Where Florin implements it: an hour entry can be marked as worked by the
+fiscal partner (`HourEntries.byPartner`). Such hours never count for the
+user's urencriterium or S&O hours (`ownHours`). The meewerkaftrek uses the
+logged partner hours plus the yearly total of partner hours not in the log
+(`TaxYearInputs.partnerHours`). The pay to the partner
+(`TaxYearInputs.partnerPay`) is not deducted below `meewerkMaxPartnerPay`;
+from it, Florin deducts it as a cost and gives no meewerkaftrek.
+
 ## Urencriterium with a job
 
 > 1 In deze afdeling en de daarop berustende bepalingen wordt verstaan onder urencriterium: het gedurende het kalenderjaar besteden van ten minste 1225 uren aan werkzaamheden voor een of meer ondernemingen waaruit de belastingplichtige als ondernemer winst geniet, indien: a. de tijd die in totaal wordt besteed aan die ondernemingen en het verrichten van werkzaamheden in de zin van de afdelingen 3.3 en 3.4, grotendeels wordt besteed aan die ondernemingen of b. de ondernemer in een of meer van de vijf voorafgaande kalenderjaren geen ondernemer was.

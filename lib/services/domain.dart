@@ -286,3 +286,12 @@ extension MileageTripDomain on MileageTrip {
 extension HourEntryDomain on HourEntry {
   bool get billable => workType == WorkType.billable;
 }
+
+/// The user's own hours in [entries], for the urencriterium: the fiscal
+/// partner's hours are not the user's.
+double ownHours(Iterable<HourEntry> entries) =>
+    entries.where((e) => !e.byPartner).fold(0.0, (s, e) => s + e.hours);
+
+/// The fiscal partner's logged hours in [entries], for the meewerkaftrek.
+double partnerLoggedHours(Iterable<HourEntry> entries) =>
+    entries.where((e) => e.byPartner).fold(0.0, (s, e) => s + e.hours);

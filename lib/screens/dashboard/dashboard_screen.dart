@@ -136,7 +136,7 @@ class DashboardScreen extends ConsumerWidget {
             ),
             const SizedBox(height: AppSpacing.heading),
             UrencriteriumProgress(
-              totalHours: hours.fold(0.0, (s, h) => s + h.hours),
+              totalHours: ownHours(hours),
               target: rules.urencriterium,
               jobHours: estimate?.timeTestHours,
               yearOver: year < DateTime.now().year,
