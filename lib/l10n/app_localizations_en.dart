@@ -2484,6 +2484,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'This VAT treatment does not fit the client\'s country. Domestic reverse charge is for Dutch clients, the EU treatments for other EU countries and the treatments outside the EU for countries outside it.';
 
   @override
+  String get invoiceValidateTreatmentConsumer =>
+      'This client is a private person. Choose Dutch BTW, the KOR or export of goods: BTW is not shifted to a private person, and a service to one is taxed in the Netherlands.';
+
+  @override
+  String invoiceEuConsumerNotice(String threshold, String total) {
+    return 'Telecommunication, broadcasting and electronic services and distance sales of goods to private persons in other EU countries are taxed in their country once together they pass $threshold excl. BTW in this year or the last (Wet OB 1968 art. 6h, 6k). Your supplies with Dutch BTW to private persons in other EU countries this year, this invoice included: $total. Florin cannot tell which are electronic services, so it counts all of them, and it does not prepare the OSS return.';
+  }
+
+  @override
+  String invoiceEuConsumerOverNotice(String threshold) {
+    return 'Your supplies with Dutch BTW to private persons in other EU countries pass $threshold in this year or the last. If they include telecommunication, broadcasting or electronic services or distance sales of goods, those are taxed in the private person\'s country, not with Dutch BTW (Wet OB 1968 art. 6h, 6k), usually through the OSS. Florin does not model this and keeps charging Dutch BTW.';
+  }
+
+  @override
   String get invoiceSelfBilled => 'Issued by the customer (self-billing)';
 
   @override
@@ -2523,7 +2537,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tick this for a platform that sells your product to end customers in its own name and pays you, such as a merchant of record or an app store. It is the seller towards the end customers, so you invoice only the platform. The Wet DBA section is about working relationships and is hidden for a reseller.';
 
   @override
+  String get clientsConsumer => 'Private person, not a business';
+
+  @override
+  String get clientsConsumerHelp =>
+      'Tick this for a customer who buys as a private person. BTW is never shifted to a private person and there is no ICP-opgaaf for one, so Florin offers only Dutch BTW, the KOR or export of goods. A service to a private person is taxed where you are established (Wet OB 1968 art. 6 lid 2), except telecommunication, broadcasting and electronic services, which are taxed where the private person lives (art. 6h) once such supplies to other EU countries pass a yearly threshold (art. 6k). For a private person in the Netherlands you need not issue an invoice (art. 34c).';
+
+  @override
   String get clientsBadgeMerchantOfRecord => 'Merchant of record';
+
+  @override
+  String get clientsBadgeConsumer => 'Private person';
 
   @override
   String get vatRowOutsideReturn =>

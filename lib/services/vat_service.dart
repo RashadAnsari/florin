@@ -228,6 +228,24 @@ abstract final class VatService {
     );
   }
 
+  /// Supplies with Dutch BTW to consumers in other member states in [year],
+  /// excl. BTW, by invoice date. Florin cannot tell which of them are
+  /// electronic services or distance sales, so this is the most they can be
+  /// for the threshold of Wet OB 1968 art. 6k: the cautious figure.
+  static int euConsumerSales(
+    List<Invoice> invoices,
+    Map<int, Client> clients,
+    int year,
+  ) => invoices
+      .where(
+        (i) =>
+            i.isIssued &&
+            i.invoiceDate.year == year &&
+            i.vatTreatment == VatTreatment.standard &&
+            (clients[i.clientId]?.isEuConsumerAbroad ?? false),
+      )
+      .fold(0, (s, i) => s + i.signedExclVat);
+
   /// The last day of the term after the quarter that the rules of [year]
   /// give: the last day of the month after it.
   static DateTime filingDeadline(int year, int quarter) => DateTime(

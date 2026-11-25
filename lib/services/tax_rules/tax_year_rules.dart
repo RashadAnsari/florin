@@ -109,6 +109,11 @@ class TaxYearRules {
   /// Most turnover in the Netherlands in a calendar year for the
   /// kleineondernemersregeling (Wet OB 1968 art. 25a lid 1).
   final int korThreshold;
+
+  /// Telecommunication, broadcasting and electronic services and distance
+  /// sales to consumers in other member states, excl. BTW, above which they
+  /// are taxed in the consumer's country (Wet OB 1968 art. 6k lid 1 c).
+  final int euConsumerSalesThreshold;
   final double gemengdeKostenPct;
   final double jaarruimtePct;
   final int aowFranchise;
@@ -257,6 +262,7 @@ class TaxYearRules {
     required this.btwPrivateCarReducedRate,
     required this.mileageCentsPerKm,
     required this.korThreshold,
+    required this.euConsumerSalesThreshold,
     required this.gemengdeKostenPct,
     required this.jaarruimtePct,
     required this.aowFranchise,

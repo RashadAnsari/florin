@@ -83,6 +83,7 @@ the statute version of 1 January of the new year, its transitional articles
 | `btwPrivateCarReducedAfterYears` | Years after the year in use before the reduced rate | Same | That page |
 | `btwPrivateCarPurchaseYears` | Years the purchase BTW counts over in the cap | Same | That page |
 | `korThreshold` | Most turnover in the Netherlands for the KOR | Wet OB 1968 art. 25a lid 1 | Statute; Belastingdienst, KOR |
+| `euConsumerSalesThreshold` | Electronic services and distance sales to consumers in other member states above which they are taxed there | Wet OB 1968 art. 6k lid 1 c | Statute |
 | `icpQuarterlyGoodsMax` | Goods a quarter above which the ICP-opgaaf is monthly | Wet OB 1968 art. 37a lid 3, ministeriële regeling | Belastingdienst, Tijdvak opgaaf ICP |
 | `icpGoodsLookbackQuarters` | Previous quarters that must also stay at or below `icpQuarterlyGoodsMax` for a quarterly opgaaf | Wet OB 1968 art. 37a lid 3 | Statute; Belastingdienst, Tijdvak opgaaf ICP |
 | `icpDueMonths` | Months after its period in which the ICP-opgaaf is due | Wet OB 1968 art. 37a lid 1 | Statute |

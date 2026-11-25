@@ -48,7 +48,7 @@ Florin houdt je facturen, uitgaven, btw-aangiftes, uren, kilometers, bedrijfsmid
 | **Bedrijfsmiddelen** | Lineaire afschrijving per dag tot de restwaarde, zakelijk gebruikspercentage, KIA, EIA, MIA en de herinvesteringsreserve. De btw op de aankoop en op een verkoop komt in je btw-aangifte, en btw die je niet terugvraagt, zoals onder de KOR, telt mee als kosten. |
 | **Auto van de zaak** | De bijtelling voor privégebruik met de korting voor emissievrije auto's en de 500 km-regel, en de btw over privégebruik in de laatste aangifte van het jaar. |
 | **Pensioen** | Je jaarruimte op basis van de winst en het loon van vorig jaar, AOW-franchise en factor A, plus reserveringsruimte, en premies voor een arbeidsongeschiktheidsverzekering (AOV). |
-| **Klanten** | Contactgegevens, btw- en KvK-nummer en het Wet DBA-risico per klant. |
+| **Klanten** | Contactgegevens, btw- en KvK-nummer en het Wet DBA-risico per klant. Markeer een particulier als particulier: Florin biedt dan alleen de btw-behandelingen die passen, en waarschuwt als prestaties met Nederlandse btw aan particulieren in andere EU-landen de drempel van € 10.000 passeren waarboven elektronische diensten in hun land belast zijn. |
 
 Florin dekt het belastingjaar **2026**. Alleen gedekte jaren zijn te kiezen en te boeken; een nieuw jaar komt in een update zodra de bedragen zijn gepubliceerd en gecontroleerd.
 

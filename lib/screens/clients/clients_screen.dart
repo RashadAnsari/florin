@@ -126,6 +126,11 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
                     label: l.clientsBadgeMerchantOfRecord,
                     color: Theme.of(context).colorScheme.primary,
                   )
+                : c.isConsumer
+                ? ToneBadge(
+                    label: l.clientsBadgeConsumer,
+                    color: Theme.of(context).colorScheme.outline,
+                  )
                 : ToneBadge(
                     label: l.clientsDbaBadge(c.wetDbaRisk.label(l)),
                     color: _riskColor(context, c.wetDbaRisk),
@@ -167,7 +172,12 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
   late bool _contractSigned = widget.client?.contractSigned ?? false;
   late bool _isActive = widget.client?.isActive ?? true;
   late bool _isMerchantOfRecord = widget.client?.isMerchantOfRecord ?? false;
+  late bool _isConsumer = widget.client?.isConsumer ?? false;
   bool _hasInvoices = false;
+
+  /// A reseller is a business, so the option is off for a consumer: a
+  /// hidden option may not stay set.
+  bool get _merchant => !_isConsumer && _isMerchantOfRecord;
 
   @override
   void initState() {
@@ -235,12 +245,12 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
               email: Value(optionalText(_email.text)),
               phone: Value(optionalText(_phone.text)),
               // A reseller has no working relationship to assess.
-              wetDbaRisk: Value(_isMerchantOfRecord ? WetDbaRisk.low : _risk),
-              contractSigned: Value(!_isMerchantOfRecord && _contractSigned),
-              contractExpiry: Value(
-                _isMerchantOfRecord ? null : _contractExpiry,
-              ),
-              isMerchantOfRecord: Value(_isMerchantOfRecord),
+              wetDbaRisk: Value(_merchant ? WetDbaRisk.low : _risk),
+              contractSigned: Value(!_merchant && _contractSigned),
+              contractExpiry: Value(_merchant ? null : _contractExpiry),
+              // A reseller is a business, so a consumer is never one.
+              isMerchantOfRecord: Value(_merchant),
+              isConsumer: Value(_isConsumer),
               notes: Value(optionalText(_notes.text)),
               isActive: Value(_isActive),
             ),
@@ -298,7 +308,7 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (!_isMerchantOfRecord && _risk == WetDbaRisk.high) ...[
+            if (!_merchant && _risk == WetDbaRisk.high) ...[
               NoticeBanner(l.clientsHighRiskWarning, tone: NoticeTone.error),
               const SizedBox(height: AppSpacing.group),
             ],
@@ -414,12 +424,19 @@ class _ClientDetailPageState extends ConsumerState<ClientDetailPage> {
             ),
             const SizedBox(height: AppSpacing.field),
             HelpCheckbox(
-              value: _isMerchantOfRecord,
-              onChanged: (v) => setState(() => _isMerchantOfRecord = v),
-              title: l.clientsMerchantOfRecord,
-              help: l.clientsMerchantOfRecordHelp,
+              value: _isConsumer,
+              onChanged: (v) => setState(() => _isConsumer = v),
+              title: l.clientsConsumer,
+              help: l.clientsConsumerHelp,
             ),
-            if (!_isMerchantOfRecord) ...[
+            if (!_isConsumer)
+              HelpCheckbox(
+                value: _isMerchantOfRecord,
+                onChanged: (v) => setState(() => _isMerchantOfRecord = v),
+                title: l.clientsMerchantOfRecord,
+                help: l.clientsMerchantOfRecordHelp,
+              ),
+            if (!_merchant) ...[
               const SizedBox(height: AppSpacing.section),
               SectionLabel(l.clientsWetDba, help: l.clientsWetDbaHelp),
               const SizedBox(height: AppSpacing.heading),
