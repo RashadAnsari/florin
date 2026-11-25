@@ -1355,7 +1355,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String settingsExportDescription(int year) {
-    return 'Export all $year data to CSV files, with the VAT return of each quarter by rubriek in whole euros, the ICP list of each quarter and the estimated income tax of the year. Florin puts them in a new folder named after the export date, inside the folder you choose.';
+    return 'Export all $year data to CSV files, with the VAT return of each period by rubriek in whole euros, the ICP list of each quarter (and of each month when goods make it monthly), the estimated income tax and balance sheet of the year, and the receipts. Florin puts them in a new folder named after the export date, inside the folder you choose.';
   }
 
   @override

@@ -35,6 +35,9 @@ Florin houdt je facturen, uitgaven, btw-aangiftes, uren, kilometers, bedrijfsmid
 
 ## Functies
 
+De [handleiding](docs/guide.nl.md) loopt langs elke taak, van de eerste factuur tot de jaarafsluiting.
+
+
 | | |
 |---|---|
 | **Facturen** | Nederlandse pdf-facturen met automatische nummering. Nederlandse btw, btw verlegd naar Nederlandse en EU-ondernemers, intracommunautaire leveringen van goederen, uitvoer buiten de EU en diensten aan ondernemers buiten de EU, met de btw-behandeling getoetst aan het land van de klant. Verkoop via een merchant of record, zoals een app store of wederverkoper: markeer die als zodanig en leg de facturen vast die hij aan jou uitreikt (self-billing). Verzonden facturen liggen vast; correcties gaan met een creditnota. Status van concept tot betaald, inclusief verlopen facturen, met het totaal dat openstaat en verlopen is. Een verlopen factuur zegt wat de wet je geeft: rente en minstens € 40 incassokosten bij een bedrijf, eerst een aanmaning bij een particulier, en de laatste dag waarop de vordering naar de rechter kan. |

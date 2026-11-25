@@ -94,6 +94,7 @@ tool/                    create_demo_database.dart, run by `make demo`
 docs/
   images/                README images: the logo
   screenshots/           README screenshots of the dashboard, one per language
+  guide.md, guide.nl.md  The user guide: every task, in both languages
   legal.md               Non-yearly rules with sources
   tax-years/README.md    Every field of TaxYearRules: meaning, law, where
                          to find the value for a new year
@@ -408,6 +409,7 @@ side.
 | When you change | Also update |
 | --- | --- |
 | Anything in `README.md` | `README.nl.md` with the same content, and the reverse |
+| A feature, a screen or a label the user follows | `docs/guide.md` and `docs/guide.nl.md`, the same content in both |
 | A feature, supported platform, OS minimum or install step | Both READMEs and the release notes body in `.github/workflows/build.yml` |
 | A legal rule or legal copy | `docs/legal.md`, and run the `legal-review` skill |
 | A tax year | Only through the `new-tax-year` skill: rules file, `taxYears`, `docs/tax-years/<year>.md` with its table of every field, tests, both READMEs |
