@@ -618,6 +618,7 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     bool receipt = true,
     List<(String, Uint8List)> files = const [],
     bool? paper,
+    String? recipient,
   }) async {
     final vat = taxYear2026.vatOn(rate, amount);
     // Under the KOR no BTW is reclaimed.
@@ -629,6 +630,7 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
             supplier: Value(supplier),
             description: Value(description),
             category: Value(category),
+            giftRecipient: Value(recipient),
             // A digital receipt has no paper original, unless it is a photo
             // of one.
             paperOriginalKept: Value(paper ?? (receipt && files.isEmpty)),
@@ -827,6 +829,23 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     rate: VatRate.zero,
     receipt: false,
   );
+
+  // Gifts: one recipient stays within the threshold of the Besluit
+  // uitsluiting aftrek omzetbelasting 1968 art. 4, the other passes it.
+  for (final (day, recipient, amount) in [
+    (8, 'Voorbeeld Media BV, M. de Vries', 4500),
+    (9, 'Bureau Fictief, A. Jansen', 15000),
+    (10, 'Bureau Fictief, A. Jansen', 12000),
+  ]) {
+    await expense(
+      DateTime(_year, 12, day),
+      'Wijnhandel Voorbeeld',
+      'Kerstpakket',
+      ExpenseCategory.gifts,
+      amount,
+      recipient: recipient,
+    );
+  }
 
   // Costs the income tax limits or bars (Wet IB 2001 art. 3.14, 3.16).
   await expense(

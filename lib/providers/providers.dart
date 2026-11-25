@@ -14,6 +14,7 @@ import '../db/daos/pension_dao.dart';
 import '../db/daos/tax_year_inputs_dao.dart';
 import '../db/daos/vat_return_dao.dart';
 import '../db/database.dart';
+import '../services/gift_service.dart';
 import '../services/asset_service.dart';
 import '../services/car_service.dart';
 import '../services/pension_service.dart';
@@ -181,14 +182,21 @@ final korStatusProvider = Provider<AsyncValue<KorStatus>>((ref) {
       );
 });
 
-/// The expenses of [year] as they count, with the KOR applied.
+/// The expenses of [year] as they count, with the KOR and the rule on gifts
+/// applied.
 final effectiveExpensesProvider =
     Provider.family<AsyncValue<List<Expense>>, int>((ref, year) {
       final expenses = ref.watch(expensesProvider(year));
       final kor = ref.watch(korStatusProvider);
       return waitForAll<List<Expense>>([expenses, kor]) ??
           AsyncData(
-            KorService.applyToExpenses(expenses.requireValue, kor.requireValue),
+            GiftService.applyDeductionRule(
+              KorService.applyToExpenses(
+                expenses.requireValue,
+                kor.requireValue,
+              ),
+              taxRulesFor,
+            ),
           );
     });
 

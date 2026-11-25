@@ -501,6 +501,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expenseCatMarketing => 'Marketing & advertising';
 
   @override
+  String get expenseCatGifts => 'Business gifts';
+
+  @override
   String get expenseCatProfessional => 'Professional services';
 
   @override
@@ -1332,6 +1335,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'The law keeps this cost out of your profit, whatever the amount: fines (Wet IB 2001 art. 3.14), and clothing other than werkkleding, personal care, a phone line in your home and literature other than professional literature (art. 3.16). Florin records it but deducts nothing. Clothing counts as werkkleding when it is only fit to wear for your work or shows that it is meant only for it; record werkkleding under Other.';
 
   @override
+  String expensesGiftNotice(String total, String threshold) {
+    return 'Gifts to this recipient this year, this one included: $total excl. BTW. While the total stays at or below $threshold, the BTW on them stays deductible (Besluit uitsluiting aftrek omzetbelasting 1968 art. 4).';
+  }
+
+  @override
+  String expensesGiftOverNotice(String total, String threshold) {
+    return 'Gifts to this recipient this year, this one included: $total excl. BTW, more than $threshold. The BTW on them is then not deductible for a recipient who cannot deduct BTW (Besluit uitsluiting aftrek omzetbelasting 1968 art. 1 and 4). Florin cannot tell whether the recipient can, so it reclaims no BTW on these gifts and counts it as a cost.';
+  }
+
+  @override
   String plTaxFoodLimited(String category, String amount) {
     return '$category ($amount)';
   }
@@ -1597,6 +1610,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get expensesFieldCategoryHelp =>
       'What kind of cost this is. Food, drinks, representation, congresses, seminars, excursions and study trips are only partly deductible (Wet IB 2001 art. 3.15), travel for courses and congresses only up to a yearly amount, and fines, ordinary clothing, personal care, a phone line at home and general literature not at all (art. 3.14 and 3.16), so each has its own category.';
+
+  @override
+  String get expensesFieldGiftRecipient => 'Recipient';
+
+  @override
+  String get expensesFieldGiftRecipientHelp =>
+      'Who received the gift. Florin adds up the gifts to each recipient in a year, because the BTW on them stays deductible only while that total stays within the threshold. Type the name the same way each time.';
+
+  @override
+  String get expensesValidateGiftRecipient =>
+      'Enter who received the gift, so Florin can add up the gifts per recipient.';
 
   @override
   String get expensesFieldDescriptionHelp =>

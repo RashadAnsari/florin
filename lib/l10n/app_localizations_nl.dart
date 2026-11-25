@@ -503,6 +503,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get expenseCatMarketing => 'Marketing & reclame';
 
   @override
+  String get expenseCatGifts => 'Relatiegeschenken';
+
+  @override
   String get expenseCatProfessional => 'Professionele diensten';
 
   @override
@@ -1334,6 +1337,16 @@ class AppLocalizationsNl extends AppLocalizations {
       'De wet houdt deze kosten buiten je winst, hoe hoog ze ook zijn: boetes (Wet IB 2001 art. 3.14), en kleding die geen werkkleding is, persoonlijke verzorging, een telefoonaansluiting in je woning en literatuur die geen vakliteratuur is (art. 3.16). Florin legt ze vast maar trekt niets af. Kleding is werkkleding als ze alleen geschikt is om voor je werk te dragen of laat zien dat ze alleen daarvoor bedoeld is; boek werkkleding onder Overig.';
 
   @override
+  String expensesGiftNotice(String total, String threshold) {
+    return 'Geschenken aan deze ontvanger dit jaar, deze meegeteld: $total excl. btw. Zolang het totaal niet boven $threshold komt, blijft de btw erop aftrekbaar (Besluit uitsluiting aftrek omzetbelasting 1968 art. 4).';
+  }
+
+  @override
+  String expensesGiftOverNotice(String total, String threshold) {
+    return 'Geschenken aan deze ontvanger dit jaar, deze meegeteld: $total excl. btw, meer dan $threshold. De btw erop is dan niet aftrekbaar bij een ontvanger die zelf geen btw kan aftrekken (Besluit uitsluiting aftrek omzetbelasting 1968 art. 1 en 4). Florin kan niet zien of de ontvanger dat kan, dus vraagt het op deze geschenken geen btw terug en telt die als kosten.';
+  }
+
+  @override
   String plTaxFoodLimited(String category, String amount) {
     return '$category ($amount)';
   }
@@ -1600,6 +1613,17 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get expensesFieldCategoryHelp =>
       'Wat voor kosten dit zijn. Voedsel, drank, representatie, congressen, seminars, excursies en studiereizen zijn maar gedeeltelijk aftrekbaar (Wet IB 2001 art. 3.15), reizen voor cursussen en congressen alleen tot een bedrag per jaar, en boetes, gewone kleding, persoonlijke verzorging, een telefoonaansluiting thuis en algemene literatuur helemaal niet (art. 3.14 en 3.16), dus ze hebben elk een eigen categorie.';
+
+  @override
+  String get expensesFieldGiftRecipient => 'Ontvanger';
+
+  @override
+  String get expensesFieldGiftRecipientHelp =>
+      'Wie het geschenk kreeg. Florin telt de geschenken per ontvanger per jaar op, omdat de btw erop alleen aftrekbaar blijft zolang dat totaal binnen de drempel blijft. Typ de naam elke keer hetzelfde.';
+
+  @override
+  String get expensesValidateGiftRecipient =>
+      'Vul in wie het geschenk kreeg, zodat Florin de geschenken per ontvanger kan optellen.';
 
   @override
   String get expensesFieldDescriptionHelp =>

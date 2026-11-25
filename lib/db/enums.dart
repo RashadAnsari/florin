@@ -42,6 +42,10 @@ enum ExpenseCategory {
   software,
   hardware,
   marketing,
+
+  /// Relatiegeschenken and other gifts, recorded per recipient for the BTW
+  /// rule of the Besluit uitsluiting aftrek omzetbelasting 1968 art. 1 and 4.
+  gifts,
   professionalServices,
   phoneAndInternet,
   insurance,

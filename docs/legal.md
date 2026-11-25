@@ -474,17 +474,28 @@ BTW counts as a cost for income tax.
 
 ## BTW on gifts
 
-> 1 De in artikel 15, eerste lid, van de Wet op de omzetbelasting 1968 bedoelde aftrek wordt uitgesloten in de gevallen waarin en voor zover de goederen en diensten worden gebezigd voor: […] b. het geven van relatiegeschenken of het doen van andere giften aan degenen bij wie, indien aan hen ter zake omzetbelasting in rekening is of zou zijn gebracht, deze in het geheel niet of hoofdzakelijk niet voor aftrek in aanmerking komt of zou komen;
+> 1 De in artikel 15, eerste lid, van de Wet op de omzetbelasting 1968 bedoelde aftrek wordt uitgesloten in de gevallen waarin en voor zover de goederen en diensten worden gebezigd voor: a. het voeren van een zekere staat; b. het geven van relatiegeschenken of het doen van andere giften aan degenen bij wie, indien aan hen ter zake omzetbelasting in rekening is of zou zijn gebracht, deze in het geheel niet of hoofdzakelijk niet voor aftrek in aanmerking komt of zou komen;
 
-[Besluit uitsluiting aftrek omzetbelasting 1968, artikel 1](https://wetten.overheid.nl/BWBR0002636/2019-01-01), read 2026-11-24
+> 2 Onder relatiegeschenken of andere giften worden verstaan alle prestaties welke de ondernemer in verband met zakelijke verhoudingen of uit vrijgevigheid ten behoeve van anderen verricht zonder vergoeding of tegen een vergoeding welke lager is dan de aanschaffings- of voortbrengingskosten dan wel, in geval van diensten, de kostprijs van die prestaties de omzetbelasting niet daaronder begrepen.
+
+[Besluit uitsluiting aftrek omzetbelasting 1968, artikel 1](https://wetten.overheid.nl/BWBR0002636/2019-02-23), read 2026-11-25 from the official XML of the version in force since 23 February 2019
 
 > 1 Indien het totaal van de aanschaffings- of voortbrengingskosten dan wel de kostprijs, de omzetbelasting niet daaronder begrepen, van alle door de ondernemer in een boekjaar ten behoeve van eenzelfde belanghebbende verrichte prestaties als zijn bedoeld in artikel 1, eerste lid, letters b en c, en het op die belanghebbende betrekking hebbende deel van het in artikel 3, eerste lid, bedoelde verschil niet meer bedraagt dan € 227, blijven die prestaties en dat deel van bedoeld verschil voor de toepassing van dit besluit buiten aanmerking.
 
-[Besluit uitsluiting aftrek omzetbelasting 1968, artikel 4](https://wetten.overheid.nl/BWBR0002636/2019-01-01), read 2026-11-24
+[Besluit uitsluiting aftrek omzetbelasting 1968, artikel 4](https://wetten.overheid.nl/BWBR0002636/2019-02-23), read 2026-11-25
 
-Not modelled: Florin cannot tell who received a gift or what that person
-received in the year. The help of Reclaim VAT on the expense form states the
-rule, so the user leaves it unticked for such gifts.
+Where Florin implements it: the expense category Business gifts asks who
+received the gift (`Expenses.giftRecipient`). `GiftService` adds up the cost
+excl. BTW of the year's gifts per recipient, by the name as typed without
+case or surrounding spaces. Above `buaGiftThreshold` no BTW on that
+recipient's gifts is reclaimed, in the form and in every figure through
+`effectiveExpensesProvider`, and the BTW not reclaimed counts as a cost.
+
+Cautious choice: whether the recipient could deduct BTW, which keeps the
+deduction under artikel 1 lid 1 b, is not in the records, so Florin assumes
+they cannot. A gift without a recipient is treated as above the threshold.
+Not modelled: gifts recorded in another category, and the staff provisions
+of artikel 1 lid 1 c, since Florin has no staff.
 
 ## Depreciation
 

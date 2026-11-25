@@ -71,6 +71,7 @@ class CsvExportService {
     ExpenseCategory.software => 'Software en abonnementen',
     ExpenseCategory.hardware => 'Hardware en apparatuur',
     ExpenseCategory.marketing => 'Marketing en reclame',
+    ExpenseCategory.gifts => 'Relatiegeschenken en giften',
     ExpenseCategory.professionalServices => 'Professionele diensten',
     ExpenseCategory.phoneAndInternet => 'Telefoon en internet',
     ExpenseCategory.insurance => 'Verzekeringen',
@@ -609,6 +610,7 @@ class CsvExportService {
         'Auto van de zaak',
         'Betaald vanaf',
         'Betalingskenmerk',
+        'Ontvanger geschenk',
         'Opmerkingen',
       ],
       for (final e in expenses)
@@ -631,6 +633,7 @@ class CsvExportService {
           assetNames[e.carAssetId] ?? '',
           e.paidFrom ?? '',
           e.paymentReference ?? '',
+          e.giftRecipient ?? '',
           e.notes ?? '',
         ],
     ]);
