@@ -648,7 +648,38 @@ The addition is capped at the costs linked to the car
 plus its depreciation. As the addition is how private use counts, a car and
 the costs linked to it count in full: the asset and expense forms store a
 business share of 100% for them and hide the slider. The 500 km test uses the trips logged in that car,
-annualised, and only when the user keeps a complete trip log for it.
+annualised, and only when the user keeps a trip log for it that passes
+the check under Trip log.
+
+## Trip log
+
+> Als u op jaarbasis 500 kilometer of minder privé rijdt, dan geldt geen bijtelling voor privégebruik. U moet dit wel kunnen aantonen, bijvoorbeeld door een rittenregistratie bij te houden.
+
+> De rittenregistratie moet vermelden: het merk van de auto het type van de auto het kenteken van de auto de periode waarin u de mogelijkheid had om de auto te gebruiken Vermeld per rit: de datum de begin- en eindstand van de kilometerteller het vertrek- en aankomstadres
+
+> de route die u hebt gereden Dit doet u alleen als dit niet de meest gebruikelijke route was. of het een privérit of een zakelijke rit was
+
+> Voldoet uw rittenregistratie niet aan deze eisen of hebt u geen rittenregistratie bijgehouden? Dan verrekent u de bijtelling privégebruik auto met de autokosten van uw onderneming.
+
+[Belastingdienst, Fiscale informatie 2026, Winst uit onderneming, 6.4.1.2](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2026/winst_uit_onderneming), read 2026-11-25
+
+Where Florin implements it: `CarService.checkTripLog`. A trip in a business
+car stores the date, the odometer at start and end, both addresses, private
+or business, the make and type and the plate; the car's record holds the
+period it is in the business. Florin sorts a car's trips of the year by
+odometer and checks that each trip starts where the one before ended: a
+higher start means kilometres not in the log, a lower one an overlap. A trip
+marked as not the usual route must name the route in its notes. A year with
+no trips, a gap, an overlap or a missing route counts as no trip log
+(`CarService.hasCompleteTripLog`): the addition and the BTW on private use
+are then computed as without one, and the mileage list and the car's form
+say why.
+
+Not modelled: the eenvoudige rittenregistratie with business addresses from
+a project administration, the rules for driving instructors and the
+verklaring uitsluitend zakelijk gebruik bestelauto. Florin cannot check that
+the log covers the first and last kilometre of the period, only that it has
+no gaps between trips.
 
 ## BTW on private use of a business car
 

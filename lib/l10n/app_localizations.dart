@@ -3125,8 +3125,44 @@ abstract class AppLocalizations {
   /// No description provided for @mileageFieldRouteDeviationHelp.
   ///
   /// In en, this message translates to:
-  /// **'Tick when you took a longer or different route than the shortest one, and note why.'**
+  /// **'Tick when you did not take the usual route, and write the route you drove in the notes: a trip log names the route of such a trip.'**
   String get mileageFieldRouteDeviationHelp;
+
+  /// No description provided for @tripLogNoTrips.
+  ///
+  /// In en, this message translates to:
+  /// **'No trips are logged in {car} this year.'**
+  String tripLogNoTrips(String car);
+
+  /// No description provided for @tripLogIncomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'The trip log of {car} is not complete this year.'**
+  String tripLogIncomplete(String car);
+
+  /// No description provided for @tripLogGaps.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{One trip starts} other{{count} trips start}} at a higher odometer reading than the trip before ended: {km} km are not in the log.'**
+  String tripLogGaps(int count, int km);
+
+  /// No description provided for @tripLogOverlaps.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{One trip starts} other{{count} trips start}} below where the trip before ended.'**
+  String tripLogOverlaps(int count);
+
+  /// No description provided for @tripLogRoutesMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{One trip is} other{{count} trips are}} marked as not the usual route without the route in the notes.'**
+  String tripLogRoutesMissing(int count);
+
+  /// No description provided for @tripLogConsequence.
+  ///
+  /// In en, this message translates to:
+  /// **'A trip log that does not meet the requirements counts as none, so Florin applies the bijtelling and the BTW on private use without it until the log is complete.'**
+  String get tripLogConsequence;
 
   /// No description provided for @mileageFieldToHelp.
   ///
@@ -3347,7 +3383,7 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldTripLogHelp.
   ///
   /// In en, this message translates to:
-  /// **'With a complete trip log of all trips in this car, there is no bijtelling at {km} private km a year or less, and VAT on private use is based on the actual kilometres.'**
+  /// **'With a complete trip log of all trips in this car, there is no bijtelling at {km} private km a year or less, and VAT on private use is based on the actual kilometres. Complete means every kilometre is in a trip with its date, odometer readings, addresses, private or business, and the route when it was not the usual one; Florin checks this and counts an incomplete log as none.'**
   String assetsFieldTripLogHelp(int km);
 
   /// No description provided for @assetsInvestmentSection.
