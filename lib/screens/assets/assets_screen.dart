@@ -1,5 +1,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
+import '../mileage/mileage_screen.dart';
+import '../../services/car_service.dart';
 import '../../widgets/validators.dart';
 import '../../services/formats.dart';
 import '../../widgets/help.dart';
@@ -585,6 +587,8 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                 title: l.assetsFieldTripLog,
                 help: l.assetsFieldTripLogHelp(_rules.carPrivateKmLimit),
               ),
+              if (_keepsTripLog && widget.asset != null)
+                _TripLogNotice(car: widget.asset!),
             ],
             const SizedBox(height: AppSpacing.section),
             SectionLabel(
@@ -812,6 +816,32 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Whether the trip log of [car] holds up in the selected year.
+class _TripLogNotice extends ConsumerWidget {
+  final FixedAsset car;
+
+  const _TripLogNotice({required this.car});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context)!;
+    final year = ref.watch(fiscalYearProvider);
+    final trips = ref.watch(mileageTripsProvider(year)).valueOrNull;
+    if (trips == null || !AssetService.inUse(car, year)) {
+      return const SizedBox.shrink();
+    }
+    final check = CarService.checkTripLog(car, trips, year);
+    if (check.complete) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.field),
+      child: NoticeBanner(
+        tripLogIssues(l, car.assetName, check),
+        tone: NoticeTone.warning,
       ),
     );
   }

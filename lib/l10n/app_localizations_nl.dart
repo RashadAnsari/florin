@@ -1775,7 +1775,54 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get mileageFieldRouteDeviationHelp =>
-      'Vink aan als je een langere of andere route dan de kortste reed, en noteer waarom.';
+      'Vink aan als je niet de gebruikelijke route hebt gereden, en schrijf de gereden route in de opmerkingen: een rittenregistratie noemt de route van zo\'n rit.';
+
+  @override
+  String tripLogNoTrips(String car) {
+    return 'Er zijn dit jaar geen ritten met $car vastgelegd.';
+  }
+
+  @override
+  String tripLogIncomplete(String car) {
+    return 'De rittenregistratie van $car is dit jaar niet volledig.';
+  }
+
+  @override
+  String tripLogGaps(int count, int km) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ritten beginnen',
+      one: 'Eén rit begint',
+    );
+    return '$_temp0 bij een hogere kilometerstand dan waar de rit ervoor eindigde: $km km staan niet in de registratie.';
+  }
+
+  @override
+  String tripLogOverlaps(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ritten beginnen',
+      one: 'Eén rit begint',
+    );
+    return '$_temp0 onder de stand waar de rit ervoor eindigde.';
+  }
+
+  @override
+  String tripLogRoutesMissing(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ritten zijn',
+      one: 'Eén rit is',
+    );
+    return '$_temp0 gemarkeerd als niet de gebruikelijke route, zonder de route in de opmerkingen.';
+  }
+
+  @override
+  String get tripLogConsequence =>
+      'Een rittenregistratie die niet aan de eisen voldoet telt als geen, dus Florin rekent de bijtelling en de btw op privégebruik zonder registratie tot die volledig is.';
 
   @override
   String get mileageFieldToHelp => 'Waar de rit eindigde.';
@@ -1914,7 +1961,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String assetsFieldTripLogHelp(int km) {
-    return 'Met een sluitende rittenregistratie van alle ritten in deze auto is er geen bijtelling bij $km privékilometers per jaar of minder, en gaat de btw over privégebruik uit van de werkelijke kilometers.';
+    return 'Met een volledige rittenregistratie van alle ritten in deze auto is er geen bijtelling bij $km privékilometers per jaar of minder, en gaat de btw op privégebruik uit van de werkelijke kilometers. Volledig betekent dat elke kilometer in een rit staat met datum, kilometerstanden, adressen, privé of zakelijk, en de route als het niet de gebruikelijke was; Florin controleert dit en telt een onvolledige registratie als geen.';
   }
 
   @override

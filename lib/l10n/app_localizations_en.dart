@@ -1773,7 +1773,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mileageFieldRouteDeviationHelp =>
-      'Tick when you took a longer or different route than the shortest one, and note why.';
+      'Tick when you did not take the usual route, and write the route you drove in the notes: a trip log names the route of such a trip.';
+
+  @override
+  String tripLogNoTrips(String car) {
+    return 'No trips are logged in $car this year.';
+  }
+
+  @override
+  String tripLogIncomplete(String car) {
+    return 'The trip log of $car is not complete this year.';
+  }
+
+  @override
+  String tripLogGaps(int count, int km) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count trips start',
+      one: 'One trip starts',
+    );
+    return '$_temp0 at a higher odometer reading than the trip before ended: $km km are not in the log.';
+  }
+
+  @override
+  String tripLogOverlaps(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count trips start',
+      one: 'One trip starts',
+    );
+    return '$_temp0 below where the trip before ended.';
+  }
+
+  @override
+  String tripLogRoutesMissing(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count trips are',
+      one: 'One trip is',
+    );
+    return '$_temp0 marked as not the usual route without the route in the notes.';
+  }
+
+  @override
+  String get tripLogConsequence =>
+      'A trip log that does not meet the requirements counts as none, so Florin applies the bijtelling and the BTW on private use without it until the log is complete.';
 
   @override
   String get mileageFieldToHelp => 'Where the trip ended.';
@@ -1910,7 +1957,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String assetsFieldTripLogHelp(int km) {
-    return 'With a complete trip log of all trips in this car, there is no bijtelling at $km private km a year or less, and VAT on private use is based on the actual kilometres.';
+    return 'With a complete trip log of all trips in this car, there is no bijtelling at $km private km a year or less, and VAT on private use is based on the actual kilometres. Complete means every kilometre is in a trip with its date, odometer readings, addresses, private or business, and the route when it was not the usual one; Florin checks this and counts an incomplete log as none.';
   }
 
   @override

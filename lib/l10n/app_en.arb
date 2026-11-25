@@ -1041,7 +1041,51 @@
   "mileageFieldOdoStartHelp": "The odometer reading at the start of the trip.",
   "mileageFieldPlateHelp": "The licence plate, for your trip log.",
   "mileageFieldPurposeHelp": "Why you made the trip, such as the client or meeting.",
-  "mileageFieldRouteDeviationHelp": "Tick when you took a longer or different route than the shortest one, and note why.",
+  "mileageFieldRouteDeviationHelp": "Tick when you did not take the usual route, and write the route you drove in the notes: a trip log names the route of such a trip.",
+  "tripLogNoTrips": "No trips are logged in {car} this year.",
+  "@tripLogNoTrips": {
+    "placeholders": {
+      "car": {
+        "type": "String"
+      }
+    }
+  },
+  "tripLogIncomplete": "The trip log of {car} is not complete this year.",
+  "@tripLogIncomplete": {
+    "placeholders": {
+      "car": {
+        "type": "String"
+      }
+    }
+  },
+  "tripLogGaps": "{count, plural, =1{One trip starts} other{{count} trips start}} at a higher odometer reading than the trip before ended: {km} km are not in the log.",
+  "@tripLogGaps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "km": {
+        "type": "int"
+      }
+    }
+  },
+  "tripLogOverlaps": "{count, plural, =1{One trip starts} other{{count} trips start}} below where the trip before ended.",
+  "@tripLogOverlaps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tripLogRoutesMissing": "{count, plural, =1{One trip is} other{{count} trips are}} marked as not the usual route without the route in the notes.",
+  "@tripLogRoutesMissing": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tripLogConsequence": "A trip log that does not meet the requirements counts as none, so Florin applies the bijtelling and the BTW on private use without it until the log is complete.",
   "mileageFieldToHelp": "Where the trip ended.",
   "mileageFieldTripTypeHelp": "Business and commuting trips in a private vehicle are deductible per km for income tax. Private trips are not.",
   "pensionAovInsuredHelp": "Tick when you have a private disability insurance (AOV). Its premiums are deductible.",
@@ -1092,7 +1136,7 @@
     }
   },
   "assetsFieldTripLog": "I keep a complete trip log for this car",
-  "assetsFieldTripLogHelp": "With a complete trip log of all trips in this car, there is no bijtelling at {km} private km a year or less, and VAT on private use is based on the actual kilometres.",
+  "assetsFieldTripLogHelp": "With a complete trip log of all trips in this car, there is no bijtelling at {km} private km a year or less, and VAT on private use is based on the actual kilometres. Complete means every kilometre is in a trip with its date, odometer readings, addresses, private or business, and the route when it was not the usual one; Florin checks this and counts an incomplete log as none.",
   "@assetsFieldTripLogHelp": {
     "placeholders": {
       "km": {

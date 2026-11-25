@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/native.dart';
 import 'package:florin/db/database.dart';
+import 'package:florin/services/car_service.dart';
 import 'package:florin/services/domain.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -137,5 +138,16 @@ void main() {
       ),
       isNotEmpty,
     );
+  });
+
+  test('a demo car with a trip log has a complete one', () async {
+    final assets = await db.select(db.fixedAssets).get();
+    final trips = await db.select(db.mileageTrips).get();
+    final logged = assets.where((a) => a.keepsTripLog).toList();
+    expect(logged, isNotEmpty);
+    for (final car in logged) {
+      final year = trips.firstWhere((t) => t.carAssetId == car.id).date.year;
+      expect(CarService.hasCompleteTripLog(car, trips, year), isTrue);
+    }
   });
 }

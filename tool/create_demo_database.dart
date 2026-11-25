@@ -907,7 +907,8 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
   }
 
   final trips = MileageDao(db);
-  var odo = 12000;
+  // Each vehicle has its own odometer, so a car's log has no gaps.
+  final odometers = <int?, int>{};
   Future<void> trip(
     DateTime date,
     TripType type,
@@ -916,8 +917,9 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     bool deviation = false,
     String purpose = 'Overleg klant',
   }) {
-    final start = odo;
-    odo += km;
+    final start = odometers[carId] ?? (carId == null ? 12000 : 30000);
+    final odo = start + km;
+    odometers[carId] = odo;
     return trips
         .save(
           MileageTripsCompanion(

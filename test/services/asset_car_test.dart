@@ -85,19 +85,27 @@ Expense carExpense(int carId, int amount, int vat) => Expense(
   carAssetId: carId,
 );
 
-MileageTrip trip(int carId, TripType type, int km) => MileageTrip(
-  id: km,
+MileageTrip trip(
+  int carId,
+  TripType type,
+  int km, {
+  int from = 0,
+  bool detour = false,
+  String? notes,
+}) => MileageTrip(
+  id: from * 100000 + km,
   date: DateTime(2026, 3, 1),
   carAssetId: carId,
   vehicleMakeModel: 'Car',
   vehicleLicensePlate: 'AB-123-C',
   departureAddress: 'A',
   arrivalAddress: 'B',
-  odometerStart: 0,
-  odometerEnd: km,
+  odometerStart: from,
+  odometerEnd: from + km,
   tripType: type,
   purpose: 'p',
-  routeDeviation: false,
+  routeDeviation: detour,
+  notes: notes,
 );
 
 Invoice saleInvoice(
@@ -633,13 +641,68 @@ void main() {
           assets: [car],
           trips: [
             trip(1, TripType.business, 2500),
-            trip(1, TripType.commute, 500),
+            trip(1, TripType.commute, 500, from: 2500),
           ],
           expenses: [carExpense(1, 500000, 150000)],
           year: 2026,
           rules: rules,
         ),
         25000,
+      );
+    });
+
+    test('a trip log holds up only when every kilometre is in a trip and '
+        'a detour names its route (Fiscale informatie 2026, 6.4.1.2)', () {
+      final car = asset(
+        1,
+        kind: AssetKind.car,
+        catalogue: 4500000,
+        registered: DateTime(2026, 1, 1),
+        tripLog: true,
+      );
+      final full = CarService.checkTripLog(car, [
+        trip(1, TripType.business, 100),
+        trip(1, TripType.private, 50, from: 100),
+        trip(1, TripType.business, 30, from: 150, detour: true, notes: 'via X'),
+      ], 2026);
+      expect(full.complete, isTrue);
+
+      final gaps = CarService.checkTripLog(car, [
+        trip(1, TripType.business, 100),
+        trip(1, TripType.business, 50, from: 180),
+        trip(1, TripType.business, 20, from: 230),
+        trip(1, TripType.business, 10, from: 240, detour: true),
+      ], 2026);
+      expect(gaps.complete, isFalse);
+      expect(gaps.gaps, 1);
+      expect(gaps.gapKm, 80);
+      expect(gaps.overlaps, 1);
+      expect(gaps.routesMissing, 1);
+      expect(CarService.checkTripLog(car, const [], 2026).complete, isFalse);
+    });
+
+    test('an incomplete trip log counts as none: the addition applies', () {
+      final car = asset(
+        1,
+        kind: AssetKind.car,
+        catalogue: 4500000,
+        registered: DateTime(2026, 1, 1),
+        tripLog: true,
+      );
+      int addition(List<MileageTrip> trips) => CarService.privateUseAddition(
+        assets: [car],
+        trips: trips,
+        expenses: [carExpense(1, 5000000, 0)],
+        year: 2026,
+        rules: rules,
+      );
+      expect(addition([trip(1, TripType.private, 100)]), 0);
+      expect(
+        addition([
+          trip(1, TripType.private, 100),
+          trip(1, TripType.business, 100, from: 5000),
+        ]),
+        greaterThan(0),
       );
     });
   });

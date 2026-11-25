@@ -4,6 +4,35 @@ import 'domain.dart';
 import 'tax_rules/car_reductions.dart';
 import 'tax_rules/tax_year_rules.dart';
 
+/// What the trip log of one car in one year shows against the rules of the
+/// Belastingdienst (`docs/legal.md`, Trip log).
+class TripLogCheck {
+  /// Trips logged in the car in the year.
+  final int trips;
+
+  /// Places where a trip starts at a higher odometer reading than the one
+  /// before it ended: kilometres driven that are not in the log.
+  final int gaps;
+  final int gapKm;
+
+  /// Places where a trip starts below where the one before it ended.
+  final int overlaps;
+
+  /// Trips marked as not the usual route without the route in the notes.
+  final int routesMissing;
+
+  const TripLogCheck({
+    required this.trips,
+    required this.gaps,
+    required this.gapKm,
+    required this.overlaps,
+    required this.routesMissing,
+  });
+
+  bool get complete =>
+      trips > 0 && gaps == 0 && overlaps == 0 && routesMissing == 0;
+}
+
 /// Private use of business cars: the income tax addition (Wet IB 2001
 /// art. 3.20) and the BTW correction in rubriek 1d. Sources: `docs/legal.md`.
 abstract final class CarService {
@@ -40,6 +69,49 @@ abstract final class CarService {
           .fold(0, (s, e) => s + e.deductibleAmount) +
       AssetService.depreciation(car, year);
 
+  /// Checks the trips of [car] in [year] in odometer order: every kilometre
+  /// must be in a trip, and a trip off the usual route must name the route.
+  /// The make, type, plate and period of the car are on its record.
+  static TripLogCheck checkTripLog(
+    FixedAsset car,
+    List<MileageTrip> trips,
+    int year,
+  ) {
+    final list = _tripsIn(trips, car).where((t) => t.date.year == year).toList()
+      ..sort(
+        (a, b) => a.odometerStart != b.odometerStart
+            ? a.odometerStart.compareTo(b.odometerStart)
+            : a.date.compareTo(b.date),
+      );
+    var gaps = 0, gapKm = 0, overlaps = 0;
+    for (var i = 1; i < list.length; i++) {
+      final step = list[i].odometerStart - list[i - 1].odometerEnd;
+      if (step > 0) {
+        gaps++;
+        gapKm += step;
+      } else if (step < 0) {
+        overlaps++;
+      }
+    }
+    return TripLogCheck(
+      trips: list.length,
+      gaps: gaps,
+      gapKm: gapKm,
+      overlaps: overlaps,
+      routesMissing: list
+          .where((t) => t.routeDeviation && (t.notes ?? '').trim().isEmpty)
+          .length,
+    );
+  }
+
+  /// The user keeps a trip log for [car] and it holds up for [year]. An
+  /// incomplete log counts as none, as the Belastingdienst says.
+  static bool hasCompleteTripLog(
+    FixedAsset car,
+    List<MileageTrip> trips,
+    int year,
+  ) => car.keepsTripLog && checkTripLog(car, trips, year).complete;
+
   /// Whether a complete trip log shows at most the private kilometres the
   /// rules allow a year, over all business cars.
   static bool _underPrivateLimit(
@@ -50,9 +122,9 @@ abstract final class CarService {
   ) {
     var annualised = 0.0;
     for (final car in cars) {
-      if (!car.keepsTripLog) return false;
       final period = _period(car, year);
       if (period == null) continue;
+      if (!hasCompleteTripLog(car, trips, year)) return false;
       final privateKm = _tripsIn(trips, car)
           .where((t) => t.tripType == TripType.private && t.date.year == year)
           .fold(0, (s, t) => s + t.distanceKm);
@@ -164,7 +236,7 @@ abstract final class CarService {
       ).where((t) => t.date.year == year).toList();
       final totalKm = yearTrips.fold(0, (s, t) => s + t.distanceKm);
       double amount;
-      if (car.keepsTripLog && totalKm > 0) {
+      if (totalKm > 0 && hasCompleteTripLog(car, trips, year)) {
         // Commuting is private use for BTW.
         final privateKm = yearTrips
             .where((t) => t.tripType != TripType.business)

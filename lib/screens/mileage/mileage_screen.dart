@@ -20,8 +20,19 @@ import '../../widgets/feedback.dart';
 import '../../widgets/form_row.dart';
 import '../../widgets/validators.dart';
 import '../../services/formats.dart';
+import '../../services/car_service.dart';
+import '../../widgets/notice_banner.dart';
 import '../../widgets/list_scaffold.dart';
 import '../../widgets/summary_bar.dart';
+
+/// Why the trip log of [car] does not hold up, in one sentence each.
+String tripLogIssues(AppLocalizations l, String car, TripLogCheck c) => [
+  if (c.trips == 0) l.tripLogNoTrips(car) else l.tripLogIncomplete(car),
+  if (c.gaps > 0) l.tripLogGaps(c.gaps, c.gapKm),
+  if (c.overlaps > 0) l.tripLogOverlaps(c.overlaps),
+  if (c.routesMissing > 0) l.tripLogRoutesMissing(c.routesMissing),
+  l.tripLogConsequence,
+].join(' ');
 
 class MileageScreen extends ConsumerWidget {
   const MileageScreen({super.key});
@@ -34,6 +45,14 @@ class MileageScreen extends ConsumerWidget {
     final rules = ref.watch(taxRulesProvider(year));
     final list = trips.valueOrNull ?? const <MileageTrip>[];
     final businessKm = TaxService.businessKm(list);
+    // Cars whose trip log the user keeps but which does not hold up.
+    final incomplete = [
+      for (final car
+          in ref.watch(assetsInUseProvider(year)).valueOrNull ??
+              const <FixedAsset>[])
+        if (car.kind == AssetKind.car && car.keepsTripLog)
+          (car, CarService.checkTripLog(car, list, year)),
+    ].where((c) => !c.$2.complete).toList();
 
     return ListScaffold<MileageTrip>(
       title: l.mileageTitle,
@@ -41,18 +60,30 @@ class MileageScreen extends ConsumerWidget {
       onAdd: () => context.push('/mileage/new'),
       items: trips,
       emptyText: l.mileageNone,
-      controls: SummaryBar([
-        SummaryStat(l.mileageBusiness, '$businessKm ${l.mileageUnitKm}'),
-        SummaryStat(
-          l.mileageTotal,
-          '${list.fold(0, (s, t) => s + t.distanceKm)} ${l.mileageUnitKm}',
-        ),
-        SummaryStat(
-          l.mileageAllowance(AppFormat.cents(rules.mileageCentsPerKm)),
-          AppFormat.cents(TaxService.mileageAllowance(businessKm, rules)),
-          color: context.colors.income,
-        ),
-      ]),
+      controls: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (final (car, check) in incomplete) ...[
+            NoticeBanner(
+              tripLogIssues(l, car.assetName, check),
+              tone: NoticeTone.warning,
+            ),
+            const SizedBox(height: AppSpacing.field),
+          ],
+          SummaryBar([
+            SummaryStat(l.mileageBusiness, '$businessKm ${l.mileageUnitKm}'),
+            SummaryStat(
+              l.mileageTotal,
+              '${list.fold(0, (s, t) => s + t.distanceKm)} ${l.mileageUnitKm}',
+            ),
+            SummaryStat(
+              l.mileageAllowance(AppFormat.cents(rules.mileageCentsPerKm)),
+              AppFormat.cents(TaxService.mileageAllowance(businessKm, rules)),
+              color: context.colors.income,
+            ),
+          ]),
+        ],
+      ),
       itemBuilder: (context, t) => ListTile(
         title: EllipsisText(
           l.mileageRoute(
