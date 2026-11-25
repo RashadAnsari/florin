@@ -65,6 +65,7 @@ const taxYear2026 = TaxYearRules(
   disabilityStartersaftrek: [1200000, 800000, 400000],
   reducedUrencriterium: 800,
   gemengdeKostenDrempel: 570000,
+  courseTravelMax: 150000,
   carBijtellingRate: 0.22,
   carOldBijtellingRate: 0.35,
   carZeroEmissionReduction: CarReduction(0.04, 120000),

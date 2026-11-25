@@ -75,6 +75,12 @@ class CsvExportService {
     ExpenseCategory.phoneAndInternet => 'Telefoon en internet',
     ExpenseCategory.insurance => 'Verzekeringen',
     ExpenseCategory.training => 'Opleiding',
+    ExpenseCategory.courseTravel =>
+      'Reizen en verblijf voor cursussen en congressen',
+    ExpenseCategory.clothingAndCare => 'Kleding en persoonlijke verzorging',
+    ExpenseCategory.homePhoneLine => 'Telefoonabonnement aansluiting woning',
+    ExpenseCategory.generalLiterature => 'Literatuur, geen vakliteratuur',
+    ExpenseCategory.fines => 'Boetes',
     ExpenseCategory.other => 'Overig',
   };
 

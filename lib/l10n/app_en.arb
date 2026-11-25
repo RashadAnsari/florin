@@ -226,6 +226,11 @@
   "expenseCatPhone": "Phone & internet",
   "expenseCatInsurance": "Insurance",
   "expenseCatTraining": "Training & education",
+  "expenseCatCourseTravel": "Travel and stay for courses and congresses",
+  "expenseCatClothingAndCare": "Clothing and personal care",
+  "expenseCatHomePhoneLine": "Phone line at home",
+  "expenseCatGeneralLiterature": "Books other than professional literature",
+  "expenseCatFines": "Fines",
   "expenseCatOther": "Other",
   "hoursTitle": "Hour registration",
   "hoursNone": "No hours registered",
@@ -716,6 +721,15 @@
       }
     }
   },
+  "expensesCourseTravelNotice": "Travel and stay for courses, studies, congresses, seminars and study trips are deductible for income tax up to {max} a year; the part above it is not, unless your work makes attending necessary (Wet IB 2001 art. 3.16). Florin keeps the limit, because it cannot tell that from your records.",
+  "@expensesCourseTravelNotice": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "expensesBarredNotice": "The law keeps this cost out of your profit, whatever the amount: fines (Wet IB 2001 art. 3.14), and clothing other than werkkleding, personal care, a phone line in your home and literature other than professional literature (art. 3.16). Florin records it but deducts nothing. Clothing counts as werkkleding when it is only fit to wear for your work or shows that it is meant only for it; record werkkleding under Other.",
   "plTaxFoodLimited": "{category} ({amount})",
   "@plTaxFoodLimited": {
     "placeholders": {
@@ -882,7 +896,7 @@
   "clientsFieldVatHelp": "The client's VAT identification number. Required on invoices where the VAT is reverse-charged or that go to an EU business.",
   "clientsRiskLevelHelp": "Your own assessment of whether the work could be seen as employment under the Wet DBA. Used only to remind you.",
   "expensesFieldAmountExclHelp": "The amount on the receipt without VAT.",
-  "expensesFieldCategoryHelp": "What kind of cost this is. Food, drinks, representation, congresses, seminars, excursions and study trips are only partly deductible (Wet IB 2001 art. 3.15), so they belong in their own category.",
+  "expensesFieldCategoryHelp": "What kind of cost this is. Food, drinks, representation, congresses, seminars, excursions and study trips are only partly deductible (Wet IB 2001 art. 3.15), travel for courses and congresses only up to a yearly amount, and fines, ordinary clothing, personal care, a phone line at home and general literature not at all (art. 3.14 and 3.16), so each has its own category.",
   "expensesFieldDescriptionHelp": "What you bought, so you and the Belastingdienst can see the business purpose.",
   "expensesFieldPaidFromHelp": "The account or card you paid with, to match the expense with your bank statement.",
   "expensesFieldPaymentRefHelp": "The reference of the payment or invoice, to find it back later.",
@@ -1300,6 +1314,23 @@
       }
     }
   },
+  "plTaxCourseTravelHelp": "Travel and stay for courses, studies and congresses are deductible up to {max} a year (Wet IB 2001 art. 3.16 lid 2 f). The limit does not apply when your work makes attending necessary (lid 8); Florin keeps it, because it cannot tell that from your records.",
+  "@plTaxCourseTravelHelp": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "plTaxBarredCosts": "Not deductible ({amount})",
+  "@plTaxBarredCosts": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "plTaxBarredCostsHelp": "Fines (Wet IB 2001 art. 3.14), clothing other than werkkleding, personal care, a phone line at home and literature other than professional literature (art. 3.16 lid 2). The law keeps these costs out of the profit, so they lower it by nothing.",
   "plTaxInputsSection": "Your situation in {year}",
   "@plTaxInputsSection": {
     "placeholders": {

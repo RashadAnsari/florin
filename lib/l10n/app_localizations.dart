@@ -1016,6 +1016,36 @@ abstract class AppLocalizations {
   /// **'Training & education'**
   String get expenseCatTraining;
 
+  /// No description provided for @expenseCatCourseTravel.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel and stay for courses and congresses'**
+  String get expenseCatCourseTravel;
+
+  /// No description provided for @expenseCatClothingAndCare.
+  ///
+  /// In en, this message translates to:
+  /// **'Clothing and personal care'**
+  String get expenseCatClothingAndCare;
+
+  /// No description provided for @expenseCatHomePhoneLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone line at home'**
+  String get expenseCatHomePhoneLine;
+
+  /// No description provided for @expenseCatGeneralLiterature.
+  ///
+  /// In en, this message translates to:
+  /// **'Books other than professional literature'**
+  String get expenseCatGeneralLiterature;
+
+  /// No description provided for @expenseCatFines.
+  ///
+  /// In en, this message translates to:
+  /// **'Fines'**
+  String get expenseCatFines;
+
   /// No description provided for @expenseCatOther.
   ///
   /// In en, this message translates to:
@@ -2342,6 +2372,18 @@ abstract class AppLocalizations {
   /// **'Food, drinks, representation, congresses, seminars and study trips are deductible for income tax at {pct}, or as far as they exceed {drempel} a year if that is more (Wet IB 2001 art. 3.15). VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed (Wet OB 1968 art. 15).'**
   String expensesFoodNotice(String pct, String drempel);
 
+  /// No description provided for @expensesCourseTravelNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel and stay for courses, studies, congresses, seminars and study trips are deductible for income tax up to {max} a year; the part above it is not, unless your work makes attending necessary (Wet IB 2001 art. 3.16). Florin keeps the limit, because it cannot tell that from your records.'**
+  String expensesCourseTravelNotice(String max);
+
+  /// No description provided for @expensesBarredNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'The law keeps this cost out of your profit, whatever the amount: fines (Wet IB 2001 art. 3.14), and clothing other than werkkleding, personal care, a phone line in your home and literature other than professional literature (art. 3.16). Florin records it but deducts nothing. Clothing counts as werkkleding when it is only fit to wear for your work or shows that it is meant only for it; record werkkleding under Other.'**
+  String get expensesBarredNotice;
+
   /// No description provided for @plTaxFoodLimited.
   ///
   /// In en, this message translates to:
@@ -2753,7 +2795,7 @@ abstract class AppLocalizations {
   /// No description provided for @expensesFieldCategoryHelp.
   ///
   /// In en, this message translates to:
-  /// **'What kind of cost this is. Food, drinks, representation, congresses, seminars, excursions and study trips are only partly deductible (Wet IB 2001 art. 3.15), so they belong in their own category.'**
+  /// **'What kind of cost this is. Food, drinks, representation, congresses, seminars, excursions and study trips are only partly deductible (Wet IB 2001 art. 3.15), travel for courses and congresses only up to a yearly amount, and fines, ordinary clothing, personal care, a phone line at home and general literature not at all (art. 3.14 and 3.16), so each has its own category.'**
   String get expensesFieldCategoryHelp;
 
   /// No description provided for @expensesFieldDescriptionHelp.
@@ -3751,6 +3793,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Food, drinks, representation, congresses, seminars and study trips are deductible for {pct}, or above the first {drempel} (Wet IB 2001 art. 3.15). Florin uses whichever gives the larger deduction.'**
   String plTaxFoodLimitedHelp(String pct, String drempel);
+
+  /// No description provided for @plTaxCourseTravelHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel and stay for courses, studies and congresses are deductible up to {max} a year (Wet IB 2001 art. 3.16 lid 2 f). The limit does not apply when your work makes attending necessary (lid 8); Florin keeps it, because it cannot tell that from your records.'**
+  String plTaxCourseTravelHelp(String max);
+
+  /// No description provided for @plTaxBarredCosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Not deductible ({amount})'**
+  String plTaxBarredCosts(String amount);
+
+  /// No description provided for @plTaxBarredCostsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Fines (Wet IB 2001 art. 3.14), clothing other than werkkleding, personal care, a phone line at home and literature other than professional literature (art. 3.16 lid 2). The law keeps these costs out of the profit, so they lower it by nothing.'**
+  String get plTaxBarredCostsHelp;
 
   /// No description provided for @plTaxInputsSection.
   ///

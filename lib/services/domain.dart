@@ -220,6 +220,20 @@ extension FixedAssetDomain on FixedAsset {
   );
 }
 
+extension ExpenseCategoryDomain on ExpenseCategory {
+  /// Costs the law keeps out of the profit whatever their amount: fines
+  /// (Wet IB 2001 art. 3.14 lid 1 c), and clothing other than werkkleding,
+  /// personal care, a phone line at home and general literature (art. 3.16
+  /// lid 2 a to d). `docs/legal.md`, Costs that are not deductible.
+  bool get barredForIncomeTax => switch (this) {
+    ExpenseCategory.fines ||
+    ExpenseCategory.clothingAndCare ||
+    ExpenseCategory.homePhoneLine ||
+    ExpenseCategory.generalLiterature => true,
+    _ => false,
+  };
+}
+
 extension MileageTripDomain on MileageTrip {
   int get distanceKm => odometerEnd - odometerStart;
 }

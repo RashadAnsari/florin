@@ -63,6 +63,7 @@ the statute version of 1 January of the new year, its transitional articles
 | `unrealisedZelfstandigenaftrekYears` | Years unrealised zelfstandigenaftrek carries forward | Wet IB 2001 art. 3.76 lid 7 | Statute |
 | `starterLookbackYears` | Previous years in which a starter was not an ondernemer; also the years of the urencriterium exception for someone with a job | Wet IB 2001 art. 3.76 lid 3, art. 3.6 lid 1 b | Statute |
 | `starterMaxZelfstandigenaftrek` | Times a starter may have had the zelfstandigenaftrek | Wet IB 2001 art. 3.76 lid 3 | Statute |
+| `courseTravelMax` | Travel and stay for courses and congresses deductible a year | Wet IB 2001 art. 3.16 lid 2 f | Statute |
 | `gemengdeKostenPct` | Deductible share of food, drinks, representation and congresses | Wet IB 2001 art. 3.15 lid 5 | Statute |
 | `carBijtellingRate` | Addition for private use of a business car | Wet IB 2001 art. 3.20 lid 1 a | Statute; Bijtelling privégebruik auto `<year>` |
 | `carOldBijtellingRate` | Addition for a car older than `carOldAfterYears` | Wet IB 2001 art. 3.20 lid 1 b | Statute |

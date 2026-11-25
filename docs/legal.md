@@ -762,6 +762,39 @@ Where Florin implements it: `TaxService.meetsUrencriterium` and
 `TaxService.timeTestHours`, the P&L banner, and `UrencriteriumProgress` on
 the dashboard and the Hours screen.
 
+## Costs that are not deductible
+
+> 1 Bij het bepalen van de winst komen niet in aftrek kosten en lasten die verband houden met de volgende posten: […] c. geldboeten opgelegd door een strafrechter en geldsommen betaald aan een staat of een onderdeel daarvan ter voorkoming van strafvervolging, in het kader van een strafbeschikking of daarmee vergelijkbare buitenlandse wijze van bestraffing, dan wel ter voldoening aan een voorwaarde verbonden aan een besluit tot gratieverlening, bestuurlijke boeten en daarmee vergelijkbare buitenlandse boeten, geldboeten opgelegd op basis van bij wet geregeld tuchtrecht, geldboeten opgelegd door een instelling van de Europese Unie, alsmede kosten als bedoeld in artikel 234, vijfde lid, en artikel 235, derde lid, van de Gemeentewet;
+
+[Wet inkomstenbelasting 2001, artikel 3.14 lid 1](https://wetten.overheid.nl/BWBR0011353/2026-01-01), read 2026-11-25
+
+> 2 Bij het bepalen van de winst komen mede niet in aftrek kosten en lasten ten behoeve van de belastingplichtige zelf die verband houden met de volgende posten: a. telefoonabonnementen met betrekking tot telefoonaansluitingen in zijn woonruimte; b. literatuur, met uitzondering van vakliteratuur; c. kleding, met uitzondering van werkkleding; d. persoonlijke verzorging; e. geheven inkomensafhankelijke bijdragen als bedoeld in artikel 43 van de Zorgverzekeringswet, of een buitenlandse regeling die naar aard en strekking daarmee overeenkomt en f. reizen en verblijf in verband met cursussen en opleidingen voor studie en beroep, alsmede in verband met congressen, seminars, symposia, excursies, studiereizen en dergelijke, voorzover deze meer bedragen dan € 1500.
+
+> 5 Voor de toepassing van het tweede lid, onderdeel c, wordt kleding als werkkleding aangemerkt indien zij: a. uitsluitend of nagenoeg uitsluitend geschikt is om in het kader van de onderneming te worden gedragen of b. is voorzien van zodanige uiterlijke kenmerken dat daaruit blijkt dat deze uitsluitend is bestemd om bij het behalen van de winst te worden gedragen.
+
+> 7 Het tweede lid, onderdelen c en d, is niet van toepassing ten aanzien van de belastingplichtige die optreedt als artiest of als presentator of die als beroep een tak van sport beoefent.
+
+> 8 Het tweede lid, onderdeel f, is niet van toepassing indien de aard van de door de belastingplichtige verrichte werkzaamheden noodzaakt tot het bijwonen van de desbetreffende cursussen, opleidingen, congressen, seminars, symposia, excursies en dergelijke respectievelijk het maken van de desbetreffende studiereizen.
+
+[Wet inkomstenbelasting 2001, artikel 3.16](https://wetten.overheid.nl/BWBR0011353/2026-01-01), read 2026-11-25 from the official XML
+
+Where Florin implements it: the expense categories Fines, Clothing and
+personal care, Phone line at home and Books other than professional
+literature are barred (`ExpenseCategoryDomain.barredForIncomeTax`); the
+estimate deducts nothing for them and the P&L shows their total as not
+deductible. Travel and stay for courses and congresses is its own category,
+deducted up to `courseTravelMax` a year (`TaxService.courseTravelDeductible`).
+The BTW on these costs follows the user's choice on the form; these articles
+are income tax rules only.
+
+Cautious choices: lid 7 (artists, presenters and professional sportspeople
+may deduct clothing and personal care) and lid 8 (no limit on course travel
+when the work makes attending necessary) depend on facts Florin does not
+hold, so Florin applies the bar and the limit, which overstates tax. Werkkleding
+in the sense of lid 5 is booked under Other and deducted. Not modelled: the
+home office rule of lid 1, the equipment of lid 3 and the Zvw bijdrage of
+lid 2 e, which Florin never books as a cost.
+
 ## Income tax estimate scope
 
 The estimate covers one ondernemer under the AOW age, with wages from

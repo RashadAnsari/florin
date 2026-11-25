@@ -95,6 +95,10 @@ class TaxYearRules {
   final List<int> disabilityStartersaftrek;
   final int reducedUrencriterium;
   final int gemengdeKostenDrempel;
+
+  /// Travel and stay for courses, studies and congresses deductible in a
+  /// year; the part above it is not (Wet IB 2001 art. 3.16 lid 2 f).
+  final int courseTravelMax;
   final double carBijtellingRate;
   final double carOldBijtellingRate;
   final CarReduction carZeroEmissionReduction;
@@ -233,6 +237,7 @@ class TaxYearRules {
     required this.disabilityStartersaftrek,
     required this.reducedUrencriterium,
     required this.gemengdeKostenDrempel,
+    required this.courseTravelMax,
     required this.carBijtellingRate,
     required this.carOldBijtellingRate,
     required this.carZeroEmissionReduction,

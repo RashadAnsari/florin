@@ -342,6 +342,18 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
                 ),
               ),
             ],
+            if (_category == ExpenseCategory.courseTravel) ...[
+              const SizedBox(height: AppSpacing.field),
+              NoticeBanner(
+                l.expensesCourseTravelNotice(
+                  AppFormat.euros(_rules.courseTravelMax),
+                ),
+              ),
+            ],
+            if (_category?.barredForIncomeTax ?? false) ...[
+              const SizedBox(height: AppSpacing.field),
+              NoticeBanner(l.expensesBarredNotice),
+            ],
             const SizedBox(height: AppSpacing.field),
             FormRow(
               children: [
@@ -424,7 +436,12 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
               ),
             ValueRow(
               label: l.expensesDeductible,
-              value: AppFormat.cents(_deductibleAmount),
+              // A barred cost stays out of the profit (art. 3.14, 3.16).
+              value: AppFormat.cents(
+                (_category?.barredForIncomeTax ?? false)
+                    ? 0
+                    : _deductibleAmount,
+              ),
             ),
             ValueRow(
               label: l.expensesVatBack,

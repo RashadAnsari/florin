@@ -507,6 +507,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expenseCatTraining => 'Training & education';
 
   @override
+  String get expenseCatCourseTravel =>
+      'Travel and stay for courses and congresses';
+
+  @override
+  String get expenseCatClothingAndCare => 'Clothing and personal care';
+
+  @override
+  String get expenseCatHomePhoneLine => 'Phone line at home';
+
+  @override
+  String get expenseCatGeneralLiterature =>
+      'Books other than professional literature';
+
+  @override
+  String get expenseCatFines => 'Fines';
+
+  @override
   String get expenseCatOther => 'Other';
 
   @override
@@ -1266,6 +1283,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String expensesCourseTravelNotice(String max) {
+    return 'Travel and stay for courses, studies, congresses, seminars and study trips are deductible for income tax up to $max a year; the part above it is not, unless your work makes attending necessary (Wet IB 2001 art. 3.16). Florin keeps the limit, because it cannot tell that from your records.';
+  }
+
+  @override
+  String get expensesBarredNotice =>
+      'The law keeps this cost out of your profit, whatever the amount: fines (Wet IB 2001 art. 3.14), and clothing other than werkkleding, personal care, a phone line in your home and literature other than professional literature (art. 3.16). Florin records it but deducts nothing. Clothing counts as werkkleding when it is only fit to wear for your work or shows that it is meant only for it; record werkkleding under Other.';
+
+  @override
   String plTaxFoodLimited(String category, String amount) {
     return '$category ($amount)';
   }
@@ -1530,7 +1556,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expensesFieldCategoryHelp =>
-      'What kind of cost this is. Food, drinks, representation, congresses, seminars, excursions and study trips are only partly deductible (Wet IB 2001 art. 3.15), so they belong in their own category.';
+      'What kind of cost this is. Food, drinks, representation, congresses, seminars, excursions and study trips are only partly deductible (Wet IB 2001 art. 3.15), travel for courses and congresses only up to a yearly amount, and fines, ordinary clothing, personal care, a phone line at home and general literature not at all (art. 3.14 and 3.16), so each has its own category.';
 
   @override
   String get expensesFieldDescriptionHelp =>
@@ -2175,6 +2201,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String plTaxFoodLimitedHelp(String pct, String drempel) {
     return 'Food, drinks, representation, congresses, seminars and study trips are deductible for $pct, or above the first $drempel (Wet IB 2001 art. 3.15). Florin uses whichever gives the larger deduction.';
   }
+
+  @override
+  String plTaxCourseTravelHelp(String max) {
+    return 'Travel and stay for courses, studies and congresses are deductible up to $max a year (Wet IB 2001 art. 3.16 lid 2 f). The limit does not apply when your work makes attending necessary (lid 8); Florin keeps it, because it cannot tell that from your records.';
+  }
+
+  @override
+  String plTaxBarredCosts(String amount) {
+    return 'Not deductible ($amount)';
+  }
+
+  @override
+  String get plTaxBarredCostsHelp =>
+      'Fines (Wet IB 2001 art. 3.14), clothing other than werkkleding, personal care, a phone line at home and literature other than professional literature (art. 3.16 lid 2). The law keeps these costs out of the profit, so they lower it by nothing.';
 
   @override
   String plTaxInputsSection(int year) {
