@@ -101,6 +101,44 @@ and the ICP-opgaaf), and export or services outside the EU for a client
 outside it. Dutch BTW fits every country. Greece's BTW prefix EL is accepted
 next to its country code GR.
 
+## Private persons as clients
+
+> 2 De plaats van een dienst, verricht voor een andere dan ondernemer, is de plaats waar de dienstverrichter de zetel van zijn bedrijfsuitoefening heeft gevestigd.
+
+[Wet op de omzetbelasting 1968, artikel 6 lid 2](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-25 from the official XML
+
+> 1 De plaats van dienst van de volgende diensten, die worden verricht voor een andere dan ondernemer, is de plaats waar deze persoon gevestigd is of zijn woonplaats of gebruikelijke verblijfplaats heeft: a. telecommunicatiediensten; b. radio- en televisieomroepdiensten; c. elektronische diensten.
+
+[Wet op de omzetbelasting 1968, artikel 6h lid 1](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-25
+
+> 1 Artikel 5a, eerste lid, onderdeel a, en artikel 6h, eerste lid, zijn niet van toepassing wanneer aan de volgende voorwaarden is voldaan: a. de leverancier of dienstverrichter is gevestigd of, bij gebreke van een vestiging, heeft zijn woonplaats of gebruikelijke verblijfplaats in slechts één lidstaat; b. de diensten worden verleend aan andere dan ondernemers die gevestigd zijn, hun woonplaats of gebruikelijke verblijfplaats hebben in een andere dan de lidstaat, bedoeld in onderdeel a, of de goederen worden verzonden of vervoerd naar een andere dan de lidstaat bedoeld in onderdeel a; en c. het totale bedrag van de leveringen van diensten of goederen, bedoeld in onderdeel b, de belasting niet inbegrepen, is in het lopende kalenderjaar niet hoger dan € 10 000 of de tegenwaarde daarvan in de nationale munteenheid, en heeft dit bedrag ook niet overschreden in de loop van het voorafgaande kalenderjaar. 2 Wanneer de drempel, genoemd in het eerste lid, onderdeel c, in de loop van een kalenderjaar wordt overschreden, zijn artikel 5a, eerste lid, onderdeel a, en artikel 6h vanaf die datum van toepassing.
+
+[Wet op de omzetbelasting 1968, artikel 6k](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-25
+
+> 1 Iedere ondernemer zorgt ervoor dat door hemzelf dan wel, in zijn naam en voor zijn rekening, door zijn afnemer of een derde, in de volgende gevallen een factuur wordt uitgereikt ter zake van: a. de goederenleveringen of diensten die hij heeft verricht voor een andere ondernemer of een rechtspersoon, andere dan ondernemer;
+
+[Wet op de omzetbelasting 1968, artikel 34c lid 1](https://wetten.overheid.nl/BWBR0002629/2026-01-01), read 2026-11-25
+
+Where Florin implements it: a client can be marked as a private person
+(`Clients.isConsumer`). For such a client only Dutch BTW, the KOR and export
+of goods fit (`VatTreatment.fitsClient`): the reverse charge and EU
+treatments need a business customer, and a service to a private person
+outside the EU is taxed where the user is established (artikel 6 lid 2), so
+it carries Dutch BTW. A new invoice to a private person starts with Dutch BTW
+or the KOR. On an invoice with Dutch BTW to a private person in another
+member state, the form shows the threshold of artikel 6k
+(`euConsumerSalesThreshold`) against the year's supplies with Dutch BTW to
+such clients (`VatService.euConsumerSales`), and warns once this year or the
+previous year passes it.
+
+Cautious choice: Florin cannot tell which services are electronic in the
+sense of artikel 6h or which goods are distance sales, so it counts every
+supply with Dutch BTW to a private person in another member state. Not
+modelled: the OSS (Unieregeling) return, the BTW rates of other member
+states and the choice of artikel 6k lid 3; past the threshold Florin keeps
+charging Dutch BTW and says so. Invoices to private persons in the
+Netherlands remain possible; artikel 34c does not require them.
+
 ## Merchant of record and self-billing
 
 > 1 Voor verscheidene afzonderlijke leveringen of diensten kan een periodieke factuur worden opgemaakt, mits de periode waarop de factuur betrekking heeft niet langer is dan een kalendermaand. 2 Facturen mogen door de afnemer worden opgemaakt voor goederenleveringen of diensten die door een ondernemer voor hem worden verricht, indien beide partijen dat vooraf onderling zijn overeengekomen en op voorwaarde dat iedere factuur het voorwerp uitmaakt van een procedure van aanvaarding door de ondernemer die de goederenleveringen of de diensten verricht.

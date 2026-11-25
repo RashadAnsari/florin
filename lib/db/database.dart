@@ -49,7 +49,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump with every schema change and run `make migration`; see AGENTS.md.
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -148,6 +148,9 @@ class AppDatabase extends _$AppDatabase {
               ON CONFLICT (year) DO UPDATE SET not_ondernemer_before = 1, is_starter = 1
             ''');
             await m.alterTable(TableMigration(schema.businessProfiles));
+          },
+          from5To6: (m, schema) async {
+            await m.addColumn(schema.clients, schema.clients.isConsumer);
           },
         )(m, from, to),
       );

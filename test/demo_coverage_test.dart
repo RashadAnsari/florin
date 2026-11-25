@@ -92,6 +92,7 @@ void main() {
     expect(clients.map((c) => c.wetDbaRisk).toSet(), WetDbaRisk.values.toSet());
     expect(clients.any((c) => !c.isActive), isTrue);
     expect(clients.any((c) => c.isMerchantOfRecord), isTrue);
+    expect(clients.any((c) => c.isEuConsumerAbroad), isTrue);
     expect(invoices.any((i) => i.selfBilled), isTrue);
     final profile = await db.select(db.businessProfiles).getSingle();
     expect(profile.korStart, isNotNull);

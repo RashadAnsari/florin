@@ -679,6 +679,21 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _isConsumerMeta = const VerificationMeta(
+    'isConsumer',
+  );
+  @override
+  late final GeneratedColumn<bool> isConsumer = GeneratedColumn<bool>(
+    'is_consumer',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_consumer" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -696,6 +711,7 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
     notes,
     isActive,
     isMerchantOfRecord,
+    isConsumer,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -806,6 +822,12 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
         ),
       );
     }
+    if (data.containsKey('is_consumer')) {
+      context.handle(
+        _isConsumerMeta,
+        isConsumer.isAcceptableOrUnknown(data['is_consumer']!, _isConsumerMeta),
+      );
+    }
     return context;
   }
 
@@ -877,6 +899,10 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
         DriftSqlType.bool,
         data['${effectivePrefix}is_merchant_of_record'],
       )!,
+      isConsumer: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_consumer'],
+      )!,
     );
   }
 
@@ -908,6 +934,11 @@ class Client extends DataClass implements Insertable<Client> {
   /// A reseller that sells the user's product to end customers in its own
   /// name and pays the user, such as a merchant of record or an app store.
   final bool isMerchantOfRecord;
+
+  /// A private person, not a business or legal person ("een andere dan
+  /// ondernemer"): no reverse charge, no ICP-opgaaf and no invoice duty
+  /// (Wet OB 1968 art. 6, 34c).
+  final bool isConsumer;
   const Client({
     required this.id,
     required this.name,
@@ -924,6 +955,7 @@ class Client extends DataClass implements Insertable<Client> {
     this.notes,
     required this.isActive,
     required this.isMerchantOfRecord,
+    required this.isConsumer,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -961,6 +993,7 @@ class Client extends DataClass implements Insertable<Client> {
     }
     map['is_active'] = Variable<bool>(isActive);
     map['is_merchant_of_record'] = Variable<bool>(isMerchantOfRecord);
+    map['is_consumer'] = Variable<bool>(isConsumer);
     return map;
   }
 
@@ -995,6 +1028,7 @@ class Client extends DataClass implements Insertable<Client> {
           : Value(notes),
       isActive: Value(isActive),
       isMerchantOfRecord: Value(isMerchantOfRecord),
+      isConsumer: Value(isConsumer),
     );
   }
 
@@ -1021,6 +1055,7 @@ class Client extends DataClass implements Insertable<Client> {
       notes: serializer.fromJson<String?>(json['notes']),
       isActive: serializer.fromJson<bool>(json['isActive']),
       isMerchantOfRecord: serializer.fromJson<bool>(json['isMerchantOfRecord']),
+      isConsumer: serializer.fromJson<bool>(json['isConsumer']),
     );
   }
   @override
@@ -1044,6 +1079,7 @@ class Client extends DataClass implements Insertable<Client> {
       'notes': serializer.toJson<String?>(notes),
       'isActive': serializer.toJson<bool>(isActive),
       'isMerchantOfRecord': serializer.toJson<bool>(isMerchantOfRecord),
+      'isConsumer': serializer.toJson<bool>(isConsumer),
     };
   }
 
@@ -1063,6 +1099,7 @@ class Client extends DataClass implements Insertable<Client> {
     Value<String?> notes = const Value.absent(),
     bool? isActive,
     bool? isMerchantOfRecord,
+    bool? isConsumer,
   }) => Client(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -1083,6 +1120,7 @@ class Client extends DataClass implements Insertable<Client> {
     notes: notes.present ? notes.value : this.notes,
     isActive: isActive ?? this.isActive,
     isMerchantOfRecord: isMerchantOfRecord ?? this.isMerchantOfRecord,
+    isConsumer: isConsumer ?? this.isConsumer,
   );
   Client copyWithCompanion(ClientsCompanion data) {
     return Client(
@@ -1111,6 +1149,9 @@ class Client extends DataClass implements Insertable<Client> {
       isMerchantOfRecord: data.isMerchantOfRecord.present
           ? data.isMerchantOfRecord.value
           : this.isMerchantOfRecord,
+      isConsumer: data.isConsumer.present
+          ? data.isConsumer.value
+          : this.isConsumer,
     );
   }
 
@@ -1131,7 +1172,8 @@ class Client extends DataClass implements Insertable<Client> {
           ..write('contractExpiry: $contractExpiry, ')
           ..write('notes: $notes, ')
           ..write('isActive: $isActive, ')
-          ..write('isMerchantOfRecord: $isMerchantOfRecord')
+          ..write('isMerchantOfRecord: $isMerchantOfRecord, ')
+          ..write('isConsumer: $isConsumer')
           ..write(')'))
         .toString();
   }
@@ -1153,6 +1195,7 @@ class Client extends DataClass implements Insertable<Client> {
     notes,
     isActive,
     isMerchantOfRecord,
+    isConsumer,
   );
   @override
   bool operator ==(Object other) =>
@@ -1172,7 +1215,8 @@ class Client extends DataClass implements Insertable<Client> {
           other.contractExpiry == this.contractExpiry &&
           other.notes == this.notes &&
           other.isActive == this.isActive &&
-          other.isMerchantOfRecord == this.isMerchantOfRecord);
+          other.isMerchantOfRecord == this.isMerchantOfRecord &&
+          other.isConsumer == this.isConsumer);
 }
 
 class ClientsCompanion extends UpdateCompanion<Client> {
@@ -1191,6 +1235,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
   final Value<String?> notes;
   final Value<bool> isActive;
   final Value<bool> isMerchantOfRecord;
+  final Value<bool> isConsumer;
   const ClientsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -1207,6 +1252,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     this.notes = const Value.absent(),
     this.isActive = const Value.absent(),
     this.isMerchantOfRecord = const Value.absent(),
+    this.isConsumer = const Value.absent(),
   });
   ClientsCompanion.insert({
     this.id = const Value.absent(),
@@ -1224,6 +1270,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     this.notes = const Value.absent(),
     this.isActive = const Value.absent(),
     this.isMerchantOfRecord = const Value.absent(),
+    this.isConsumer = const Value.absent(),
   }) : name = Value(name),
        address = Value(address),
        wetDbaRisk = Value(wetDbaRisk);
@@ -1243,6 +1290,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     Expression<String>? notes,
     Expression<bool>? isActive,
     Expression<bool>? isMerchantOfRecord,
+    Expression<bool>? isConsumer,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1261,6 +1309,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
       if (isActive != null) 'is_active': isActive,
       if (isMerchantOfRecord != null)
         'is_merchant_of_record': isMerchantOfRecord,
+      if (isConsumer != null) 'is_consumer': isConsumer,
     });
   }
 
@@ -1280,6 +1329,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     Value<String?>? notes,
     Value<bool>? isActive,
     Value<bool>? isMerchantOfRecord,
+    Value<bool>? isConsumer,
   }) {
     return ClientsCompanion(
       id: id ?? this.id,
@@ -1297,6 +1347,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
       notes: notes ?? this.notes,
       isActive: isActive ?? this.isActive,
       isMerchantOfRecord: isMerchantOfRecord ?? this.isMerchantOfRecord,
+      isConsumer: isConsumer ?? this.isConsumer,
     );
   }
 
@@ -1350,6 +1401,9 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     if (isMerchantOfRecord.present) {
       map['is_merchant_of_record'] = Variable<bool>(isMerchantOfRecord.value);
     }
+    if (isConsumer.present) {
+      map['is_consumer'] = Variable<bool>(isConsumer.value);
+    }
     return map;
   }
 
@@ -1370,7 +1424,8 @@ class ClientsCompanion extends UpdateCompanion<Client> {
           ..write('contractExpiry: $contractExpiry, ')
           ..write('notes: $notes, ')
           ..write('isActive: $isActive, ')
-          ..write('isMerchantOfRecord: $isMerchantOfRecord')
+          ..write('isMerchantOfRecord: $isMerchantOfRecord, ')
+          ..write('isConsumer: $isConsumer')
           ..write(')'))
         .toString();
   }
@@ -10401,6 +10456,7 @@ typedef $$ClientsTableCreateCompanionBuilder =
       Value<String?> notes,
       Value<bool> isActive,
       Value<bool> isMerchantOfRecord,
+      Value<bool> isConsumer,
     });
 typedef $$ClientsTableUpdateCompanionBuilder =
     ClientsCompanion Function({
@@ -10419,6 +10475,7 @@ typedef $$ClientsTableUpdateCompanionBuilder =
       Value<String?> notes,
       Value<bool> isActive,
       Value<bool> isMerchantOfRecord,
+      Value<bool> isConsumer,
     });
 
 final class $$ClientsTableReferences
@@ -10527,6 +10584,11 @@ class $$ClientsTableFilterComposer
 
   ColumnFilters<bool> get isMerchantOfRecord => $composableBuilder(
     column: $table.isMerchantOfRecord,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isConsumer => $composableBuilder(
+    column: $table.isConsumer,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -10639,6 +10701,11 @@ class $$ClientsTableOrderingComposer
     column: $table.isMerchantOfRecord,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get isConsumer => $composableBuilder(
+    column: $table.isConsumer,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ClientsTableAnnotationComposer
@@ -10703,6 +10770,11 @@ class $$ClientsTableAnnotationComposer
 
   GeneratedColumn<bool> get isMerchantOfRecord => $composableBuilder(
     column: $table.isMerchantOfRecord,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isConsumer => $composableBuilder(
+    column: $table.isConsumer,
     builder: (column) => column,
   );
 
@@ -10775,6 +10847,7 @@ class $$ClientsTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
                 Value<bool> isMerchantOfRecord = const Value.absent(),
+                Value<bool> isConsumer = const Value.absent(),
               }) => ClientsCompanion(
                 id: id,
                 name: name,
@@ -10791,6 +10864,7 @@ class $$ClientsTableTableManager
                 notes: notes,
                 isActive: isActive,
                 isMerchantOfRecord: isMerchantOfRecord,
+                isConsumer: isConsumer,
               ),
           createCompanionCallback:
               ({
@@ -10809,6 +10883,7 @@ class $$ClientsTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
                 Value<bool> isMerchantOfRecord = const Value.absent(),
+                Value<bool> isConsumer = const Value.absent(),
               }) => ClientsCompanion.insert(
                 id: id,
                 name: name,
@@ -10825,6 +10900,7 @@ class $$ClientsTableTableManager
                 notes: notes,
                 isActive: isActive,
                 isMerchantOfRecord: isMerchantOfRecord,
+                isConsumer: isConsumer,
               ),
           withReferenceMapper: (p0) => p0
               .map(

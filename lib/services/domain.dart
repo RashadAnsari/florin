@@ -90,6 +90,22 @@ extension VatTreatmentDomain on VatTreatment {
     };
   }
 
+  /// Whether this treatment can apply to a consumer: reverse charge and the
+  /// zero rate for EU supplies need a business customer, and a service to a
+  /// consumer outside the EU is taxed where the supplier is (Wet OB 1968
+  /// art. 6 lid 2), so it carries Dutch BTW.
+  bool get fitsConsumer => switch (this) {
+    VatTreatment.standard ||
+    VatTreatment.kor ||
+    VatTreatment.exportOutsideEu => true,
+    _ => false,
+  };
+
+  /// Whether this treatment can apply to [client]: its country and whether
+  /// it is a consumer.
+  bool fitsClient(Client client) =>
+      fitsCountry(client.country) && (!client.isConsumer || fitsConsumer);
+
   /// The rates a line can state under this treatment: any rate with Dutch
   /// BTW; with domestic reverse charge the rate that would apply without it,
   /// as the invoice must show (`docs/legal.md`, Invoice contents); none for
@@ -106,12 +122,18 @@ extension VatTreatmentDomain on VatTreatment {
 }
 
 extension ClientDomain on Client {
+  /// Whether a service to this client may be taxed in its country instead
+  /// of the Netherlands: a consumer in another member state (Wet OB 1968
+  /// art. 6h, 6k).
+  bool get isEuConsumerAbroad =>
+      isConsumer && country != 'NL' && isEuCountry(country);
+
   /// The treatment a new invoice to this client starts with: Dutch BTW in
-  /// the Netherlands, or the KOR exemption while that applies; services with
+  /// the Netherlands or to a consumer, or the KOR exemption while that applies; services with
   /// BTW verlegd in another member state and services outside the EU
   /// elsewhere. The user can pick another that fits.
   VatTreatment suggestedVatTreatment({required bool korApplies}) {
-    if (country == 'NL') {
+    if (country == 'NL' || isConsumer) {
       return korApplies ? VatTreatment.kor : VatTreatment.standard;
     }
     return isEuCountry(country)

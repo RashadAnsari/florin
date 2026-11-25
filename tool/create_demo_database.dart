@@ -75,6 +75,7 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     WetDbaRisk risk, {
     bool active = true,
     bool reseller = false,
+    bool consumer = false,
     String? kvk,
   }) => clients.save(
     ClientsCompanion(
@@ -87,6 +88,7 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
       contractSigned: Value(!reseller && risk != WetDbaRisk.high),
       contractExpiry: Value(reseller ? null : DateTime(_year + 1, 6, 30)),
       isMerchantOfRecord: Value(reseller),
+      isConsumer: Value(consumer),
       contactPerson: const Value('Sam Voorbeeld'),
       phone: const Value('+31 20 000 0000'),
       email: Value('finance@${name.toLowerCase().split(' ').first}.example'),
@@ -145,6 +147,14 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     '1 Example Street\nLondon EC1A 1AA\nUnited Kingdom',
     WetDbaRisk.low,
     reseller: true,
+  );
+  final consumerDe = await client(
+    'Anna Beispiel',
+    'DE',
+    null,
+    'Gartenweg 4\n50667 Köln\nDeutschland',
+    WetDbaRisk.low,
+    consumer: true,
   );
   await client(
     'Oud Klant BV',
@@ -239,6 +249,14 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
           : VatTreatment.standard,
     );
   }
+  // A private person in another member state: Dutch BTW, counted towards
+  // the threshold of Wet OB 1968 art. 6k.
+  await invoice(
+    clientId: consumerDe,
+    date: DateTime(_year, 11, 3),
+    lines: [('Ontwerp geboortekaart', 1, 45000, VatRate.high)],
+    unit: 'stuk',
+  );
   final german1 = await invoice(
     clientId: german,
     date: DateTime(_year, 3, 15),

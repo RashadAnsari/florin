@@ -176,7 +176,7 @@ find, older ones included. These are shared:
 | Dutch text for the PDF and CSV | `VatRate.dutchLabel(rules)` and the other helpers in `domain.dart`; enum labels in the CSV mapping |
 | A statutory figure, a BTW amount, a term or a deadline | The year's `TaxYearRules` (`taxRulesProvider`, `taxRulesFor`): `vatOn`, `keepUntil`, `latestInvoiceDate`, `minUsefulLifeYears` and its fields |
 | A rate or amount in a text | `AppFormat.percentLabel` and `AppFormat.euros`, passed into a placeholder |
-| Whether a treatment fits a country | `VatTreatment.fitsCountry`, `euCountries` |
+| Whether a treatment fits a country or a private person | `VatTreatment.fitsCountry`, `fitsClient`, `euCountries`, `Client.isEuConsumerAbroad` |
 | KOR status, turnover and its effect on expenses and assets | `KorService`, `KorStatus`, `korStatusProvider`, `effectiveExpensesProvider`, `effectiveAssetsProvider` |
 | Assets in use in a year, sales invoiced in Florin | `AssetService.inUse`, `assetsInUseProvider`, `AssetService.saleInvoiceIds`, `invoicedProceeds` |
 | Combining several provider streams | `waitForAll` in `lib/providers/providers.dart` |

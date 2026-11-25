@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../widgets/validators.dart';
 import '../../widgets/form_error_text.dart';
 import '../../widgets/amount_field.dart';
+import '../../services/vat_service.dart';
 import '../../services/asset_service.dart';
 import '../../services/formats.dart';
 import '../../widgets/help.dart';
@@ -470,6 +471,31 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
     return t == VatTreatment.kor ? null : l.invoiceValidateKorTreatment;
   }
 
+  /// Electronic services and distance sales to consumers in other member
+  /// states are taxed there above the threshold (Wet OB 1968 art. 6h, 6k).
+  /// Florin cannot tell which supplies those are, so it compares all of them
+  /// with the threshold, this year and the year before, and warns.
+  Widget _euConsumerNotice(List<Client> clients, AppLocalizations l) {
+    final year = _invoiceDate.year;
+    final threshold = _rulesOf(_invoiceDate).euConsumerSalesThreshold;
+    final invoices = ref.read(allInvoicesProvider).valueOrNull ?? const [];
+    final byId = {for (final c in clients) c.id: c};
+    final others = invoices.where((i) => i.id != _original?.id).toList();
+    final thisYear =
+        VatService.euConsumerSales(others, byId, year) + _totalExclVat;
+    final lastYear = VatService.euConsumerSales(others, byId, year - 1);
+    final over = thisYear > threshold || lastYear > threshold;
+    return NoticeBanner(
+      over
+          ? l.invoiceEuConsumerOverNotice(AppFormat.cents(threshold))
+          : l.invoiceEuConsumerNotice(
+              AppFormat.cents(threshold),
+              AppFormat.cents(thisYear),
+            ),
+      tone: over ? NoticeTone.warning : NoticeTone.info,
+    );
+  }
+
   /// A credit note reverses at most what is left of the corrected invoice.
   String? _creditLimitError(AppLocalizations l) {
     final c = _corrected;
@@ -722,11 +748,21 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                         ? null
                         : (t) => setState(() => _treatment = t),
                     required: true,
-                    validator: (t) =>
-                        client != null && !t.fitsCountry(client.country)
+                    validator: (t) => client == null
+                        ? _korError(t, l)
+                        : !t.fitsCountry(client.country)
                         ? l.invoiceValidateTreatmentCountry
+                        : !t.fitsClient(client)
+                        ? l.invoiceValidateTreatmentConsumer
                         : _korError(t, l),
                   ),
+                  if (_isEditable &&
+                      client != null &&
+                      client.isEuConsumerAbroad &&
+                      _treatment == VatTreatment.standard) ...[
+                    const SizedBox(height: AppSpacing.field),
+                    _euConsumerNotice(allClients, l),
+                  ],
                   // Self-billing is a reseller's practice, so the option shows
                   // only there, or on an invoice that already uses it.
                   if (_selfBilled || (client?.isMerchantOfRecord ?? false)) ...[

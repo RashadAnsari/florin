@@ -22,4 +22,9 @@ class Clients extends Table {
   /// name and pays the user, such as a merchant of record or an app store.
   BoolColumn get isMerchantOfRecord =>
       boolean().withDefault(const Constant(false))();
+
+  /// A private person, not a business or legal person ("een andere dan
+  /// ondernemer"): no reverse charge, no ICP-opgaaf and no invoice duty
+  /// (Wet OB 1968 art. 6, 34c).
+  BoolColumn get isConsumer => boolean().withDefault(const Constant(false))();
 }

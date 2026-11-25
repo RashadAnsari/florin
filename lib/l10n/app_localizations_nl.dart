@@ -2491,6 +2491,20 @@ class AppLocalizationsNl extends AppLocalizations {
       'Deze btw-behandeling past niet bij het land van de klant. Btw verlegd binnenland is voor Nederlandse klanten, de EU-behandelingen voor andere EU-landen en de behandelingen buiten de EU voor landen daarbuiten.';
 
   @override
+  String get invoiceValidateTreatmentConsumer =>
+      'Deze klant is een particulier. Kies Nederlandse btw, de KOR of uitvoer van goederen: btw wordt niet naar een particulier verlegd, en een dienst aan een particulier is in Nederland belast.';
+
+  @override
+  String invoiceEuConsumerNotice(String threshold, String total) {
+    return 'Telecommunicatie-, omroep- en elektronische diensten en afstandsverkopen van goederen aan particulieren in andere EU-landen zijn in hun land belast zodra ze samen in dit of het vorige jaar meer dan $threshold excl. btw zijn (Wet OB 1968 art. 6h, 6k). Uw prestaties met Nederlandse btw aan particulieren in andere EU-landen dit jaar, deze factuur meegeteld: $total. Florin kan niet zien welke elektronische diensten zijn, dus telt het ze allemaal, en het maakt de OSS-aangifte niet.';
+  }
+
+  @override
+  String invoiceEuConsumerOverNotice(String threshold) {
+    return 'Uw prestaties met Nederlandse btw aan particulieren in andere EU-landen zijn in dit of het vorige jaar meer dan $threshold. Zitten er telecommunicatie-, omroep- of elektronische diensten of afstandsverkopen van goederen tussen, dan zijn die belast in het land van de particulier, niet met Nederlandse btw (Wet OB 1968 art. 6h, 6k), meestal via de OSS. Florin berekent dit niet en rekent Nederlandse btw.';
+  }
+
+  @override
   String get invoiceSelfBilled => 'Uitgereikt door afnemer (self-billing)';
 
   @override
@@ -2530,7 +2544,17 @@ class AppLocalizationsNl extends AppLocalizations {
       'Vink aan voor een platform dat jouw product op eigen naam aan eindklanten verkoopt en jou betaalt, zoals een merchant of record of een app store. Het platform is de verkoper tegenover de eindklanten, dus je factureert alleen aan het platform. Het onderdeel Wet DBA gaat over arbeidsrelaties en is verborgen bij een wederverkoper.';
 
   @override
+  String get clientsConsumer => 'Particulier, geen bedrijf';
+
+  @override
+  String get clientsConsumerHelp =>
+      'Vink dit aan voor een klant die als particulier koopt. Btw wordt nooit naar een particulier verlegd en er is geen ICP-opgaaf voor, dus Florin biedt alleen Nederlandse btw, de KOR of uitvoer van goederen. Een dienst aan een particulier is belast waar u gevestigd bent (Wet OB 1968 art. 6 lid 2), behalve telecommunicatie-, omroep- en elektronische diensten, die belast zijn waar de particulier woont (art. 6h) zodra zulke prestaties aan andere EU-landen een drempel per jaar overschrijden (art. 6k). Voor een particulier in Nederland hoeft u geen factuur uit te reiken (art. 34c).';
+
+  @override
   String get clientsBadgeMerchantOfRecord => 'Merchant of record';
+
+  @override
+  String get clientsBadgeConsumer => 'Particulier';
 
   @override
   String get vatRowOutsideReturn =>

@@ -11,6 +11,7 @@ import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
 import 'generated/schema_v5.dart' as v5;
+import 'generated/schema_v6.dart' as v6;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -458,6 +459,46 @@ void main() {
       validateItems: (newDb) async {
         expect(await newDb.select(newDb.businessProfiles).get(), [newProfile]);
         expect(await newDb.select(newDb.taxYearInputs).get(), [newInputs]);
+      },
+    );
+  });
+
+  test('migration from v5 to v6 keeps every client a business', () async {
+    const oldClient = v5.ClientsData(
+      id: 1,
+      name: 'Voorbeeld BV',
+      country: 'DE',
+      vatNumber: 'DE123456789',
+      address: 'Strasse 1',
+      wetDbaRisk: 'low',
+      contractSigned: 0,
+      isActive: 1,
+      isMerchantOfRecord: 0,
+    );
+    const newClient = v6.ClientsData(
+      id: 1,
+      name: 'Voorbeeld BV',
+      country: 'DE',
+      vatNumber: 'DE123456789',
+      address: 'Strasse 1',
+      wetDbaRisk: 'low',
+      contractSigned: 0,
+      isActive: 1,
+      isMerchantOfRecord: 0,
+      isConsumer: 0,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 5,
+      newVersion: 6,
+      createOld: v5.DatabaseAtV5.new,
+      createNew: v6.DatabaseAtV6.new,
+      openTestedDatabase: AppDatabase.new,
+      createItems: (batch, oldDb) {
+        batch.insert(oldDb.clients, oldClient);
+      },
+      validateItems: (newDb) async {
+        expect(await newDb.select(newDb.clients).get(), [newClient]);
       },
     );
   });

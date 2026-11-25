@@ -48,7 +48,7 @@ Florin keeps your invoices, expenses, BTW returns, hours, mileage, assets and pe
 | **Fixed assets** | Straight-line depreciation by day down to the residual value, business use percentage, KIA, EIA, MIA and the herinvesteringsreserve. The BTW on the purchase and on a sale goes into your BTW return, and BTW you cannot reclaim, such as under the KOR, counts as part of the cost. |
 | **Business car** | The private-use addition (bijtelling) with the zero-emission reduction and the 500 km rule, and the BTW on private use in the last return of the year. |
 | **Pension** | Your jaarruimte from last year's profit and wages, AOW-franchise and factor A, plus reserveringsruimte, and premiums for disability insurance (AOV). |
-| **Clients** | Contact details, BTW and KvK numbers, and the Wet DBA risk per client. |
+| **Clients** | Contact details, BTW and KvK numbers, and the Wet DBA risk per client. Mark a private person as one: Florin then offers only the treatments that fit, and warns when supplies with Dutch BTW to private persons in other EU countries pass the € 10.000 threshold above which electronic services are taxed in their country. |
 
 Florin covers the **2026** tax year. Only covered years can be selected and booked into; a new year arrives in an update once its figures are published and checked.
 

@@ -105,6 +105,7 @@ void main() {
       contractSigned: false,
       isActive: true,
       isMerchantOfRecord: false,
+      isConsumer: false,
     );
     final rows = CsvExportService.icpRows(
       _quarter(
