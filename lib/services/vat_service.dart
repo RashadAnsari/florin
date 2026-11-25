@@ -1,4 +1,5 @@
 import '../db/database.dart';
+import 'car_service.dart';
 import 'domain.dart';
 import 'kor_service.dart';
 import 'tax_rules/tax_year_rules.dart';
@@ -60,6 +61,18 @@ class VatReturnResult {
 
   int get vatRevisionTotal => vatRevision.values.fold(0, (s, v) => s + v);
 
+  /// Corrections of earlier filed periods carried into this return, per
+  /// rubriek as (base, BTW), already added to the figures above.
+  final Map<String, (int, int)> carriedCorrections;
+
+  /// The earlier periods those corrections come from, with their figures as
+  /// they are now, kept as filed once this return is filed.
+  final Map<VatPeriod, Map<String, (int, int)>> carriedFrom;
+
+  /// For a filed period: how its records now differ from what was filed,
+  /// per rubriek. Empty when nothing changed or the period is not filed.
+  final Map<String, (int, int)> changedSinceFiled;
+
   const VatReturnResult({
     required this.revenue1a,
     required this.vat1a,
@@ -81,7 +94,62 @@ class VatReturnResult {
     this.revenueKorExempt = 0,
     this.duty = ReturnDuty.regular,
     this.vatRevision = const {},
+    this.carriedCorrections = const {},
+    this.carriedFrom = const {},
+    this.changedSinceFiled = const {},
   });
+
+  /// The figures per rubriek as the form asks them, (base, BTW) in cents.
+  Map<String, (int, int)> get rubrieken => {
+    '1a': (revenue1a, vat1a),
+    '1b': (revenue1b, vat1b),
+    '1d': (0, vat1d),
+    '1e': (revenue1e, 0),
+    '2a': (base2a, vat2a),
+    '3a': (revenue3a, 0),
+    '3b': (revenue3b, 0),
+    '4a': (base4a, vat4a),
+    '4b': (base4b, vat4b),
+    '5b': (0, inputVat5b),
+  };
+
+  /// This return with [corrections] of earlier periods added, from
+  /// [from], and [changed] as the change since it was filed.
+  VatReturnResult withCorrections({
+    Map<String, (int, int)> corrections = const {},
+    Map<VatPeriod, Map<String, (int, int)>> from = const {},
+    Map<String, (int, int)> changed = const {},
+  }) {
+    (int, int) c(String r) => corrections[r] ?? (0, 0);
+    final net = VatService.netVatOf(corrections);
+    return VatReturnResult(
+      revenue1a: revenue1a + c('1a').$1,
+      vat1a: vat1a + c('1a').$2,
+      revenue1b: revenue1b + c('1b').$1,
+      vat1b: vat1b + c('1b').$2,
+      revenue1e: revenue1e + c('1e').$1,
+      vat1d: vat1d + c('1d').$2,
+      revenue3a: revenue3a + c('3a').$1,
+      revenue3b: revenue3b + c('3b').$1,
+      base2a: base2a + c('2a').$1,
+      vat2a: vat2a + c('2a').$2,
+      base4a: base4a + c('4a').$1,
+      vat4a: vat4a + c('4a').$2,
+      base4b: base4b + c('4b').$1,
+      vat4b: vat4b + c('4b').$2,
+      inputVat5b: inputVat5b + c('5b').$2,
+      icpInvoices: icpInvoices,
+      revenueOutsideReturn: revenueOutsideReturn,
+      revenueKorExempt: revenueKorExempt,
+      // A correction that changes the BTW needs a return, also in a period
+      // the KOR covers.
+      duty: duty == ReturnDuty.none && net != 0 ? ReturnDuty.incidental : duty,
+      vatRevision: vatRevision,
+      carriedCorrections: corrections,
+      carriedFrom: from,
+      changedSinceFiled: changed,
+    );
+  }
 
   /// Nothing to report in any rubriek: the return is a nil return.
   bool get isEmpty =>
@@ -130,6 +198,45 @@ abstract final class VatService {
     privateUseVat: privateUseVat,
     kor: kor,
     vatRevision: vatRevision,
+  );
+
+  /// The return of [period] from the records as they count (the KOR and the
+  /// rule on gifts applied): the herziening and the BTW on private use of a
+  /// car go in the last return of the year.
+  static VatReturnResult fromRecords({
+    required List<Invoice> invoices,
+    required List<InvoiceLine> lines,
+    required List<Expense> expenses,
+    required List<FixedAsset> assets,
+    required List<MileageTrip> trips,
+    required VatPeriod period,
+    required KorStatus kor,
+    required TaxYearRules rules,
+  }) => calculatePeriod(
+    invoices: invoices,
+    lines: lines,
+    expenses: expenses,
+    assets: assets,
+    period: period,
+    kor: kor,
+    vatRevision: period.isLastOfYear
+        ? KorService.revision(
+            status: kor,
+            assets: assets,
+            invoices: invoices,
+            year: period.year,
+            rules: rules,
+          )
+        : const {},
+    privateUseVat: period.isLastOfYear
+        ? CarService.btwPrivateUse(
+            assets: assets,
+            trips: trips,
+            expenses: expenses,
+            year: period.year,
+            rules: rules,
+          )
+        : 0,
   );
 
   /// The return of one [period], as [calculateQuarter] describes.
@@ -289,6 +396,36 @@ abstract final class VatService {
     final end = period.last;
     return DateTime(end.year, end.month + months + 1, 0);
   }
+
+  /// [now] minus [filed] per rubriek, leaving out rubrieken that did not
+  /// change.
+  static Map<String, (int, int)> difference(
+    Map<String, (int, int)> now,
+    Map<String, (int, int)> filed,
+  ) => {
+    for (final r in {...now.keys, ...filed.keys})
+      if ((now[r] ?? (0, 0)) != (filed[r] ?? (0, 0)))
+        r: (
+          (now[r]?.$1 ?? 0) - (filed[r]?.$1 ?? 0),
+          (now[r]?.$2 ?? 0) - (filed[r]?.$2 ?? 0),
+        ),
+  };
+
+  /// The BTW to pay that [rubrieken] add up to: the BTW of rubrieken 1 to 4
+  /// minus the voorbelasting of 5b.
+  static int netVatOf(Map<String, (int, int)> rubrieken) => rubrieken.entries
+      .fold(0, (s, e) => s + (e.key == '5b' ? -e.value.$2 : e.value.$2));
+
+  /// Whether a change to a filed return goes into the next return (true) or
+  /// needs a suppletie (false), by its BTW (Belastingdienst, Btw-aangifte
+  /// corrigeren). The page does not say how changes in several rubrieken add
+  /// up, so Florin asks both the net change and each rubriek's change to
+  /// stay within the amount: the reading that sends more to a suppletie.
+  static bool fitsNextReturn(Map<String, (int, int)> change, TaxYearRules r) =>
+      netVatOf(change).abs() <= r.correctionNextReturnMax &&
+      change.entries.every(
+        (e) => e.value.$2.abs() <= r.correctionNextReturnMax,
+      );
 
   /// Whether a year's figures break a condition for a yearly return: BTW to
   /// pay of at least the limit, or EU supplies or EU purchases of at least

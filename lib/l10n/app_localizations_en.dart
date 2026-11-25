@@ -895,6 +895,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vatReturnFilingPeriod => 'Filing period';
 
   @override
+  String vatReturnRubriek(String code) {
+    return 'Rubriek $code';
+  }
+
+  @override
+  String get vatReturnChangedSection => 'Changed since you filed';
+
+  @override
+  String get vatReturnChangedSectionHelp =>
+      'Records of this period changed after you marked the return filed. These are the differences per rubriek with what Florin kept as filed, as base and BTW.';
+
+  @override
+  String get vatReturnChangedNet => 'Change in BTW to pay';
+
+  @override
+  String vatReturnChangedNextNotice(String max) {
+    return 'A correction of at most $max goes into your next return, in the rubriek where it belongs (Belastingdienst, Btw-aangifte corrigeren). Florin adds it to the next return you have not filed yet.';
+  }
+
+  @override
+  String vatReturnChangedSuppletieNotice(String max, int weeks, int years) {
+    return 'A correction of more than $max must be filed with the form Suppletie btw in Mijn Belastingdienst Zakelijk, as soon as possible and at the latest $weeks weeks after you found the error; otherwise a fine is possible. Corrections are possible up to $years years after the year. Mark it below once you filed it, so Florin counts these figures as filed.';
+  }
+
+  @override
+  String get vatReturnSuppletieFiled => 'I filed the suppletie';
+
+  @override
+  String get vatReturnCarriedSection =>
+      'Corrections of earlier returns included';
+
+  @override
+  String vatReturnCarriedSectionHelp(String max) {
+    return 'Changes of at most $max to returns you already filed go into this return, in the rubriek where they belong (Belastingdienst, Btw-aangifte corrigeren). They are added to the figures above and to the export. When you mark this return filed, Florin counts those earlier returns as corrected.';
+  }
+
+  @override
+  String vatReturnCarriedFrom(String periods) {
+    return 'From: $periods';
+  }
+
+  @override
   String vatReturnFilingPeriodHelp(String vat, String eu) {
     return 'The period of your BTW returns, as in your aangiftebrief. Most businesses file per quarter. The Belastingdienst lets you file per month on request, and per year on request when you pay less than $vat BTW a year, are an eenmanszaak and have less than $eu a year of each kind of EU supply or purchase; it can also require monthly returns after late returns or payments. Choose the period the Belastingdienst confirmed.';
   }
@@ -1988,7 +2030,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get vatReturnFiledHelp =>
-      'Tick once you have filed this quarter\'s return in Mijn Belastingdienst Zakelijk.';
+      'Tick once you filed this return. Florin keeps the figures you filed, so a later change to this period\'s records shows as a correction: small ones go into your next return, larger ones need a suppletie.';
 
   @override
   String get vatReturnPaidHelp =>

@@ -16,6 +16,7 @@ import 'tables/mileage_trips.dart';
 import 'tables/pension.dart';
 import 'tables/receipts.dart';
 import 'tables/tax_year_inputs.dart';
+import 'tables/vat_filed_figures.dart';
 import 'tables/vat_returns.dart';
 
 export 'enums.dart';
@@ -36,6 +37,7 @@ part 'database.g.dart';
     VatReturns,
     TaxYearInputs,
     Receipts,
+    VatFiledFigures,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -49,7 +51,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump with every schema change and run `make migration`; see AGENTS.md.
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -193,6 +195,9 @@ class AppDatabase extends _$AppDatabase {
                 newColumns: [returns.kind, returns.number],
               ),
             );
+          },
+          from10To11: (m, schema) async {
+            await m.createTable(schema.vatFiledFigures);
           },
         )(m, from, to),
       );

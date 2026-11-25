@@ -22,6 +22,11 @@ import 'package:florin/db/daos/pension_dao.dart';
 import 'package:florin/db/daos/tax_year_inputs_dao.dart';
 import 'package:florin/db/daos/vat_return_dao.dart';
 import 'package:florin/db/database.dart';
+import 'package:florin/services/vat_service.dart';
+import 'package:florin/services/kor_service.dart';
+import 'package:florin/services/gift_service.dart';
+import 'package:florin/services/asset_service.dart';
+import 'package:florin/db/daos/vat_filed_figures_dao.dart';
 import 'package:florin/db/daos/receipt_dao.dart';
 import 'package:florin/services/domain.dart';
 import 'package:florin/services/tax_rules/tax_year_rules.dart';
@@ -1049,12 +1054,42 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
       paid: Value(true),
     ),
   );
-  await vatReturns.save(
-    const VatReturnsCompanion(
-      year: Value(_year),
-      number: Value(3),
-      filed: Value(true),
+  // Q3 was filed with its figures then; an expense booked into it later
+  // shows as a correction, carried into Q4.
+  const q3 = (year: _year, kind: VatFilingPeriod.quarterly, number: 3);
+  final profile = await BusinessProfileDao(db).get();
+  final allInvoices = await db.select(db.invoices).get();
+  final assetRows = await db.select(db.fixedAssets).get();
+  final kor = KorService.status(
+    profile,
+    allInvoices,
+    assetSales: AssetService.saleInvoiceIds(assetRows),
+  );
+  final filedQ3 = VatService.fromRecords(
+    invoices: allInvoices,
+    lines: await db.select(db.invoiceLines).get(),
+    expenses: GiftService.applyDeductionRule(
+      KorService.applyToExpenses(await db.select(db.expenses).get(), kor),
+      taxRulesFor,
     ),
+    assets: KorService.applyToAssets(
+      AssetService.withSaleInvoices(assetRows, allInvoices),
+      kor,
+    ),
+    trips: await db.select(db.mileageTrips).get(),
+    period: q3,
+    kor: kor,
+    rules: taxYear2026,
+  );
+  await VatFiledFiguresDao(
+    db,
+  ).setFiled(q3, filed: true, paid: true, figures: filedQ3.rubrieken);
+  await expense(
+    DateTime(_year, 9, 29),
+    'Software Voorbeeld',
+    'Licentie gevonden na de aangifte',
+    ExpenseCategory.software,
+    20000,
   );
 }
 
