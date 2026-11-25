@@ -75,6 +75,31 @@ class TaxYearInputs extends Table {
   /// is off.
   BoolColumn get isStarter => boolean().withDefault(const Constant(false))();
 
+  // The year-end balance sheet: what the records do not show, in cents
+  // (Belastingdienst, cijfers voor de aangifte; `docs/legal.md`).
+
+  /// Ondernemingsvermogen at the start of the year: the end of last year's.
+  IntColumn get equityStart => integer().withDefault(const Constant(0))();
+
+  /// Business bank balance on 31 December.
+  IntColumn get bankBalance => integer().withDefault(const Constant(0))();
+
+  /// Business cash on 31 December.
+  IntColumn get cashBalance => integer().withDefault(const Constant(0))();
+
+  /// Supplier invoices not paid on 31 December.
+  IntColumn get unpaidPurchases => integer().withDefault(const Constant(0))();
+
+  /// Loans of the business longer than a year.
+  IntColumn get longTermLoans => integer().withDefault(const Constant(0))();
+
+  /// Money and goods taken from the business for private use in the year.
+  IntColumn get privateWithdrawals =>
+      integer().withDefault(const Constant(0))();
+
+  /// Private money and goods put into the business in the year.
+  IntColumn get privateDeposits => integer().withDefault(const Constant(0))();
+
   /// The period of the year's BTW returns.
   TextColumn get vatFilingPeriod => textEnum<VatFilingPeriod>().withDefault(
     Constant(VatFilingPeriod.quarterly.name),

@@ -1023,6 +1023,14 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
       year: Value(_year),
       // Below the amount that makes it a deductible cost.
       partnerPay: Value(150000),
+      // The year-end figures the records do not show.
+      equityStart: Value(1250000),
+      bankBalance: Value(1834500),
+      cashBalance: Value(12000),
+      unpaidPurchases: Value(48400),
+      longTermLoans: Value(500000),
+      privateWithdrawals: Value(3600000),
+      privateDeposits: Value(45000),
       hasSoVerklaring: Value(true),
       soStarter: Value(false),
       unrealisedZelfstandigenaftrek: Value(50000),

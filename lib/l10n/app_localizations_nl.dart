@@ -1156,6 +1156,117 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
+  String balanceSection(int year) {
+    return 'Balans op 31 december $year (geschat)';
+  }
+
+  @override
+  String get balanceSectionHelp =>
+      'De aangifte inkomstenbelasting vraagt om de balans: wat de onderneming op 1 januari en 31 december bezit en verschuldigd is, en de privéonttrekkingen en -stortingen, waaruit de winst volgt (vraag 19). Florin neemt de bedrijfsmiddelen, openstaande facturen en openstaande btw uit je administratie; de rest vul je in vanuit je bankafschriften en leningpapieren.';
+
+  @override
+  String get balancePaperNotice =>
+      'Iedereen met een bedrijf moet een administratie voeren waaruit zijn rechten en verplichtingen altijd blijken, en binnen zes maanden na het jaar de balans en de staat van baten en lasten maken en op papier stellen (BW 3:15i met 2:10). Florin berekent de cijfers; ze op papier bewaren doe je zelf.';
+
+  @override
+  String get balanceBank => 'Zakelijk banksaldo';
+
+  @override
+  String get balanceBankHelp =>
+      'Het saldo van de zakelijke bankrekening op 31 december, zoals op het jaaroverzicht van de bank.';
+
+  @override
+  String get balanceCash => 'Zakelijke kas';
+
+  @override
+  String get balanceCashHelp =>
+      'Contant geld van de onderneming op 31 december.';
+
+  @override
+  String get balanceUnpaidPurchases => 'Onbetaalde leveranciersfacturen';
+
+  @override
+  String get balanceUnpaidPurchasesHelp =>
+      'Facturen van leveranciers die je op 31 december nog niet had betaald, incl. btw. Het zijn kortlopende schulden.';
+
+  @override
+  String get balanceLoans => 'Leningen langer dan een jaar';
+
+  @override
+  String get balanceLoansHelp =>
+      'Geld dat de onderneming leende, bij een bank of bij familie of vrienden, voor langer dan een jaar: langlopende schulden.';
+
+  @override
+  String get balanceEquityStart => 'Ondernemingsvermogen op 1 januari';
+
+  @override
+  String get balanceEquityStartHelp =>
+      'Het ondernemingsvermogen aan het einde van vorig jaar, uit de aangifte van vorig jaar (vraag 19a). De aangifte vraagt een verschil toe te lichten.';
+
+  @override
+  String get balanceWithdrawals => 'Privéonttrekkingen';
+
+  @override
+  String get balanceWithdrawalsHelp =>
+      'Geld en goederen die je het jaar uit de onderneming voor jezelf nam, ook het privégebruik van een auto van de zaak dat Florin bij de winst telt (vraag 19b).';
+
+  @override
+  String get balanceDeposits => 'Privéstortingen';
+
+  @override
+  String get balanceDepositsHelp =>
+      'Privégeld en -goederen die je het jaar in de onderneming stak, zoals zakelijke kosten betaald van een privérekening (vraag 19e).';
+
+  @override
+  String get balanceFixedAssets => 'Vaste activa';
+
+  @override
+  String get balanceReceivables => 'Vorderingen';
+
+  @override
+  String get balanceReceivablesHelp =>
+      'Facturen die op 31 december niet betaald waren, incl. btw, en btw die je nog terugkrijgt.';
+
+  @override
+  String get balanceLiquid => 'Liquide middelen';
+
+  @override
+  String get balanceTotalAssets => 'Totaal activa';
+
+  @override
+  String get balanceShortTermDebts => 'Kortlopende schulden';
+
+  @override
+  String get balanceShortTermDebtsHelp =>
+      'Onbetaalde leveranciersfacturen en btw die je over het jaar nog moet betalen. De laatste aangifte van het jaar valt na 31 december, dus die btw telt hier mee.';
+
+  @override
+  String get balanceLongTermDebts => 'Langlopende schulden';
+
+  @override
+  String get balanceEquityEnd => 'Ondernemingsvermogen op 31 december (19a)';
+
+  @override
+  String get balanceEquityEndHelp =>
+      'Wat de onderneming op 31 december bezit min wat ze verschuldigd is: vraag 19a van de aangifte.';
+
+  @override
+  String get balanceEquityProfit => 'Saldo fiscale winstberekening (19g)';
+
+  @override
+  String get balanceEquityProfitHelp =>
+      '19a plus de privéonttrekkingen, min het ondernemingsvermogen op 1 januari en de privéstortingen, zoals vraag 19 van de aangifte het berekent.';
+
+  @override
+  String get balanceEstimateProfit =>
+      'Winst in de schatting, vóór investeringsaftrek';
+
+  @override
+  String balanceDifferenceNotice(String amount) {
+    return 'De vermogensvergelijking wijkt $amount af van de schatting. Een verschil betekent meestal dat een saldo of een privébeweging ontbreekt of dat een boeking niet in Florin staat. Controleer de cijfers hierboven met je bankafschriften.';
+  }
+
+  @override
   String plTaxUrenBanner(String hours, String target, String suffix) {
     return 'Urencriterium: $hours van $target uur gelogd$suffix.';
   }

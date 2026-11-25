@@ -79,6 +79,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 .requireValue,
         ],
         incomeTax: ref.read(taxEstimateProvider(year)).valueOrNull?.result,
+        balance: ref.read(balanceSheetProvider(year)).valueOrNull,
         receipts: ref.read(receiptServiceProvider).store,
       );
       if (dir != null && mounted) {
@@ -112,6 +113,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           )),
         ),
       ref.watch(taxEstimateProvider(year)),
+      ref.watch(balanceSheetProvider(year)),
     ];
     final figuresReady = figures.every((f) => f.hasValue);
     final locale = ref.watch(localeProvider);

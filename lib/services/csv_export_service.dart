@@ -9,6 +9,7 @@ import 'package:path/path.dart' as p;
 
 import '../db/database.dart';
 import 'asset_service.dart';
+import 'balance_service.dart';
 import '../theme/app_theme.dart';
 import 'domain.dart';
 import 'receipt_store.dart';
@@ -265,6 +266,26 @@ class CsvExportService {
       [e.key.assetName, _date(e.key.purchaseDate), _euro(e.value)],
   ];
 
+  /// The balance sheet on 31 December and the equity comparison of vraag 19
+  /// of the income tax return, in euros and cents.
+  static List<List<Object>> balanceRows(BalanceSheet b) => [
+    ['Onderdeel (schatting)', 'Bedrag'],
+    ['Vaste activa (boekwaarde)', _euro(b.fixedAssets)],
+    ['Vorderingen: openstaande facturen', _euro(b.receivables)],
+    ['Vorderingen: terug te ontvangen btw', _euro(b.vatReceivable)],
+    ['Liquide middelen: bank', _euro(b.bank)],
+    ['Liquide middelen: kas', _euro(b.cash)],
+    ['Totaal activa', _euro(b.totalAssets)],
+    ['Kortlopende schulden: leveranciers', _euro(b.unpaidPurchases)],
+    ['Kortlopende schulden: te betalen btw', _euro(b.vatPayable)],
+    ['Langlopende schulden', _euro(b.longTermLoans)],
+    ['19a Ondernemingsvermogen einde boekjaar', _euro(b.equityEnd)],
+    ['19b Privéonttrekkingen', _euro(b.withdrawals)],
+    ['19d Ondernemingsvermogen begin boekjaar', _euro(b.equityStart)],
+    ['19e Privéstortingen', _euro(b.deposits)],
+    ['19g Saldo fiscale winstberekening', _euro(b.equityProfit)],
+  ];
+
   /// The seller details printed on invoices, and the KOR dates.
   static List<List<Object>> profileRows(BusinessProfile? b) => [
     ['Gegeven', 'Waarde'],
@@ -417,6 +438,7 @@ class CsvExportService {
     required List<(VatPeriod, VatReturnResult)> periods,
     required List<VatReturnResult> quarters,
     required TaxResult? incomeTax,
+    BalanceSheet? balance,
     required ReceiptStore receipts,
   }) async {
     final parent = await FilePicker.platform.getDirectoryPath(
@@ -429,6 +451,7 @@ class CsvExportService {
       periods: periods,
       quarters: quarters,
       incomeTax: incomeTax,
+      balance: balance,
       receipts: receipts,
     );
   }
@@ -441,6 +464,7 @@ class CsvExportService {
     required List<(VatPeriod, VatReturnResult)> periods,
     required List<VatReturnResult> quarters,
     required TaxResult? incomeTax,
+    BalanceSheet? balance,
     required ReceiptStore receipts,
   }) async {
     assert(quarters.length == 4 && periods.isNotEmpty);
@@ -857,6 +881,9 @@ class CsvExportService {
     }
     if (incomeTax != null) {
       await write('inkomstenbelasting_schatting', incomeTaxRows(incomeTax));
+    }
+    if (balance != null) {
+      await write('balans_schatting', balanceRows(balance));
     }
 
     // Each file is copied as stored, so its SHA-256 still matches.

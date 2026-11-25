@@ -362,6 +362,8 @@ class PlTaxScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: AppSpacing.section),
                 _YearInputs(year: year),
+                const SizedBox(height: AppSpacing.section),
+                _BalanceSheetSection(year: year, profit: r.grossProfit),
               ],
             ),
           );
@@ -674,6 +676,161 @@ class _WholeNumberFieldState extends State<_WholeNumberField> {
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: fieldDecoration(label: widget.label, help: widget.help),
       validator: (_) => _error(l),
+    );
+  }
+}
+
+/// The business on 31 December and the equity comparison of the income tax
+/// return (vraag 19), from the records and the year's inputs.
+class _BalanceSheetSection extends ConsumerWidget {
+  final int year;
+
+  /// The estimate's profit before investeringsaftrek, to compare with.
+  final int profit;
+
+  const _BalanceSheetSection({required this.year, required this.profit});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context)!;
+    final inputs = ref.watch(taxYearInputsProvider(year)).valueOrNull;
+    Future<void> save(TaxYearInputsCompanion change) => guardSave(
+      context,
+      () => ref
+          .read(taxYearInputsDaoProvider)
+          .save(change.copyWith(year: Value(year))),
+    );
+    Widget field(
+      String key,
+      String label,
+      String help,
+      int value,
+      TaxYearInputsCompanion Function(int) change,
+    ) => AmountField(
+      key: ValueKey('${key}_$year'),
+      label: label,
+      help: help,
+      initialValueCents: value,
+      onChanged: (v) => save(change(v)),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionLabel(l.balanceSection(year), help: l.balanceSectionHelp),
+        const SizedBox(height: AppSpacing.heading),
+        NoticeBanner(l.balancePaperNotice),
+        const SizedBox(height: AppSpacing.field),
+        FormRow(
+          children: [
+            field(
+              'bank',
+              l.balanceBank,
+              l.balanceBankHelp,
+              inputs?.bankBalance ?? 0,
+              (v) => TaxYearInputsCompanion(bankBalance: Value(v)),
+            ),
+            field(
+              'cash',
+              l.balanceCash,
+              l.balanceCashHelp,
+              inputs?.cashBalance ?? 0,
+              (v) => TaxYearInputsCompanion(cashBalance: Value(v)),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.field),
+        FormRow(
+          children: [
+            field(
+              'unpaid',
+              l.balanceUnpaidPurchases,
+              l.balanceUnpaidPurchasesHelp,
+              inputs?.unpaidPurchases ?? 0,
+              (v) => TaxYearInputsCompanion(unpaidPurchases: Value(v)),
+            ),
+            field(
+              'loans',
+              l.balanceLoans,
+              l.balanceLoansHelp,
+              inputs?.longTermLoans ?? 0,
+              (v) => TaxYearInputsCompanion(longTermLoans: Value(v)),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.field),
+        FormRow(
+          children: [
+            field(
+              'equityStart',
+              l.balanceEquityStart,
+              l.balanceEquityStartHelp,
+              inputs?.equityStart ?? 0,
+              (v) => TaxYearInputsCompanion(equityStart: Value(v)),
+            ),
+            field(
+              'withdrawals',
+              l.balanceWithdrawals,
+              l.balanceWithdrawalsHelp,
+              inputs?.privateWithdrawals ?? 0,
+              (v) => TaxYearInputsCompanion(privateWithdrawals: Value(v)),
+            ),
+            field(
+              'deposits',
+              l.balanceDeposits,
+              l.balanceDepositsHelp,
+              inputs?.privateDeposits ?? 0,
+              (v) => TaxYearInputsCompanion(privateDeposits: Value(v)),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.field),
+        AsyncBody(
+          value: ref.watch(balanceSheetProvider(year)),
+          builder: (b) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ValueRow.cents(l.balanceFixedAssets, b.fixedAssets),
+              ValueRow.cents(
+                l.balanceReceivables,
+                b.receivables + b.vatReceivable,
+                help: l.balanceReceivablesHelp,
+              ),
+              ValueRow.cents(l.balanceLiquid, b.bank + b.cash),
+              ValueRow.cents(l.balanceTotalAssets, b.totalAssets, bold: true),
+              ValueRow.cents(
+                l.balanceShortTermDebts,
+                -b.shortTermDebts,
+                help: l.balanceShortTermDebtsHelp,
+              ),
+              ValueRow.cents(l.balanceLongTermDebts, -b.longTermLoans),
+              const Divider(),
+              ValueRow.cents(
+                l.balanceEquityEnd,
+                b.equityEnd,
+                bold: true,
+                help: l.balanceEquityEndHelp,
+              ),
+              ValueRow.cents(
+                l.balanceEquityProfit,
+                b.equityProfit,
+                bold: true,
+                help: l.balanceEquityProfitHelp,
+              ),
+              ValueRow.cents(l.balanceEstimateProfit, profit),
+              if (b.equityProfit != profit) ...[
+                const SizedBox(height: AppSpacing.heading),
+                NoticeBanner(
+                  l.balanceDifferenceNotice(
+                    AppFormat.cents(b.equityProfit - profit),
+                  ),
+                  tone: NoticeTone.warning,
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
