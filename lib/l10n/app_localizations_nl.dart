@@ -1359,7 +1359,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String settingsExportDescription(int year) {
-    return 'Exporteer alle gegevens van $year naar CSV-bestanden, met per kwartaal de btw-aangifte per rubriek in hele euro\'s, het ICP-overzicht en de geschatte inkomstenbelasting van het jaar. Florin zet ze in een nieuwe map met de exportdatum in de naam, in de map die je kiest.';
+    return 'Exporteer alle gegevens van $year naar CSV-bestanden, met per tijdvak de btw-aangifte per rubriek in hele euro\'s, het ICP-overzicht per kwartaal (en per maand als goederen de opgaaf maandelijks maken), de geschatte inkomstenbelasting en balans van het jaar, en de bonnen. Florin zet ze in een nieuwe map met de exportdatum in de naam, in de map die je kiest.';
   }
 
   @override

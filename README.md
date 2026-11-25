@@ -35,6 +35,9 @@ Florin keeps your invoices, expenses, BTW returns, hours, mileage, assets and pe
 
 ## Features
 
+The [user guide](docs/guide.md) walks through every task, from the first invoice to the year end.
+
+
 | | |
 |---|---|
 | **Invoicing** | Dutch PDF invoices with automatic numbering. Dutch BTW, btw verlegd to Dutch and EU businesses, intra-Community supplies of goods, export outside the EU and services to businesses outside the EU, with the treatment checked against the client's country. Sell through a merchant of record such as an app store or reseller: mark it as one and record the invoices it issues to you (self-billing). Issued invoices are locked; corrections are credit notes. Status from draft to paid, including overdue, with what is open and overdue in total. An overdue invoice says what the law gives you: interest and at least € 40 collection costs from a business, a reminder first for a private person, and the last day the claim can go to court. |
