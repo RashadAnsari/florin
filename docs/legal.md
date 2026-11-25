@@ -807,6 +807,37 @@ in the sense of lid 5 is booked under Other and deducted. Not modelled: the
 home office rule of lid 1, the equipment of lid 3 and the Zvw bijdrage of
 lid 2 e, which Florin never books as a cost.
 
+## Voorlopige aanslag and toeslagen
+
+> Meestal kunt u tot 1 mei van het volgende jaar een voorlopige aanslag aanvragen of wijzigen. De exacte datum hangt af van of u aangifte moet doen.
+
+> Hebt u al aangifte gedaan? Dan kunt u over dat jaar geen voorlopige aanslag meer aanvragen. U kunt uw bestaande voorlopige aanslag ook niet meer wijzigen.
+
+> Dan kunt u een voorlopige aanslag aanvragen of wijzigen tot de uiterste datum waarop uw aangifte binnen moet zijn. Die datum staat op uw aangiftebrief.
+
+> Hebt u uitstel gekregen voor uw aangifte? Dan is de uitsteldatum ook de uiterste datum dat u een voorlopige aanslag kunt aanvragen of wijzigen.
+
+[Belastingdienst, Tot wanneer kan ik een voorlopige aanslag aanvragen of wijzigen?](https://www.belastingdienst.nl/wps/wcm/connect/nl/voorlopige-aanslag/content/tot-wanneer-voorlopige-aanslag-aanvragen-wijzigen), read 2026-11-25
+
+> Voor de toeslagen kijken we naar uw toetsingsinkomen. Dat is uw verzamelinkomen voor de belasting. Het toetsingsinkomen is niet uw winst.
+
+> Hebt u een toeslagpartner? Dan tellen we het toetsingsinkomen van die persoon ook mee.
+
+> Vindt u het moeilijk om uw inkomen te berekenen? Schat het dan liever iets te hoog in. U krijgt dan mogelijk nog geld terug. Als u een te laag inkomen doorgeeft, kan het zijn dat u te veel toeslag krijgt. U moet dan mogelijk geld terugbetalen.
+
+> Als u recht hebt op ondernemersaftrekposten, dan mag u dit bedrag aftrekken van uw brutowinst.
+
+[Belastingdienst, Ik heb een wisselend inkomen - heb ik recht op toeslagen?](https://www.belastingdienst.nl/wps/wcm/connect/nl/toeslagen/content/ik-heb-een-wisselend-inkomen-heb-ik-recht-op-toeslagen), read 2026-11-25
+
+Where Florin implements it: the P&L and tax screen ends with a section
+"Voorlopige aanslag and toeslagen (estimated)" that repeats the estimated
+belastbare winst, the taxable income in box 1 and the tax to pay, and names
+the last day (`provisionalAssessmentDeadline`, 1 May of the next year) with
+the letter and uitstel exceptions. The help says the toetsingsinkomen is the
+verzamelinkomen plus a toeslagpartner's, that Florin's figure is box 1 from
+its records only, and that the Belastingdienst advises estimating high.
+Florin does not compute the verzamelinkomen or any toeslag.
+
 ## Income tax estimate scope
 
 The estimate covers one ondernemer under the AOW age, with wages from

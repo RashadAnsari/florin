@@ -16,6 +16,14 @@ void main() {
     );
   });
 
+  test('a voorlopige aanslag can be asked for or changed until 1 May of the '
+      'next year (Belastingdienst)', () {
+    expect(
+      taxRulesFor(2026)!.provisionalAssessmentDeadline,
+      DateTime(2027, 5, 1),
+    );
+  });
+
   test('todayIn keeps new records inside the selected year', () {
     final now = DateTime.now();
     expect(todayIn(now.year - 1), DateTime(now.year - 1, 12, 31));
