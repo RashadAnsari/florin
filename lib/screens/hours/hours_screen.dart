@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' show Value;
 import '../../services/tax_rules/tax_year_rules.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/help.dart';
+import '../../widgets/tone_badge.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:florin/l10n/app_localizations.dart';
@@ -40,10 +41,8 @@ class HoursScreen extends ConsumerWidget {
       items: entries,
       emptyText: l.hoursNone,
       controls: UrencriteriumProgress(
-        totalHours: list.fold(0.0, (s, e) => s + e.hours),
-        billableHours: list
-            .where((e) => e.billable)
-            .fold<double>(0.0, (s, e) => s + e.hours),
+        totalHours: ownHours(list),
+        billableHours: ownHours(list.where((e) => e.billable)),
         target: rules.urencriterium,
         jobHours: ref
             .watch(taxEstimateProvider(year))
@@ -60,7 +59,19 @@ class HoursScreen extends ConsumerWidget {
             if (e.clientProject != null) e.clientProject!,
           ].join('  '),
         ),
-        trailing: Text('${AppFormat.hours(e.hours)} ${l.hoursUnitShort}'),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (e.byPartner) ...[
+              ToneBadge(
+                label: l.hoursBadgePartner,
+                color: Theme.of(context).colorScheme.outline,
+              ),
+              const SizedBox(width: AppSpacing.field),
+            ],
+            Text('${AppFormat.hours(e.hours)} ${l.hoursUnitShort}'),
+          ],
+        ),
         onTap: () => context.push('/hours/${e.id}', extra: e),
       ),
     );
@@ -94,6 +105,7 @@ class _HourDetailPageState extends ConsumerState<HourDetailPage> {
     text: widget.entry?.clientProject,
   );
   late final _notes = TextEditingController(text: widget.entry?.notes);
+  late bool _byPartner = widget.entry?.byPartner ?? false;
 
   @override
   void dispose() {
@@ -120,6 +132,7 @@ class _HourDetailPageState extends ConsumerState<HourDetailPage> {
               hours: Value(parseDecimal(_hoursField.text)!),
               clientProject: Value(optionalText(_clientProject.text)),
               notes: Value(optionalText(_notes.text)),
+              byPartner: Value(_byPartner),
             ),
           ),
     );
@@ -133,6 +146,8 @@ class _HourDetailPageState extends ConsumerState<HourDetailPage> {
           .where(
             (e) =>
                 e.id != widget.entry?.id &&
+                // A day has 24 hours for each person.
+                e.byPartner == _byPartner &&
                 e.date.year == _date.year &&
                 e.date.month == _date.month &&
                 e.date.day == _date.day,
@@ -232,6 +247,13 @@ class _HourDetailPageState extends ConsumerState<HourDetailPage> {
                 label: l.hoursFieldClientProject,
                 help: l.hoursFieldClientProjectHelp,
               ),
+            ),
+            const SizedBox(height: AppSpacing.field),
+            HelpCheckbox(
+              value: _byPartner,
+              onChanged: (v) => setState(() => _byPartner = v),
+              title: l.hoursFieldByPartner,
+              help: l.hoursFieldByPartnerHelp(_rules.meewerkaftrek.first.$1),
             ),
             const SizedBox(height: AppSpacing.field),
             TextFormField(

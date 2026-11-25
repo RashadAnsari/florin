@@ -923,6 +923,17 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
         notes: Value(d.day == 1 ? 'Begin van de maand' : null),
       ),
     );
+    // The fiscal partner helps unpaid, logged per day (Wet IB 2001
+    // art. 3.78), for the meewerkaftrek.
+    await hours.save(
+      HourEntriesCompanion(
+        date: Value(d),
+        description: const Value('Administratie en klantcontact'),
+        workType: const Value(WorkType.administrative),
+        hours: const Value(4.0),
+        byPartner: const Value(true),
+      ),
+    );
   }
 
   final trips = MileageDao(db);
@@ -1004,7 +1015,8 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
   await TaxYearInputsDao(db).save(
     const TaxYearInputsCompanion(
       year: Value(_year),
-      partnerHours: Value(900),
+      // Below the amount that makes it a deductible cost.
+      partnerPay: Value(150000),
       hasSoVerklaring: Value(true),
       soStarter: Value(false),
       unrealisedZelfstandigenaftrek: Value(50000),

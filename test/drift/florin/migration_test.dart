@@ -13,6 +13,7 @@ import 'generated/schema_v4.dart' as v4;
 import 'generated/schema_v5.dart' as v5;
 import 'generated/schema_v6.dart' as v6;
 import 'generated/schema_v7.dart' as v7;
+import 'generated/schema_v8.dart' as v8;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -559,4 +560,80 @@ void main() {
       );
     },
   );
+
+  test('migration from v7 to v8 keeps hours as the user\'s own and the '
+      'partner unpaid', () async {
+    // 15 June 2026, 12:00 UTC, in seconds.
+    const date = 1781524800;
+    const oldHours = v7.HourEntriesData(
+      id: 1,
+      date: date,
+      description: 'Ontwerp',
+      workType: 'billable',
+      hours: 6,
+    );
+    const newHours = v8.HourEntriesData(
+      id: 1,
+      date: date,
+      description: 'Ontwerp',
+      workType: 'billable',
+      hours: 6,
+      byPartner: 0,
+    );
+    const oldInputs = v7.TaxYearInputsData(
+      year: 2026,
+      partnerHours: 600,
+      hasSoVerklaring: 0,
+      soStarter: 0,
+      businessCeased: 0,
+      stakingsaftrekUsedBefore: 0,
+      disabilityBenefit: 0,
+      disabilityStartersUsed: 0,
+      unrealisedZelfstandigenaftrek: 0,
+      lossCarryForward: 0,
+      employed: 0,
+      wages: 0,
+      wageTaxWithheld: 0,
+      zvwWages: 0,
+      employmentHours: 0,
+      notOndernemerBefore: 0,
+      isStarter: 0,
+    );
+    const newInputs = v8.TaxYearInputsData(
+      year: 2026,
+      partnerHours: 600,
+      partnerPay: 0,
+      hasSoVerklaring: 0,
+      soStarter: 0,
+      businessCeased: 0,
+      stakingsaftrekUsedBefore: 0,
+      disabilityBenefit: 0,
+      disabilityStartersUsed: 0,
+      unrealisedZelfstandigenaftrek: 0,
+      lossCarryForward: 0,
+      employed: 0,
+      wages: 0,
+      wageTaxWithheld: 0,
+      zvwWages: 0,
+      employmentHours: 0,
+      notOndernemerBefore: 0,
+      isStarter: 0,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 7,
+      newVersion: 8,
+      createOld: v7.DatabaseAtV7.new,
+      createNew: v8.DatabaseAtV8.new,
+      openTestedDatabase: AppDatabase.new,
+      createItems: (batch, oldDb) {
+        batch.insert(oldDb.hourEntries, oldHours);
+        batch.insert(oldDb.taxYearInputs, oldInputs);
+      },
+      validateItems: (newDb) async {
+        expect(await newDb.select(newDb.hourEntries).get(), [newHours]);
+        expect(await newDb.select(newDb.taxYearInputs).get(), [newInputs]);
+      },
+    );
+  });
 }

@@ -256,6 +256,8 @@ abstract final class TaxService {
     required int stakingswinst,
     required double totalHours,
     required double soHours,
+    // The fiscal partner's hours in the business, logged and entered.
+    double partnerHours = 0,
     // Whether the year is over, so the hours logged are all there will be.
     required bool hoursFinal,
     required TaxYearInput? inputs,
@@ -263,7 +265,15 @@ abstract final class TaxService {
     required int aovPremium,
   }) {
     final i = inputs;
-    final totalCosts = deductibleExpenses + depreciation + mileageAllowance;
+    // Pay to the partner below the rules' amount is not deductible (art. 3.16
+    // lid 4); from it, it is a cost and the partner is not unpaid.
+    final partnerPay = i?.partnerPay ?? 0;
+    final partnerPaid = partnerPay >= rules.meewerkMaxPartnerPay;
+    final totalCosts =
+        deductibleExpenses +
+        depreciation +
+        mileageAllowance +
+        (partnerPaid ? partnerPay : 0);
     final additions =
         disposalResult +
         desinvesteringsbijtelling +
@@ -308,8 +318,8 @@ abstract final class TaxService {
             ((i?.soStarter ?? false) ? rules.soStarterIncrease : 0);
       }
       final meewerkBase = profit - stakingswinst;
-      if (meewerkBase > 0) {
-        meewerkaftrek = (meewerkBase * meewerkRate(i?.partnerHours ?? 0, rules))
+      if (meewerkBase > 0 && !partnerPaid) {
+        meewerkaftrek = (meewerkBase * meewerkRate(partnerHours.floor(), rules))
             .round();
       }
     } else if (hoursFinal &&

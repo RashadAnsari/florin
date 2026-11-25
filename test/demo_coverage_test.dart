@@ -150,4 +150,9 @@ void main() {
       expect(CarService.hasCompleteTripLog(car, trips, year), isTrue);
     }
   });
+
+  test('the demo logs the partner\'s hours per day', () async {
+    final hours = await db.select(db.hourEntries).get();
+    expect(hours.any((h) => h.byPartner), isTrue);
+  });
 }

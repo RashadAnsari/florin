@@ -543,6 +543,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get hoursNone => 'Geen uren geregistreerd';
 
   @override
+  String get hoursBadgePartner => 'Partner';
+
+  @override
   String hoursBillable(String hours) {
     return 'Facturabel: $hours uur';
   }
@@ -1671,6 +1674,14 @@ class AppLocalizationsNl extends AppLocalizations {
       'Alles wat je over deze uren wilt onthouden.';
 
   @override
+  String get hoursFieldByPartner => 'Gewerkt door mijn fiscale partner';
+
+  @override
+  String hoursFieldByPartnerHelp(int hours) {
+    return 'Vink aan voor uren die je fiscale partner in je onderneming werkte. Ze tellen niet mee voor jouw urencriterium; vanaf $hours partneruren per jaar geven ze de meewerkaftrek. De Belastingdienst vraagt je deze uren aannemelijk te maken en in je administratie te bewaren, dus leg ze per dag vast zoals je eigen uren.';
+  }
+
+  @override
   String hoursFieldWorkTypeHelp(int hours) {
     return 'Het soort werk. WBSO-uren tellen mee voor de $hours uur die nodig zijn voor de S&O-aftrek.';
   }
@@ -2108,11 +2119,19 @@ class AppLocalizationsNl extends AppLocalizations {
   String get mileagePrivateVehicle => 'Privévoertuig';
 
   @override
-  String get inputPartnerHours => 'Uren van je partner in de onderneming';
+  String get inputPartnerHours => 'Partneruren buiten de urenregistratie';
 
   @override
   String inputPartnerHoursHelp(String pay, int hours) {
-    return 'Uren die je fiscale partner dit jaar in je onderneming werkte zonder vergoeding of voor minder dan $pay. Vanaf $hours uur krijg je de meewerkaftrek.';
+    return 'Uren die je fiscale partner dit jaar in je onderneming werkte en die niet per dag onder Uren staan. Florin telt ze op bij de vastgelegde partneruren. Vanaf $hours uur, zolang je partner zonder vergoeding of voor minder dan $pay werkt, krijg je de meewerkaftrek. De Belastingdienst vraagt je de uren aannemelijk te maken, dus een registratie per dag is het betere bewijs.';
+  }
+
+  @override
+  String get inputPartnerPay => 'Vergoeding aan je partner';
+
+  @override
+  String inputPartnerPayHelp(String pay) {
+    return 'Wat je onderneming je fiscale partner dit jaar voor het werk betaalde. Onder $pay is het niet aftrekbaar en telt je partner nog als onbetaald voor de meewerkaftrek (Wet IB 2001 art. 3.16 lid 4, art. 3.78); vanaf $pay trekt Florin het af als kosten en geeft het geen meewerkaftrek. Boek het niet ook als uitgave.';
   }
 
   @override

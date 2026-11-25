@@ -438,6 +438,16 @@ class _YearInputs extends ConsumerWidget {
                       save(TaxYearInputsCompanion(partnerHours: Value(v))),
                 ),
                 AmountField(
+                  key: ValueKey('partnerPay_$year'),
+                  label: l.inputPartnerPay,
+                  help: l.inputPartnerPayHelp(
+                    AppFormat.euros(rules.meewerkMaxPartnerPay),
+                  ),
+                  initialValueCents: i?.partnerPay ?? 0,
+                  onChanged: (v) =>
+                      save(TaxYearInputsCompanion(partnerPay: Value(v))),
+                ),
+                AmountField(
                   key: ValueKey('unrealised_$year'),
                   label: l.inputUnrealisedZelfs,
                   help: l.inputUnrealisedZelfsHelp(

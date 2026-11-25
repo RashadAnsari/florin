@@ -6277,6 +6277,21 @@ class $HourEntriesTable extends HourEntries
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _byPartnerMeta = const VerificationMeta(
+    'byPartner',
+  );
+  @override
+  late final GeneratedColumn<bool> byPartner = GeneratedColumn<bool>(
+    'by_partner',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("by_partner" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -6286,6 +6301,7 @@ class $HourEntriesTable extends HourEntries
     hours,
     clientProject,
     notes,
+    byPartner,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -6344,6 +6360,12 @@ class $HourEntriesTable extends HourEntries
         notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
       );
     }
+    if (data.containsKey('by_partner')) {
+      context.handle(
+        _byPartnerMeta,
+        byPartner.isAcceptableOrUnknown(data['by_partner']!, _byPartnerMeta),
+      );
+    }
     return context;
   }
 
@@ -6383,6 +6405,10 @@ class $HourEntriesTable extends HourEntries
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
       ),
+      byPartner: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}by_partner'],
+      )!,
     );
   }
 
@@ -6403,6 +6429,10 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
   final double hours;
   final String? clientProject;
   final String? notes;
+
+  /// Worked by the fiscal partner in the business, for the meewerkaftrek
+  /// (Wet IB 2001 art. 3.78). Not part of the user's own hours.
+  final bool byPartner;
   const HourEntry({
     required this.id,
     required this.date,
@@ -6411,6 +6441,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
     required this.hours,
     this.clientProject,
     this.notes,
+    required this.byPartner,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -6430,6 +6461,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
+    map['by_partner'] = Variable<bool>(byPartner);
     return map;
   }
 
@@ -6446,6 +6478,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
+      byPartner: Value(byPartner),
     );
   }
 
@@ -6464,6 +6497,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
       hours: serializer.fromJson<double>(json['hours']),
       clientProject: serializer.fromJson<String?>(json['clientProject']),
       notes: serializer.fromJson<String?>(json['notes']),
+      byPartner: serializer.fromJson<bool>(json['byPartner']),
     );
   }
   @override
@@ -6479,6 +6513,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
       'hours': serializer.toJson<double>(hours),
       'clientProject': serializer.toJson<String?>(clientProject),
       'notes': serializer.toJson<String?>(notes),
+      'byPartner': serializer.toJson<bool>(byPartner),
     };
   }
 
@@ -6490,6 +6525,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
     double? hours,
     Value<String?> clientProject = const Value.absent(),
     Value<String?> notes = const Value.absent(),
+    bool? byPartner,
   }) => HourEntry(
     id: id ?? this.id,
     date: date ?? this.date,
@@ -6500,6 +6536,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
         ? clientProject.value
         : this.clientProject,
     notes: notes.present ? notes.value : this.notes,
+    byPartner: byPartner ?? this.byPartner,
   );
   HourEntry copyWithCompanion(HourEntriesCompanion data) {
     return HourEntry(
@@ -6514,6 +6551,7 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
           ? data.clientProject.value
           : this.clientProject,
       notes: data.notes.present ? data.notes.value : this.notes,
+      byPartner: data.byPartner.present ? data.byPartner.value : this.byPartner,
     );
   }
 
@@ -6526,14 +6564,23 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
           ..write('workType: $workType, ')
           ..write('hours: $hours, ')
           ..write('clientProject: $clientProject, ')
-          ..write('notes: $notes')
+          ..write('notes: $notes, ')
+          ..write('byPartner: $byPartner')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, date, description, workType, hours, clientProject, notes);
+  int get hashCode => Object.hash(
+    id,
+    date,
+    description,
+    workType,
+    hours,
+    clientProject,
+    notes,
+    byPartner,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -6544,7 +6591,8 @@ class HourEntry extends DataClass implements Insertable<HourEntry> {
           other.workType == this.workType &&
           other.hours == this.hours &&
           other.clientProject == this.clientProject &&
-          other.notes == this.notes);
+          other.notes == this.notes &&
+          other.byPartner == this.byPartner);
 }
 
 class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
@@ -6555,6 +6603,7 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
   final Value<double> hours;
   final Value<String?> clientProject;
   final Value<String?> notes;
+  final Value<bool> byPartner;
   const HourEntriesCompanion({
     this.id = const Value.absent(),
     this.date = const Value.absent(),
@@ -6563,6 +6612,7 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
     this.hours = const Value.absent(),
     this.clientProject = const Value.absent(),
     this.notes = const Value.absent(),
+    this.byPartner = const Value.absent(),
   });
   HourEntriesCompanion.insert({
     this.id = const Value.absent(),
@@ -6572,6 +6622,7 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
     required double hours,
     this.clientProject = const Value.absent(),
     this.notes = const Value.absent(),
+    this.byPartner = const Value.absent(),
   }) : date = Value(date),
        description = Value(description),
        workType = Value(workType),
@@ -6584,6 +6635,7 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
     Expression<double>? hours,
     Expression<String>? clientProject,
     Expression<String>? notes,
+    Expression<bool>? byPartner,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -6593,6 +6645,7 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
       if (hours != null) 'hours': hours,
       if (clientProject != null) 'client_project': clientProject,
       if (notes != null) 'notes': notes,
+      if (byPartner != null) 'by_partner': byPartner,
     });
   }
 
@@ -6604,6 +6657,7 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
     Value<double>? hours,
     Value<String?>? clientProject,
     Value<String?>? notes,
+    Value<bool>? byPartner,
   }) {
     return HourEntriesCompanion(
       id: id ?? this.id,
@@ -6613,6 +6667,7 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
       hours: hours ?? this.hours,
       clientProject: clientProject ?? this.clientProject,
       notes: notes ?? this.notes,
+      byPartner: byPartner ?? this.byPartner,
     );
   }
 
@@ -6642,6 +6697,9 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
+    if (byPartner.present) {
+      map['by_partner'] = Variable<bool>(byPartner.value);
+    }
     return map;
   }
 
@@ -6654,7 +6712,8 @@ class HourEntriesCompanion extends UpdateCompanion<HourEntry> {
           ..write('workType: $workType, ')
           ..write('hours: $hours, ')
           ..write('clientProject: $clientProject, ')
-          ..write('notes: $notes')
+          ..write('notes: $notes, ')
+          ..write('byPartner: $byPartner')
           ..write(')'))
         .toString();
   }
@@ -8262,6 +8321,18 @@ class $TaxYearInputsTable extends TaxYearInputs
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _partnerPayMeta = const VerificationMeta(
+    'partnerPay',
+  );
+  @override
+  late final GeneratedColumn<int> partnerPay = GeneratedColumn<int>(
+    'partner_pay',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   static const VerificationMeta _hasSoVerklaringMeta = const VerificationMeta(
     'hasSoVerklaring',
   );
@@ -8463,6 +8534,7 @@ class $TaxYearInputsTable extends TaxYearInputs
   List<GeneratedColumn> get $columns => [
     year,
     partnerHours,
+    partnerPay,
     hasSoVerklaring,
     soStarter,
     businessCeased,
@@ -8504,6 +8576,12 @@ class $TaxYearInputsTable extends TaxYearInputs
           data['partner_hours']!,
           _partnerHoursMeta,
         ),
+      );
+    }
+    if (data.containsKey('partner_pay')) {
+      context.handle(
+        _partnerPayMeta,
+        partnerPay.isAcceptableOrUnknown(data['partner_pay']!, _partnerPayMeta),
       );
     }
     if (data.containsKey('has_so_verklaring')) {
@@ -8643,6 +8721,10 @@ class $TaxYearInputsTable extends TaxYearInputs
         DriftSqlType.int,
         data['${effectivePrefix}partner_hours'],
       )!,
+      partnerPay: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}partner_pay'],
+      )!,
       hasSoVerklaring: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}has_so_verklaring'],
@@ -8715,9 +8797,15 @@ class $TaxYearInputsTable extends TaxYearInputs
 class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
   final int year;
 
-  /// Hours the fiscal partner worked in the business unpaid or for less than
-  /// the pay the rules allow (meewerkaftrek).
+  /// Hours the fiscal partner worked in the business that are not in the
+  /// hour log, for the meewerkaftrek. The log is the proof the Belastingdienst
+  /// asks for; this total is what was entered before Florin kept one.
   final int partnerHours;
+
+  /// What the business paid the fiscal partner for the work in the year:
+  /// below the rules' amount it is not deductible (Wet IB 2001 art. 3.16 lid
+  /// 4) and the partner counts as unpaid for the meewerkaftrek.
+  final int partnerPay;
   final bool hasSoVerklaring;
 
   /// Not an ondernemer in one of the previous years the rules name and at
@@ -8774,6 +8862,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
   const TaxYearInput({
     required this.year,
     required this.partnerHours,
+    required this.partnerPay,
     required this.hasSoVerklaring,
     required this.soStarter,
     required this.businessCeased,
@@ -8795,6 +8884,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     final map = <String, Expression>{};
     map['year'] = Variable<int>(year);
     map['partner_hours'] = Variable<int>(partnerHours);
+    map['partner_pay'] = Variable<int>(partnerPay);
     map['has_so_verklaring'] = Variable<bool>(hasSoVerklaring);
     map['so_starter'] = Variable<bool>(soStarter);
     map['business_ceased'] = Variable<bool>(businessCeased);
@@ -8819,6 +8909,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     return TaxYearInputsCompanion(
       year: Value(year),
       partnerHours: Value(partnerHours),
+      partnerPay: Value(partnerPay),
       hasSoVerklaring: Value(hasSoVerklaring),
       soStarter: Value(soStarter),
       businessCeased: Value(businessCeased),
@@ -8845,6 +8936,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     return TaxYearInput(
       year: serializer.fromJson<int>(json['year']),
       partnerHours: serializer.fromJson<int>(json['partnerHours']),
+      partnerPay: serializer.fromJson<int>(json['partnerPay']),
       hasSoVerklaring: serializer.fromJson<bool>(json['hasSoVerklaring']),
       soStarter: serializer.fromJson<bool>(json['soStarter']),
       businessCeased: serializer.fromJson<bool>(json['businessCeased']),
@@ -8876,6 +8968,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     return <String, dynamic>{
       'year': serializer.toJson<int>(year),
       'partnerHours': serializer.toJson<int>(partnerHours),
+      'partnerPay': serializer.toJson<int>(partnerPay),
       'hasSoVerklaring': serializer.toJson<bool>(hasSoVerklaring),
       'soStarter': serializer.toJson<bool>(soStarter),
       'businessCeased': serializer.toJson<bool>(businessCeased),
@@ -8901,6 +8994,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
   TaxYearInput copyWith({
     int? year,
     int? partnerHours,
+    int? partnerPay,
     bool? hasSoVerklaring,
     bool? soStarter,
     bool? businessCeased,
@@ -8919,6 +9013,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
   }) => TaxYearInput(
     year: year ?? this.year,
     partnerHours: partnerHours ?? this.partnerHours,
+    partnerPay: partnerPay ?? this.partnerPay,
     hasSoVerklaring: hasSoVerklaring ?? this.hasSoVerklaring,
     soStarter: soStarter ?? this.soStarter,
     businessCeased: businessCeased ?? this.businessCeased,
@@ -8944,6 +9039,9 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
       partnerHours: data.partnerHours.present
           ? data.partnerHours.value
           : this.partnerHours,
+      partnerPay: data.partnerPay.present
+          ? data.partnerPay.value
+          : this.partnerPay,
       hasSoVerklaring: data.hasSoVerklaring.present
           ? data.hasSoVerklaring.value
           : this.hasSoVerklaring,
@@ -8987,6 +9085,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
     return (StringBuffer('TaxYearInput(')
           ..write('year: $year, ')
           ..write('partnerHours: $partnerHours, ')
+          ..write('partnerPay: $partnerPay, ')
           ..write('hasSoVerklaring: $hasSoVerklaring, ')
           ..write('soStarter: $soStarter, ')
           ..write('businessCeased: $businessCeased, ')
@@ -9012,6 +9111,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
   int get hashCode => Object.hash(
     year,
     partnerHours,
+    partnerPay,
     hasSoVerklaring,
     soStarter,
     businessCeased,
@@ -9034,6 +9134,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
       (other is TaxYearInput &&
           other.year == this.year &&
           other.partnerHours == this.partnerHours &&
+          other.partnerPay == this.partnerPay &&
           other.hasSoVerklaring == this.hasSoVerklaring &&
           other.soStarter == this.soStarter &&
           other.businessCeased == this.businessCeased &&
@@ -9055,6 +9156,7 @@ class TaxYearInput extends DataClass implements Insertable<TaxYearInput> {
 class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
   final Value<int> year;
   final Value<int> partnerHours;
+  final Value<int> partnerPay;
   final Value<bool> hasSoVerklaring;
   final Value<bool> soStarter;
   final Value<bool> businessCeased;
@@ -9073,6 +9175,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
   const TaxYearInputsCompanion({
     this.year = const Value.absent(),
     this.partnerHours = const Value.absent(),
+    this.partnerPay = const Value.absent(),
     this.hasSoVerklaring = const Value.absent(),
     this.soStarter = const Value.absent(),
     this.businessCeased = const Value.absent(),
@@ -9092,6 +9195,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
   TaxYearInputsCompanion.insert({
     this.year = const Value.absent(),
     this.partnerHours = const Value.absent(),
+    this.partnerPay = const Value.absent(),
     this.hasSoVerklaring = const Value.absent(),
     this.soStarter = const Value.absent(),
     this.businessCeased = const Value.absent(),
@@ -9111,6 +9215,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
   static Insertable<TaxYearInput> custom({
     Expression<int>? year,
     Expression<int>? partnerHours,
+    Expression<int>? partnerPay,
     Expression<bool>? hasSoVerklaring,
     Expression<bool>? soStarter,
     Expression<bool>? businessCeased,
@@ -9130,6 +9235,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     return RawValuesInsertable({
       if (year != null) 'year': year,
       if (partnerHours != null) 'partner_hours': partnerHours,
+      if (partnerPay != null) 'partner_pay': partnerPay,
       if (hasSoVerklaring != null) 'has_so_verklaring': hasSoVerklaring,
       if (soStarter != null) 'so_starter': soStarter,
       if (businessCeased != null) 'business_ceased': businessCeased,
@@ -9155,6 +9261,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
   TaxYearInputsCompanion copyWith({
     Value<int>? year,
     Value<int>? partnerHours,
+    Value<int>? partnerPay,
     Value<bool>? hasSoVerklaring,
     Value<bool>? soStarter,
     Value<bool>? businessCeased,
@@ -9174,6 +9281,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     return TaxYearInputsCompanion(
       year: year ?? this.year,
       partnerHours: partnerHours ?? this.partnerHours,
+      partnerPay: partnerPay ?? this.partnerPay,
       hasSoVerklaring: hasSoVerklaring ?? this.hasSoVerklaring,
       soStarter: soStarter ?? this.soStarter,
       businessCeased: businessCeased ?? this.businessCeased,
@@ -9203,6 +9311,9 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     }
     if (partnerHours.present) {
       map['partner_hours'] = Variable<int>(partnerHours.value);
+    }
+    if (partnerPay.present) {
+      map['partner_pay'] = Variable<int>(partnerPay.value);
     }
     if (hasSoVerklaring.present) {
       map['has_so_verklaring'] = Variable<bool>(hasSoVerklaring.value);
@@ -9263,6 +9374,7 @@ class TaxYearInputsCompanion extends UpdateCompanion<TaxYearInput> {
     return (StringBuffer('TaxYearInputsCompanion(')
           ..write('year: $year, ')
           ..write('partnerHours: $partnerHours, ')
+          ..write('partnerPay: $partnerPay, ')
           ..write('hasSoVerklaring: $hasSoVerklaring, ')
           ..write('soStarter: $soStarter, ')
           ..write('businessCeased: $businessCeased, ')
@@ -14298,6 +14410,7 @@ typedef $$HourEntriesTableCreateCompanionBuilder =
       required double hours,
       Value<String?> clientProject,
       Value<String?> notes,
+      Value<bool> byPartner,
     });
 typedef $$HourEntriesTableUpdateCompanionBuilder =
     HourEntriesCompanion Function({
@@ -14308,6 +14421,7 @@ typedef $$HourEntriesTableUpdateCompanionBuilder =
       Value<double> hours,
       Value<String?> clientProject,
       Value<String?> notes,
+      Value<bool> byPartner,
     });
 
 class $$HourEntriesTableFilterComposer
@@ -14352,6 +14466,11 @@ class $$HourEntriesTableFilterComposer
 
   ColumnFilters<String> get notes => $composableBuilder(
     column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get byPartner => $composableBuilder(
+    column: $table.byPartner,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -14399,6 +14518,11 @@ class $$HourEntriesTableOrderingComposer
     column: $table.notes,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get byPartner => $composableBuilder(
+    column: $table.byPartner,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$HourEntriesTableAnnotationComposer
@@ -14434,6 +14558,9 @@ class $$HourEntriesTableAnnotationComposer
 
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<bool> get byPartner =>
+      $composableBuilder(column: $table.byPartner, builder: (column) => column);
 }
 
 class $$HourEntriesTableTableManager
@@ -14474,6 +14601,7 @@ class $$HourEntriesTableTableManager
                 Value<double> hours = const Value.absent(),
                 Value<String?> clientProject = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
+                Value<bool> byPartner = const Value.absent(),
               }) => HourEntriesCompanion(
                 id: id,
                 date: date,
@@ -14482,6 +14610,7 @@ class $$HourEntriesTableTableManager
                 hours: hours,
                 clientProject: clientProject,
                 notes: notes,
+                byPartner: byPartner,
               ),
           createCompanionCallback:
               ({
@@ -14492,6 +14621,7 @@ class $$HourEntriesTableTableManager
                 required double hours,
                 Value<String?> clientProject = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
+                Value<bool> byPartner = const Value.absent(),
               }) => HourEntriesCompanion.insert(
                 id: id,
                 date: date,
@@ -14500,6 +14630,7 @@ class $$HourEntriesTableTableManager
                 hours: hours,
                 clientProject: clientProject,
                 notes: notes,
+                byPartner: byPartner,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -15454,6 +15585,7 @@ typedef $$TaxYearInputsTableCreateCompanionBuilder =
     TaxYearInputsCompanion Function({
       Value<int> year,
       Value<int> partnerHours,
+      Value<int> partnerPay,
       Value<bool> hasSoVerklaring,
       Value<bool> soStarter,
       Value<bool> businessCeased,
@@ -15474,6 +15606,7 @@ typedef $$TaxYearInputsTableUpdateCompanionBuilder =
     TaxYearInputsCompanion Function({
       Value<int> year,
       Value<int> partnerHours,
+      Value<int> partnerPay,
       Value<bool> hasSoVerklaring,
       Value<bool> soStarter,
       Value<bool> businessCeased,
@@ -15507,6 +15640,11 @@ class $$TaxYearInputsTableFilterComposer
 
   ColumnFilters<int> get partnerHours => $composableBuilder(
     column: $table.partnerHours,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get partnerPay => $composableBuilder(
+    column: $table.partnerPay,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -15605,6 +15743,11 @@ class $$TaxYearInputsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get partnerPay => $composableBuilder(
+    column: $table.partnerPay,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get hasSoVerklaring => $composableBuilder(
     column: $table.hasSoVerklaring,
     builder: (column) => ColumnOrderings(column),
@@ -15695,6 +15838,11 @@ class $$TaxYearInputsTableAnnotationComposer
 
   GeneratedColumn<int> get partnerHours => $composableBuilder(
     column: $table.partnerHours,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get partnerPay => $composableBuilder(
+    column: $table.partnerPay,
     builder: (column) => column,
   );
 
@@ -15797,6 +15945,7 @@ class $$TaxYearInputsTableTableManager
               ({
                 Value<int> year = const Value.absent(),
                 Value<int> partnerHours = const Value.absent(),
+                Value<int> partnerPay = const Value.absent(),
                 Value<bool> hasSoVerklaring = const Value.absent(),
                 Value<bool> soStarter = const Value.absent(),
                 Value<bool> businessCeased = const Value.absent(),
@@ -15815,6 +15964,7 @@ class $$TaxYearInputsTableTableManager
               }) => TaxYearInputsCompanion(
                 year: year,
                 partnerHours: partnerHours,
+                partnerPay: partnerPay,
                 hasSoVerklaring: hasSoVerklaring,
                 soStarter: soStarter,
                 businessCeased: businessCeased,
@@ -15835,6 +15985,7 @@ class $$TaxYearInputsTableTableManager
               ({
                 Value<int> year = const Value.absent(),
                 Value<int> partnerHours = const Value.absent(),
+                Value<int> partnerPay = const Value.absent(),
                 Value<bool> hasSoVerklaring = const Value.absent(),
                 Value<bool> soStarter = const Value.absent(),
                 Value<bool> businessCeased = const Value.absent(),
@@ -15853,6 +16004,7 @@ class $$TaxYearInputsTableTableManager
               }) => TaxYearInputsCompanion.insert(
                 year: year,
                 partnerHours: partnerHours,
+                partnerPay: partnerPay,
                 hasSoVerklaring: hasSoVerklaring,
                 soStarter: soStarter,
                 businessCeased: businessCeased,

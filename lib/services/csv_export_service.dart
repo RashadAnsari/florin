@@ -284,7 +284,11 @@ class CsvExportService {
   /// bookkeeping does not show.
   static List<List<Object>> taxYearInputRows(TaxYearInput? i) => [
     ['Gegeven', 'Waarde'],
-    ['Uren meewerkende partner', i?.partnerHours ?? 0],
+    [
+      'Uren meewerkende partner buiten de urenregistratie',
+      i?.partnerHours ?? 0,
+    ],
+    ['Vergoeding aan partner', _cents(i?.partnerPay ?? 0)],
     ['S&O-verklaring', _yesNo(i?.hasSoVerklaring ?? false)],
     ['S&O-starter', _yesNo(i?.soStarter ?? false)],
     ['Onderneming gestaakt', _yesNo(i?.businessCeased ?? false)],
@@ -645,6 +649,7 @@ class CsvExportService {
         'Soort',
         'Uren',
         'Klant / project',
+        'Door partner',
         'Opmerkingen',
       ],
       for (final h in hours)
@@ -654,6 +659,7 @@ class CsvExportService {
           _work(h.workType),
           h.hours,
           h.clientProject ?? '',
+          _yesNo(h.byPartner),
           h.notes ?? '',
         ],
     ]);

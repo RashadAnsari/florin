@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 const _noInputs = TaxYearInput(
   year: 2026,
   partnerHours: 0,
+  partnerPay: 0,
   hasSoVerklaring: false,
   soStarter: false,
   businessCeased: false,
@@ -56,6 +57,7 @@ void main() {
     // With the urencriterium, the hours that meet it unless given.
     totalHours: hours ?? (uren ? rules.urencriterium.toDouble() : 0),
     soHours: soHours,
+    partnerHours: (inputs?.partnerHours ?? 0).toDouble(),
     hoursFinal: yearOver,
     // A startersaftrek starter was not an ondernemer in a previous year.
     inputs: starter
@@ -70,6 +72,7 @@ void main() {
 
   TaxYearInput inputs({
     int partnerHours = 0,
+    int partnerPay = 0,
     bool so = false,
     bool soStarter = false,
     bool ceased = false,
@@ -87,6 +90,7 @@ void main() {
   }) => TaxYearInput(
     year: 2026,
     partnerHours: partnerHours,
+    partnerPay: partnerPay,
     hasSoVerklaring: so,
     soStarter: soStarter,
     businessCeased: ceased,
@@ -265,6 +269,23 @@ void main() {
         ).meewerkaftrek,
         0,
       );
+    });
+
+    test('pay to the partner: below € 5.000 not deductible and still '
+        'meewerkaftrek; from it a cost and no meewerkaftrek '
+        '(art. 3.16 lid 4, art. 3.78 lid 1)', () {
+      final low = calc(
+        revenue: 5000000,
+        inputs: inputs(partnerHours: 900, partnerPay: 499999),
+      );
+      expect(low.totalCosts, 0);
+      expect(low.meewerkaftrek, 100000);
+      final paid = calc(
+        revenue: 5000000,
+        inputs: inputs(partnerHours: 900, partnerPay: 500000),
+      );
+      expect(paid.totalCosts, 500000);
+      expect(paid.meewerkaftrek, 0);
     });
 
     test('S&O-aftrek needs the verklaring and 500 hours (art. 3.77)', () {

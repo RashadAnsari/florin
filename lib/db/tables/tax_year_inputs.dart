@@ -4,9 +4,15 @@ import 'package:drift/drift.dart';
 class TaxYearInputs extends Table {
   IntColumn get year => integer()();
 
-  /// Hours the fiscal partner worked in the business unpaid or for less than
-  /// the pay the rules allow (meewerkaftrek).
+  /// Hours the fiscal partner worked in the business that are not in the
+  /// hour log, for the meewerkaftrek. The log is the proof the Belastingdienst
+  /// asks for; this total is what was entered before Florin kept one.
   IntColumn get partnerHours => integer().withDefault(const Constant(0))();
+
+  /// What the business paid the fiscal partner for the work in the year:
+  /// below the rules' amount it is not deductible (Wet IB 2001 art. 3.16 lid
+  /// 4) and the partner counts as unpaid for the meewerkaftrek.
+  IntColumn get partnerPay => integer().withDefault(const Constant(0))();
   BoolColumn get hasSoVerklaring =>
       boolean().withDefault(const Constant(false))();
 

@@ -14,6 +14,7 @@ import '../db/daos/pension_dao.dart';
 import '../db/daos/tax_year_inputs_dao.dart';
 import '../db/daos/vat_return_dao.dart';
 import '../db/database.dart';
+import '../services/domain.dart';
 import '../services/gift_service.dart';
 import '../services/asset_service.dart';
 import '../services/car_service.dart';
@@ -262,7 +263,7 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
   final pending = waitForAll<TaxEstimate>(all);
   if (pending != null) return pending;
 
-  final totalHours = hours.requireValue.fold(0.0, (s, h) => s + h.hours);
+  final totalHours = ownHours(hours.requireValue);
   final yearOver = year < DateTime.now().year;
   final km = TaxService.businessKm(trips.requireValue);
   final assetList = assets.requireValue;
@@ -275,9 +276,9 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
     year,
     ceasedYear: ceased ? year : null,
   )[year];
-  final soHours = hours.requireValue
-      .where((h) => h.workType == WorkType.wbso)
-      .fold(0.0, (s, h) => s + h.hours);
+  final soHours = ownHours(
+    hours.requireValue.where((h) => h.workType == WorkType.wbso),
+  );
   final result = TaxService.calculate(
     rules: rules,
     grossRevenue: TaxService.grossRevenue(
@@ -314,6 +315,9 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
         : 0,
     totalHours: totalHours,
     soHours: soHours,
+    partnerHours:
+        partnerLoggedHours(hours.requireValue) +
+        (yearInputs?.partnerHours ?? 0),
     hoursFinal: yearOver,
     inputs: yearInputs,
     lijfrentePremium: PensionService.deductiblePremium(
