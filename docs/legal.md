@@ -320,8 +320,12 @@ and the ICP section of the BTW return screen.
 - The BTW return screen gives the deadline of a quarterly opgaaf, the last
   day of the month after the quarter (`icpDueMonths`), and states when goods
   must be reported per month instead (`icpQuarterlyGoodsMax` over the
-  quarter or one of the `icpGoodsLookbackQuarters` before it). Florin does
-  not check the earlier quarters or make monthly lists.
+  quarter or one of the `icpGoodsLookbackQuarters` before it).
+  `VatService.icpMonthlyDue` checks those quarters, earlier years included,
+  and the screen warns when the opgaaf over goods is due per month; the
+  export then also writes `icp_M01` to `icp_M12` (`VatService.icpList`).
+  Florin keeps services in the same monthly list, which lid 4 allows per
+  quarter: the user may report them per quarter instead.
 - Supplies dated while the KOR applies are left off the list: lid 1 exempts
   the ondernemer of artikel 25a, eerste lid. They stay in rubriek 3b.
 
@@ -1196,3 +1200,8 @@ Florin does not collect other income outside the business: a fiscal
 partner's income, resultaat uit overige werkzaamheden, benefits and pensions,
 box 2, box 3, or an oudedagsreserve built up before 2023. The estimate leaves
 them out and says so.
+
+Options that lower the profit by the user's choice are not modelled, so the
+estimate never assumes them: willekeurige afschrijving for starters (Florin
+depreciates by the straight line only) and the release of an existing
+oudedagsreserve.

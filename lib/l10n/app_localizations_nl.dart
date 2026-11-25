@@ -1611,6 +1611,11 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
+  String vatReturnIcpMonthlyNotice(String max, int quarters) {
+    return 'Goederen aan EU-bedrijven kwamen in dit kwartaal of een van de $quarters kwartalen ervoor boven $max, dus de opgaaf ICP over goederen doe je per maand (Wet OB 1968 art. 37a lid 3). De export schrijft dan ook de lijst van elke maand.';
+  }
+
+  @override
   String get assetsFieldResidualValue => 'Restwaarde';
 
   @override

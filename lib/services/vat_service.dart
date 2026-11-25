@@ -283,8 +283,7 @@ abstract final class VatService {
         case VatTreatment.euServices:
         case VatTreatment.euGoods:
           r3b += inv.signedExclVat;
-          // A KOR participant files no ICP-opgaaf (art. 37a lid 1).
-          if (!kor.appliesOn(inv.vatDate)) icp.add(inv);
+          if (onIcpList(inv, kor)) icp.add(inv);
         case VatTreatment.exportOutsideEu:
           r3a += inv.signedExclVat;
         case VatTreatment.servicesOutsideEu:
@@ -426,6 +425,49 @@ abstract final class VatService {
       change.entries.every(
         (e) => e.value.$2.abs() <= r.correctionNextReturnMax,
       );
+
+  /// Whether issued invoice [inv] belongs on the ICP-opgaaf: a supply to an
+  /// EU business, not dated while the KOR applies (art. 37a lid 1).
+  static bool onIcpList(Invoice inv, KorStatus kor) =>
+      inv.isIssued &&
+      (inv.vatTreatment == VatTreatment.euGoods ||
+          inv.vatTreatment == VatTreatment.euServices) &&
+      !kor.appliesOn(inv.vatDate);
+
+  /// The ICP-opgaaf of [period]: the invoices it lists.
+  static List<Invoice> icpList(
+    List<Invoice> invoices,
+    VatPeriod period,
+    KorStatus kor,
+  ) => [
+    for (final i in invoices)
+      if (period.contains(i.vatDate) && onIcpList(i, kor)) i,
+  ];
+
+  /// Whether the goods on the ICP-opgaaf pass the quarterly limit in
+  /// [quarter] of [year] or one of the quarters before it the rules name,
+  /// so the opgaaf over goods is due per month (art. 37a lid 3).
+  static bool icpMonthlyDue(
+    List<Invoice> invoices,
+    KorStatus kor,
+    int year,
+    int quarter,
+    TaxYearRules rules,
+  ) {
+    for (var back = 0; back <= rules.icpGoodsLookbackQuarters; back++) {
+      final index = year * 4 + quarter - 1 - back;
+      final period = (
+        year: index ~/ 4,
+        kind: VatFilingPeriod.quarterly,
+        number: index % 4 + 1,
+      );
+      final goods = icpList(invoices, period, kor)
+          .where((i) => i.vatTreatment == VatTreatment.euGoods)
+          .fold(0, (s, i) => s + i.signedExclVat);
+      if (goods > rules.icpQuarterlyGoodsMax) return true;
+    }
+    return false;
+  }
 
   /// Whether a year's figures break a condition for a yearly return: BTW to
   /// pay of at least the limit, or EU supplies or EU purchases of at least

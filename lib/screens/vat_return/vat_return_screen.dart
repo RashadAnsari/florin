@@ -361,6 +361,22 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                       ),
                       style: theme.textTheme.bodySmall,
                     ),
+                    if (VatService.icpMonthlyDue(
+                      ref.watch(allInvoicesProvider).valueOrNull ?? const [],
+                      kor,
+                      year,
+                      quarterOf(period.last),
+                      rules,
+                    )) ...[
+                      const SizedBox(height: AppSpacing.heading),
+                      NoticeBanner(
+                        l.vatReturnIcpMonthlyNotice(
+                          AppFormat.euros(rules.icpQuarterlyGoodsMax),
+                          rules.icpGoodsLookbackQuarters,
+                        ),
+                        tone: NoticeTone.warning,
+                      ),
+                    ],
                     const SizedBox(height: AppSpacing.heading),
                     for (final inv in r.icpInvoices)
                       ValueRow.cents(inv.invoiceNumber, inv.signedExclVat),

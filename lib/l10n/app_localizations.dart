@@ -2882,6 +2882,12 @@ abstract class AppLocalizations {
   /// **'Report these supplies in the ICP report over this quarter by {date}. If you supplied goods to EU businesses for more than {amount} in this quarter or in one of the {quarters} quarters before it, you report goods per month instead (Wet OB 1968 art. 37a).'**
   String vatReturnIcpNote(String date, String amount, int quarters);
 
+  /// No description provided for @vatReturnIcpMonthlyNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Goods to EU businesses passed {max} in this quarter or one of the {quarters} before it, so the ICP-opgaaf over goods is due per month (Wet OB 1968 art. 37a lid 3). The export then also writes the list of each month.'**
+  String vatReturnIcpMonthlyNotice(String max, int quarters);
+
   /// No description provided for @assetsFieldResidualValue.
   ///
   /// In en, this message translates to:

@@ -697,6 +697,7 @@
   "vatTreatmentEuServices": "Diensten aan EU-ondernemer (btw verlegd)",
   "vatTreatmentEuGoods": "Goederen aan EU-ondernemer (intracommunautaire levering, 0%)",
   "vatReturnIcpNote": "Geef deze prestaties uiterlijk {date} op in de ICP-opgaaf over dit kwartaal. Leverde je in dit kwartaal of in een van de {quarters} kwartalen ervoor voor meer dan {amount} aan goederen aan EU-ondernemers, dan geef je goederen per maand op (Wet OB 1968 art. 37a).",
+  "vatReturnIcpMonthlyNotice": "Goederen aan EU-bedrijven kwamen in dit kwartaal of een van de {quarters} kwartalen ervoor boven {max}, dus de opgaaf ICP over goederen doe je per maand (Wet OB 1968 art. 37a lid 3). De export schrijft dan ook de lijst van elke maand.",
   "assetsFieldResidualValue": "Restwaarde",
   "assetsValidateResidualValue": "Voer de restwaarde in, of 0 als het bedrijfsmiddel dan niets meer waard is",
   "assetsValidateResidualAboveCost": "De restwaarde kan niet hoger zijn dan de kosten",

@@ -1607,6 +1607,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String vatReturnIcpMonthlyNotice(String max, int quarters) {
+    return 'Goods to EU businesses passed $max in this quarter or one of the $quarters before it, so the ICP-opgaaf over goods is due per month (Wet OB 1968 art. 37a lid 3). The export then also writes the list of each month.';
+  }
+
+  @override
   String get assetsFieldResidualValue => 'Residual value';
 
   @override

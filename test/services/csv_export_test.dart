@@ -108,13 +108,11 @@ void main() {
       isConsumer: false,
     );
     final rows = CsvExportService.icpRows(
-      _quarter(
-        icp: [
-          _invoice(1, VatTreatment.euGoods, 50000),
-          _invoice(2, VatTreatment.euServices, 20000),
-          _invoice(3, VatTreatment.euServices, 5000, credit: true),
-        ],
-      ),
+      [
+        _invoice(1, VatTreatment.euGoods, 50000),
+        _invoice(2, VatTreatment.euServices, 20000),
+        _invoice(3, VatTreatment.euServices, 5000, credit: true),
+      ],
       {1: client},
     );
     expect(rows, hasLength(2));
