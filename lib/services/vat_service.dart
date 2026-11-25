@@ -53,6 +53,13 @@ class VatQuarterResult {
 
   final ReturnDuty duty;
 
+  /// BTW deducted on assets to repay because the KOR lowered their taxed
+  /// use (herziening), per asset. Added to the BTW of rubriek 1a in the
+  /// last return of the year, as the Belastingdienst instructs.
+  final Map<FixedAsset, int> vatRevision;
+
+  int get vatRevisionTotal => vatRevision.values.fold(0, (s, v) => s + v);
+
   const VatQuarterResult({
     required this.revenue1a,
     required this.vat1a,
@@ -73,6 +80,7 @@ class VatQuarterResult {
     this.revenueOutsideReturn = 0,
     this.revenueKorExempt = 0,
     this.duty = ReturnDuty.regular,
+    this.vatRevision = const {},
   });
 
   /// Nothing to report in any rubriek: the return is a nil return.
@@ -112,6 +120,7 @@ abstract final class VatService {
     required int quarter,
     int privateUseVat = 0,
     KorStatus kor = KorStatus.none,
+    Map<FixedAsset, int> vatRevision = const {},
   }) {
     bool inQuarter(DateTime d) => d.year == year && quarterOf(d) == quarter;
     final linesByInvoice = <int, List<InvoiceLine>>{};
@@ -196,6 +205,7 @@ abstract final class VatService {
         v1a +
         v1b +
         privateUseVat +
+        vatRevision.values.fold(0, (s, v) => s + v) +
         vat(PurchaseVat.reverseChargeNl) +
         vat(PurchaseVat.fromOutsideEu) +
         vat(PurchaseVat.fromEu);
@@ -207,7 +217,7 @@ abstract final class VatService {
 
     return VatQuarterResult(
       revenue1a: r1a,
-      vat1a: v1a,
+      vat1a: v1a + vatRevision.values.fold(0, (s, v) => s + v),
       revenue1b: r1b,
       vat1b: v1b,
       revenue1e: r1e,
@@ -225,6 +235,7 @@ abstract final class VatService {
       revenueOutsideReturn: outside,
       revenueKorExempt: korExempt,
       duty: duty,
+      vatRevision: vatRevision,
     );
   }
 

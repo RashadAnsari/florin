@@ -377,6 +377,16 @@ final vatQuarterProvider =
           year: key.year,
           quarter: key.quarter,
           kor: kor.requireValue,
+          // Herziening is settled in the last return of the year.
+          vatRevision: key.quarter == 4
+              ? KorService.revision(
+                  status: kor.requireValue,
+                  assets: assets.requireValue,
+                  invoices: invoices.requireValue,
+                  year: key.year,
+                  rules: ref.watch(taxRulesProvider(key.year)),
+                )
+              : const {},
           // Private use of business cars goes in the last return of the year.
           privateUseVat: key.quarter == 4
               ? CarService.btwPrivateUse(

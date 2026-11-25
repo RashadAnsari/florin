@@ -591,6 +591,52 @@ Where Florin implements it: the asset form, `FixedAssetDomain` in
   business, other than a car. The business share entered is the share in
   the business for BTW and income tax alike.
 
+## Herziening of BTW on assets
+
+> bij roerende goederen wordt de btw-aftrek nog 5 jaar gevolgd (het jaar van ingebruikname en de 4 jaar daaropvolgend)
+
+> Bepaal nu 10 % van percentage 1. In dit voorbeeld is dat 10 %. Is percentage 3 kleiner dan of gelijk aan 10 % van percentage 1? Dan vindt er geen herziening van de btw plaats en hoeft u niets te doen. Is percentage 3 groter dan 10 % van percentage 1? Dan moet u herzien.
+
+> Is percentage 2 kleiner dan percentage 1? Dan kunt u de herziening aangeven als een extra bedrag aan af te dragen btw, in rubriek 1 van uw btw-aangifte.
+
+> In dit voorbeeld is percentage 2 (30) kleiner dan percentage 1 (100), dus u telt € 20.580 op bij rubriek 1a, in uw laatste btw-aangifte van het jaar.
+
+> Door de verkoop wordt de herziening voor deze 2 jaar nu in 1 keer uitgevoerd.
+
+[Belastingdienst, Herziening btw-aftrek bij investeringsdiensten](https://www.belastingdienst.nl/wps/wcm/connect/nl/btw/content/btw-aftrek-investeringsdiensten), read 2026-11-25
+
+> Er vindt geen herziening voor aftrek bij investeringsgoederen en -diensten plaats als: het gaat om investeringsgoederen die in de jaren voor dat boekjaar in gebruik zijn genomen én de herziening het gevolg is van het aanmelden of beëindigen van uw deelname aan de KOR en het totale bedrag van de herziening in dat boekjaar minder is dan € 500
+
+> Eind 2025 controleert u of u de btw-aftrek moet herzien. De herzieningsperiode voor investeringsgoederen, zoals deze auto, is 5 jaar (het jaar van ingebruikname en de 4 jaren daarna). Hierdoor is € 4.500 / 5 = € 900 van de btw die u eerder hebt afgetrokken, toe te wijzen aan 2025.
+
+> Eind 2024 gaat u controleren of u uw btw-aftrek moet herzien. Het gaat hier om het 1e jaar van ingebruikname van de auto. Voor de herziening moet u daarom kijken naar het volledige bedrag dat u eerder in uw aangifte hebt afgetrokken. En niet maar 1/5 van dat bedrag.
+
+> Moet u tijdens uw deelname aan de KOR uw btw herzien? Dan vraagt u daarvoor zelf schriftelijk een aangifte omzetbelasting aan bij uw belastingkantoor.
+
+[Belastingdienst, Moet ik mijn btw-aftrek herzien vanwege de kleineondernemersregeling (KOR)?](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/hoe_werkt_de_btw/kleineondernemersregeling/wat-betekent-meedoen-met-de-kleineondernemersregeling/moet-ik-mijn-btw-aftrek-herzien-vanwege-de-kleineondernemersregeling), read 2026-11-25
+
+Where Florin implements it: `KorService.revision`, for every asset whose
+purchase BTW was deducted, in the years of `vatRevisionYears`. The taxed
+share of a year is the share of its invoiced turnover that is not exempt
+under the KOR, or, in a year without turnover, the share of its days the KOR
+does not cover (`KorService.taxedShare`). In the year of purchase the whole
+deduction follows that year's share; in a later year one part a year
+follows the change from the first year's share; a sale while the KOR
+applies settles the remaining years at once as exempt use. A change of at
+most `vatRevisionMinShift` of the first year's share is not revised, and in
+later years a total below `korRevisionMin` is not revised. The amount is
+added to the BTW of rubriek 1a in the fourth quarter, listed per asset on
+the BTW return screen and in `btw_herziening`, and makes a quarter the KOR
+covers need an incidental return.
+
+Not modelled: the revision in the user's favour when the KOR ends, which the
+user may claim but Florin does not compute (the cautious side); real estate
+(10 years), which Florin does not record; the revision of goods and
+services that are not investment goods; and changes in taxed use other
+than the KOR. The asset's income tax cost does not follow the repaid BTW.
+The Uitvoeringsbeschikking omzetbelasting 1968 behind these pages was not
+read.
+
 ## Investeringsaftrek and desinvesteringsbijtelling
 
 > U kunt voor een bedrijfsmiddel niet tegelijk gebruikmaken van de energie-investeringsaftrek en de milieu-investeringsaftrek.
