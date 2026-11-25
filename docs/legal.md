@@ -876,6 +876,49 @@ verzamelinkomen plus a toeslagpartner's, that Florin's figure is box 1 from
 its records only, and that the Belastingdienst advises estimating high.
 Florin does not compute the verzamelinkomen or any toeslag.
 
+## Payment terms and late payment
+
+> 1 De schadevergoeding, verschuldigd wegens vertraging in de voldoening van een geldsom, bestaat in het geval van een handelsovereenkomst in de wettelijke rente van die som met ingang van de dag volgend op de dag die is overeengekomen als de uiterste dag van betaling tot en met de dag waarop de schuldenaar de geldsom heeft voldaan.
+
+> 2 Indien geen uiterste dag van betaling is overeengekomen, is de wettelijke rente van rechtswege verschuldigd: a. vanaf 30 dagen na de aanvang van de dag, volgende op die waarop de schuldenaar de factuur heeft ontvangen,
+
+> 5 Partijen kunnen een uiterste dag van betaling overeenkomen van ten hoogste 60 dagen, tenzij zij uitdrukkelijk een langere termijn van betaling in de overeenkomst opnemen en deze termijn niet kennelijk onbillijk is jegens de schuldeiser,
+
+> 6 In afwijking van lid 5 kunnen partijen geen uiterste dag van betaling overeenkomen van meer dan 30 dagen indien de schuldenaar een rechtspersoon is die op twee opeenvolgende balansdata, zonder onderbreking nadien op twee opeenvolgende balansdata, niet heeft voldaan aan ten minste twee van de vereisten, bedoeld in artikel 397, leden 1 en 2 van Boek 2, en de schuldeiser een natuurlijk persoon is die handelt in de uitoefening van een beroep of bedrijf of een rechtspersoon, die gedurende die periode aan ten minste twee van die vereisten heeft voldaan. Een beding in een overeenkomst in strijd met de vorige zin is nietig.
+
+[Burgerlijk Wetboek Boek 6, artikel 119a](https://wetten.overheid.nl/BWBR0005289/2026-07-16), read 2026-11-25 from the official XML
+
+> 4 In geval van een handelsovereenkomst als bedoeld in artikel 119a lid 1 of artikel 119b lid 1 bestaat de vergoeding van kosten bedoeld in lid 2 onder c uit ten minste een bedrag van 40 euro. Dit bedrag is zonder aanmaning verschuldigd vanaf de dag volgende op de dag waarop de wettelijke of overeengekomen uiterste dag van betaling is verstreken.
+
+> 6 De vergoeding volgens de nadere regels kan indien de schuldenaar een natuurlijk persoon is, die niet handelt in de uitoefening van een beroep of bedrijf, eerst verschuldigd worden nadat de schuldenaar na het intreden van het verzuim, bedoeld in artikel 81, onder vermelding van de gevolgen van het uitblijven van betaling, waaronder de vergoeding die in overeenstemming met de nadere regels wordt gevorderd, vruchteloos is aangemaand tot betaling binnen een termijn van veertien dagen, aanvangende de dag na aanmaning.
+
+> 7 Indien een schuldenaar voor meer dan een vordering door een schuldeiser kan worden aangemaand als bedoeld in lid 6, dan dient dit in één aanmaning te geschieden.
+
+[Burgerlijk Wetboek Boek 6, artikel 96](https://wetten.overheid.nl/BWBR0005289/2026-07-16), read 2026-11-25
+
+> 1 Een rechtsvordering tot nakoming van een verbintenis uit overeenkomst tot een geven of een doen verjaart door verloop van vijf jaren na de aanvang van de dag, volgende op die waarop de vordering opeisbaar is geworden.
+
+[Burgerlijk Wetboek Boek 3, artikel 307](https://wetten.overheid.nl/BWBR0005291/2025-07-01), read 2026-11-25 from the official XML of the version in force from 1 July 2025
+
+Where Florin implements it: the figures are rules fields
+(`statutoryPaymentDays`, `maxAgreedPaymentDays`, `largeDebtorMaxPaymentDays`,
+`minCollectionCosts`, `consumerReminderDays`, `claimLimitationYears`). The
+payment term help names lid 2 and lid 5; a term above lid 5 on an invoice to
+a business shows a warning with lid 6. An issued invoice past its due date
+shows, for a business client, that interest runs and at least the minimum
+collection costs are owed without a reminder, and for a private person that
+a reminder with the term of lid 6 comes first; both name the last day of the
+limitation term (`Invoice.claimLapsesOn`, the due date plus the term, the
+reading that ends it earliest). The invoice list shows what is open and
+overdue (`openReceivables`, `Invoice.isOpenOn`).
+
+Not modelled: the interest itself, whose rate Florin does not hold, and the
+staffel of the Besluit vergoeding voor buitengerechtelijke incassokosten.
+Florin cannot tell whether a client is a large legal person in the sense of
+lid 6, so it states the rule instead of applying it. A claim against a
+private person for the price of consumer goods lapses sooner (BW 7:28);
+Florin shows the general term of artikel 307 only.
+
 ## Income tax estimate scope
 
 The estimate covers one ondernemer under the AOW age, with wages from

@@ -155,6 +155,12 @@ class AppLocalizationsNl extends AppLocalizations {
   String get invoicesFilterOverdue => 'Verlopen';
 
   @override
+  String get invoicesOpenTotal => 'Openstaand';
+
+  @override
+  String get invoicesOverdueTotal => 'Verlopen';
+
+  @override
   String get invoiceStatusConcept => 'Concept';
 
   @override
@@ -1025,21 +1031,21 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get plTaxProvisionalSectionHelp =>
-      'Geschatte cijfers uit uw administratie voor het inkomen dat u tijdens het jaar aan de Belastingdienst doorgeeft: als u een voorlopige aanslag aanvraagt of wijzigt, en als u uw inkomen voor toeslagen schat. Het zijn schattingen en ze bevatten alleen wat Florin heeft.';
+      'Geschatte cijfers uit je administratie voor het inkomen dat je tijdens het jaar aan de Belastingdienst doorgeeft: als je een voorlopige aanslag aanvraagt of wijzigt, en als je je inkomen voor toeslagen schat. Het zijn schattingen en ze bevatten alleen wat Florin heeft.';
 
   @override
   String get plTaxProvisionalProfit => 'Geschatte belastbare winst';
 
   @override
   String get plTaxProvisionalProfitHelp =>
-      'De winst na de ondernemersaftrek en de mkb-winstvrijstelling, zoals hierboven geschat. De Belastingdienst laat u de ondernemersaftrek waar u recht op hebt aftrekken als u uw inkomen voor toeslagen schat.';
+      'De winst na de ondernemersaftrek en de mkb-winstvrijstelling, zoals hierboven geschat. De Belastingdienst laat je de ondernemersaftrek waar je recht op hebt aftrekken als je je inkomen voor toeslagen schat.';
 
   @override
   String get plTaxProvisionalIncome => 'Geschat belastbaar inkomen box 1';
 
   @override
   String get plTaxProvisionalIncomeHelp =>
-      'Voor toeslagen gebruikt de Belastingdienst uw toetsingsinkomen: uw verzamelinkomen, niet uw winst, plus dat van een toeslagpartner. Dit cijfer is alleen box 1 uit uw administratie; inkomen dat Florin niet heeft, zoals box 3, zit er niet in. De Belastingdienst raadt aan iets te hoog te schatten, want een te laag inkomen kan betekenen dat u toeslag moet terugbetalen.';
+      'Voor toeslagen gebruikt de Belastingdienst je toetsingsinkomen: je verzamelinkomen, niet je winst, plus dat van een toeslagpartner. Dit cijfer is alleen box 1 uit je administratie; inkomen dat Florin niet heeft, zoals box 3, zit er niet in. De Belastingdienst raadt aan iets te hoog te schatten, want een te laag inkomen kan betekenen dat je toeslag moet terugbetalen.';
 
   @override
   String get plTaxProvisionalTax => 'Geschatte belasting over het jaar';
@@ -1050,7 +1056,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String plTaxProvisionalDeadline(int year, String date) {
-    return 'U kunt een voorlopige aanslag over $year aanvragen of wijzigen tot $date. Hebt u een aangiftebrief gekregen, dan geldt de datum in die brief of uw uitsteldatum; als u aangifte hebt gedaan, kan het niet meer.';
+    return 'Je kunt een voorlopige aanslag over $year aanvragen of wijzigen tot $date. Heb je een aangiftebrief gekregen, dan geldt de datum in die brief of je uitsteldatum; als je aangifte hebt gedaan, kan het niet meer.';
   }
 
   @override
@@ -1320,12 +1326,12 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String expensesCourseTravelNotice(String max) {
-    return 'Reizen en verblijf voor cursussen, opleidingen, congressen, seminars en studiereizen zijn voor de inkomstenbelasting aftrekbaar tot $max per jaar; het deel daarboven niet, tenzij uw werk het bijwonen noodzakelijk maakt (Wet IB 2001 art. 3.16). Florin houdt de grens aan, omdat het dat niet uit uw administratie kan afleiden.';
+    return 'Reizen en verblijf voor cursussen, opleidingen, congressen, seminars en studiereizen zijn voor de inkomstenbelasting aftrekbaar tot $max per jaar; het deel daarboven niet, tenzij je werk het bijwonen noodzakelijk maakt (Wet IB 2001 art. 3.16). Florin houdt de grens aan, omdat het dat niet uit je administratie kan afleiden.';
   }
 
   @override
   String get expensesBarredNotice =>
-      'De wet houdt deze kosten buiten uw winst, hoe hoog ze ook zijn: boetes (Wet IB 2001 art. 3.14), en kleding die geen werkkleding is, persoonlijke verzorging, een telefoonaansluiting in uw woning en literatuur die geen vakliteratuur is (art. 3.16). Florin legt ze vast maar trekt niets af. Kleding is werkkleding als ze alleen geschikt is om voor uw werk te dragen of laat zien dat ze alleen daarvoor bedoeld is; boek werkkleding onder Overig.';
+      'De wet houdt deze kosten buiten je winst, hoe hoog ze ook zijn: boetes (Wet IB 2001 art. 3.14), en kleding die geen werkkleding is, persoonlijke verzorging, een telefoonaansluiting in je woning en literatuur die geen vakliteratuur is (art. 3.16). Florin legt ze vast maar trekt niets af. Kleding is werkkleding als ze alleen geschikt is om voor je werk te dragen of laat zien dat ze alleen daarvoor bedoeld is; boek werkkleding onder Overig.';
 
   @override
   String plTaxFoodLimited(String category, String amount) {
@@ -1666,8 +1672,9 @@ class AppLocalizationsNl extends AppLocalizations {
       'Een uniek nummer in een doorlopende reeks, zoals de wet vereist. Florin stelt het volgende voor.';
 
   @override
-  String get invoiceFieldPaymentTermHelp =>
-      'Hoeveel dagen de klant heeft om te betalen.';
+  String invoiceFieldPaymentTermHelp(int max, int statutory) {
+    return 'Hoeveel dagen de klant heeft om te betalen. Tussen bedrijven moet een termijn van meer dan $max dagen uitdrukkelijk zijn afgesproken en mag die niet kennelijk onbillijk voor jou zijn; zonder afgesproken termijn is de wettelijke handelsrente verschuldigd vanaf $statutory dagen nadat de klant de factuur heeft ontvangen (BW 6:119a).';
+  }
 
   @override
   String get invoiceFieldPriceHelp => 'De prijs per eenheid zonder btw.';
@@ -1686,6 +1693,21 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String invoiceLateNotice(int day, String date) {
     return 'Een factuur reik je uit uiterlijk op dag $day van de maand na de levering (Wet OB 1968 art. 34g): voor deze levering uiterlijk $date.';
+  }
+
+  @override
+  String invoiceLongTermNotice(int max, int large) {
+    return 'Tussen bedrijven geldt een betalingstermijn van meer dan $max dagen alleen als die uitdrukkelijk is afgesproken en niet kennelijk onbillijk voor jou is, en een groot bedrijf mag met een kleine leverancier niet meer dan $large dagen afspreken (BW 6:119a lid 5 en 6).';
+  }
+
+  @override
+  String invoiceOverdueBusinessNotice(String due, String min, String lapses) {
+    return 'Deze factuur moest op $due betaald zijn. Tussen bedrijven loopt vanaf de dag erna de wettelijke handelsrente (BW 6:119a lid 1), en je mag minstens $min incassokosten vragen zonder eerst een aanmaning te sturen (BW 6:96 lid 4). De vordering kan tot $lapses bij de rechter worden ingesteld (BW 3:307). Florin berekent de rente niet.';
+  }
+
+  @override
+  String invoiceOverdueConsumerNotice(String due, int days, String lapses) {
+    return 'Deze factuur moest op $due betaald zijn. Een particulier is pas incassokosten verschuldigd na een aanmaning die $days dagen geeft om te betalen en de kosten noemt die worden gevraagd (BW 6:96 lid 6); stuur één aanmaning voor alle openstaande facturen van deze klant (lid 7). De vordering kan tot $lapses bij de rechter worden ingesteld (BW 3:307).';
   }
 
   @override
@@ -2244,7 +2266,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String plTaxCourseTravelHelp(String max) {
-    return 'Reizen en verblijf voor cursussen, opleidingen en congressen zijn aftrekbaar tot $max per jaar (Wet IB 2001 art. 3.16 lid 2 f). De grens geldt niet als uw werk het bijwonen noodzakelijk maakt (lid 8); Florin houdt de grens aan, omdat het dat niet uit uw administratie kan afleiden.';
+    return 'Reizen en verblijf voor cursussen, opleidingen en congressen zijn aftrekbaar tot $max per jaar (Wet IB 2001 art. 3.16 lid 2 f). De grens geldt niet als je werk het bijwonen noodzakelijk maakt (lid 8); Florin houdt de grens aan, omdat het dat niet uit je administratie kan afleiden.';
   }
 
   @override
@@ -2496,12 +2518,12 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String invoiceEuConsumerNotice(String threshold, String total) {
-    return 'Telecommunicatie-, omroep- en elektronische diensten en afstandsverkopen van goederen aan particulieren in andere EU-landen zijn in hun land belast zodra ze samen in dit of het vorige jaar meer dan $threshold excl. btw zijn (Wet OB 1968 art. 6h, 6k). Uw prestaties met Nederlandse btw aan particulieren in andere EU-landen dit jaar, deze factuur meegeteld: $total. Florin kan niet zien welke elektronische diensten zijn, dus telt het ze allemaal, en het maakt de OSS-aangifte niet.';
+    return 'Telecommunicatie-, omroep- en elektronische diensten en afstandsverkopen van goederen aan particulieren in andere EU-landen zijn in hun land belast zodra ze samen in dit of het vorige jaar meer dan $threshold excl. btw zijn (Wet OB 1968 art. 6h, 6k). Je prestaties met Nederlandse btw aan particulieren in andere EU-landen dit jaar, deze factuur meegeteld: $total. Florin kan niet zien welke elektronische diensten zijn, dus telt het ze allemaal, en het maakt de OSS-aangifte niet.';
   }
 
   @override
   String invoiceEuConsumerOverNotice(String threshold) {
-    return 'Uw prestaties met Nederlandse btw aan particulieren in andere EU-landen zijn in dit of het vorige jaar meer dan $threshold. Zitten er telecommunicatie-, omroep- of elektronische diensten of afstandsverkopen van goederen tussen, dan zijn die belast in het land van de particulier, niet met Nederlandse btw (Wet OB 1968 art. 6h, 6k), meestal via de OSS. Florin berekent dit niet en rekent Nederlandse btw.';
+    return 'Je prestaties met Nederlandse btw aan particulieren in andere EU-landen zijn in dit of het vorige jaar meer dan $threshold. Zitten er telecommunicatie-, omroep- of elektronische diensten of afstandsverkopen van goederen tussen, dan zijn die belast in het land van de particulier, niet met Nederlandse btw (Wet OB 1968 art. 6h, 6k), meestal via de OSS. Florin berekent dit niet en rekent Nederlandse btw.';
   }
 
   @override
@@ -2548,7 +2570,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get clientsConsumerHelp =>
-      'Vink dit aan voor een klant die als particulier koopt. Btw wordt nooit naar een particulier verlegd en er is geen ICP-opgaaf voor, dus Florin biedt alleen Nederlandse btw, de KOR of uitvoer van goederen. Een dienst aan een particulier is belast waar u gevestigd bent (Wet OB 1968 art. 6 lid 2), behalve telecommunicatie-, omroep- en elektronische diensten, die belast zijn waar de particulier woont (art. 6h) zodra zulke prestaties aan andere EU-landen een drempel per jaar overschrijden (art. 6k). Voor een particulier in Nederland hoeft u geen factuur uit te reiken (art. 34c).';
+      'Vink dit aan voor een klant die als particulier koopt. Btw wordt nooit naar een particulier verlegd en er is geen ICP-opgaaf voor, dus Florin biedt alleen Nederlandse btw, de KOR of uitvoer van goederen. Een dienst aan een particulier is belast waar jij gevestigd bent (Wet OB 1968 art. 6 lid 2), behalve telecommunicatie-, omroep- en elektronische diensten, die belast zijn waar de particulier woont (art. 6h) zodra zulke prestaties aan andere EU-landen een drempel per jaar overschrijden (art. 6k). Voor een particulier in Nederland hoef je geen factuur uit te reiken (art. 34c).';
 
   @override
   String get clientsBadgeMerchantOfRecord => 'Merchant of record';
@@ -2853,7 +2875,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String receiptsKeepUntilHelp(int years, int navordering, int foreign) {
-    return 'De Belastingdienst vraagt facturen en bonnen $years jaar te bewaren. Florin telt vanaf het einde van het jaar waar ze bij horen en verwijdert ze nooit. De Belastingdienst kan over een jaar nog belasting navorderen tot $navordering jaar nadat de belasting verschuldigd werd, langer als u uitstel had voor de aangifte, en tot $foreign jaar voor inkomen of vermogen in het buitenland (AWR art. 16). Bewaar de administratie van zo\'n jaar dus minstens zo lang.';
+    return 'De Belastingdienst vraagt facturen en bonnen $years jaar te bewaren. Florin telt vanaf het einde van het jaar waar ze bij horen en verwijdert ze nooit. De Belastingdienst kan over een jaar nog belasting navorderen tot $navordering jaar nadat de belasting verschuldigd werd, langer als je uitstel had voor de aangifte, en tot $foreign jaar voor inkomen of vermogen in het buitenland (AWR art. 16). Bewaar de administratie van zo\'n jaar dus minstens zo lang.';
   }
 
   @override

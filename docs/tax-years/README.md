@@ -91,6 +91,12 @@ the statute version of 1 January of the new year, its transitional articles
 | `invoiceDueDay` | Day of the next month by which an invoice is due | Wet OB 1968 art. 34g | Statute |
 | `vatReturnDueMonths` | Months after a quarter in which its return and payment are due | AWR art. 19 lid 1 | Statute; Belastingdienst, Uiterste aangifte- en betaaldatums |
 | `provisionalAssessmentMonth` | Month of the next year on whose first day a voorlopige aanslag can last be asked for or changed without a letter asking for a return | Belastingdienst practice | Belastingdienst, Tot wanneer kan ik een voorlopige aanslag aanvragen of wijzigen? |
+| `statutoryPaymentDays` | Days after receiving an invoice from which commercial interest runs without an agreed term | BW 6:119a lid 2 | Statute |
+| `maxAgreedPaymentDays` | Longest term between businesses without stating it explicitly | BW 6:119a lid 5 | Statute |
+| `largeDebtorMaxPaymentDays` | Longest term a large legal person may agree with a small supplier | BW 6:119a lid 6 | Statute |
+| `minCollectionCosts` | Least collection costs between businesses | BW 6:96 lid 4 | Statute |
+| `consumerReminderDays` | Days a private person gets in a reminder before collection costs | BW 6:96 lid 6 | Statute |
+| `claimLimitationYears` | Years in which a claim can be brought to court | BW 3:307 lid 1 | Statute |
 | `retentionYears` | Years records are kept | AWR art. 52 lid 4 | Statute |
 | `navorderingYears` | Years after the tax became due in which the Belastingdienst can raise it afterwards | AWR art. 16 lid 3 | Statute |
 | `navorderingForeignYears` | The same for income or assets abroad | AWR art. 16 lid 4 | Statute |

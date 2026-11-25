@@ -144,6 +144,30 @@ class TaxYearRules {
   /// for a return (Belastingdienst).
   final int provisionalAssessmentMonth;
 
+  /// Days after receiving the invoice from which statutory commercial
+  /// interest is due when no payment day was agreed (BW 6:119a lid 2).
+  final int statutoryPaymentDays;
+
+  /// Longest payment term two businesses agree on without stating it
+  /// explicitly (BW 6:119a lid 5).
+  final int maxAgreedPaymentDays;
+
+  /// Longest payment term a large legal person may agree with a small
+  /// supplier (BW 6:119a lid 6).
+  final int largeDebtorMaxPaymentDays;
+
+  /// Least collection costs owed between businesses, without a reminder,
+  /// from the day after the payment day (BW 6:96 lid 4).
+  final int minCollectionCosts;
+
+  /// Days a private person gets in a reminder before collection costs are
+  /// owed (BW 6:96 lid 6).
+  final int consumerReminderDays;
+
+  /// Years after the day a claim fell due in which it can be claimed in
+  /// court (BW 3:307 lid 1).
+  final int claimLimitationYears;
+
   /// Years invoices and receipts are kept (AWR art. 52 lid 4).
   final int retentionYears;
 
@@ -273,6 +297,12 @@ class TaxYearRules {
     required this.vatReturnDueMonths,
     required this.invoiceDueDay,
     required this.provisionalAssessmentMonth,
+    required this.statutoryPaymentDays,
+    required this.maxAgreedPaymentDays,
+    required this.largeDebtorMaxPaymentDays,
+    required this.minCollectionCosts,
+    required this.consumerReminderDays,
+    required this.claimLimitationYears,
     required this.retentionYears,
     required this.navorderingYears,
     required this.navorderingForeignYears,
