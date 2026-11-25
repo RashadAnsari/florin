@@ -98,6 +98,14 @@ class CsvExportService {
     TripType.private => 'Privé',
   };
 
+  static String _zeroEmission(ZeroEmission z) => switch (z) {
+    ZeroEmission.none => 'Nee',
+    ZeroEmission.battery => 'Elektrisch (batterij)',
+    ZeroEmission.hydrogenOrSolar => 'Waterstof of geïntegreerde zonnecellen',
+  };
+
+  static String _cents(int? cents) => cents == null ? '' : '${_euro(cents)}';
+
   static String _risk(WetDbaRisk r) => switch (r) {
     WetDbaRisk.low => 'Laag',
     WetDbaRisk.medium => 'Middel',
@@ -248,6 +256,76 @@ class CsvExportService {
     ['Te betalen (negatief: terug te ontvangen)', _euro(t.taxToPay)],
   ];
 
+  /// The seller details printed on invoices, and the KOR dates.
+  static List<List<Object>> profileRows(BusinessProfile? b) => [
+    ['Gegeven', 'Waarde'],
+    ['Naam', b?.name ?? ''],
+    ['Btw-identificatienummer', b?.vatNumber ?? ''],
+    ['KvK-nummer', b?.kvkNumber ?? ''],
+    ['Adres', b?.address ?? ''],
+    ['IBAN', b?.iban ?? ''],
+    ['Kleineondernemersregeling vanaf', _date(b?.korStart)],
+    ['Kleineondernemersregeling tot', _date(b?.korEnd)],
+  ];
+
+  /// The figures behind the jaarruimte and the disability insurance.
+  static List<List<Object>> pensionRows(PensionEntry? e) => [
+    ['Gegeven', 'Waarde'],
+    ['Premiegrondslag: inkomen vorig jaar', _cents(e?.priorYearIncome ?? 0)],
+    ['Factor A', _cents(e?.factorA ?? 0)],
+    ['Reserveringsruimte', _cents(e?.reserveringsruimte ?? 0)],
+    ['Geplande lijfrentepremie', _cents(e?.plannedContribution ?? 0)],
+    ['Arbeidsongeschiktheidsverzekering', _yesNo(e?.aovInsured ?? false)],
+    ['Premie per maand', _cents(e?.monthlyAovPremium ?? 0)],
+  ];
+
+  /// The facts of the year the income tax estimate uses that the
+  /// bookkeeping does not show.
+  static List<List<Object>> taxYearInputRows(TaxYearInput? i) => [
+    ['Gegeven', 'Waarde'],
+    ['Uren meewerkende partner', i?.partnerHours ?? 0],
+    ['S&O-verklaring', _yesNo(i?.hasSoVerklaring ?? false)],
+    ['S&O-starter', _yesNo(i?.soStarter ?? false)],
+    ['Onderneming gestaakt', _yesNo(i?.businessCeased ?? false)],
+    ['Eerder genoten stakingsaftrek', _cents(i?.stakingsaftrekUsedBefore ?? 0)],
+    ['Arbeidsongeschiktheidsuitkering', _yesNo(i?.disabilityBenefit ?? false)],
+    [
+      'Eerder gebruikte startersaftrek bij arbeidsongeschiktheid',
+      i?.disabilityStartersUsed ?? 0,
+    ],
+    [
+      'Niet-gerealiseerde zelfstandigenaftrek',
+      _cents(i?.unrealisedZelfstandigenaftrek ?? 0),
+    ],
+    ['Te verrekenen verliezen', _cents(i?.lossCarryForward ?? 0)],
+    ['In loondienst', _yesNo(i?.employed ?? false)],
+    ['Loon', _cents(i?.wages ?? 0)],
+    ['Ingehouden loonheffing', _cents(i?.wageTaxWithheld ?? 0)],
+    ['Loon Zvw', _cents(i?.zvwWages ?? 0)],
+    ['Uren in loondienst', i?.employmentHours ?? 0],
+    [
+      'Geen ondernemer in een van de vorige jaren',
+      _yesNo(i?.notOndernemerBefore ?? false),
+    ],
+    ['Recht op startersaftrek', _yesNo(i?.isStarter ?? false)],
+  ];
+
+  /// Whether each quarter's BTW return was filed and paid, as the user
+  /// marked it, with its last day.
+  static List<List<Object>> vatStatusRows(int year, List<VatReturn> filed) {
+    final byQuarter = {for (final v in filed) v.quarter: v};
+    return [
+      ['Kwartaal', 'Uiterste datum', 'Aangifte gedaan', 'Betaald'],
+      for (var q = 1; q <= 4; q++)
+        [
+          'Q$q',
+          _date(VatService.filingDeadline(year, q)),
+          _yesNo(byQuarter[q]?.filed ?? false),
+          _yesNo(byQuarter[q]?.paid ?? false),
+        ],
+    ];
+  }
+
   /// A new folder inside [parent] for one export, named after the year and
   /// the moment of the export, so exports never mix with each other or with
   /// what the folder held: `florin_2026_export_2026-11-23_14-30-05`.
@@ -383,6 +461,7 @@ class CsvExportService {
     final assets = await (db.select(
       db.fixedAssets,
     )..orderBy([(a) => OrderingTerm.asc(a.purchaseDate)])).get();
+    final assetNames = {for (final a in assets) a.id: a.assetName};
     final saleInvoiceIds = AssetService.saleInvoiceIds(assets);
     final saleInvoiceNumbers = {
       for (final i in await (db.select(
@@ -463,6 +542,7 @@ class CsvExportService {
         'Btw',
         'Incl. btw',
         'Kwartaal',
+        'Opmerkingen',
       ],
       for (final i in invoices)
         [
@@ -481,6 +561,7 @@ class CsvExportService {
           _euro(i.totalVat),
           _euro(i.totalInclVat),
           'Q${quarterOf(i.invoiceDate)}',
+          i.notes ?? '',
         ],
     ]);
 
@@ -525,6 +606,10 @@ class CsvExportService {
         'Papieren origineel bewaard',
         'Bonnen',
         'Kwartaal',
+        'Auto van de zaak',
+        'Betaald vanaf',
+        'Betalingskenmerk',
+        'Opmerkingen',
       ],
       for (final e in expenses)
         [
@@ -543,11 +628,22 @@ class CsvExportService {
           _yesNo(e.paperOriginalKept),
           (filesOfExpense[e.id] ?? const []).join('; '),
           'Q${quarterOf(e.date)}',
+          assetNames[e.carAssetId] ?? '',
+          e.paidFrom ?? '',
+          e.paymentReference ?? '',
+          e.notes ?? '',
         ],
     ]);
 
     await write('uren', [
-      ['Datum', 'Omschrijving', 'Soort', 'Uren', 'Klant / project'],
+      [
+        'Datum',
+        'Omschrijving',
+        'Soort',
+        'Uren',
+        'Klant / project',
+        'Opmerkingen',
+      ],
       for (final h in hours)
         [
           _date(h.date),
@@ -555,6 +651,7 @@ class CsvExportService {
           _work(h.workType),
           h.hours,
           h.clientProject ?? '',
+          h.notes ?? '',
         ],
     ]);
 
@@ -571,6 +668,8 @@ class CsvExportService {
         'Soort',
         'Doel',
         'Routeafwijking',
+        'Auto van de zaak',
+        'Opmerkingen',
       ],
       for (final m in trips)
         [
@@ -585,6 +684,8 @@ class CsvExportService {
           _trip(m.tripType),
           m.purpose,
           _yesNo(m.routeDeviation),
+          assetNames[m.carAssetId] ?? '',
+          m.notes ?? '',
         ],
     ]);
 
@@ -606,12 +707,18 @@ class CsvExportService {
         'MIA-categorie',
         'Afgeboekte herinvesteringsreserve',
         'Cataloguswaarde',
+        'Datum eerste toelating',
+        'Nul-emissie',
+        'Waarde in het economisch verkeer',
+        'Rittenregistratie',
+        'Ontvangen investeringsaftrek',
         'Verkoopdatum',
         'Verkoopopbrengst',
         'Verkoopfactuur',
         'Btw-tarief verkoop',
         'Btw verkoop',
         'Boekwinst naar herinvesteringsreserve',
+        'Opmerkingen',
       ],
       for (final a in assets)
         [
@@ -636,6 +743,11 @@ class CsvExportService {
           },
           _euro(a.reinvestmentReserveApplied),
           a.catalogueValue == null ? '' : _euro(a.catalogueValue!),
+          _date(a.firstRegistration),
+          a.kind == AssetKind.car ? _zeroEmission(a.zeroEmission) : '',
+          _cents(a.marketValue),
+          a.kind == AssetKind.car ? _yesNo(a.keepsTripLog) : '',
+          _cents(a.investmentDeductionReceived),
           _date(a.disposalDate),
           a.disposalProceeds == null ? '' : _euro(a.disposalProceeds!),
           a.disposalInvoiceId == null
@@ -644,6 +756,7 @@ class CsvExportService {
           _rateIn(a.disposalVatRate, a.disposalDate),
           a.disposalVatAmount == null ? '' : _euro(a.disposalVatAmount!),
           _yesNo(a.reserveGain),
+          a.notes ?? '',
         ],
     ]);
 
@@ -662,6 +775,7 @@ class CsvExportService {
         'Contract getekend',
         'Contract vervaldatum',
         'Actief',
+        'Opmerkingen',
       ],
       for (final c in clients)
         [
@@ -678,8 +792,29 @@ class CsvExportService {
           c.isMerchantOfRecord ? '' : _yesNo(c.contractSigned),
           _date(c.contractExpiry),
           _yesNo(c.isActive),
+          c.notes ?? '',
         ],
     ]);
+
+    final profile = await (db.select(
+      db.businessProfiles,
+    )..where((b) => b.id.equals(1))).getSingleOrNull();
+    await write('bedrijfsgegevens', profileRows(profile));
+
+    final pension = await (db.select(
+      db.pensionEntries,
+    )..where((e) => e.year.equals(year))).getSingleOrNull();
+    await write('pensioen', pensionRows(pension));
+
+    final inputs = await (db.select(
+      db.taxYearInputs,
+    )..where((e) => e.year.equals(year))).getSingleOrNull();
+    await write('fiscale_gegevens', taxYearInputRows(inputs));
+
+    final filed = await (db.select(
+      db.vatReturns,
+    )..where((v) => v.year.equals(year))).get();
+    await write('btw_aangiften', vatStatusRows(year, filed));
 
     for (var q = 1; q <= 4; q++) {
       await write('btw_Q$q', btwReturnRows(quarters[q - 1]));
