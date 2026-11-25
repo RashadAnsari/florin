@@ -12,6 +12,7 @@ import 'asset_service.dart';
 import 'balance_service.dart';
 import '../theme/app_theme.dart';
 import 'domain.dart';
+import 'kor_service.dart';
 import 'receipt_store.dart';
 import 'tax_service.dart';
 import 'vat_service.dart';
@@ -187,11 +188,11 @@ class CsvExportService {
   /// The supplies to EU businesses of one quarter, totalled per customer BTW
   /// number with goods and services apart, as the ICP-opgaaf lists them.
   static List<List<Object>> icpRows(
-    VatReturnResult r,
+    List<Invoice> icpInvoices,
     Map<int, Client> clients,
   ) {
     final totals = <String, ({String country, int goods, int services})>{};
-    for (final i in r.icpInvoices) {
+    for (final i in icpInvoices) {
       final c = clients[i.clientId];
       final key = c?.vatNumber ?? '';
       final t =
@@ -439,6 +440,7 @@ class CsvExportService {
     required List<VatReturnResult> quarters,
     required TaxResult? incomeTax,
     BalanceSheet? balance,
+    KorStatus kor = KorStatus.none,
     required ReceiptStore receipts,
   }) async {
     final parent = await FilePicker.platform.getDirectoryPath(
@@ -452,6 +454,7 @@ class CsvExportService {
       quarters: quarters,
       incomeTax: incomeTax,
       balance: balance,
+      kor: kor,
       receipts: receipts,
     );
   }
@@ -465,6 +468,7 @@ class CsvExportService {
     required List<VatReturnResult> quarters,
     required TaxResult? incomeTax,
     BalanceSheet? balance,
+    KorStatus kor = KorStatus.none,
     required ReceiptStore receipts,
   }) async {
     assert(quarters.length == 4 && periods.isNotEmpty);
@@ -877,7 +881,21 @@ class CsvExportService {
       await write('btw_${p.code}', btwReturnRows(r));
     }
     for (var q = 1; q <= 4; q++) {
-      await write('icp_Q$q', icpRows(quarters[q - 1], clientsById));
+      await write('icp_Q$q', icpRows(quarters[q - 1].icpInvoices, clientsById));
+    }
+    // Goods above the quarterly limit make the opgaaf monthly (art. 37a lid
+    // 3); the monthly lists are written for the whole year then.
+    final allInvoices = await db.select(db.invoices).get();
+    if ([
+      for (var q = 1; q <= 4; q++)
+        VatService.icpMonthlyDue(allInvoices, kor, year, q, rules),
+    ].contains(true)) {
+      for (final m in vatPeriodsOf(year, VatFilingPeriod.monthly)) {
+        await write(
+          'icp_${m.code}',
+          icpRows(VatService.icpList(allInvoices, m, kor), clientsById),
+        );
+      }
     }
     if (incomeTax != null) {
       await write('inkomstenbelasting_schatting', incomeTaxRows(incomeTax));

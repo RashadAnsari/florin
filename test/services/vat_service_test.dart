@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:florin/db/database.dart';
 import 'package:florin/services/tax_rules/tax_year_rules.dart';
 import 'package:florin/services/domain.dart';
+import 'package:florin/services/kor_service.dart';
 import 'package:florin/services/vat_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -230,5 +231,49 @@ void main() {
     expect(VatTreatment.servicesOutsideEu.fitsCountry('IE'), isFalse);
     expect(VatTreatment.exportOutsideEu.fitsCountry('CH'), isTrue);
     expect(euCountries.where((c) => c != 'EL'), hasLength(27));
+  });
+
+  test('goods above EUR 50.000 in a quarter or one of the four before make '
+      'the ICP-opgaaf monthly (Wet OB 1968 art. 37a lid 3)', () {
+    final rules = taxRulesFor(2026)!;
+    Invoice goods(int id, DateTime date, int total) => Invoice(
+      id: id,
+      invoiceNumber: '$id',
+      invoiceType: InvoiceType.invoice,
+      invoiceDate: date,
+      clientId: 1,
+      vatTreatment: VatTreatment.euGoods,
+      selfBilled: false,
+      sellerName: 'S',
+      sellerVatNumber: 'V',
+      sellerKvkNumber: 'K',
+      sellerAddress: 'A',
+      sellerIban: 'I',
+      paymentTermDays: 14,
+      status: InvoiceStatus.sent,
+      totalExclVat: total,
+      totalVat: 0,
+      totalInclVat: total,
+    );
+    final invoices = [goods(1, DateTime(2025, 5, 1), 6000000)];
+    // Q2 2025 is within the four quarters before Q1 2026, not before Q3 2026.
+    expect(
+      VatService.icpMonthlyDue(invoices, KorStatus.none, 2026, 1, rules),
+      isTrue,
+    );
+    expect(
+      VatService.icpMonthlyDue(invoices, KorStatus.none, 2026, 3, rules),
+      isFalse,
+    );
+    expect(
+      VatService.icpMonthlyDue(
+        [goods(2, DateTime(2026, 2, 1), 5000000)],
+        KorStatus.none,
+        2026,
+        1,
+        rules,
+      ),
+      isFalse,
+    );
   });
 }

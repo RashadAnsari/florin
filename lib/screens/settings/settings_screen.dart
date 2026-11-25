@@ -11,6 +11,7 @@ import '../../app.dart' show localeProvider, kSupportedLocales;
 import '../../constants/prefs_keys.dart';
 import '../../db/database.dart';
 import '../../providers/providers.dart';
+import '../../services/kor_service.dart';
 import '../../services/csv_export_service.dart';
 import '../../services/db_location_service.dart';
 import '../../services/tax_rules/tax_year_rules.dart';
@@ -80,6 +81,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ],
         incomeTax: ref.read(taxEstimateProvider(year)).valueOrNull?.result,
         balance: ref.read(balanceSheetProvider(year)).valueOrNull,
+        kor: ref.read(korStatusProvider).valueOrNull ?? KorStatus.none,
         receipts: ref.read(receiptServiceProvider).store,
       );
       if (dir != null && mounted) {
