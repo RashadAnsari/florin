@@ -810,6 +810,51 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     receipt: false,
   );
 
+  // Costs the income tax limits or bars (Wet IB 2001 art. 3.14, 3.16).
+  await expense(
+    DateTime(_year, 9, 18),
+    'Hotel Voorbeeld Berlijn',
+    'Reis en hotel ontwerpcongres',
+    ExpenseCategory.courseTravel,
+    180000,
+    rate: VatRate.low,
+  );
+  await expense(
+    DateTime(_year, 4, 22),
+    'Kledingzaak Proef',
+    'Colbert voor presentaties',
+    ExpenseCategory.clothingAndCare,
+    15000,
+    reclaim: false,
+  );
+  await expense(
+    DateTime(_year, 1, 31),
+    'Telecom Voorbeeld',
+    'Abonnement vaste lijn thuis',
+    ExpenseCategory.homePhoneLine,
+    2500,
+    reclaim: false,
+  );
+  await expense(
+    DateTime(_year, 12, 2),
+    'Boekhandel Voorbeeld',
+    'Roman voor op vakantie',
+    ExpenseCategory.generalLiterature,
+    2200,
+    rate: VatRate.low,
+    reclaim: false,
+  );
+  await expense(
+    DateTime(_year, 6, 12),
+    'Gemeente Voorbeeld',
+    'Parkeerboete bij klantbezoek',
+    ExpenseCategory.fines,
+    7500,
+    rate: VatRate.exempt,
+    reclaim: false,
+    receipt: false,
+  );
+
   final hours = HourDao(db);
   for (
     var d = DateTime(_year);

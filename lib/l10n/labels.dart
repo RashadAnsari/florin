@@ -116,6 +116,11 @@ extension ExpenseCategoryLabel on ExpenseCategory {
     ExpenseCategory.phoneAndInternet => l.expenseCatPhone,
     ExpenseCategory.insurance => l.expenseCatInsurance,
     ExpenseCategory.training => l.expenseCatTraining,
+    ExpenseCategory.courseTravel => l.expenseCatCourseTravel,
+    ExpenseCategory.clothingAndCare => l.expenseCatClothingAndCare,
+    ExpenseCategory.homePhoneLine => l.expenseCatHomePhoneLine,
+    ExpenseCategory.generalLiterature => l.expenseCatGeneralLiterature,
+    ExpenseCategory.fines => l.expenseCatFines,
     ExpenseCategory.other => l.expenseCatOther,
   };
 }

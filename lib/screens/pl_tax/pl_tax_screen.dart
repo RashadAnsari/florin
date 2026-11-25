@@ -8,6 +8,7 @@ import '../../db/database.dart';
 import '../../l10n/labels.dart';
 import '../../providers/providers.dart';
 import '../../services/asset_service.dart';
+import '../../services/domain.dart';
 import '../../services/tax_service.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_theme.dart';
@@ -44,6 +45,8 @@ class PlTaxScreen extends ConsumerWidget {
                 (byCategory[e.category] ?? 0) + e.deductibleAmount;
           }
           final food = TaxService.gemengdeKosten(expenses);
+          final courseTravel = TaxService.courseTravel(expenses);
+          final barred = TaxService.barredCosts(expenses);
           final mileage = TaxService.mileageAllowance(
             estimate.businessKm,
             rules,
@@ -86,7 +89,9 @@ class PlTaxScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.field),
                 SectionLabel(l.plTaxCostsSection),
                 for (final e in byCategory.entries)
-                  if (e.key != ExpenseCategory.foodAndRepresentation)
+                  if (e.key != ExpenseCategory.foodAndRepresentation &&
+                      e.key != ExpenseCategory.courseTravel &&
+                      !e.key.barredForIncomeTax)
                     ValueRow.cents(e.key.label(l), -e.value),
                 if (food > 0)
                   ValueRow.cents(
@@ -99,6 +104,24 @@ class PlTaxScreen extends ConsumerWidget {
                       AppFormat.percentLabel(rules.gemengdeKostenPct),
                       AppFormat.cents(rules.gemengdeKostenDrempel),
                     ),
+                  ),
+                if (courseTravel > 0)
+                  ValueRow.cents(
+                    l.plTaxFoodLimited(
+                      ExpenseCategory.courseTravel.label(l),
+                      AppFormat.cents(courseTravel),
+                    ),
+                    -TaxService.courseTravelDeductible(courseTravel, rules),
+                    help: l.plTaxCourseTravelHelp(
+                      AppFormat.cents(rules.courseTravelMax),
+                    ),
+                  ),
+                if (barred > 0)
+                  ValueRow.cents(
+                    l.plTaxBarredCosts(AppFormat.cents(barred)),
+                    0,
+                    muted: true,
+                    help: l.plTaxBarredCostsHelp,
                   ),
                 if (mileage > 0)
                   ValueRow.cents(

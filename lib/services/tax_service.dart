@@ -151,12 +151,37 @@ abstract final class TaxService {
     return best < 0 ? 0 : best;
   }
 
-  /// Deductible business share of expenses, with the limit on food, drinks
-  /// and representation.
+  /// Travel and stay for courses and congresses of the year.
+  static int courseTravel(List<Expense> expenses) => expenses
+      .where((e) => e.category == ExpenseCategory.courseTravel)
+      .fold(0, (s, e) => s + e.deductibleAmount);
+
+  /// The deductible part of course and congress travel: at most the yearly
+  /// amount (art. 3.16 lid 2 f). Lid 8 lifts the limit when the work makes
+  /// attending necessary; Florin cannot tell that from the records, so it
+  /// keeps the limit, which overstates tax rather than understates it.
+  static int courseTravelDeductible(int costs, TaxYearRules rules) =>
+      costs < rules.courseTravelMax ? costs : rules.courseTravelMax;
+
+  /// The business share of costs the law bars from the profit whatever the
+  /// amount (art. 3.14 and 3.16 lid 2).
+  static int barredCosts(List<Expense> expenses) => expenses
+      .where((e) => e.category.barredForIncomeTax)
+      .fold(0, (s, e) => s + e.deductibleAmount);
+
+  /// Deductible business share of expenses, with the limits on food, drinks
+  /// and representation and on course travel, and without barred costs.
   static int deductibleExpenses(List<Expense> expenses, TaxYearRules rules) {
     final food = gemengdeKosten(expenses);
-    final other = expenses.fold(0, (s, e) => s + e.deductibleAmount) - food;
-    return other + gemengdeKostenDeductible(food, rules);
+    final course = courseTravel(expenses);
+    final other =
+        expenses.fold(0, (s, e) => s + e.deductibleAmount) -
+        food -
+        course -
+        barredCosts(expenses);
+    return other +
+        gemengdeKostenDeductible(food, rules) +
+        courseTravelDeductible(course, rules);
   }
 
   /// Kilometres in a private vehicle deductible at the mileage rate.

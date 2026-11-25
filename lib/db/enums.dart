@@ -46,6 +46,26 @@ enum ExpenseCategory {
   phoneAndInternet,
   insurance,
   training,
+
+  /// Travel and stay for courses and congresses, deductible up to a yearly
+  /// amount (Wet IB 2001 art. 3.16 lid 2 f).
+  courseTravel,
+
+  /// Clothing other than werkkleding, and personal care (art. 3.16 lid 2 c
+  /// and d). Not deductible.
+  clothingAndCare,
+
+  /// A telephone subscription for a line in the home (art. 3.16 lid 2 a).
+  /// Not deductible.
+  homePhoneLine,
+
+  /// Literature other than vakliteratuur (art. 3.16 lid 2 b). Not
+  /// deductible.
+  generalLiterature,
+
+  /// Fines from a court or an administrative body (art. 3.14 lid 1 c). Not
+  /// deductible.
+  fines,
   other,
 }
 

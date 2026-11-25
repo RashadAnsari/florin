@@ -354,6 +354,55 @@ void main() {
     expect(TaxService.gemengdeKostenDeductible(5000000, rules), 4430000);
   });
 
+  Expense cost(ExpenseCategory category, int amount) => Expense(
+    id: amount,
+    date: DateTime(2026, 5, 1),
+    supplier: 's',
+    description: 'd',
+    category: category,
+    paperOriginalKept: false,
+    amountExclVat: amount,
+    vatRate: VatRate.zero,
+    purchaseVat: PurchaseVat.domestic,
+    vatAmount: 0,
+    totalInclVat: amount,
+    businessUsePct: 1,
+    deductibleAmount: amount,
+    vatReclaimable: false,
+    vatToReclaim: 0,
+  );
+
+  test('fines, clothing, a home phone line and general literature are not '
+      'deducted (Wet IB 2001 art. 3.14 lid 1 c, art. 3.16 lid 2 a to d)', () {
+    final expenses = [
+      cost(ExpenseCategory.software, 10000),
+      cost(ExpenseCategory.fines, 20000),
+      cost(ExpenseCategory.clothingAndCare, 30000),
+      cost(ExpenseCategory.homePhoneLine, 4000),
+      cost(ExpenseCategory.generalLiterature, 5000),
+    ];
+    expect(TaxService.barredCosts(expenses), 59000);
+    expect(TaxService.deductibleExpenses(expenses, rules), 10000);
+  });
+
+  test('course and congress travel is deducted up to € 1.500 '
+      '(art. 3.16 lid 2 f)', () {
+    expect(
+      TaxService.deductibleExpenses([
+        cost(ExpenseCategory.courseTravel, 100000),
+      ], rules),
+      100000,
+    );
+    expect(
+      TaxService.deductibleExpenses([
+        cost(ExpenseCategory.courseTravel, 120000),
+        cost(ExpenseCategory.courseTravel, 60000),
+        cost(ExpenseCategory.office, 1000),
+      ], rules),
+      150000 + 1000,
+    );
+  });
+
   test('zelfstandigenaftrek is capped at profit for non-starters', () {
     expect(calc(revenue: 50000).zelfstandigenaftrek, 50000);
     expect(calc(revenue: 50000, starter: true).zelfstandigenaftrek, 120000);

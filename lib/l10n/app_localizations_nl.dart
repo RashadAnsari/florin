@@ -509,6 +509,22 @@ class AppLocalizationsNl extends AppLocalizations {
   String get expenseCatTraining => 'Training & opleiding';
 
   @override
+  String get expenseCatCourseTravel =>
+      'Reizen en verblijf voor cursussen en congressen';
+
+  @override
+  String get expenseCatClothingAndCare => 'Kleding en persoonlijke verzorging';
+
+  @override
+  String get expenseCatHomePhoneLine => 'Telefoonaansluiting in de woning';
+
+  @override
+  String get expenseCatGeneralLiterature => 'Literatuur, geen vakliteratuur';
+
+  @override
+  String get expenseCatFines => 'Boetes';
+
+  @override
   String get expenseCatOther => 'Overig';
 
   @override
@@ -1269,6 +1285,15 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
+  String expensesCourseTravelNotice(String max) {
+    return 'Reizen en verblijf voor cursussen, opleidingen, congressen, seminars en studiereizen zijn voor de inkomstenbelasting aftrekbaar tot $max per jaar; het deel daarboven niet, tenzij uw werk het bijwonen noodzakelijk maakt (Wet IB 2001 art. 3.16). Florin houdt de grens aan, omdat het dat niet uit uw administratie kan afleiden.';
+  }
+
+  @override
+  String get expensesBarredNotice =>
+      'De wet houdt deze kosten buiten uw winst, hoe hoog ze ook zijn: boetes (Wet IB 2001 art. 3.14), en kleding die geen werkkleding is, persoonlijke verzorging, een telefoonaansluiting in uw woning en literatuur die geen vakliteratuur is (art. 3.16). Florin legt ze vast maar trekt niets af. Kleding is werkkleding als ze alleen geschikt is om voor uw werk te dragen of laat zien dat ze alleen daarvoor bedoeld is; boek werkkleding onder Overig.';
+
+  @override
   String plTaxFoodLimited(String category, String amount) {
     return '$category ($amount)';
   }
@@ -1534,7 +1559,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get expensesFieldCategoryHelp =>
-      'Wat voor kosten dit zijn. Voedsel, drank, representatie, congressen, seminars, excursies en studiereizen zijn maar gedeeltelijk aftrekbaar (Wet IB 2001 art. 3.15), dus ze horen in hun eigen categorie.';
+      'Wat voor kosten dit zijn. Voedsel, drank, representatie, congressen, seminars, excursies en studiereizen zijn maar gedeeltelijk aftrekbaar (Wet IB 2001 art. 3.15), reizen voor cursussen en congressen alleen tot een bedrag per jaar, en boetes, gewone kleding, persoonlijke verzorging, een telefoonaansluiting thuis en algemene literatuur helemaal niet (art. 3.14 en 3.16), dus ze hebben elk een eigen categorie.';
 
   @override
   String get expensesFieldDescriptionHelp =>
@@ -2182,6 +2207,20 @@ class AppLocalizationsNl extends AppLocalizations {
   String plTaxFoodLimitedHelp(String pct, String drempel) {
     return 'Voedsel, drank, representatie, congressen, seminars en studiereizen zijn voor $pct aftrekbaar, of boven de eerste $drempel (Wet IB 2001 art. 3.15). Florin neemt wat de grootste aftrek geeft.';
   }
+
+  @override
+  String plTaxCourseTravelHelp(String max) {
+    return 'Reizen en verblijf voor cursussen, opleidingen en congressen zijn aftrekbaar tot $max per jaar (Wet IB 2001 art. 3.16 lid 2 f). De grens geldt niet als uw werk het bijwonen noodzakelijk maakt (lid 8); Florin houdt de grens aan, omdat het dat niet uit uw administratie kan afleiden.';
+  }
+
+  @override
+  String plTaxBarredCosts(String amount) {
+    return 'Niet aftrekbaar ($amount)';
+  }
+
+  @override
+  String get plTaxBarredCostsHelp =>
+      'Boetes (Wet IB 2001 art. 3.14), kleding die geen werkkleding is, persoonlijke verzorging, een telefoonaansluiting in de woning en literatuur die geen vakliteratuur is (art. 3.16 lid 2). De wet houdt deze kosten buiten de winst, dus ze verlagen die met niets.';
 
   @override
   String plTaxInputsSection(int year) {
