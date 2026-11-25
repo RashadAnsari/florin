@@ -24,6 +24,7 @@ const _noInputs = TaxYearInput(
   employmentHours: 0,
   notOndernemerBefore: false,
   isStarter: false,
+  vatFilingPeriod: VatFilingPeriod.quarterly,
 );
 
 void main() {
@@ -105,6 +106,7 @@ void main() {
     zvwWages: zvwWages,
     employmentHours: jobHours,
     notOndernemerBefore: notOndernemerBefore,
+    vatFilingPeriod: VatFilingPeriod.quarterly,
     isStarter: false,
   );
 

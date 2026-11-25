@@ -96,10 +96,10 @@ void main() {
     expect(status.appliesOn(DateTime(2026, 4, 28)), isFalse);
     expect(status.appliesOn(DateTime(2026, 12, 31)), isFalse);
     expect(status.appliesOn(DateTime(2027, 6, 1)), isFalse);
-    expect(status.coversQuarter(2026, 1), isTrue);
-    expect(status.coversQuarter(2026, 2), isFalse);
-    expect(status.touchesQuarter(2026, 2), isTrue);
-    expect(status.touchesQuarter(2026, 3), isFalse);
+    expect(status.covers(DateTime(2026), DateTime(2026, 3, 31)), isTrue);
+    expect(status.covers(DateTime(2026, 4), DateTime(2026, 6, 30)), isFalse);
+    expect(status.touches(DateTime(2026, 4), DateTime(2026, 6, 30)), isTrue);
+    expect(status.touches(DateTime(2026, 7), DateTime(2026, 9, 30)), isFalse);
   });
 
   test('the KOR applies from its start and until a voluntary end '
@@ -198,7 +198,7 @@ void main() {
     );
     final kor = KorService.status(_profile(start: DateTime(2026, 1, 1)), []);
 
-    VatQuarterResult quarter({
+    VatReturnResult quarter({
       List<Expense> expenses = const [],
       List<Invoice> invoices = const [],
       KorStatus status = KorStatus.none,

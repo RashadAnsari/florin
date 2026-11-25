@@ -38,6 +38,10 @@ void main() {
       final dir = await CsvExportService(db).writeYear(
         2026,
         parent: parent.path,
+        periods: [
+          for (var q = 1; q <= 4; q++)
+            ((year: 2026, kind: VatFilingPeriod.quarterly, number: q), empty),
+        ],
         quarters: [empty, empty, empty, empty],
         incomeTax: null,
         receipts: ReceiptStore(folder.path),

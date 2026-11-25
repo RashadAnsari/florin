@@ -135,6 +135,17 @@ class TaxYearRules {
   /// are due (AWR art. 19 lid 1).
   final int vatReturnDueMonths;
 
+  /// Months after the year in which a yearly BTW return and payment are due
+  /// (Belastingdienst, Uiterste aangifte- en betaaldatums).
+  final int vatYearlyReturnDueMonths;
+
+  /// BTW a year below which a yearly return may be asked for.
+  final int yearlyFilingMaxVat;
+
+  /// Each kind of intra-Community transaction a year below which a yearly
+  /// return may be asked for.
+  final int yearlyFilingMaxEu;
+
   /// Day of the month after the supply by which the invoice is due
   /// (Wet OB 1968 art. 34g).
   final int invoiceDueDay;
@@ -306,6 +317,9 @@ class TaxYearRules {
     required this.factorAMultiplier,
     required this.vatRates,
     required this.vatReturnDueMonths,
+    required this.vatYearlyReturnDueMonths,
+    required this.yearlyFilingMaxVat,
+    required this.yearlyFilingMaxEu,
     required this.invoiceDueDay,
     required this.provisionalAssessmentMonth,
     required this.statutoryPaymentDays,

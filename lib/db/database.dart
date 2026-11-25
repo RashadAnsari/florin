@@ -49,7 +49,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump with every schema change and run `make migration`; see AGENTS.md.
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 10;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -176,6 +176,23 @@ class AppDatabase extends _$AppDatabase {
                 WHERE lower(trim(c.name)) = lower(trim(hour_entries.client_project))
               ) = 1
             ''');
+          },
+          from9To10: (m, schema) async {
+            await m.addColumn(
+              schema.taxYearInputs,
+              schema.taxYearInputs.vatFilingPeriod,
+            );
+            // Every stored return was a quarter's.
+            final returns = schema.vatReturns;
+            await m.alterTable(
+              TableMigration(
+                returns,
+                columnTransformer: {
+                  returns.number: const CustomExpression<int>('quarter'),
+                },
+                newColumns: [returns.kind, returns.number],
+              ),
+            );
           },
         )(m, from, to),
       );

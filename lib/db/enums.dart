@@ -88,6 +88,10 @@ enum MiaCategory { one, two, three }
 /// (Wet IB 2001 art. 3.20 lid 2). Hydrogen and integrated solar have no cap.
 enum ZeroEmission { none, battery, hydrogenOrSolar }
 
+/// The period a BTW return covers. A quarter unless the Belastingdienst
+/// agreed to another on request (`docs/legal.md`, Filing period).
+enum VatFilingPeriod { quarterly, monthly, yearly }
+
 /// What a receipt belongs to.
 enum ReceiptOwnerKind { expense, asset, invoice }
 

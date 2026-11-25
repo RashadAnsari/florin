@@ -135,7 +135,7 @@ Invoice saleInvoice(
   totalInclVat: total,
 );
 
-VatQuarterResult quarterOf2026(
+VatReturnResult quarterOf2026(
   int quarter,
   List<FixedAsset> assets, {
   KorStatus kor = KorStatus.none,

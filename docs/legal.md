@@ -417,6 +417,41 @@ Where Florin implements it: `VatService.filingDeadline`, the last day of the
 month after the quarter, from `TaxYearRules.vatReturnDueMonths`. For a new
 year, quote its row of the table above.
 
+## Filing period
+
+> Btw-aangifte doet u meestal per kwartaal. Maar er zijn uitzonderingen mogelijk.
+
+> Ontvangen wij uw btw-aangifte of betaling niet op tijd? Dan kunnen wij u verplichten om maandelijks btw-aangifte te doen. U ontvangt daarvan altijd schriftelijk bericht.
+
+> Wilt u per maand aangifte doen? Dan kunt u hier om verzoeken met een brief aan uw belastingkantoor.
+
+> Wilt u per jaar aangifte doen? Dan kunt u hier om verzoeken met een brief aan uw belastingkantoor. U moet dan voldoen aan alle volgende voorwaarden: U betaalt per jaar minder dan € 1.883 btw. U hebt geen vergunning artikel 23 U bent een natuurlijk persoon (eenmanszaak) of een samenwerkingsverband van uitsluitend natuurlijke personen.
+
+> Het drempelbedrag van € 10.000 geldt voor elk van deze activiteiten afzonderlijk.
+
+[Belastingdienst, Over welk tijdvak moet ik btw-aangifte doen?](https://www.belastingdienst.nl/wps/wcm/connect/nl/btw/content/wijziging-aangiftetijdvak-btw), read 2026-11-25
+
+> Ik doe aangifte per jaar Tijdvak Uw aangifte en betaling moeten binnen zijn op 2025 31 maart 2026 2026 31 maart 2027
+
+[Belastingdienst, Uiterste aangifte- en betaaldatums](https://www.belastingdienst.nl/wps/wcm/connect/nl/btw/content/uiterste-aangifte-en-betaaldatums), read 2026-11-25
+
+Where Florin implements it: the filing period is chosen per year on the BTW
+return screen (`TaxYearInputs.vatFilingPeriod`), a quarter by default. A
+return covers a `VatPeriod`: a month, a quarter or the year. A month or
+quarter is due one month after it ends (AWR artikel 19 lid 1), a yearly
+return `vatYearlyReturnDueMonths` after the year. Private use of a car and
+the herziening go in the last return of the year. The ICP-opgaaf stays per
+quarter. The export writes one BTW file per period of the year's filing
+period (`btw_M01` to `btw_M12`, `btw_Q1` to `btw_Q4`, or `btw_jaar`). With a
+yearly period, the screen warns when the year's BTW to pay reaches
+`yearlyFilingMaxVat` or its EU supplies or EU purchases reach
+`yearlyFilingMaxEu`. Florin adds goods and services together there, so it
+warns sooner than the Belastingdienst would: the cautious side.
+
+Not modelled: the vergunning artikel 23 and partnerships, which Florin does
+not record, and the legal basis of the yearly figures, which was not read
+beyond the Belastingdienst page.
+
 ## Filing a return
 
 > 1 De in een tijdvak verschuldigd geworden belasting moet op aangifte worden voldaan.

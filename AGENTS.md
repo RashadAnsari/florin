@@ -60,9 +60,10 @@ Two skills hold the procedures:
 7. **Exports follow the form they feed.** A figure the user copies into a
    return is exported in the layout, codes, units and rounding of that
    return, sourced in `docs/legal.md`: the BTW return as one file per
-   quarter (`btw_Q1` to `btw_Q4`, written even when a quarter is empty) with
-   every rubriek in whole euros, the ICP-opgaaf per quarter, and the income
-   tax estimate per year. A change to a return's rubrieken changes the export
+   period of the year's filing period (`btw_Q1` to `btw_Q4`, `btw_M01` to
+   `btw_M12` or `btw_jaar`, written even when a period is empty) with every
+   rubriek in whole euros, the ICP-opgaaf per quarter, and the income tax
+   estimate per year. A change to a return's rubrieken changes the export
    and its test in the same commit.
 8. **Every estimate says it is one.** A figure Florin calculates rather than
    reads from the records (tax, net profit after tax, tax savings, private

@@ -16,6 +16,56 @@ DateTime todayIn(int year) {
 /// Calendar quarter 1 to 4 of [date].
 int quarterOf(DateTime date) => (date.month - 1) ~/ 3 + 1;
 
+/// One BTW return period: a month, a quarter or a year, numbered from 1.
+typedef VatPeriod = ({int year, VatFilingPeriod kind, int number});
+
+/// The periods of [year] when returns are filed per [kind].
+List<VatPeriod> vatPeriodsOf(int year, VatFilingPeriod kind) => [
+  for (var n = 1; n <= kind.periodsPerYear; n++)
+    (year: year, kind: kind, number: n),
+];
+
+/// The period of [kind] that holds [date].
+VatPeriod vatPeriodOf(DateTime date, VatFilingPeriod kind) => (
+  year: date.year,
+  kind: kind,
+  number: switch (kind) {
+    VatFilingPeriod.monthly => date.month,
+    VatFilingPeriod.quarterly => quarterOf(date),
+    VatFilingPeriod.yearly => 1,
+  },
+);
+
+extension VatFilingPeriodDomain on VatFilingPeriod {
+  int get periodsPerYear => switch (this) {
+    VatFilingPeriod.monthly => 12,
+    VatFilingPeriod.quarterly => 4,
+    VatFilingPeriod.yearly => 1,
+  };
+
+  int get monthsPerPeriod => 12 ~/ periodsPerYear;
+}
+
+extension VatPeriodDomain on VatPeriod {
+  DateTime get first => DateTime(year, (number - 1) * kind.monthsPerPeriod + 1);
+
+  DateTime get last => DateTime(year, number * kind.monthsPerPeriod + 1, 0);
+
+  bool contains(DateTime d) =>
+      !d.isBefore(first) && d.isBefore(last.add(const Duration(days: 1)));
+
+  /// The last return of the year, which carries the yearly corrections.
+  bool get isLastOfYear => number == kind.periodsPerYear;
+
+  /// The short Dutch name of the period, as an export file names it:
+  /// `M01`, `Q1` or `jaar`.
+  String get code => switch (kind) {
+    VatFilingPeriod.monthly => 'M${number.toString().padLeft(2, '0')}',
+    VatFilingPeriod.quarterly => 'Q$number',
+    VatFilingPeriod.yearly => 'jaar',
+  };
+}
+
 extension InvoiceDomain on Invoice {
   /// Issued invoices count for revenue and BTW; drafts do not.
   bool get isIssued => status != InvoiceStatus.draft;

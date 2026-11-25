@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import '../enums.dart';
 
 /// Facts for one year that the bookkeeping does not show.
 class TaxYearInputs extends Table {
@@ -73,6 +74,11 @@ class TaxYearInputs extends Table {
   /// those years (art. 3.76 lid 3). Kept false while [notOndernemerBefore]
   /// is off.
   BoolColumn get isStarter => boolean().withDefault(const Constant(false))();
+
+  /// The period of the year's BTW returns.
+  TextColumn get vatFilingPeriod => textEnum<VatFilingPeriod>().withDefault(
+    Constant(VatFilingPeriod.quarterly.name),
+  )();
 
   @override
   Set<Column> get primaryKey => {year};

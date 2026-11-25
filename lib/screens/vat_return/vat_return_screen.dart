@@ -14,7 +14,9 @@ import '../../theme/app_theme.dart';
 import '../../widgets/async_body.dart';
 import '../../widgets/deadline_badge.dart';
 import '../../widgets/feedback.dart';
-import '../../widgets/quarter_chips.dart';
+import '../../widgets/choice_chips.dart';
+import '../../widgets/enum_dropdown.dart';
+import '../../l10n/labels.dart';
 import '../../widgets/value_row.dart';
 
 class VatReturnScreen extends ConsumerStatefulWidget {
@@ -25,10 +27,11 @@ class VatReturnScreen extends ConsumerStatefulWidget {
 }
 
 class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
-  int _quarter = quarterOf(DateTime.now());
+  /// The month or quarter shown; the kind follows the year's filing period.
+  int? _number;
 
   Future<void> _setStatus(
-    int year,
+    VatPeriod period,
     VatReturn? current, {
     bool? filed,
     bool? paid,
@@ -38,34 +41,59 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
         .read(vatReturnDaoProvider)
         .save(
           VatReturnsCompanion(
-            year: Value(year),
-            quarter: Value(_quarter),
+            year: Value(period.year),
+            kind: Value(period.kind),
+            number: Value(period.number),
             filed: Value(filed ?? current?.filed ?? false),
             paid: Value(paid ?? current?.paid ?? false),
           ),
         ),
   );
 
+  Future<void> _setKind(int year, VatFilingPeriod kind) async {
+    final saved = await guardSave(
+      context,
+      () => ref
+          .read(taxYearInputsDaoProvider)
+          .save(
+            TaxYearInputsCompanion(
+              year: Value(year),
+              vatFilingPeriod: Value(kind),
+            ),
+          ),
+    );
+    if (saved && mounted) setState(() => _number = null);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final year = ref.watch(fiscalYearProvider);
-    final result = ref.watch(
-      vatQuarterProvider((year: year, quarter: _quarter)),
-    );
+    // Until the year's choice loads, quarters: the regular period.
+    final kind =
+        ref.watch(vatFilingPeriodProvider(year)).valueOrNull ??
+        VatFilingPeriod.quarterly;
+    final period = _number != null && _number! <= kind.periodsPerYear
+        ? (year: year, kind: kind, number: _number!)
+        : vatPeriodOf(todayIn(year), kind);
+    final result = ref.watch(vatPeriodProvider(period));
     final status = ref
         .watch(vatReturnsProvider(year))
         .valueOrNull
-        ?.where((v) => v.quarter == _quarter)
+        ?.where((v) => v.kind == kind && v.number == period.number)
         .firstOrNull;
-    final deadline = VatService.filingDeadline(year, _quarter);
+    final deadline = VatService.filingDeadline(period);
     final rules = ref.watch(taxRulesProvider(year));
     final kor = ref.watch(korStatusProvider).valueOrNull ?? KorStatus.none;
-    final korCovered = kor.coversQuarter(year, _quarter);
+    final korCovered = kor.covers(period.first, period.last);
     final korExceeded = kor.exceededOn[year];
     // Until the figures load, a return is due: the cautious answer.
     final duty = result.valueOrNull?.duty ?? ReturnDuty.regular;
+    final yearlyIssue =
+        kind == VatFilingPeriod.yearly &&
+        result.hasValue &&
+        VatService.yearlyFilingIssue(result.requireValue, rules);
 
     return Scaffold(
       appBar: AppBar(title: Text(l.vatReturnTitle)),
@@ -74,14 +102,45 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            EnumDropdown<VatFilingPeriod>(
+              label: l.vatReturnFilingPeriod,
+              help: l.vatReturnFilingPeriodHelp(
+                AppFormat.euros(rules.yearlyFilingMaxVat),
+                AppFormat.euros(rules.yearlyFilingMaxEu),
+              ),
+              value: kind,
+              values: VatFilingPeriod.values,
+              labelOf: (k) => k.label(l),
+              onChanged: (k) => _setKind(year, k),
+              required: true,
+            ),
+            if (yearlyIssue) ...[
+              const SizedBox(height: AppSpacing.field),
+              NoticeBanner(
+                l.vatReturnYearlyNotAllowed(
+                  AppFormat.euros(rules.yearlyFilingMaxVat),
+                  AppFormat.euros(rules.yearlyFilingMaxEu),
+                ),
+                tone: NoticeTone.warning,
+              ),
+            ],
+            const SizedBox(height: AppSpacing.field),
             Row(
               children: [
-                QuarterChips(
-                  selected: _quarter,
-                  allowAll: false,
-                  onSelected: (q) => setState(() => _quarter = q!),
-                ),
-                const Spacer(),
+                if (kind != VatFilingPeriod.yearly)
+                  Expanded(
+                    child: ChoiceChips<int>(
+                      selected: period.number,
+                      onSelected: (n) => setState(() => _number = n),
+                      options: [
+                        for (final p in vatPeriodsOf(year, kind))
+                          (p.number, p.label(l)),
+                      ],
+                    ),
+                  )
+                else
+                  Expanded(child: Text(period.label(l))),
+                const SizedBox(width: AppSpacing.field),
                 DeadlineBadge(
                   deadline: deadline,
                   filed: status?.filed ?? false,
@@ -95,7 +154,7 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                 l.vatReturnKorIncidentalNotice,
                 tone: NoticeTone.warning,
               ),
-            ] else if (kor.touchesQuarter(year, _quarter)) ...[
+            ] else if (kor.touches(period.first, period.last)) ...[
               const SizedBox(height: AppSpacing.group),
               NoticeBanner(
                 korCovered ? l.vatReturnKorNotice : l.vatReturnKorPartNotice,
@@ -104,7 +163,7 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
               const SizedBox(height: AppSpacing.group),
               NoticeBanner(l.vatReturnNilNotice),
             ],
-            if (korExceeded != null && quarterOf(korExceeded) == _quarter) ...[
+            if (korExceeded != null && period.contains(korExceeded)) ...[
               const SizedBox(height: AppSpacing.group),
               NoticeBanner(
                 l.vatReturnKorExceeded(
@@ -259,7 +318,9 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                     ),
                     Text(
                       l.vatReturnIcpNote(
-                        AppFormat.date(VatService.icpDeadline(year, _quarter)),
+                        AppFormat.date(
+                          VatService.icpDeadline(year, quarterOf(period.last)),
+                        ),
                         AppFormat.euros(rules.icpQuarterlyGoodsMax),
                         rules.icpGoodsLookbackQuarters,
                       ),
@@ -277,13 +338,13 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
             const SizedBox(height: AppSpacing.heading),
             HelpCheckbox(
               value: status?.filed ?? false,
-              onChanged: (v) => _setStatus(year, status, filed: v),
+              onChanged: (v) => _setStatus(period, status, filed: v),
               title: l.vatReturnFiled,
               help: l.vatReturnFiledHelp,
             ),
             HelpCheckbox(
               value: status?.paid ?? false,
-              onChanged: (v) => _setStatus(year, status, paid: v),
+              onChanged: (v) => _setStatus(period, status, paid: v),
               title: l.vatReturnPaid,
               help: l.vatReturnPaidHelp,
             ),

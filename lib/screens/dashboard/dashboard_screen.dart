@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../../db/database.dart';
+import '../../l10n/labels.dart';
 import '../../providers/providers.dart';
 import '../../services/asset_service.dart';
 import '../../services/domain.dart';
@@ -35,9 +36,12 @@ class DashboardScreen extends ConsumerWidget {
     final korTurnover = kor.turnover[year] ?? 0;
     // Shown to those who take part, and to those whose turnover allows it.
     final showKor = kor.participates || korTurnover <= rules.korThreshold;
+    final kind =
+        ref.watch(vatFilingPeriodProvider(year)).valueOrNull ??
+        VatFilingPeriod.quarterly;
     final filed = {
       for (final v in ref.watch(vatReturnsProvider(year)).valueOrNull ?? [])
-        if (v.filed) v.quarter,
+        if (v.filed && v.kind == kind) v.number,
     };
 
     final unpaid = invoices.where(
@@ -162,22 +166,17 @@ class DashboardScreen extends ConsumerWidget {
               spacing: AppSpacing.field,
               runSpacing: AppSpacing.heading,
               children: [
-                for (var q = 1; q <= 4; q++)
+                for (final p in vatPeriodsOf(year, kind))
                   _DeadlineTile(
-                    quarter: q,
-                    deadline: VatService.filingDeadline(year, q),
-                    filed: filed.contains(q),
+                    label: p.label(l),
+                    deadline: VatService.filingDeadline(p),
+                    filed: filed.contains(p.number),
                     // Until the figures load, a return is due: the cautious
                     // answer.
                     duty:
-                        ref
-                            .watch(vatQuarterProvider((year: year, quarter: q)))
-                            .valueOrNull
-                            ?.duty ??
+                        ref.watch(vatPeriodProvider(p)).valueOrNull?.duty ??
                         ReturnDuty.regular,
-                    isCurrent:
-                        year == DateTime.now().year &&
-                        q == quarterOf(DateTime.now()),
+                    isCurrent: p.contains(DateTime.now()),
                   ),
               ],
             ),
@@ -193,14 +192,14 @@ class DashboardScreen extends ConsumerWidget {
 }
 
 class _DeadlineTile extends StatelessWidget {
-  final int quarter;
+  final String label;
   final DateTime deadline;
   final bool filed;
   final bool isCurrent;
   final ReturnDuty duty;
 
   const _DeadlineTile({
-    required this.quarter,
+    required this.label,
     required this.deadline,
     required this.filed,
     required this.isCurrent,
@@ -239,7 +238,7 @@ class _DeadlineTile extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            'Q$quarter',
+            label,
             style: TextStyle(fontWeight: FontWeight.w700, color: color),
           ),
           Text(AppFormat.date(deadline), style: theme.textTheme.bodySmall),

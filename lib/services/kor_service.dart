@@ -47,21 +47,19 @@ class KorStatus {
     return !exceededOn.containsKey(date.year - 1);
   }
 
-  /// Whether the scheme covers every day of [quarter] in [year], so no
-  /// regular return is due for it.
-  bool coversQuarter(int year, int quarter) {
-    final first = DateTime(year, quarter * 3 - 2);
-    final last = DateTime(year, quarter * 3 + 1, 0);
+  /// Whether the scheme covers every day from [first] to [last], so no
+  /// regular return is due for that period.
+  bool covers(DateTime first, DateTime last) {
     if (!appliesOn(first) || !appliesOn(last)) return false;
-    final exceeded = exceededOn[year];
+    final exceeded = exceededOn[first.year];
     return exceeded == null || exceeded.isAfter(last);
   }
 
-  /// Whether the scheme applies on any day of [quarter] in [year].
-  bool touchesQuarter(int year, int quarter) {
+  /// Whether the scheme applies on any day from [first] to [last].
+  bool touches(DateTime first, DateTime last) {
     for (
-      var d = DateTime(year, quarter * 3 - 2);
-      d.month <= quarter * 3 && d.year == year;
+      var d = first;
+      !d.isAfter(last);
       d = DateTime(d.year, d.month, d.day + 1)
     ) {
       if (appliesOn(d)) return true;

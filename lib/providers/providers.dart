@@ -345,12 +345,18 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
   );
 });
 
-/// The BTW return figures for one quarter.
-final vatQuarterProvider =
-    Provider.family<AsyncValue<VatQuarterResult>, ({int year, int quarter})>((
-      ref,
-      key,
-    ) {
+/// The period of [year]'s BTW returns, a quarter unless the user chose
+/// another.
+final vatFilingPeriodProvider =
+    Provider.family<AsyncValue<VatFilingPeriod>, int>(
+      (ref, year) => ref
+          .watch(taxYearInputsProvider(year))
+          .whenData((i) => i?.vatFilingPeriod ?? VatFilingPeriod.quarterly),
+    );
+
+/// The BTW return figures for one period.
+final vatPeriodProvider =
+    Provider.family<AsyncValue<VatReturnResult>, VatPeriod>((ref, key) {
       // Every year's invoices: a service is reported in the quarter it was
       // supplied, which can precede the year of its invoice.
       final invoices = ref.watch(allInvoicesProvider);
@@ -359,7 +365,7 @@ final vatQuarterProvider =
       final trips = ref.watch(mileageTripsProvider(key.year));
       final assets = ref.watch(effectiveAssetsProvider);
       final kor = ref.watch(korStatusProvider);
-      final pending = waitForAll<VatQuarterResult>([
+      final pending = waitForAll<VatReturnResult>([
         invoices,
         lines,
         expenses,
@@ -369,16 +375,15 @@ final vatQuarterProvider =
       ]);
       if (pending != null) return pending;
       return AsyncData(
-        VatService.calculateQuarter(
+        VatService.calculatePeriod(
           invoices: invoices.requireValue,
           lines: lines.requireValue,
           expenses: expenses.requireValue,
           assets: assets.requireValue,
-          year: key.year,
-          quarter: key.quarter,
+          period: key,
           kor: kor.requireValue,
           // Herziening is settled in the last return of the year.
-          vatRevision: key.quarter == 4
+          vatRevision: key.isLastOfYear
               ? KorService.revision(
                   status: kor.requireValue,
                   assets: assets.requireValue,
@@ -388,7 +393,7 @@ final vatQuarterProvider =
                 )
               : const {},
           // Private use of business cars goes in the last return of the year.
-          privateUseVat: key.quarter == 4
+          privateUseVat: key.isLastOfYear
               ? CarService.btwPrivateUse(
                   assets: assets.requireValue,
                   trips: trips.requireValue,
@@ -399,6 +404,26 @@ final vatQuarterProvider =
               : 0,
         ),
       );
+    });
+
+/// Every BTW period of [year] for its filing period, with its figures.
+final vatYearProvider =
+    Provider.family<AsyncValue<List<(VatPeriod, VatReturnResult)>>, int>((
+      ref,
+      year,
+    ) {
+      final kind = ref.watch(vatFilingPeriodProvider(year));
+      final pending = waitForAll<List<(VatPeriod, VatReturnResult)>>([kind]);
+      if (pending != null) return pending;
+      final periods = vatPeriodsOf(year, kind.requireValue);
+      final results = [
+        for (final p in periods) ref.watch(vatPeriodProvider(p)),
+      ];
+      return waitForAll<List<(VatPeriod, VatReturnResult)>>(results) ??
+          AsyncData([
+            for (var i = 0; i < periods.length; i++)
+              (periods[i], results[i].requireValue),
+          ]);
     });
 
 class TaxEstimate {

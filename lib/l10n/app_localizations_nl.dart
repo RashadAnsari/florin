@@ -886,6 +886,28 @@ class AppLocalizationsNl extends AppLocalizations {
   String get vatReturnTitle => 'BTW-aangifte';
 
   @override
+  String get vatFilingQuarterly => 'Per kwartaal';
+
+  @override
+  String get vatFilingMonthly => 'Per maand';
+
+  @override
+  String get vatFilingYearly => 'Per jaar';
+
+  @override
+  String get vatReturnFilingPeriod => 'Aangiftetijdvak';
+
+  @override
+  String vatReturnFilingPeriodHelp(String vat, String eu) {
+    return 'Het tijdvak van je btw-aangiftes, zoals in je aangiftebrief. De meeste ondernemers doen aangifte per kwartaal. De Belastingdienst laat je op verzoek per maand aangifte doen, en op verzoek per jaar als je minder dan $vat btw per jaar betaalt, een eenmanszaak hebt en per soort EU-levering of -aankoop minder dan $eu per jaar hebt; na te late aangiftes of betalingen kan hij ook maandaangifte verplichten. Kies het tijdvak dat de Belastingdienst heeft bevestigd.';
+  }
+
+  @override
+  String vatReturnYearlyNotAllowed(String vat, String eu) {
+    return 'De cijfers van dit jaar voldoen niet aan de voorwaarden voor een jaaraangifte: $vat of meer btw te betalen, of EU-leveringen of -aankopen van $eu of meer. De Belastingdienst verandert dan je aangiftetijdvak en laat je dat per brief weten. Florin telt goederen en diensten samen, dus kan het een jaar aanwijzen dat nog wel voldoet.';
+  }
+
+  @override
   String get vatReturnRevenueSection => 'Omzet';
 
   @override
