@@ -90,6 +90,8 @@ the statute version of 1 January of the new year, its transitional articles
 | `invoiceDueDay` | Day of the next month by which an invoice is due | Wet OB 1968 art. 34g | Statute |
 | `vatReturnDueMonths` | Months after a quarter in which its return and payment are due | AWR art. 19 lid 1 | Statute; Belastingdienst, Uiterste aangifte- en betaaldatums |
 | `retentionYears` | Years records are kept | AWR art. 52 lid 4 | Statute |
+| `navorderingYears` | Years after the tax became due in which the Belastingdienst can raise it afterwards | AWR art. 16 lid 3 | Statute |
+| `navorderingForeignYears` | The same for income or assets abroad | AWR art. 16 lid 4 | Statute |
 
 ## Not in the rules
 

@@ -137,6 +137,13 @@ class TaxYearRules {
   /// Years invoices and receipts are kept (AWR art. 52 lid 4).
   final int retentionYears;
 
+  /// Years after the tax became due in which the Belastingdienst can raise
+  /// it afterwards, extended by any extra time to file (AWR art. 16 lid 3).
+  final int navorderingYears;
+
+  /// The same for income or assets held abroad (AWR art. 16 lid 4).
+  final int navorderingForeignYears;
+
   /// Goods to EU businesses in a quarter above which the ICP-opgaaf is due
   /// per month.
   final int icpQuarterlyGoodsMax;
@@ -255,6 +262,8 @@ class TaxYearRules {
     required this.vatReturnDueMonths,
     required this.invoiceDueDay,
     required this.retentionYears,
+    required this.navorderingYears,
+    required this.navorderingForeignYears,
     required this.icpQuarterlyGoodsMax,
     required this.icpGoodsLookbackQuarters,
     required this.icpDueMonths,

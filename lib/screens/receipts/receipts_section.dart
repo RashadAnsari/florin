@@ -217,6 +217,7 @@ class _ReceiptsSectionState extends ConsumerState<ReceiptsSection> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final rules = ref.watch(taxRulesProvider(widget.year));
     final owner = widget.owner;
     final service = ref.watch(receiptServiceProvider);
     final stored = owner == null
@@ -274,7 +275,9 @@ class _ReceiptsSectionState extends ConsumerState<ReceiptsSection> {
           ValueRow(
             label: l.receiptsKeepUntil,
             help: l.receiptsKeepUntilHelp(
-              ref.watch(taxRulesProvider(widget.year)).retentionYears,
+              rules.retentionYears,
+              rules.navorderingYears,
+              rules.navorderingForeignYears,
             ),
             value: widget.keepUntil,
           ),

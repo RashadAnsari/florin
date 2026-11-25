@@ -209,6 +209,18 @@ Where Florin implements it: `KorService` and `KorStatus` in
 
 [Algemene wet inzake rijksbelastingen, artikel 52 lid 4](https://wetten.overheid.nl/BWBR0002320/2026-10-01), read 2026-11-24 from the official XML of the version in force from 1 October 2026
 
+> 3 De bevoegdheid tot het vaststellen van een navorderingsaanslag vervalt door verloop van vijf jaren na het tijdstip waarop de belastingschuld is ontstaan. Artikel 11, vierde lid, is te dezen van toepassing. Indien voor het doen van aangifte uitstel is verleend, wordt de navorderingstermijn met de duur van dit uitstel verlengd.
+
+> 4 Indien te weinig belasting is geheven over een bestanddeel van het voorwerp van enige belasting dat in het buitenland wordt gehouden of is opgekomen, vervalt, in afwijking in zoverre van het derde lid, eerste volzin, de bevoegdheid tot navorderen door verloop van twaalf jaren na het tijdstip waarop de belastingschuld is ontstaan.
+
+[Algemene wet inzake rijksbelastingen, artikel 16](https://wetten.overheid.nl/BWBR0002320/2026-10-01), read 2026-11-25 from the official XML of the version in force from 1 October 2026
+
+The retention term is not the end of the risk: the navordering term of
+article 16 can run past it, with uitstel or for items abroad. The keep-until
+help names both terms (`navorderingYears`, `navorderingForeignYears`), so the
+user keeps the records of such a year longer. Florin itself never deletes a
+record.
+
 Where Florin implements it: `ReceiptStore` and `ReceiptService`.
 
 - Receipt files are copied into `receipts/<year>/<uuid>.<extension>` next to
