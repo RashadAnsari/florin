@@ -1004,6 +1004,12 @@ abstract class AppLocalizations {
   /// **'Marketing & advertising'**
   String get expenseCatMarketing;
 
+  /// No description provided for @expenseCatGifts.
+  ///
+  /// In en, this message translates to:
+  /// **'Business gifts'**
+  String get expenseCatGifts;
+
   /// No description provided for @expenseCatProfessional.
   ///
   /// In en, this message translates to:
@@ -2450,6 +2456,18 @@ abstract class AppLocalizations {
   /// **'The law keeps this cost out of your profit, whatever the amount: fines (Wet IB 2001 art. 3.14), and clothing other than werkkleding, personal care, a phone line in your home and literature other than professional literature (art. 3.16). Florin records it but deducts nothing. Clothing counts as werkkleding when it is only fit to wear for your work or shows that it is meant only for it; record werkkleding under Other.'**
   String get expensesBarredNotice;
 
+  /// No description provided for @expensesGiftNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Gifts to this recipient this year, this one included: {total} excl. BTW. While the total stays at or below {threshold}, the BTW on them stays deductible (Besluit uitsluiting aftrek omzetbelasting 1968 art. 4).'**
+  String expensesGiftNotice(String total, String threshold);
+
+  /// No description provided for @expensesGiftOverNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Gifts to this recipient this year, this one included: {total} excl. BTW, more than {threshold}. The BTW on them is then not deductible for a recipient who cannot deduct BTW (Besluit uitsluiting aftrek omzetbelasting 1968 art. 1 and 4). Florin cannot tell whether the recipient can, so it reclaims no BTW on these gifts and counts it as a cost.'**
+  String expensesGiftOverNotice(String total, String threshold);
+
   /// No description provided for @plTaxFoodLimited.
   ///
   /// In en, this message translates to:
@@ -2863,6 +2881,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'What kind of cost this is. Food, drinks, representation, congresses, seminars, excursions and study trips are only partly deductible (Wet IB 2001 art. 3.15), travel for courses and congresses only up to a yearly amount, and fines, ordinary clothing, personal care, a phone line at home and general literature not at all (art. 3.14 and 3.16), so each has its own category.'**
   String get expensesFieldCategoryHelp;
+
+  /// No description provided for @expensesFieldGiftRecipient.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipient'**
+  String get expensesFieldGiftRecipient;
+
+  /// No description provided for @expensesFieldGiftRecipientHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Who received the gift. Florin adds up the gifts to each recipient in a year, because the BTW on them stays deductible only while that total stays within the threshold. Type the name the same way each time.'**
+  String get expensesFieldGiftRecipientHelp;
+
+  /// No description provided for @expensesValidateGiftRecipient.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter who received the gift, so Florin can add up the gifts per recipient.'**
+  String get expensesValidateGiftRecipient;
 
   /// No description provided for @expensesFieldDescriptionHelp.
   ///

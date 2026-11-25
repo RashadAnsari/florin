@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart' show Value;
+import '../../services/gift_service.dart';
 import '../../services/tax_rules/tax_year_rules.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/validators.dart';
@@ -166,6 +167,9 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
     text: widget.expense?.paymentReference,
   );
   late final _notes = TextEditingController(text: widget.expense?.notes);
+  late final _giftRecipient = TextEditingController(
+    text: widget.expense?.giftRecipient,
+  );
 
   late DateTime _date =
       widget.expense?.date ?? todayIn(ref.read(fiscalYearProvider));
@@ -192,22 +196,34 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
   /// private use correct its private use (`docs/legal.md`).
   double get _share => _carAssetId != null ? 1.0 : _businessUsePct;
 
+  /// BTW on gifts to a recipient above the yearly threshold is not
+  /// reclaimed (Besluit uitsluiting aftrek omzetbelasting 1968 art. 1, 4).
+  bool get _reclaims =>
+      _vatReclaimable && !(_isGift && _giftTotal() > _rules.buaGiftThreshold);
+
   int get _deductibleAmount => PurchaseMath.deductible(
     amountExclVat: _amountExclVat,
     vatAmount: _vatAmount,
     businessUsePct: _share,
-    vatReclaimable: _vatReclaimable,
+    vatReclaimable: _reclaims,
   );
 
   int get _vatToReclaim => PurchaseMath.vatToReclaim(
     vatAmount: _vatAmount,
     businessUsePct: _share,
-    vatReclaimable: _vatReclaimable,
+    vatReclaimable: _reclaims,
   );
 
   @override
   void dispose() {
-    for (final c in [_supplier, _description, _paidFrom, _paymentRef, _notes]) {
+    for (final c in [
+      _supplier,
+      _description,
+      _paidFrom,
+      _paymentRef,
+      _notes,
+      _giftRecipient,
+    ]) {
       c.dispose();
     }
     _receiptDraft.dispose();
@@ -237,12 +253,16 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
               totalInclVat: Value(_amountExclVat + (_shifted ? 0 : _vatAmount)),
               businessUsePct: Value(_share),
               deductibleAmount: Value(_deductibleAmount),
-              vatReclaimable: Value(_vatReclaimable),
+              vatReclaimable: Value(_reclaims),
               vatToReclaim: Value(_vatToReclaim),
               notes: Value(optionalText(_notes.text)),
               paidFrom: Value(optionalText(_paidFrom.text)),
               paymentReference: Value(optionalText(_paymentRef.text)),
               carAssetId: Value(_carAssetId),
+              // A hidden field may not stay set.
+              giftRecipient: Value(
+                _isGift ? optionalText(_giftRecipient.text) : null,
+              ),
             ),
           );
       final owner = ReceiptOwner.expense(widget.expense?.id ?? id);
@@ -272,6 +292,20 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
     if (deleted && mounted) context.pop();
   }
 
+  bool get _isGift => _category == ExpenseCategory.gifts;
+
+  /// The cost excl. BTW of this year's gifts to the recipient typed, this
+  /// one included.
+  int _giftTotal() {
+    final name = _giftRecipient.text;
+    final key = GiftService.recipientKey(name);
+    if (key.isEmpty) return _amountExclVat;
+    final others = (ref.read(expensesProvider(_date.year)).valueOrNull ?? [])
+        .where((e) => e.id != widget.expense?.id);
+    return (GiftService.totalsByRecipient(others, _date.year)[key] ?? 0) +
+        _amountExclVat;
+  }
+
   bool get _korApplies =>
       (ref.read(korStatusProvider).valueOrNull ?? KorStatus.none).appliesOn(
         _date,
@@ -295,6 +329,7 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
     ref.watch(korStatusProvider);
+    ref.watch(expensesProvider(_date.year));
     return DetailScaffold(
       title: widget.expense == null
           ? l.expensesNewHeader
@@ -348,6 +383,35 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
                 l.expensesCourseTravelNotice(
                   AppFormat.euros(_rules.courseTravelMax),
                 ),
+              ),
+            ],
+            if (_isGift) ...[
+              const SizedBox(height: AppSpacing.field),
+              TextFormField(
+                controller: _giftRecipient,
+                decoration: fieldDecoration(
+                  label: l.expensesFieldGiftRecipient,
+                  help: l.expensesFieldGiftRecipientHelp,
+                  required: true,
+                ),
+                onChanged: (_) => setState(() {}),
+                validator: (v) =>
+                    Validate.required(v, l.expensesValidateGiftRecipient),
+              ),
+              const SizedBox(height: AppSpacing.field),
+              NoticeBanner(
+                _giftTotal() > _rules.buaGiftThreshold
+                    ? l.expensesGiftOverNotice(
+                        AppFormat.cents(_giftTotal()),
+                        AppFormat.euros(_rules.buaGiftThreshold),
+                      )
+                    : l.expensesGiftNotice(
+                        AppFormat.cents(_giftTotal()),
+                        AppFormat.euros(_rules.buaGiftThreshold),
+                      ),
+                tone: _giftTotal() > _rules.buaGiftThreshold
+                    ? NoticeTone.warning
+                    : NoticeTone.info,
               ),
             ],
             if (_category?.barredForIncomeTax ?? false) ...[

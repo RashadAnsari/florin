@@ -28,6 +28,10 @@ class Expenses extends Table {
   TextColumn get paidFrom => text().nullable()();
   TextColumn get paymentReference => text().nullable()();
 
+  /// Who received a gift, for the yearly total per recipient (Besluit
+  /// uitsluiting aftrek omzetbelasting 1968 art. 4). Only for gifts.
+  TextColumn get giftRecipient => text().nullable()();
+
   /// The business car this cost belongs to.
   IntColumn get carAssetId => integer().nullable().references(
     FixedAssets,

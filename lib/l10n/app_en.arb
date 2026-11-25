@@ -224,6 +224,7 @@
   "expenseCatSoftware": "Software & subscriptions",
   "expenseCatHardware": "Hardware & equipment",
   "expenseCatMarketing": "Marketing & advertising",
+  "expenseCatGifts": "Business gifts",
   "expenseCatProfessional": "Professional services",
   "expenseCatPhone": "Phone & internet",
   "expenseCatInsurance": "Insurance",
@@ -751,6 +752,28 @@
     }
   },
   "expensesBarredNotice": "The law keeps this cost out of your profit, whatever the amount: fines (Wet IB 2001 art. 3.14), and clothing other than werkkleding, personal care, a phone line in your home and literature other than professional literature (art. 3.16). Florin records it but deducts nothing. Clothing counts as werkkleding when it is only fit to wear for your work or shows that it is meant only for it; record werkkleding under Other.",
+  "expensesGiftNotice": "Gifts to this recipient this year, this one included: {total} excl. BTW. While the total stays at or below {threshold}, the BTW on them stays deductible (Besluit uitsluiting aftrek omzetbelasting 1968 art. 4).",
+  "@expensesGiftNotice": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
+  "expensesGiftOverNotice": "Gifts to this recipient this year, this one included: {total} excl. BTW, more than {threshold}. The BTW on them is then not deductible for a recipient who cannot deduct BTW (Besluit uitsluiting aftrek omzetbelasting 1968 art. 1 and 4). Florin cannot tell whether the recipient can, so it reclaims no BTW on these gifts and counts it as a cost.",
+  "@expensesGiftOverNotice": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
   "plTaxFoodLimited": "{category} ({amount})",
   "@plTaxFoodLimited": {
     "placeholders": {
@@ -918,6 +941,9 @@
   "clientsRiskLevelHelp": "Your own assessment of whether the work could be seen as employment under the Wet DBA. Used only to remind you.",
   "expensesFieldAmountExclHelp": "The amount on the receipt without VAT.",
   "expensesFieldCategoryHelp": "What kind of cost this is. Food, drinks, representation, congresses, seminars, excursions and study trips are only partly deductible (Wet IB 2001 art. 3.15), travel for courses and congresses only up to a yearly amount, and fines, ordinary clothing, personal care, a phone line at home and general literature not at all (art. 3.14 and 3.16), so each has its own category.",
+  "expensesFieldGiftRecipient": "Recipient",
+  "expensesFieldGiftRecipientHelp": "Who received the gift. Florin adds up the gifts to each recipient in a year, because the BTW on them stays deductible only while that total stays within the threshold. Type the name the same way each time.",
+  "expensesValidateGiftRecipient": "Enter who received the gift, so Florin can add up the gifts per recipient.",
   "expensesFieldDescriptionHelp": "What you bought, so you and the Belastingdienst can see the business purpose.",
   "expensesFieldPaidFromHelp": "The account or card you paid with, to match the expense with your bank statement.",
   "expensesFieldPaymentRefHelp": "The reference of the payment or invoice, to find it back later.",

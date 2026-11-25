@@ -12,6 +12,7 @@ import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
 import 'generated/schema_v5.dart' as v5;
 import 'generated/schema_v6.dart' as v6;
+import 'generated/schema_v7.dart' as v7;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -502,4 +503,60 @@ void main() {
       },
     );
   });
+
+  test(
+    'migration from v6 to v7 keeps expenses, without a gift recipient',
+    () async {
+      // 15 June 2026, 12:00 UTC, in seconds.
+      const date = 1781524800;
+      const oldExpense = v6.ExpensesData(
+        id: 1,
+        date: date,
+        supplier: 'S',
+        description: 'D',
+        category: 'marketing',
+        paperOriginalKept: 0,
+        amountExclVat: 10000,
+        vatRate: 'high',
+        purchaseVat: 'domestic',
+        vatAmount: 2100,
+        totalInclVat: 12100,
+        businessUsePct: 1,
+        deductibleAmount: 10000,
+        vatReclaimable: 1,
+        vatToReclaim: 2100,
+      );
+      const newExpense = v7.ExpensesData(
+        id: 1,
+        date: date,
+        supplier: 'S',
+        description: 'D',
+        category: 'marketing',
+        paperOriginalKept: 0,
+        amountExclVat: 10000,
+        vatRate: 'high',
+        purchaseVat: 'domestic',
+        vatAmount: 2100,
+        totalInclVat: 12100,
+        businessUsePct: 1,
+        deductibleAmount: 10000,
+        vatReclaimable: 1,
+        vatToReclaim: 2100,
+      );
+
+      await verifier.testWithDataIntegrity(
+        oldVersion: 6,
+        newVersion: 7,
+        createOld: v6.DatabaseAtV6.new,
+        createNew: v7.DatabaseAtV7.new,
+        openTestedDatabase: AppDatabase.new,
+        createItems: (batch, oldDb) {
+          batch.insert(oldDb.expenses, oldExpense);
+        },
+        validateItems: (newDb) async {
+          expect(await newDb.select(newDb.expenses).get(), [newExpense]);
+        },
+      );
+    },
+  );
 }

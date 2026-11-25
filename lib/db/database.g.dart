@@ -5235,6 +5235,17 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _giftRecipientMeta = const VerificationMeta(
+    'giftRecipient',
+  );
+  @override
+  late final GeneratedColumn<String> giftRecipient = GeneratedColumn<String>(
+    'gift_recipient',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _carAssetIdMeta = const VerificationMeta(
     'carAssetId',
   );
@@ -5269,6 +5280,7 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     notes,
     paidFrom,
     paymentReference,
+    giftRecipient,
     carAssetId,
   ];
   @override
@@ -5417,6 +5429,15 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
         ),
       );
     }
+    if (data.containsKey('gift_recipient')) {
+      context.handle(
+        _giftRecipientMeta,
+        giftRecipient.isAcceptableOrUnknown(
+          data['gift_recipient']!,
+          _giftRecipientMeta,
+        ),
+      );
+    }
     if (data.containsKey('car_asset_id')) {
       context.handle(
         _carAssetIdMeta,
@@ -5513,6 +5534,10 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
         DriftSqlType.string,
         data['${effectivePrefix}payment_reference'],
       ),
+      giftRecipient: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}gift_recipient'],
+      ),
       carAssetId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}car_asset_id'],
@@ -5557,6 +5582,10 @@ class Expense extends DataClass implements Insertable<Expense> {
   final String? paidFrom;
   final String? paymentReference;
 
+  /// Who received a gift, for the yearly total per recipient (Besluit
+  /// uitsluiting aftrek omzetbelasting 1968 art. 4). Only for gifts.
+  final String? giftRecipient;
+
   /// The business car this cost belongs to.
   final int? carAssetId;
   const Expense({
@@ -5578,6 +5607,7 @@ class Expense extends DataClass implements Insertable<Expense> {
     this.notes,
     this.paidFrom,
     this.paymentReference,
+    this.giftRecipient,
     this.carAssetId,
   });
   @override
@@ -5619,6 +5649,9 @@ class Expense extends DataClass implements Insertable<Expense> {
     if (!nullToAbsent || paymentReference != null) {
       map['payment_reference'] = Variable<String>(paymentReference);
     }
+    if (!nullToAbsent || giftRecipient != null) {
+      map['gift_recipient'] = Variable<String>(giftRecipient);
+    }
     if (!nullToAbsent || carAssetId != null) {
       map['car_asset_id'] = Variable<int>(carAssetId);
     }
@@ -5651,6 +5684,9 @@ class Expense extends DataClass implements Insertable<Expense> {
       paymentReference: paymentReference == null && nullToAbsent
           ? const Value.absent()
           : Value(paymentReference),
+      giftRecipient: giftRecipient == null && nullToAbsent
+          ? const Value.absent()
+          : Value(giftRecipient),
       carAssetId: carAssetId == null && nullToAbsent
           ? const Value.absent()
           : Value(carAssetId),
@@ -5687,6 +5723,7 @@ class Expense extends DataClass implements Insertable<Expense> {
       notes: serializer.fromJson<String?>(json['notes']),
       paidFrom: serializer.fromJson<String?>(json['paidFrom']),
       paymentReference: serializer.fromJson<String?>(json['paymentReference']),
+      giftRecipient: serializer.fromJson<String?>(json['giftRecipient']),
       carAssetId: serializer.fromJson<int?>(json['carAssetId']),
     );
   }
@@ -5718,6 +5755,7 @@ class Expense extends DataClass implements Insertable<Expense> {
       'notes': serializer.toJson<String?>(notes),
       'paidFrom': serializer.toJson<String?>(paidFrom),
       'paymentReference': serializer.toJson<String?>(paymentReference),
+      'giftRecipient': serializer.toJson<String?>(giftRecipient),
       'carAssetId': serializer.toJson<int?>(carAssetId),
     };
   }
@@ -5741,6 +5779,7 @@ class Expense extends DataClass implements Insertable<Expense> {
     Value<String?> notes = const Value.absent(),
     Value<String?> paidFrom = const Value.absent(),
     Value<String?> paymentReference = const Value.absent(),
+    Value<String?> giftRecipient = const Value.absent(),
     Value<int?> carAssetId = const Value.absent(),
   }) => Expense(
     id: id ?? this.id,
@@ -5763,6 +5802,9 @@ class Expense extends DataClass implements Insertable<Expense> {
     paymentReference: paymentReference.present
         ? paymentReference.value
         : this.paymentReference,
+    giftRecipient: giftRecipient.present
+        ? giftRecipient.value
+        : this.giftRecipient,
     carAssetId: carAssetId.present ? carAssetId.value : this.carAssetId,
   );
   Expense copyWithCompanion(ExpensesCompanion data) {
@@ -5805,6 +5847,9 @@ class Expense extends DataClass implements Insertable<Expense> {
       paymentReference: data.paymentReference.present
           ? data.paymentReference.value
           : this.paymentReference,
+      giftRecipient: data.giftRecipient.present
+          ? data.giftRecipient.value
+          : this.giftRecipient,
       carAssetId: data.carAssetId.present
           ? data.carAssetId.value
           : this.carAssetId,
@@ -5832,6 +5877,7 @@ class Expense extends DataClass implements Insertable<Expense> {
           ..write('notes: $notes, ')
           ..write('paidFrom: $paidFrom, ')
           ..write('paymentReference: $paymentReference, ')
+          ..write('giftRecipient: $giftRecipient, ')
           ..write('carAssetId: $carAssetId')
           ..write(')'))
         .toString();
@@ -5857,6 +5903,7 @@ class Expense extends DataClass implements Insertable<Expense> {
     notes,
     paidFrom,
     paymentReference,
+    giftRecipient,
     carAssetId,
   );
   @override
@@ -5881,6 +5928,7 @@ class Expense extends DataClass implements Insertable<Expense> {
           other.notes == this.notes &&
           other.paidFrom == this.paidFrom &&
           other.paymentReference == this.paymentReference &&
+          other.giftRecipient == this.giftRecipient &&
           other.carAssetId == this.carAssetId);
 }
 
@@ -5903,6 +5951,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
   final Value<String?> notes;
   final Value<String?> paidFrom;
   final Value<String?> paymentReference;
+  final Value<String?> giftRecipient;
   final Value<int?> carAssetId;
   const ExpensesCompanion({
     this.id = const Value.absent(),
@@ -5923,6 +5972,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     this.notes = const Value.absent(),
     this.paidFrom = const Value.absent(),
     this.paymentReference = const Value.absent(),
+    this.giftRecipient = const Value.absent(),
     this.carAssetId = const Value.absent(),
   });
   ExpensesCompanion.insert({
@@ -5944,6 +5994,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     this.notes = const Value.absent(),
     this.paidFrom = const Value.absent(),
     this.paymentReference = const Value.absent(),
+    this.giftRecipient = const Value.absent(),
     this.carAssetId = const Value.absent(),
   }) : date = Value(date),
        supplier = Value(supplier),
@@ -5976,6 +6027,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     Expression<String>? notes,
     Expression<String>? paidFrom,
     Expression<String>? paymentReference,
+    Expression<String>? giftRecipient,
     Expression<int>? carAssetId,
   }) {
     return RawValuesInsertable({
@@ -5997,6 +6049,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
       if (notes != null) 'notes': notes,
       if (paidFrom != null) 'paid_from': paidFrom,
       if (paymentReference != null) 'payment_reference': paymentReference,
+      if (giftRecipient != null) 'gift_recipient': giftRecipient,
       if (carAssetId != null) 'car_asset_id': carAssetId,
     });
   }
@@ -6020,6 +6073,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     Value<String?>? notes,
     Value<String?>? paidFrom,
     Value<String?>? paymentReference,
+    Value<String?>? giftRecipient,
     Value<int?>? carAssetId,
   }) {
     return ExpensesCompanion(
@@ -6041,6 +6095,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
       notes: notes ?? this.notes,
       paidFrom: paidFrom ?? this.paidFrom,
       paymentReference: paymentReference ?? this.paymentReference,
+      giftRecipient: giftRecipient ?? this.giftRecipient,
       carAssetId: carAssetId ?? this.carAssetId,
     );
   }
@@ -6108,6 +6163,9 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     if (paymentReference.present) {
       map['payment_reference'] = Variable<String>(paymentReference.value);
     }
+    if (giftRecipient.present) {
+      map['gift_recipient'] = Variable<String>(giftRecipient.value);
+    }
     if (carAssetId.present) {
       map['car_asset_id'] = Variable<int>(carAssetId.value);
     }
@@ -6135,6 +6193,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
           ..write('notes: $notes, ')
           ..write('paidFrom: $paidFrom, ')
           ..write('paymentReference: $paymentReference, ')
+          ..write('giftRecipient: $giftRecipient, ')
           ..write('carAssetId: $carAssetId')
           ..write(')'))
         .toString();
@@ -13542,6 +13601,7 @@ typedef $$ExpensesTableCreateCompanionBuilder =
       Value<String?> notes,
       Value<String?> paidFrom,
       Value<String?> paymentReference,
+      Value<String?> giftRecipient,
       Value<int?> carAssetId,
     });
 typedef $$ExpensesTableUpdateCompanionBuilder =
@@ -13564,6 +13624,7 @@ typedef $$ExpensesTableUpdateCompanionBuilder =
       Value<String?> notes,
       Value<String?> paidFrom,
       Value<String?> paymentReference,
+      Value<String?> giftRecipient,
       Value<int?> carAssetId,
     });
 
@@ -13707,6 +13768,11 @@ class $$ExpensesTableFilterComposer
 
   ColumnFilters<String> get paymentReference => $composableBuilder(
     column: $table.paymentReference,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get giftRecipient => $composableBuilder(
+    column: $table.giftRecipient,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -13858,6 +13924,11 @@ class $$ExpensesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get giftRecipient => $composableBuilder(
+    column: $table.giftRecipient,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$FixedAssetsTableOrderingComposer get carAssetId {
     final $$FixedAssetsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -13966,6 +14037,11 @@ class $$ExpensesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get giftRecipient => $composableBuilder(
+    column: $table.giftRecipient,
+    builder: (column) => column,
+  );
+
   $$FixedAssetsTableAnnotationComposer get carAssetId {
     final $$FixedAssetsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -14061,6 +14137,7 @@ class $$ExpensesTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<String?> paidFrom = const Value.absent(),
                 Value<String?> paymentReference = const Value.absent(),
+                Value<String?> giftRecipient = const Value.absent(),
                 Value<int?> carAssetId = const Value.absent(),
               }) => ExpensesCompanion(
                 id: id,
@@ -14081,6 +14158,7 @@ class $$ExpensesTableTableManager
                 notes: notes,
                 paidFrom: paidFrom,
                 paymentReference: paymentReference,
+                giftRecipient: giftRecipient,
                 carAssetId: carAssetId,
               ),
           createCompanionCallback:
@@ -14103,6 +14181,7 @@ class $$ExpensesTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<String?> paidFrom = const Value.absent(),
                 Value<String?> paymentReference = const Value.absent(),
+                Value<String?> giftRecipient = const Value.absent(),
                 Value<int?> carAssetId = const Value.absent(),
               }) => ExpensesCompanion.insert(
                 id: id,
@@ -14123,6 +14202,7 @@ class $$ExpensesTableTableManager
                 notes: notes,
                 paidFrom: paidFrom,
                 paymentReference: paymentReference,
+                giftRecipient: giftRecipient,
                 carAssetId: carAssetId,
               ),
           withReferenceMapper: (p0) => p0

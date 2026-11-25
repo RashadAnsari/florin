@@ -112,6 +112,7 @@ extension ExpenseCategoryLabel on ExpenseCategory {
     ExpenseCategory.software => l.expenseCatSoftware,
     ExpenseCategory.hardware => l.expenseCatHardware,
     ExpenseCategory.marketing => l.expenseCatMarketing,
+    ExpenseCategory.gifts => l.expenseCatGifts,
     ExpenseCategory.professionalServices => l.expenseCatProfessional,
     ExpenseCategory.phoneAndInternet => l.expenseCatPhone,
     ExpenseCategory.insurance => l.expenseCatInsurance,
