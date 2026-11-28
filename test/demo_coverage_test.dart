@@ -4,6 +4,10 @@ import 'package:drift/native.dart';
 import 'package:florin/db/database.dart';
 import 'package:florin/services/car_service.dart';
 import 'package:florin/services/domain.dart';
+import 'package:florin/services/gift_service.dart';
+import 'package:florin/services/kor_service.dart';
+import 'package:florin/services/tax_rules/tax_year_rules.dart';
+import 'package:florin/services/vat_service.dart';
 import 'package:florin/providers/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -97,6 +101,20 @@ void main() {
     expect(clients.any((c) => !c.isActive), isTrue);
     expect(clients.any((c) => c.isMerchantOfRecord), isTrue);
     expect(clients.any((c) => c.isEuConsumerAbroad), isTrue);
+    // Services taxed outside the EU for a private person there (Wet OB 1968
+    // art. 6i).
+    final consumersOutsideEu = {
+      for (final c in clients)
+        if (c.isConsumer && !isEuCountry(c.country)) c.id,
+    };
+    expect(
+      invoices.any(
+        (i) =>
+            consumersOutsideEu.contains(i.clientId) &&
+            i.vatTreatment == VatTreatment.servicesOutsideEu,
+      ),
+      isTrue,
+    );
     expect(invoices.any((i) => i.selfBilled), isTrue);
     final profile = await db.select(db.businessProfiles).getSingle();
     expect(profile.korStart, isNotNull);
@@ -154,6 +172,92 @@ void main() {
     }
   });
 
+  /// The demo's 2026 BTW returns as the app computes them.
+  Future<List<(VatPeriod, VatReturnResult)>> returns2026() async {
+    SharedPreferences.setMockInitialValues({});
+    final container = ProviderContainer(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(
+          await SharedPreferences.getInstance(),
+        ),
+        databaseProvider.overrideWithValue(db),
+      ],
+    );
+    addTearDown(container.dispose);
+    final year = container.listen(vatYearProvider(2026), (_, _) {});
+    for (var i = 0; i < 300 && !year.read().hasValue; i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+    }
+    return year.read().requireValue;
+  }
+
+  test(
+    'a sale under the KOR settles its herziening in the return of the '
+    'sale\'s period (Uitvoeringsbeschikking OB 1968 art. 13a lid 2)',
+    () async {
+      final periods = await returns2026();
+      final q1 = periods.firstWhere((p) => p.$1.number == 1).$2;
+      expect(q1.vatRevisionTotal, greaterThan(0));
+      expect(q1.duty, ReturnDuty.incidental);
+      final sold = q1.vatRevision.keys.single;
+      expect(quarterOf(sold.disposalDate!), 1);
+      expect(periods.last.$2.vatRevision.keys, isNot(contains(sold)));
+    },
+  );
+
+  test('the demo charges BTW on a car\'s private use in a KOR year and says '
+      'so, with the base of 1d from the trip log (Wet OB 1968 art. 4 lid 2 a, '
+      'art. 25a lid 1)', () async {
+    final q4 = (await returns2026()).last.$2;
+    expect(q4.vat1d, greaterThan(0));
+    expect(q4.privateUseUnderKor, isTrue);
+    expect(q4.base1d, greaterThan(0));
+  });
+
+  test('a gift without BTW stays out of the threshold (Belastingdienst, '
+      'drempelbedrag giften)', () async {
+    final gifts = (await db.select(db.expenses).get())
+        .where((e) => e.category == ExpenseCategory.gifts)
+        .toList();
+    final threshold = taxRulesFor(2026)!.buaGiftThreshold;
+    final withoutVat = gifts.firstWhere((e) => e.vatAmount == 0);
+    final key = GiftService.recipientKey(withoutVat.giftRecipient!);
+    final all = gifts
+        .where((e) => GiftService.recipientKey(e.giftRecipient!) == key)
+        .fold(0, (s, e) => s + e.amountExclVat);
+    expect(all, greaterThan(threshold));
+    expect(
+      GiftService.totalsByRecipient(gifts, 2026)[key],
+      lessThanOrEqualTo(threshold),
+    );
+  });
+
+  test('the demo\'s goods to EU businesses pass the limit in the second month '
+      'of Q3, so the ICP-opgaaf covers July and August, then months (Wet OB '
+      '1968 art. 37a lid 3)', () async {
+    final invoices = await db.select(db.invoices).get();
+    final kor = KorService.status(
+      await db.select(db.businessProfiles).getSingle(),
+      invoices,
+    );
+    final periods = VatService.icpPeriods(
+      invoices,
+      kor,
+      2026,
+      taxRulesFor(2026)!,
+    );
+    expect(periods.map((p) => p.code), [
+      'Q1',
+      'Q2',
+      'M07-M08',
+      'M09',
+      'M10',
+      'M11',
+      'M12',
+    ]);
+    expect(periods[2].due, DateTime(2026, 9, 30));
+  });
+
   test('the demo logs the partner\'s hours per day', () async {
     final hours = await db.select(db.hourEntries).get();
     expect(hours.any((h) => h.byPartner), isTrue);
@@ -183,7 +287,7 @@ void main() {
       }
       expect(
         balance.read().requireValue.equityProfit,
-        estimate.read().requireValue.result.grossProfit,
+        estimate.read().requireValue.comparableProfit,
       );
     },
   );

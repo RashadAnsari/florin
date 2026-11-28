@@ -20,11 +20,13 @@ accountant does.
    iCloud Drive, OneDrive or Dropbox gives you a backup; choosing a folder
    that already holds `florin.db` opens it.
 2. **Enter your business details** in Settings, Business details: name, BTW
-   number, KvK number, address and IBAN. Every invoice prints them, as the
-   law asks.
+   number, KvK number, address and IBAN. Every invoice prints them, except
+   the BTW number under the KOR; the law asks for the name, address, BTW
+   number and KvK number, and the IBAN goes in the payment instructions.
 3. **The KOR.** If you take part in the kleineondernemersregeling, enter the
-   date the Belastingdienst confirmed under Settings, Kleineondernemersregeling.
-   Leave it empty if you do not take part.
+   date the Belastingdienst confirmed under Settings, Kleineondernemersregeling,
+   and the end date from its letter if you deregistered. Leave it empty if
+   you do not take part.
 4. **Pick the year** in the sidebar. Only years whose rules Florin has
    checked can be chosen, and every date you enter falls in such a year.
 5. **Language.** Settings, Language switches between English and Dutch.
@@ -42,7 +44,11 @@ Clients holds who you work for. For each client:
   never shifted to them and they are not on the ICP-opgaaf. For a private
   person in another EU country, the invoice form shows how far your
   supplies to such clients are from the € 10.000 threshold (2026) above
-  which electronic services are taxed in their country.
+  which telecommunication, broadcasting and electronic services and
+  distance sales of goods are taxed in their country. For a private person
+  outside the EU, an invoice can also use services taxed outside the EU,
+  for the services the law places there; a new invoice starts with Dutch
+  BTW.
 - **Merchant of record**: for an app store or reseller that sells in its
   own name and issues the invoice to you (self-billing).
 - **Wet DBA**: your own assessment of the working relationship, the
@@ -65,22 +71,28 @@ A client with invoices or hours cannot be deleted; mark it inactive instead.
    with a **Credit note**, which names the invoice it corrects.
 4. Mark it **Paid** with the date the money came in.
 
-The invoice list shows what is open and overdue. An overdue invoice says
-what the law gives you: from a business, statutory commercial interest and
-at least € 40 collection costs without a reminder; from a private person,
-a reminder with 14 days first. It also shows the last day the claim can go
-to court.
+The invoice list shows what is open and overdue. An invoice is overdue from
+the day after its due date, and then says what the law gives you: from a
+business, statutory commercial interest and at least € 40 collection costs
+without a reminder, from the day after the agreed payment day or, if you
+agreed none, from 30 days after the client received the invoice; from a
+private person, a reminder with 14 days first. It also shows the last day
+the claim can go to court, five years after the supply date or the invoice
+date, whichever is earlier.
 
 ### Expenses
 
 1. Expenses, **+**: date, category, supplier, amount and BTW rate.
 2. **Category matters for the tax**:
-   - Food, drinks, representation and congresses: partly deductible.
-   - Travel and stay for courses and congresses: up to € 1.500 a year.
+   - Food, drinks, representation and congresses: partly deductible for
+     income tax; Florin turns BTW reclaim off for this category, as BTW on
+     food and drinks in a restaurant, café or hotel is not deductible.
+   - Travel and stay for courses and congresses: up to € 1.500 a year, and
+     what is left counts with food, drinks and representation.
    - Fines, clothing and personal care, a phone line at home and books other
      than professional literature: recorded but not deducted.
-   - Business gifts: enter the recipient. Once a recipient's gifts pass
-     € 227 in a year, Florin reclaims no BTW on them.
+   - Business gifts: enter the recipient. Once a recipient's gifts with BTW
+     pass € 227 in a year, Florin reclaims no BTW on them.
 3. **BTW**: tick Reclaim VAT when you may deduct it. Choose how the BTW was
    charged when it was shifted to you (domestic, from the EU or from outside
    the EU). Under the KOR no BTW is reclaimed.
@@ -124,7 +136,10 @@ day and applies the KIA, EIA and MIA. For a business car, enter the
 catalogue value, first registration and zero emission, and whether you keep
 a trip log. When you sell an asset, enter the date and proceeds or link the
 sale invoice; Florin computes the gain and, if you choose, the
-herinvesteringsreserve.
+herinvesteringsreserve. Items of small value, as a rule of thumb below
+€ 450 (Belastingdienst), are an expense in the year you buy them, not an
+asset. Depreciation is at most 20% of the cost a year, so a useful life
+under five years is spread over more years.
 
 ## 3. The BTW return
 
@@ -150,30 +165,41 @@ Florin warns when the year breaks the conditions for it.
 
 When you change a record in a period you already filed, the period shows
 what changed. A change of at most € 1.000 is added to your following
-return, and filing that return settles it. A larger change needs the form
+return, and filing that return settles it. For the last period of the year
+that return falls in the next year: Florin says so, and you add the figures
+to it yourself. A larger change needs the form
 Suppletie btw, within 8 weeks after you found the error; tick **I filed the
 suppletie** afterwards.
 
 ### ICP-opgaaf
 
-Supplies to EU businesses are listed per quarter on the VAT Return screen
-and in the export. When goods pass € 50.000 in a quarter or one of the
-four before it, the opgaaf over goods is monthly; Florin warns and writes
-the monthly lists too.
+The ICP-opgaaf has its own period, whatever the period of your returns.
+Supplies to EU businesses are listed per ICP period on the VAT Return
+screen, each with its deadline, and the export has one list per ICP period.
+The period is a quarter while goods stay at or below € 50.000 in it and in
+the four quarters before it. In the quarter goods pass € 50.000, the months
+up to and including the month they pass it go in one opgaaf, due at the end
+of the next month, and every later month has its own; Florin says when and
+why.
 
 ### KOR
 
 With the KOR, invoices carry no BTW and no BTW is reclaimed. Florin follows
-your turnover against the € 20.000 limit and ends the KOR at the invoice
-that passes it. When the KOR starts, BTW reclaimed earlier on assets is
-partly repaid (herziening): Florin estimates it per asset and adds it to the
-last return of the year.
+your turnover against the € 20.000 limit, counting a supply on its supply
+date when that comes before the invoice, and ends the KOR at the supply that
+passes it. After that the KOR applies only from a new start date, which
+cannot fall in the rest of that year or the next. While you take part in the KOR, BTW you deducted on assets
+is partly repaid (herziening): Florin estimates it per asset and adds it to
+the last return of the year, or for an asset sold under the KOR to the
+return of that period.
 
 ### Private use of a business car
 
 The BTW on private use goes into the last return of the year, rubriek 1d.
 With a complete trip log it follows the private and commuting kilometres;
-without one Florin uses the Belastingdienst's fixed rate.
+without one Florin uses the Belastingdienst's fixed rate. For a car whose
+BTW you deducted, Florin also counts it for time under the KOR, and the BTW
+return says so.
 
 ## 4. The income tax return
 
@@ -185,25 +211,33 @@ estimated tax, line by line, as the return computes them. Below it:
 - **Facts for the year**: whether you were a business owner before and are
   a starter, partner hours not in the log and pay to your partner, an
   S&O-verklaring, stopping the business, a disability benefit, unused
-  zelfstandigenaftrek, losses from earlier years and a job next to the
-  business. Enter what applies.
+  zelfstandigenaftrek, losses from earlier years, a job next to the
+  business and the hours you spend in employment and other work. Enter what
+  applies.
 - **Voorlopige aanslag and toeslagen (estimated)**: the belastbare winst,
-  box 1 income and tax to pay to use when you ask for or change a voorlopige
+  the verzamelinkomen from box 1, before losses from earlier years, and tax
+  to pay to use when you ask for or change a voorlopige
   aanslag, and when you estimate your income for toeslagen, with the last
   day to do so.
 - **Balance sheet on 31 December (estimated)**: enter your bank and cash
   balances, unpaid supplier invoices, loans, the ondernemingsvermogen on
   1 January and your private withdrawals and deposits. Florin adds the
   assets, open invoices and open BTW, and computes the equity comparison of
-  the return (vraag 19). A difference with the estimated profit points to a
-  missing balance or record.
+  the return (vraag 19). It compares that with the estimated profit without
+  the desinvesteringsbijtelling and the herinvesteringsreserve movements,
+  which change the profit or the ondernemingsvermogen but not both. A
+  difference points to a missing balance or record. Work done but not yet
+  invoiced on 31 December (onderhanden werk) is not included, and an asset
+  used partly in private counts at its business share.
 
 ### Pension and AOV
 
 The Pension screen computes your jaarruimte from last year's income from
-work and your factor A, adds the reserveringsruimte, and shows the deductible
-premium and the estimated tax saving. Premiums for disability insurance
-(AOV) are deducted in full.
+work, minus your factor A or the pension premiums of a scheme under the Wet
+toekomst pensioenen, adds the reserveringsruimte, and shows the deductible
+lijfrente premium and the estimated tax saving. Premiums for disability
+insurance (AOV) are deducted in full for the months of the year that have
+ended.
 
 ### Filing
 
@@ -219,14 +253,16 @@ accountant.
 3. Fill in the year's facts and the balance sheet on the P&L & Tax screen.
 4. Export the year (Settings, Export) and keep the folder with your records.
    Put the balance sheet and the statement of income and expenses on paper
-   within six months, as the Civil Code asks of every business.
+   within six months, as the law asks of every business.
 
 ## 6. Keeping your records
 
-- **Seven years.** Invoices, receipts and records are kept for seven years.
-  The Belastingdienst can raise a year's tax for five years after it, longer
-  with uitstel, and twelve years for income or assets abroad; keep such a
-  year's records at least that long.
+- **Seven years.** Invoices, receipts and records are kept for seven years
+  (ten for real estate and OSS, which Florin does not cover). Florin shows
+  the earliest date: a record that stays current, such as a contract that
+  still runs, starts its term later. Separately, the Belastingdienst can
+  raise a year's tax for five years after it, longer with uitstel, and
+  twelve years for income or assets abroad.
 - **The export** holds every record, the BTW returns, the ICP lists, the
   estimated income tax and balance sheet, the business details, pension
   figures, the year's facts, the filed status of each return and the

@@ -79,7 +79,6 @@ class InvoiceDao extends DatabaseAccessor<AppDatabase>
         InvoicesCompanion(status: Value(status), paidDate: Value(paidDate)),
       );
 
-  /// Highest sequence number used in `<prefix>-<year>-<n>`, plus one.
   /// The number the next issued invoice of the series [prefix]-[year] must
   /// take: one after the highest issued, so issued numbers follow on (Wet OB
   /// 1968 art. 35a lid 1 b). Null while nothing in the series is issued, so
@@ -130,6 +129,7 @@ class InvoiceDao extends DatabaseAccessor<AppDatabase>
     }
   });
 
+  /// Highest sequence number used in `<prefix>-<year>-<n>`, plus one.
   Future<int> nextSequenceNumber(int year, String prefix) async {
     final numbers =
         await (selectOnly(invoices)

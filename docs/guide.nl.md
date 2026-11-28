@@ -20,11 +20,13 @@ Je doet aangifte in Mijn Belastingdienst Zakelijk, of je boekhouder doet dat.
    iCloud Drive, OneDrive of Dropbox geeft je een back-up; kies je een map
    met al een `florin.db`, dan opent Florin die.
 2. **Vul je bedrijfsgegevens in** onder Instellingen, Bedrijfsgegevens: naam,
-   btw-nummer, KvK-nummer, adres en IBAN. Elke factuur toont ze, zoals de wet
-   vraagt.
+   btw-nummer, KvK-nummer, adres en IBAN. Elke factuur toont ze, behalve het
+   btw-nummer onder de KOR; de wet vraagt om de naam, het adres, het
+   btw-nummer en het KvK-nummer, en de IBAN staat bij de betaalinstructies.
 3. **De KOR.** Doe je mee aan de kleineondernemersregeling, vul dan de datum
    die de Belastingdienst bevestigde in onder Instellingen,
-   Kleineondernemersregeling. Doe je niet mee, laat het leeg.
+   Kleineondernemersregeling, en de einddatum uit zijn brief als je je hebt
+   afgemeld. Doe je niet mee, laat het leeg.
 4. **Kies het jaar** in de zijbalk. Alleen jaren waarvan Florin de regels
    heeft gecontroleerd zijn te kiezen, en elke datum die je invult valt in
    zo'n jaar.
@@ -43,7 +45,11 @@ Onder Klanten staat voor wie je werkt. Per klant:
   dan nooit naar hem verlegd en hij staat niet op de opgaaf ICP. Voor een
   particulier in een ander EU-land laat het factuurformulier zien hoe ver je
   prestaties aan zulke klanten van de drempel van € 10.000 (2026) af zijn,
-  waarboven elektronische diensten in hun land belast zijn.
+  waarboven telecommunicatie-, omroep- en elektronische diensten en
+  afstandsverkopen van goederen in hun land belast zijn. Voor een
+  particulier buiten de EU kan een factuur ook diensten belast buiten de EU
+  gebruiken, voor de diensten die de wet daar plaatst; een nieuwe factuur
+  begint met Nederlandse btw.
 - **Merchant of record**: voor een appwinkel of wederverkoper die op eigen
   naam verkoopt en de factuur aan jou uitreikt (self-billing).
 - **Wet DBA**: je eigen inschatting van de arbeidsrelatie, de contractdatum
@@ -68,23 +74,31 @@ inactief.
    **Creditnota**, die de gecorrigeerde factuur noemt.
 4. Markeer hem **Betaald** met de datum waarop het geld binnenkwam.
 
-De lijst toont wat openstaat en verlopen is. Een verlopen factuur zegt wat de
-wet je geeft: bij een bedrijf de wettelijke handelsrente en minstens € 40
-incassokosten zonder aanmaning; bij een particulier eerst een aanmaning met
-14 dagen. Ook staat erbij tot wanneer de vordering naar de rechter kan.
+De lijst toont wat openstaat en verlopen is. Een factuur is verlopen vanaf de
+dag na de vervaldatum, en zegt dan wat de wet je geeft: bij een bedrijf de
+wettelijke handelsrente en minstens € 40 incassokosten zonder aanmaning,
+vanaf de dag na de afgesproken betaaldag of, als je er geen afsprak, vanaf
+30 dagen nadat de klant de factuur ontving; bij een particulier eerst een
+aanmaning met 14 dagen. Ook staat erbij tot wanneer de vordering naar de
+rechter kan: vijf jaar na de leveringsdatum of de factuurdatum, wat eerder
+is.
 
 ### Uitgaven
 
 1. Uitgaven, **+**: datum, categorie, leverancier, bedrag en btw-tarief.
 2. **De categorie telt mee voor de belasting**:
-   - Voedsel, drank, representatie en congressen: gedeeltelijk aftrekbaar.
-   - Reizen en verblijf voor cursussen en congressen: tot € 1.500 per jaar.
+   - Voedsel, drank, representatie en congressen: voor de
+     inkomstenbelasting gedeeltelijk aftrekbaar; Florin zet btw terugvragen
+     voor deze categorie uit, omdat btw op eten en drinken in een restaurant,
+     café of hotel niet aftrekbaar is.
+   - Reizen en verblijf voor cursussen en congressen: tot € 1.500 per jaar,
+     en wat overblijft telt mee met voedsel, drank en representatie.
    - Boetes, kleding en persoonlijke verzorging, een telefoonaansluiting
      thuis en literatuur die geen vakliteratuur is: vastgelegd maar niet
      afgetrokken.
-   - Relatiegeschenken: vul de ontvanger in. Zodra de geschenken aan een
-     ontvanger in een jaar boven € 227 komen, vraagt Florin er geen btw op
-     terug.
+   - Relatiegeschenken: vul de ontvanger in. Zodra de geschenken met btw aan
+     een ontvanger in een jaar boven € 227 komen, vraagt Florin er geen btw
+     op terug.
 3. **Btw**: vink BTW terugvragen aan als je die mag aftrekken. Kies hoe de
    btw werd berekend als die naar jou is verlegd (binnenland, uit de EU of
    van buiten de EU). Onder de KOR wordt geen btw teruggevraagd.
@@ -130,7 +144,11 @@ dag af en past de KIA, EIA en MIA toe. Vul voor een auto van de zaak de
 cataloguswaarde, de datum van eerste toelating en of hij emissievrij is in,
 en of je een rittenregistratie bijhoudt. Verkoop je een bedrijfsmiddel, vul
 dan datum en opbrengst in of koppel de verkoopfactuur; Florin berekent de
-boekwinst en, als je dat kiest, de herinvesteringsreserve.
+boekwinst en, als je dat kiest, de herinvesteringsreserve. Zaken van
+geringe waarde, als vuistregel onder € 450 (Belastingdienst), zijn kosten in
+het jaar van aankoop, geen bedrijfsmiddel. De afschrijving is hoogstens 20%
+van de kosten per jaar, dus een levensduur onder vijf jaar wordt over meer
+jaren verdeeld.
 
 ## 3. De btw-aangifte
 
@@ -157,31 +175,42 @@ waarschuwt Florin als het jaar niet aan de voorwaarden voldoet.
 
 Wijzig je een boeking in een tijdvak waarvoor je al aangifte deed, dan toont
 dat tijdvak wat er veranderde. Een wijziging van maximaal € 1.000 gaat mee in
-je volgende aangifte, en die aangifte doen sluit de correctie af. Een grotere
+je volgende aangifte, en die aangifte doen sluit de correctie af. Bij het
+laatste tijdvak van het jaar valt die aangifte in het volgende jaar: Florin
+zegt dat, en je telt de cijfers er zelf bij op. Een grotere
 wijziging vraagt het formulier Suppletie btw, binnen 8 weken nadat je de fout
 ontdekte; vink daarna **Ik heb de suppletie ingediend** aan.
 
 ### Opgaaf ICP
 
-Prestaties aan EU-bedrijven staan per kwartaal op het scherm BTW-aangifte en
-in de export. Komen goederen in een kwartaal of een van de vier ervoor boven
-€ 50.000, dan is de opgaaf over goederen maandelijks; Florin waarschuwt en
-schrijft ook de maandlijsten.
+De opgaaf ICP heeft een eigen tijdvak, los van het tijdvak van je
+aangiftes. Prestaties aan EU-ondernemers staan per ICP-tijdvak op het scherm
+BTW-aangifte, elk met de uiterste datum, en de export heeft per ICP-tijdvak
+een lijst. Het tijdvak is een kwartaal zolang goederen in dat kwartaal en in
+de vier kwartalen ervoor niet boven € 50.000 komen. In het kwartaal waarin
+goederen boven € 50.000 komen, gaan de maanden tot en met de maand waarin dat
+gebeurt in één opgaaf, uiterlijk aan het eind van de maand erna, en heeft
+elke latere maand een eigen opgaaf; Florin zegt wanneer en waarom.
 
 ### KOR
 
 Met de KOR staat er geen btw op je facturen en vraag je geen btw terug.
-Florin volgt je omzet tegenover de grens van € 20.000 en beëindigt de KOR bij
-de factuur die erover gaat. Als de KOR begint, betaal je eerder
-teruggevraagde btw op bedrijfsmiddelen deels terug (herziening): Florin schat
-dat per bedrijfsmiddel en telt het op bij de laatste aangifte van het jaar.
+Florin volgt je omzet tegenover de grens van € 20.000, met een levering op
+de leverdatum als die voor de factuur ligt, en beëindigt de KOR bij de
+levering die erover gaat. Daarna geldt de KOR pas weer vanaf een nieuwe
+begindatum, die niet in de rest van dat jaar of het jaar erna kan vallen. Zolang je meedoet aan de KOR, betaal je btw die
+je op bedrijfsmiddelen aftrok deels terug (herziening): Florin schat dat per
+bedrijfsmiddel en telt het op bij de laatste aangifte van het jaar, of bij
+een bedrijfsmiddel dat je onder de KOR verkoopt bij de aangifte over dat
+tijdvak.
 
 ### Privégebruik van een auto van de zaak
 
 De btw op privégebruik gaat in de laatste aangifte van het jaar, rubriek 1d.
 Met een volledige rittenregistratie volgt die de privé- en
 woon-werkkilometers; zonder rekent Florin met het vaste percentage van de
-Belastingdienst.
+Belastingdienst. Voor een auto waarop je btw aftrok telt Florin die ook over
+de tijd onder de KOR, en de btw-aangifte zegt dat.
 
 ## 4. De aangifte inkomstenbelasting
 
@@ -195,25 +224,33 @@ Daaronder:
   partneruren buiten de urenregistratie en de vergoeding aan je partner, een
   S&O-verklaring, het staken van de onderneming, een
   arbeidsongeschiktheidsuitkering, niet-gerealiseerde zelfstandigenaftrek,
-  verliezen uit eerdere jaren en een baan naast de onderneming. Vul in wat
-  geldt.
+  verliezen uit eerdere jaren, een baan naast de onderneming en de uren die
+  je in loondienst en ander werk besteedt. Vul in wat geldt.
 - **Voorlopige aanslag en toeslagen (geschat)**: de belastbare winst, het
-  inkomen in box 1 en de te betalen belasting voor als je een voorlopige
+  verzamelinkomen uit box 1, vóór verliezen uit eerdere jaren, en de te
+  betalen belasting voor als je een voorlopige
   aanslag aanvraagt of wijzigt en als je je inkomen voor toeslagen schat, met
   de laatste dag waarop dat kan.
 - **Balans op 31 december (geschat)**: vul je bank- en kassaldo,
   onbetaalde leveranciersfacturen, leningen, het ondernemingsvermogen op
   1 januari en je privéonttrekkingen en -stortingen in. Florin telt de
   bedrijfsmiddelen, openstaande facturen en openstaande btw erbij en berekent
-  de vermogensvergelijking van de aangifte (vraag 19). Een verschil met de
-  geschatte winst wijst op een ontbrekend saldo of een ontbrekende boeking.
+  de vermogensvergelijking van de aangifte (vraag 19). Die vergelijkt het met
+  de geschatte winst zonder de desinvesteringsbijtelling en de bewegingen van
+  de herinvesteringsreserve, die de winst of het ondernemingsvermogen
+  veranderen maar niet allebei. Een verschil wijst op een ontbrekend saldo of
+  een ontbrekende boeking. Werk dat op 31 december gedaan maar nog niet
+  gefactureerd is (onderhanden werk) telt niet mee, en een bedrijfsmiddel dat
+  je deels privé gebruikt telt voor het zakelijke deel.
 
 ### Pensioen en AOV
 
 Het scherm Pensioen berekent je jaarruimte uit je inkomen uit arbeid van
-vorig jaar en je factor A, telt de reserveringsruimte erbij op, en toont de
-aftrekbare premie en de geschatte belastingbesparing. Premies voor een
-arbeidsongeschiktheidsverzekering (AOV) worden helemaal afgetrokken.
+vorig jaar, min je factor A of de pensioenpremies van een regeling onder de
+Wet toekomst pensioenen, telt de reserveringsruimte erbij op, en toont de
+aftrekbare lijfrentepremie en de geschatte belastingbesparing. Premies voor
+een arbeidsongeschiktheidsverzekering (AOV) worden helemaal afgetrokken
+voor de maanden van het jaar die voorbij zijn.
 
 ### Aangifte doen
 
@@ -230,14 +267,16 @@ boekhouder.
    Belasting.
 4. Exporteer het jaar (Instellingen, Exporteren) en bewaar de map bij je
    administratie. Stel de balans en de staat van baten en lasten binnen zes
-   maanden op papier, zoals het Burgerlijk Wetboek van elk bedrijf vraagt.
+   maanden op papier, zoals de wet van elk bedrijf vraagt.
 
 ## 6. Je administratie bewaren
 
-- **Zeven jaar.** Facturen, bonnen en administratie bewaar je zeven jaar. De
-  Belastingdienst kan over een jaar nog vijf jaar belasting navorderen,
-  langer met uitstel, en twaalf jaar voor inkomen of vermogen in het
-  buitenland; bewaar de administratie van zo'n jaar minstens zo lang.
+- **Zeven jaar.** Facturen, bonnen en administratie bewaar je zeven jaar
+  (tien voor onroerend goed en OSS, die Florin niet dekt). Florin toont de
+  vroegste datum: een gegeven dat actueel blijft, zoals een contract dat nog
+  loopt, begint zijn termijn later. Los daarvan kan de Belastingdienst over
+  een jaar nog vijf jaar belasting navorderen, langer met uitstel, en twaalf
+  jaar voor inkomen of vermogen in het buitenland.
 - **De export** bevat alle boekingen, de btw-aangiftes, de ICP-lijsten, de
   geschatte inkomstenbelasting en balans, de bedrijfsgegevens, de
   pensioencijfers, de gegevens van het jaar, de status van elke aangifte en

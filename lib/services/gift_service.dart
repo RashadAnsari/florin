@@ -9,7 +9,9 @@ abstract final class GiftService {
   /// case or surrounding spaces.
   static String recipientKey(String name) => name.trim().toLowerCase();
 
-  /// The cost excl. BTW of the gifts of [year] per recipient.
+  /// The cost excl. BTW of the gifts of [year] per recipient. A gift
+  /// without BTW does not count: "U telt alleen de uitgaven mee waarover u
+  /// btw hebt betaald" (Belastingdienst, drempelbedrag giften).
   static Map<String, int> totalsByRecipient(
     Iterable<Expense> expenses,
     int year,
@@ -19,7 +21,8 @@ abstract final class GiftService {
       final recipient = e.giftRecipient;
       if (e.category != ExpenseCategory.gifts ||
           recipient == null ||
-          e.date.year != year) {
+          e.date.year != year ||
+          e.vatAmount == 0) {
         continue;
       }
       final key = recipientKey(recipient);

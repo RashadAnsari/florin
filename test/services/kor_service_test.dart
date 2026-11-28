@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:florin/db/database.dart';
 import 'package:florin/services/domain.dart';
 import 'package:florin/services/kor_service.dart';
@@ -100,6 +101,64 @@ void main() {
     expect(status.covers(DateTime(2026, 4), DateTime(2026, 6, 30)), isFalse);
     expect(status.touches(DateTime(2026, 4), DateTime(2026, 6, 30)), isTrue);
     expect(status.touches(DateTime(2026, 7), DateTime(2026, 9, 30)), isFalse);
+  });
+
+  test('passing the limit ends the KOR until a new registration (Wet OB 1968 '
+      'art. 25a lid 5 and 9)', () {
+    final invoices = [
+      _invoice(1, DateTime(2026, 1, 28), 1530000),
+      _invoice(
+        2,
+        DateTime(2026, 4, 28),
+        510000,
+        treatment: VatTreatment.standard,
+      ),
+    ];
+    final status = KorService.status(
+      _profile(start: DateTime(2026, 1, 1)),
+      invoices,
+    );
+    expect(status.appliesOn(DateTime(2028, 6, 1)), isFalse);
+    // A new registration from 2028 starts the scheme again.
+    final again = KorService.status(
+      _profile(start: DateTime(2028, 7, 1)),
+      invoices,
+    );
+    expect(again.appliesOn(DateTime(2028, 6, 30)), isFalse);
+    expect(again.appliesOn(DateTime(2028, 7, 1)), isTrue);
+  });
+
+  test('a new KOR start in the rest of the year the limit was passed or the '
+      'year after is refused (Wet OB 1968 art. 25a lid 9)', () {
+    final status = KorService.status(_profile(start: DateTime(2026, 1, 1)), [
+      _invoice(1, DateTime(2026, 4, 28), 2100000),
+    ]);
+    expect(status.startBlockedUntil(DateTime(2026, 1, 1)), isNull);
+    expect(status.startBlockedUntil(DateTime(2026, 7, 1)), DateTime(2028));
+    expect(status.startBlockedUntil(DateTime(2027, 12, 1)), DateTime(2028));
+    expect(status.startBlockedUntil(DateTime(2028, 1, 1)), isNull);
+  });
+
+  test('turnover counts a supply in the year and on the day it was performed '
+      '(Wet OB 1968 art. 25 lid 1 a)', () {
+    final january = _invoice(
+      1,
+      DateTime(2027, 1, 5),
+      500000,
+    ).copyWith(supplyDate: Value(DateTime(2026, 12, 20)));
+    expect(KorService.turnover([january], 2026), 500000);
+    expect(KorService.turnover([january], 2027), 0);
+    final september = _invoice(
+      2,
+      DateTime(2026, 9, 30),
+      2100000,
+      treatment: VatTreatment.standard,
+    ).copyWith(supplyDate: Value(DateTime(2026, 9, 10)));
+    final status = KorService.status(_profile(start: DateTime(2026, 1, 1)), [
+      september,
+    ]);
+    expect(status.exceededOn[2026], DateTime(2026, 9, 10));
+    expect(status.appliesOn(DateTime(2026, 9, 20)), isFalse);
   });
 
   test('the KOR applies from its start and until a voluntary end '
@@ -281,7 +340,8 @@ void main() {
         year: 2026,
         rules: rules,
       );
-      expect(r.values.single, 90000);
+      expect(r.yearEnd.values.single, 90000);
+      expect(r.sales, isEmpty);
     });
 
     test('joining in the year of purchase revises the whole deduction by '
@@ -305,19 +365,95 @@ void main() {
           invoices: invoices,
           year: 2025,
           rules: rules,
-        ).values.single,
+        ).yearEnd.values.single,
         225000,
       );
-      expect(
-        KorService.revision(
-          status: kor,
-          assets: [asset],
-          invoices: invoices,
-          year: 2026,
-          rules: rules,
-        ),
-        isEmpty,
+      final later = KorService.revision(
+        status: kor,
+        assets: [asset],
+        invoices: invoices,
+        year: 2026,
+        rules: rules,
       );
+      expect(later.yearEnd, isEmpty);
+      expect(later.sales, isEmpty);
+    });
+
+    test('the year of purchase is revised on the whole year without the 10% '
+        'margin (Uitvoeringsbeschikking OB 1968 art. 12 lid 3)', () {
+      final r = KorService.revision(
+        status: from(DateTime(2026, 10)),
+        assets: [car(DateTime(2026), 450000)],
+        invoices: [
+          _invoice(
+            1,
+            DateTime(2026, 3, 1),
+            92000,
+            treatment: VatTreatment.standard,
+          ),
+          _invoice(2, DateTime(2026, 11, 1), 8000),
+        ],
+        year: 2026,
+        rules: rules,
+      );
+      // 92% taxed: a shift of 8%, within the margin a later year has.
+      expect(r.yearEnd.values.single, 36000);
+    });
+
+    test('the share of the year of purchase is the whole boekjaar\'s '
+        '(Uitvoeringsbeschikking OB 1968 art. 12 lid 3)', () {
+      final kor = from(DateTime(2025, 7));
+      final invoices = [
+        _invoice(
+          1,
+          DateTime(2025, 1, 15),
+          100000,
+          treatment: VatTreatment.standard,
+        ),
+        _invoice(
+          2,
+          DateTime(2025, 9, 15),
+          50000,
+          treatment: VatTreatment.euServices,
+        ),
+        _invoice(3, DateTime(2025, 10, 15), 150000),
+      ];
+      int revised(DateTime bought) => KorService.revision(
+        status: kor,
+        assets: [car(bought, 450000)],
+        invoices: invoices,
+        year: 2025,
+        rules: rules,
+      ).yearEnd.values.single;
+      expect(revised(DateTime(2025, 3, 1)), revised(DateTime(2025)));
+      expect(revised(DateTime(2025, 3, 1)), 225000);
+    });
+
+    test('an asset bought after the KOR ended that year served only taxed '
+        'supplies and is not revised (Uitvoeringsbeschikking OB 1968 '
+        'art. 11 lid 1 a)', () {
+      final kor = KorStatus(
+        start: DateTime(2025),
+        end: null,
+        exceededOn: {2026: DateTime(2026, 4, 28)},
+        turnover: const {},
+      );
+      final r = KorService.revision(
+        status: kor,
+        assets: [car(DateTime(2026, 5, 4), 450000)],
+        invoices: [
+          _invoice(1, DateTime(2026, 2, 1), 1500000),
+          _invoice(
+            2,
+            DateTime(2026, 4, 28),
+            600000,
+            treatment: VatTreatment.standard,
+          ),
+        ],
+        year: 2026,
+        rules: rules,
+      );
+      expect(r.yearEnd, isEmpty);
     });
 
     test('a sale under the KOR settles the remaining years at once', () {
@@ -329,8 +465,54 @@ void main() {
         rules: rules,
       );
       // 2026, 2027 and 2028 remain of the five years.
-      expect(r.values.single, 270000);
+      expect(r.sales.values.single, 270000);
+      expect(r.yearEnd, isEmpty);
     });
+
+    test('a sale under the KOR settles the herziening in the return of the '
+        'sale\'s period (Uitvoeringsbeschikking OB 1968 art. 13a lid 2)', () {
+      final kor = from(DateTime(2025));
+      final sold = car(DateTime(2024), 450000, sold: DateTime(2026, 6, 1));
+      VatReturnResult quarter(int q) => VatService.fromRecords(
+        invoices: const [],
+        lines: const [],
+        expenses: const [],
+        assets: [sold],
+        trips: const [],
+        period: (year: 2026, kind: VatFilingPeriod.quarterly, number: q),
+        kor: kor,
+        rules: rules,
+      );
+      expect(quarter(2).vat1a, 270000);
+      expect(quarter(2).duty, ReturnDuty.incidental);
+      expect(quarter(4).vat1a, 0);
+      expect(quarter(4).duty, ReturnDuty.none);
+    });
+
+    test(
+      'a KOR year shows both the herziening and the BTW on private use, '
+      'the cautious reading (Wet OB 1968 art. 4 lid 2 a, art. 25a lid 1)',
+      () {
+        final kept = car(
+          DateTime(2025),
+          630000,
+        ).copyWith(catalogueValue: const Value(4000000));
+        final q4 = VatService.fromRecords(
+          invoices: const [],
+          lines: const [],
+          expenses: const [],
+          assets: [kept],
+          trips: const [],
+          period: (year: 2026, kind: VatFilingPeriod.quarterly, number: 4),
+          kor: from(DateTime(2026)),
+          rules: rules,
+        );
+        expect(q4.vatRevisionTotal, 126000);
+        expect(q4.vat1d, 108000);
+        expect(q4.privateUseUnderKor, isTrue);
+        expect(q4.duty, ReturnDuty.incidental);
+      },
+    );
 
     test('the revision goes into the BTW of rubriek 1a and makes the KOR '
         'quarter need a return', () {

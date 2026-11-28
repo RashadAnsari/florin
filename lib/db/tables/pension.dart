@@ -7,6 +7,10 @@ class PensionEntries extends Table {
   /// (Wet IB 2001 art. 3.127).
   IntColumn get priorYearIncome => integer().withDefault(const Constant(0))();
   IntColumn get factorA => integer().withDefault(const Constant(0))();
+
+  /// Premiums for ouderdomspensioen and partnerpensioen put into a pension
+  /// scheme under the Wet toekomst pensioenen last year (art. 3.127 lid 4).
+  IntColumn get pensionPremiumsPriorYear => integer().nullable()();
   IntColumn get reserveringsruimte =>
       integer().withDefault(const Constant(0))();
   IntColumn get plannedContribution =>

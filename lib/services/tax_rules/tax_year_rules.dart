@@ -101,6 +101,12 @@ class TaxYearRules {
   final int courseTravelMax;
   final double carBijtellingRate;
   final double carOldBijtellingRate;
+
+  /// The addition, instead of [carBijtellingRate], for a car first admitted
+  /// on or before 31 December of [carTransitionalLastYear] (Wet IB 2001
+  /// art. 10a.4 lid 1).
+  final double carTransitionalBijtellingRate;
+  final int carTransitionalLastYear;
   final CarReduction carZeroEmissionReduction;
   final double btwPrivateCarRate;
   final double btwPrivateCarReducedRate;
@@ -178,6 +184,15 @@ class TaxYearRules {
   /// supplier (BW 6:119a lid 6).
   final int largeDebtorMaxPaymentDays;
 
+  /// Longest payment term with a government client unless the contract
+  /// states a longer one that its nature objectively justifies (BW 6:119b
+  /// lid 5).
+  final int governmentPaymentDays;
+
+  /// Longest payment term with a government client in any case (BW 6:119b
+  /// lid 5).
+  final int governmentMaxPaymentDays;
+
   /// Least collection costs owed between businesses, without a reminder,
   /// from the day after the payment day (BW 6:96 lid 4).
   final int minCollectionCosts;
@@ -217,7 +232,7 @@ class TaxYearRules {
   final int buaGiftThreshold;
 
   /// Most depreciation a year as a share of the cost (Wet IB 2001 art. 3.30
-  /// lid 2), which sets the shortest useful life.
+  /// lid 2).
   final double maxDepreciationRate;
 
   /// Years after the year it was formed in which the herinvesteringsreserve
@@ -255,7 +270,8 @@ class TaxYearRules {
   final int carPrivateKmLimit;
 
   /// A car older than this many years counts at its market value (art. 3.20
-  /// lid 5 b).
+  /// lid 5 b). The Belastingdienst keeps the catalogue price until
+  /// [carOldAfterYears]; in between Florin takes the higher of the two.
   final int carMarketValueAfterYears;
 
   /// A car older than this many years gets [carOldBijtellingRate] (art. 3.20
@@ -270,7 +286,9 @@ class TaxYearRules {
   /// use and the years after (Belastingdienst, herziening vanwege de KOR).
   final int vatRevisionYears;
 
-  /// Change in the taxed share of use above which deducted BTW is revised.
+  /// Change in the taxed share, as a share of the first year's, at or below
+  /// which a later year's deducted BTW is not revised (Uitvoeringsbeschikking
+  /// OB 1968 art. 13 lid 4).
   final double vatRevisionMinShift;
 
   /// A year's revision because the KOR starts or ends, on assets in use
@@ -314,6 +332,8 @@ class TaxYearRules {
     required this.courseTravelMax,
     required this.carBijtellingRate,
     required this.carOldBijtellingRate,
+    required this.carTransitionalBijtellingRate,
+    required this.carTransitionalLastYear,
     required this.carZeroEmissionReduction,
     required this.btwPrivateCarRate,
     required this.btwPrivateCarReducedRate,
@@ -339,6 +359,8 @@ class TaxYearRules {
     required this.statutoryPaymentDays,
     required this.maxAgreedPaymentDays,
     required this.largeDebtorMaxPaymentDays,
+    required this.governmentPaymentDays,
+    required this.governmentMaxPaymentDays,
     required this.minCollectionCosts,
     required this.consumerReminderDays,
     required this.claimLimitationYears,
@@ -378,9 +400,6 @@ class TaxYearRules {
   int get jaarruimteMax =>
       ((premiegrondslagMaxIncome - aowFranchise) * jaarruimtePct).round();
 
-  /// The shortest useful life the depreciation limit allows.
-  int get minUsefulLifeYears => (1 / maxDepreciationRate).ceil();
-
   /// The last day to issue the invoice for a supply on [supply].
   DateTime latestInvoiceDate(DateTime supply) =>
       DateTime(supply.year, supply.month + 1, invoiceDueDay);
@@ -391,9 +410,10 @@ class TaxYearRules {
   DateTime get provisionalAssessmentDeadline =>
       DateTime(year + 1, provisionalAssessmentMonth);
 
-  /// The last day records of the bookkeeping [year] must be kept: the end
-  /// of the retention term after that year, the cautious reading of when
-  /// the term starts.
+  /// The keep-until date of records of the bookkeeping [year]: the end of
+  /// the retention term counted from the end of that year, the earliest it
+  /// can end. A record that stays current starts its term later
+  /// (`docs/legal.md`, Receipts).
   DateTime keepUntil(int year) => DateTime(year + retentionYears, 12, 31);
 
   /// Where the top bracket starts: "het in de eerste kolom van de in het

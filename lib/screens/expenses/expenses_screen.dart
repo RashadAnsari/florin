@@ -198,20 +198,23 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
 
   /// BTW on gifts to a recipient above the yearly threshold is not
   /// reclaimed (Besluit uitsluiting aftrek omzetbelasting 1968 art. 1, 4).
+  /// The form shows that; the record keeps the user's choice, and
+  /// `GiftService.applyDeductionRule` applies the threshold to every gift of
+  /// the year, so a gift regains its BTW when the total drops back.
   bool get _reclaims =>
       _vatReclaimable && !(_isGift && _giftTotal() > _rules.buaGiftThreshold);
 
-  int get _deductibleAmount => PurchaseMath.deductible(
+  int _deductibleAmount(bool reclaims) => PurchaseMath.deductible(
     amountExclVat: _amountExclVat,
     vatAmount: _vatAmount,
     businessUsePct: _share,
-    vatReclaimable: _reclaims,
+    vatReclaimable: reclaims,
   );
 
-  int get _vatToReclaim => PurchaseMath.vatToReclaim(
+  int _vatToReclaim(bool reclaims) => PurchaseMath.vatToReclaim(
     vatAmount: _vatAmount,
     businessUsePct: _share,
-    vatReclaimable: _reclaims,
+    vatReclaimable: reclaims,
   );
 
   @override
@@ -252,9 +255,9 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
               vatAmount: Value(_vatAmount),
               totalInclVat: Value(_amountExclVat + (_shifted ? 0 : _vatAmount)),
               businessUsePct: Value(_share),
-              deductibleAmount: Value(_deductibleAmount),
-              vatReclaimable: Value(_reclaims),
-              vatToReclaim: Value(_vatToReclaim),
+              deductibleAmount: Value(_deductibleAmount(_vatReclaimable)),
+              vatReclaimable: Value(_vatReclaimable),
+              vatToReclaim: Value(_vatToReclaim(_vatReclaimable)),
               notes: Value(optionalText(_notes.text)),
               paidFrom: Value(optionalText(_paidFrom.text)),
               paymentReference: Value(optionalText(_paymentRef.text)),
@@ -295,15 +298,16 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
   bool get _isGift => _category == ExpenseCategory.gifts;
 
   /// The cost excl. BTW of this year's gifts to the recipient typed, this
-  /// one included.
+  /// one included when it carries BTW, as [GiftService.totalsByRecipient]
+  /// counts them.
   int _giftTotal() {
+    final own = _vatAmount == 0 ? 0 : _amountExclVat;
     final name = _giftRecipient.text;
     final key = GiftService.recipientKey(name);
-    if (key.isEmpty) return _amountExclVat;
+    if (key.isEmpty) return own;
     final others = (ref.read(expensesProvider(_date.year)).valueOrNull ?? [])
         .where((e) => e.id != widget.expense?.id);
-    return (GiftService.totalsByRecipient(others, _date.year)[key] ?? 0) +
-        _amountExclVat;
+    return (GiftService.totalsByRecipient(others, _date.year)[key] ?? 0) + own;
   }
 
   bool get _korApplies =>
@@ -504,12 +508,12 @@ class _ExpenseDetailPageState extends ConsumerState<ExpenseDetailPage> {
               value: AppFormat.cents(
                 (_category?.barredForIncomeTax ?? false)
                     ? 0
-                    : _deductibleAmount,
+                    : _deductibleAmount(_reclaims),
               ),
             ),
             ValueRow(
               label: l.expensesVatBack,
-              value: AppFormat.cents(_vatToReclaim),
+              value: AppFormat.cents(_vatToReclaim(_reclaims)),
             ),
             const SizedBox(height: AppSpacing.field),
             HelpCheckbox(

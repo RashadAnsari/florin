@@ -29,9 +29,12 @@ abstract final class PensionService {
   static JaarruimteResult calculate(TaxYearRules rules, PensionEntry? entry) {
     final above = countedIncome(rules, entry) - rules.aowFranchise;
     final grondslag = above < 0 ? 0 : above;
+    // Lid 4 lowers the room by last year's Wtp premiums 1:1; art. 10a.25
+    // keeps the factor A reduction for schemes not yet under the Wtp.
     final raw =
         (grondslag * rules.jaarruimtePct -
-                rules.factorAMultiplier * (entry?.factorA ?? 0))
+                rules.factorAMultiplier * (entry?.factorA ?? 0) -
+                (entry?.pensionPremiumsPriorYear ?? 0))
             .round();
     return JaarruimteResult(
       premiegrondslag: grondslag,
@@ -42,6 +45,19 @@ abstract final class PensionService {
       ),
     );
   }
+
+  /// The AOV premiums paid in [months] of the year: they are deducted when
+  /// paid (art. 3.147).
+  static int aovPremiumPaid(PensionEntry? entry, int months) =>
+      (entry?.aovInsured ?? false) ? entry!.monthlyAovPremium * months : 0;
+
+  /// The months of [year] that have ended on [now]. The day a premium is
+  /// paid is not recorded, so the current month does not count yet.
+  static int aovMonthsPaid(int year, DateTime now) => year < now.year
+      ? 12
+      : year > now.year
+      ? 0
+      : now.month - 1;
 
   /// The planned premium, limited to the available room.
   static int deductiblePremium(TaxYearRules rules, PensionEntry? entry) {

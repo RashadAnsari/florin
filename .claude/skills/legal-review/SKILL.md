@@ -41,7 +41,7 @@ Check each area the change touches, or all of them for a full review. Pin the fi
 - **Exports**: each file follows the form it feeds (layout, codes, units, rounding), as AGENTS.md non-negotiable 7 says.
 - **Yearly rules**: every statutory figure lives in the year's `TaxYearRules` and nowhere else, including the figures help texts name (`test/services/tax_year_docs_test.dart` checks the texts and the docs). A constant in a service or a figure typed into a text is a finding.
 - **Assumptions about the future**: an estimate made during the year must not assume a fact that lowers tax before it is true. The urencriterium counts only logged hours; a deduction that needs the year to end waits for it.
-- **Copy** in both ARB files and both READMEs: every claim matches a source, every estimate says it is one, nothing advises (no "consult an adviser"), nothing promises compliance. Statutory outputs (invoice PDF, CSV export) stay in Dutch.
+- **Copy** in both ARB files and both READMEs: every claim matches a source, every estimate says it is one, nothing advises (no "consult an adviser"), nothing promises compliance, and nothing cites an article, lid, statute, Staatscourant or ruling: the source goes in `docs/legal.md` or `docs/tax-years/`, the copy says what the law does. The invoice PDF keeps the legal wording invoices require. Statutory outputs (invoice PDF, CSV export) stay in Dutch.
 
 ## Process
 

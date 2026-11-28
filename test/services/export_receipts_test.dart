@@ -42,7 +42,6 @@ void main() {
           for (var q = 1; q <= 4; q++)
             ((year: 2026, kind: VatFilingPeriod.quarterly, number: q), empty),
         ],
-        quarters: [empty, empty, empty, empty],
         incomeTax: null,
         receipts: ReceiptStore(folder.path),
       );

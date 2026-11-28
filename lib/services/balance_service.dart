@@ -1,6 +1,7 @@
 import '../db/database.dart';
 import 'asset_service.dart';
 import 'domain.dart';
+import 'tax_rules/tax_year_rules.dart';
 import 'vat_service.dart';
 
 /// The business on 31 December and the equity comparison of the income tax
@@ -57,6 +58,23 @@ class BalanceSheet {
 }
 
 abstract final class BalanceService {
+  /// The estimate's profit as the equity comparison counts it. The
+  /// desinvesteringsbijtelling and a reserve released change the profit but
+  /// no asset or debt; a gain kept in the herinvesteringsreserve raises the
+  /// ondernemingsvermogen but not the profit, and booking the reserve off a
+  /// new asset lowers its book value without a loss (Fiscale informatie
+  /// 2026, 7.7.1.2).
+  static int comparableProfit({
+    required int grossProfit,
+    required int desinvesteringsbijtelling,
+    required ReserveYear? reserve,
+  }) =>
+      grossProfit -
+      desinvesteringsbijtelling +
+      (reserve?.formed ?? 0) -
+      (reserve?.applied ?? 0) -
+      (reserve?.released ?? 0);
+
   static BalanceSheet yearEnd({
     required int year,
     required List<FixedAsset> assets,
@@ -64,6 +82,7 @@ abstract final class BalanceService {
     required List<(VatPeriod, VatReturnResult)> vatPeriods,
     required List<VatReturn> vatReturns,
     required TaxYearInput? inputs,
+    required TaxYearRules rules,
   }) {
     final end = DateTime(year, 12, 31);
     final fixed = assets
@@ -72,7 +91,7 @@ abstract final class BalanceService {
               a.purchaseDate.year <= year &&
               (a.disposalDate == null || a.disposalDate!.year > year),
         )
-        .fold(0, (s, a) => s + AssetService.bookValue(a, year));
+        .fold(0, (s, a) => s + AssetService.bookValue(a, year, rules));
     final paid = {
       for (final v in vatReturns)
         if (v.paid) (v.kind, v.number),

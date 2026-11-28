@@ -19,7 +19,7 @@ These are indexed or set again every year. Expect a new value.
 
 | Field | What it is | Law | Where to find the new value |
 | --- | --- | --- | --- |
-| `box1Brackets` | Box 1 brackets: upper bound and combined rate of each | Wet IB 2001 art. 2.10 lid 1, with the premies volksverzekeringen | Belastingdienst, Fiscale informatie `<year>`, tarieven; the statute version of 1 January |
+| `box1Brackets` | Box 1 brackets: upper bound and combined rate of each | Wet IB 2001 art. 2.10 lid 1, with the premies volksverzekeringen | Belastingdienst, Fiscale informatie `<year>`, Belastingberekening (box 1) and Premie volksverzekeringen, not the voorlopige-aanslag page, which moves to the next year in the autumn; the statute version of 1 January |
 | `algemeneHeffingskorting` | Maximum, phase-out start, rate and end | Wet IB 2001 art. 8.10 lid 2 | Fiscale informatie, Heffingskortingen |
 | `arbeidskorting` | Segments with their caps | Wet IB 2001 art. 8.11 lid 2 | Fiscale informatie, Heffingskortingen; follow the statute's caps |
 | `tariefaanpassingRate` | Rate at which deductions above the top bracket are taxed back | Wet IB 2001 art. 2.10 lid 2 | The statute text; it is the top rate minus the rate below it |
@@ -50,14 +50,14 @@ the statute version of 1 January of the new year, its transitional articles
 | `urencriterium` | Hours a year for the urencriterium | Wet IB 2001 art. 3.6 lid 1 | Statute |
 | `reducedUrencriterium` | Verlaagd urencriterium | Wet IB 2001 art. 3.78a lid 3 | Statute |
 | `kiaMinAssetCost` | Smallest asset that counts for the KIA | Wet IB 2001 art. 3.45 lid 2 b | Statute |
-| `eiaRate` | Energie-investeringsaftrek rate | Wet IB 2001 art. 3.42a | Fiscale informatie; Investeringsaftrek `<year>` |
+| `eiaRate` | Energie-investeringsaftrek rate | Wet IB 2001 art. 3.42 lid 3 | Fiscale informatie; Investeringsaftrek `<year>` |
 | `eiaMiaMinAssetCost` | Smallest asset for EIA and MIA | Wet IB 2001 art. 3.45 lid 4 b | Statute |
-| `miaRates` | MIA rate per category | Wet IB 2001 art. 3.42 | Fiscale informatie |
-| `eiaMiaReportMonths` | Months to report an EIA or MIA investment to RVO | RVO rules | Fiscale informatie |
+| `miaRates` | MIA rate per category | Wet IB 2001 art. 3.42a lid 3 | Fiscale informatie |
+| `eiaMiaReportMonths` | Months to report an EIA or MIA investment to RVO | Belastingdienst, Fiscale informatie `<year>`, Ondernemersaftrek en investeringsaftrek; the ministerial regulation was not read | Fiscale informatie |
 | `soMinHours` | S&O hours for the S&O-aftrek | Wet IB 2001 art. 3.77 lid 1 | Statute |
 | `soStarterMaxYears` | Years with an S&O-verklaring a starter may have | Wet IB 2001 art. 3.77 lid 2 | Statute |
 | `meewerkaftrek` | Partner hours and share of profit | Wet IB 2001 art. 3.78 lid 2 | Statute |
-| `meewerkMaxPartnerPay` | Partner pay below which the partner counts as unpaid | Fiscale informatie, meewerkaftrek | Fiscale informatie |
+| `meewerkMaxPartnerPay` | Partner pay below which the partner counts as unpaid | Wet IB 2001 art. 3.16 lid 4, with art. 3.78 lid 1; Fiscale informatie, meewerkaftrek | Fiscale informatie |
 | `stakingsaftrekMax` | Most stakingsaftrek over a lifetime | Wet IB 2001 art. 3.79 lid 2 | Statute |
 | `disabilityStartersaftrek` | Startersaftrek bij arbeidsongeschiktheid by times used | Wet IB 2001 art. 3.78a lid 4 | Statute |
 | `unrealisedZelfstandigenaftrekYears` | Years unrealised zelfstandigenaftrek carries forward | Wet IB 2001 art. 3.76 lid 7 | Statute |
@@ -67,19 +67,21 @@ the statute version of 1 January of the new year, its transitional articles
 | `gemengdeKostenPct` | Deductible share of food, drinks, representation and congresses | Wet IB 2001 art. 3.15 lid 5 | Statute |
 | `carBijtellingRate` | Addition for private use of a business car | Wet IB 2001 art. 3.20 lid 1 a | Statute; Bijtelling privégebruik auto `<year>` |
 | `carOldBijtellingRate` | Addition for a car older than `carOldAfterYears` | Wet IB 2001 art. 3.20 lid 1 b | Statute |
+| `carTransitionalBijtellingRate` | Addition, instead of `carBijtellingRate`, for a car first admitted on or before 31 December of `carTransitionalLastYear` | Wet IB 2001 art. 10a.4 lid 1 | Statute; Belastingdienst, Kenteken afgegeven in 2016 of eerder |
+| `carTransitionalLastYear` | Last year of first admission that keeps `carTransitionalBijtellingRate` | Wet IB 2001 art. 10a.4 lid 1 | Statute |
 | `carZeroEmissionReduction` | Zero-emission reduction and its maximum; later years use it for cars registered in this year | Wet IB 2001 art. 3.20 lid 2 and 11 | Statute; Bijtelling privégebruik auto `<year>` |
 | `carPrivateKmLimit` | Private kilometres a year without an addition | Wet IB 2001 art. 3.20 lid 1 and 3 | Statute |
-| `carMarketValueAfterYears` | Age after which the market value replaces the catalogue value | Wet IB 2001 art. 3.20 lid 5 b | Statute |
+| `carMarketValueAfterYears` | Age after which the statute takes the market value instead of the catalogue value; where the Belastingdienst keeps the catalogue value until `carOldAfterYears`, Florin takes the higher of the two in between | Wet IB 2001 art. 3.20 lid 5 b, as the Belastingdienst applies it with lid 1 | Statute; Fiscale informatie, Winst uit onderneming |
 | `carOldAfterYears` | Age after which `carOldBijtellingRate` applies | Wet IB 2001 art. 3.20 lid 1 b | Statute |
 | `carReductionFreezeMonths` | Months a registration year's reduction holds | Wet IB 2001 art. 3.20 lid 11 | Statute |
-| `maxDepreciationRate` | Most depreciation a year, which sets the shortest useful life | Wet IB 2001 art. 3.30 lid 2 | Statute |
+| `maxDepreciationRate` | Most depreciation a year as a share of the cost; a shorter useful life is spread over more years | Wet IB 2001 art. 3.30 lid 2 | Statute |
 | `reinvestmentReserveYears` | Years to use a herinvesteringsreserve | Wet IB 2001 art. 3.54 lid 5 | Statute |
 | `desinvesteringYears` | Years in which a sale leads to a desinvesteringsbijtelling | Wet IB 2001 art. 3.47 lid 2 | Statute |
 | `jaarruimtePct` | Share of the premiegrondslag | Wet IB 2001 art. 3.127 lid 1 | Statute |
 | `factorAMultiplier` | Factor A multiplier of the transitional jaarruimte rule | Wet IB 2001 art. 10a.25 lid 1 with art. 3.127 lid 4 as of 31 December 2023 | Statute; Overzicht cijfers leven `<year>` |
 | `vatRates` | BTW rate per category | Wet OB 1968 art. 9 | Statute |
 | `vatRevisionYears` | Years deducted BTW on a movable asset is followed | Belastingdienst, Herziening btw-aftrek bij investeringsdiensten | That page |
-| `vatRevisionMinShift` | Share of the first year's taxed use a change must exceed for a revision | Same | That page |
+| `vatRevisionMinShift` | Share of the first year's taxed use a change must exceed for a revision in the years after the year of first use | Same; Uitvoeringsbeschikking omzetbelasting 1968 art. 13 lid 4 | That page and the statute |
 | `korRevisionMin` | Yearly revision below which joining or leaving the KOR revises nothing on older assets | Belastingdienst, herziening vanwege de KOR | That page |
 | `btwPrivateCarRate` | BTW on private use of a car without a trip log | Belastingdienst, Btw en privégebruik auto van de zaak | That page |
 | `btwPrivateCarReducedRate` | The reduced rate of the same rule | Same | That page |
@@ -87,22 +89,24 @@ the statute version of 1 January of the new year, its transitional articles
 | `btwPrivateCarPurchaseYears` | Years the purchase BTW counts over in the cap | Same | That page |
 | `korThreshold` | Most turnover in the Netherlands for the KOR | Wet OB 1968 art. 25a lid 1 | Statute; Belastingdienst, KOR |
 | `euConsumerSalesThreshold` | Electronic services and distance sales to consumers in other member states above which they are taxed there | Wet OB 1968 art. 6k lid 1 c | Statute |
-| `icpQuarterlyGoodsMax` | Goods a quarter above which the ICP-opgaaf is monthly | Wet OB 1968 art. 37a lid 3, ministeriële regeling | Belastingdienst, Tijdvak opgaaf ICP |
+| `icpQuarterlyGoodsMax` | Goods a quarter above which the ICP-opgaaf is monthly | Wet OB 1968 art. 37a lid 3; Uitvoeringsbeschikking OB 1968 art. 33b | Belastingdienst, Tijdvak opgaaf ICP |
 | `icpGoodsLookbackQuarters` | Previous quarters that must also stay at or below `icpQuarterlyGoodsMax` for a quarterly opgaaf | Wet OB 1968 art. 37a lid 3 | Statute; Belastingdienst, Tijdvak opgaaf ICP |
 | `icpDueMonths` | Months after its period in which the ICP-opgaaf is due | Wet OB 1968 art. 37a lid 1 | Statute |
 | `buaGiftThreshold` | Gifts to one person a year at or below which their BTW stays deductible | Besluit uitsluiting aftrek omzetbelasting 1968 art. 4 | Statute |
 | `invoiceDueDay` | Day of the next month by which an invoice is due | Wet OB 1968 art. 34g | Statute |
-| `correctionNextReturnMax` | A change to a filed return at most this much BTW goes into the next return | Belastingdienst practice, AWR art. 10a | Belastingdienst, Btw-aangifte corrigeren |
+| `correctionNextReturnMax` | A change to a filed return at most this much BTW goes into the next return | Uitvoeringsbesluit OB 1968 art. 15 (8 weeks, 5 years); € 1.000 is Belastingdienst practice (Toelichting bij de btw-aangifte `<year>`) | Belastingdienst, Btw-aangifte corrigeren |
 | `suppletieWeeks` | Weeks after finding a larger error in which the suppletie is due | Same | Same page |
 | `correctionYears` | Years after the year in which a return can be corrected | Same | Same page |
 | `vatYearlyReturnDueMonths` | Months after the year in which a yearly return and payment are due | Belastingdienst practice | Belastingdienst, Uiterste aangifte- en betaaldatums |
 | `yearlyFilingMaxVat` | BTW a year below which a yearly return may be asked for | Belastingdienst practice | Belastingdienst, Over welk tijdvak moet ik btw-aangifte doen? |
 | `yearlyFilingMaxEu` | Each kind of EU transaction a year below which a yearly return may be asked for | Belastingdienst practice | Same page |
-| `vatReturnDueMonths` | Months after a quarter in which its return and payment are due | AWR art. 19 lid 1 | Statute; Belastingdienst, Uiterste aangifte- en betaaldatums |
+| `vatReturnDueMonths` | Months after a quarter in which its return and payment are due | AWR art. 10 lid 2 (return) and art. 19 lid 1 (payment) | Statute; Belastingdienst, Uiterste aangifte- en betaaldatums |
 | `provisionalAssessmentMonth` | Month of the next year on whose first day a voorlopige aanslag can last be asked for or changed without a letter asking for a return | Belastingdienst practice | Belastingdienst, Tot wanneer kan ik een voorlopige aanslag aanvragen of wijzigen? |
 | `statutoryPaymentDays` | Days after receiving an invoice from which commercial interest runs without an agreed term | BW 6:119a lid 2 | Statute |
 | `maxAgreedPaymentDays` | Longest term between businesses without stating it explicitly | BW 6:119a lid 5 | Statute |
 | `largeDebtorMaxPaymentDays` | Longest term a large legal person may agree with a small supplier | BW 6:119a lid 6 | Statute |
+| `governmentPaymentDays` | Longest term with a government client unless the contract states a longer one its nature objectively justifies | BW 6:119b lid 5 | Statute |
+| `governmentMaxPaymentDays` | Longest term with a government client in any case | BW 6:119b lid 5 | Statute |
 | `minCollectionCosts` | Least collection costs between businesses | BW 6:96 lid 4 | Statute |
 | `consumerReminderDays` | Days a private person gets in a reminder before collection costs | BW 6:96 lid 6 | Statute |
 | `claimLimitationYears` | Years in which a claim can be brought to court | BW 3:307 lid 1 | Statute |

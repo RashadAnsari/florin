@@ -15,21 +15,97 @@ import 'domain.dart';
 /// content follows Wet OB 1968 art. 35a; see `docs/legal.md`. A self-billed
 /// invoice is the customer's document, so Florin makes no PDF of it.
 abstract final class InvoicePdfService {
-  static String _treatmentNote(VatTreatment t) => switch (t) {
-    VatTreatment.standard => '',
-    VatTreatment.reverseChargeNl => 'Btw verlegd',
-    VatTreatment.euServices => 'Btw verlegd',
-    VatTreatment.euGoods =>
-      'Intracommunautaire levering, 0% btw: artikel 138, lid 1, '
-          'Richtlijn 2006/112',
-    VatTreatment.exportOutsideEu => 'Uitvoer buiten de EU, 0% btw',
-    VatTreatment.servicesOutsideEu =>
-      'Niet in Nederland belast: dienst aan een ondernemer buiten de EU '
-          '(artikel 6, lid 1, Wet OB 1968)',
-    // Art. 25a lid 4 forbids any mention of the tax on the invoice; the
-    // Belastingdienst asks to state that an exemption applies.
-    VatTreatment.kor => 'Vrijgesteld op grond van de kleineondernemersregeling',
-  };
+  /// The note under the totals that names the treatment: «btw verlegd»
+  /// (art. 35a lid 1 m), the ground of the zero rate or exemption (lid 1 l),
+  /// or the article that places a service outside the Netherlands.
+  static String treatmentNote(Invoice invoice, Client client) =>
+      switch (invoice.vatTreatment) {
+        VatTreatment.standard => '',
+        VatTreatment.reverseChargeNl => 'Btw verlegd',
+        VatTreatment.euServices => 'Btw verlegd',
+        VatTreatment.euGoods =>
+          'Intracommunautaire levering, 0% btw: artikel 138, lid 1, '
+              'Richtlijn 2006/112',
+        VatTreatment.exportOutsideEu => 'Uitvoer buiten de EU, 0% btw',
+        VatTreatment.servicesOutsideEu =>
+          client.isConsumer
+              ? 'Niet in Nederland belast: dienst aan een afnemer buiten de '
+                    'EU (artikel 6e, 6h of 6i, Wet OB 1968)'
+              : 'Niet in Nederland belast: dienst aan een ondernemer buiten '
+                    'de EU (artikel 6, lid 1, Wet OB 1968)',
+        // Art. 25a lid 4 forbids any mention of the tax on the invoice; the
+        // Belastingdienst asks to state that an exemption applies.
+        VatTreatment.kor =>
+          'Vrijgesteld op grond van de kleineondernemersregeling',
+      };
+
+  /// Art. 25a lid 4: a KOR invoice mentions no BTW at all.
+  static bool _mentionsNoVat(Invoice invoice) =>
+      invoice.vatTreatment == VatTreatment.kor;
+
+  /// The seller block: name and address, the btw-id (art. 35a lid 1 c and e)
+  /// except under the KOR, and the KvK number (Handelsregisterwet 2007
+  /// art. 27 lid 1).
+  static List<String> sellerRows(Invoice invoice) => [
+    invoice.sellerName,
+    ...invoice.sellerAddress.split('\n'),
+    if (!_mentionsNoVat(invoice)) 'Btw-id: ${invoice.sellerVatNumber}',
+    'KvK: ${invoice.sellerKvkNumber}',
+  ];
+
+  /// The customer block: name and address (art. 35a lid 1 e), and the
+  /// customer's btw-id when known, except under the KOR.
+  static List<String> clientRows(Invoice invoice, Client client) => [
+    client.name,
+    ...client.address.split('\n'),
+    if (client.country != 'NL') client.country,
+    if ((client.vatNumber ?? '').isNotEmpty && !_mentionsNoVat(invoice))
+      'Btw-id: ${client.vatNumber}',
+  ];
+
+  /// The heads of the line table; under the KOR without the BTW column.
+  static List<String> columnHeads(Invoice invoice) {
+    final kor = _mentionsNoVat(invoice);
+    return [
+      'Omschrijving',
+      'Aantal',
+      kor ? 'Prijs' : 'Prijs excl. btw',
+      if (!kor) 'Btw',
+      kor ? 'Bedrag' : 'Bedrag excl. btw',
+    ];
+  }
+
+  /// The rows under the line table, the last one the amount to pay: under
+  /// the KOR only the total, otherwise the subtotal, the BTW rows and the
+  /// total incl. BTW.
+  static List<(String, String)> totalRows(
+    Invoice invoice,
+    List<InvoiceLine> lines,
+  ) {
+    final total = AppFormat.cents(invoice.sign * invoice.totalInclVat);
+    if (_mentionsNoVat(invoice)) return [('Totaal', total)];
+    return [
+      (
+        'Totaal excl. btw',
+        AppFormat.cents(invoice.sign * invoice.totalExclVat),
+      ),
+      ...vatRows(invoice, lines),
+      ('Totaal incl. btw', total),
+    ];
+  }
+
+  /// The line that makes a credit note an invoice: a specific reference to
+  /// the invoice it corrects (art. 34f, art. 35a lid 2 e).
+  static String creditReference(Invoice corrected) =>
+      'Creditnota bij factuur ${corrected.invoiceNumber} '
+      'van ${AppFormat.date(corrected.invoiceDate)}';
+
+  /// The payment instructions of an invoice.
+  static String paymentText(Invoice invoice) =>
+      'Graag ${AppFormat.cents(invoice.sign * invoice.totalInclVat)} '
+      'overmaken vóór ${AppFormat.date(invoice.dueDate)} op '
+      '${invoice.sellerIban} t.n.v. ${invoice.sellerName} o.v.v. '
+      '${invoice.invoiceNumber}.';
 
   /// The rate column of [line]: the rate with Dutch BTW, and with domestic
   /// reverse charge the rate that would apply without it (art. 35a lid 1 i).
@@ -114,10 +190,11 @@ abstract final class InvoicePdfService {
     );
 
     final isCredit = invoice.isCreditNote;
-    final sign = invoice.sign;
-    String money(int cents) => AppFormat.cents(sign * cents);
-    final note = _treatmentNote(invoice.vatTreatment);
-    final kor = invoice.vatTreatment == VatTreatment.kor;
+    String money(int cents) => AppFormat.cents(invoice.sign * cents);
+    final note = treatmentNote(invoice, client);
+    final kor = _mentionsNoVat(invoice);
+    final heads = columnHeads(invoice);
+    final totals = totalRows(invoice, lines);
 
     final doc = pw.Document(
       theme: pw.ThemeData.withFont(base: regular, bold: bold),
@@ -188,30 +265,15 @@ abstract final class InvoicePdfService {
           ),
           if (correctedInvoice != null) ...[
             pw.SizedBox(height: 6),
-            pw.Text(
-              'Creditnota bij factuur ${correctedInvoice.invoiceNumber} '
-              'van ${AppFormat.date(correctedInvoice.invoiceDate)}',
-              style: small,
-            ),
+            pw.Text(creditReference(correctedInvoice), style: small),
           ],
           pw.SizedBox(height: 20),
           pw.Row(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              party('Van', [
-                invoice.sellerName,
-                ...invoice.sellerAddress.split('\n'),
-                if (!kor) 'Btw-id: ${invoice.sellerVatNumber}',
-                'KvK: ${invoice.sellerKvkNumber}',
-              ]),
+              party('Van', sellerRows(invoice)),
               pw.SizedBox(width: 40),
-              party('Aan', [
-                client.name,
-                ...client.address.split('\n'),
-                if (client.country != 'NL') client.country,
-                if ((client.vatNumber ?? '').isNotEmpty)
-                  'Btw-id: ${client.vatNumber}',
-              ]),
+              party('Aan', clientRows(invoice, client)),
             ],
           ),
           pw.SizedBox(height: 16),
@@ -244,19 +306,8 @@ abstract final class InvoicePdfService {
               pw.TableRow(
                 decoration: const pw.BoxDecoration(color: PdfColors.grey200),
                 children: [
-                  cell('Omschrijving', head: true),
-                  cell('Aantal', right: true, head: true),
-                  cell(
-                    kor ? 'Prijs' : 'Prijs excl. btw',
-                    right: true,
-                    head: true,
-                  ),
-                  if (!kor) cell('Btw', right: true, head: true),
-                  cell(
-                    kor ? 'Bedrag' : 'Bedrag excl. btw',
-                    right: true,
-                    head: true,
-                  ),
+                  for (final (i, h) in heads.indexed)
+                    cell(h, right: i > 0, head: true),
                 ],
               ),
               for (final l in lines)
@@ -281,25 +332,12 @@ abstract final class InvoicePdfService {
             child: pw.SizedBox(
               width: 260,
               child: pw.Column(
-                children: kor
-                    ? [
-                        total(
-                          'Totaal',
-                          money(invoice.totalInclVat),
-                          strong: true,
-                        ),
-                      ]
-                    : [
-                        total('Totaal excl. btw', money(invoice.totalExclVat)),
-                        for (final (label, value) in vatRows(invoice, lines))
-                          total(label, value),
-                        pw.Divider(color: PdfColors.grey400),
-                        total(
-                          'Totaal incl. btw',
-                          money(invoice.totalInclVat),
-                          strong: true,
-                        ),
-                      ],
+                children: [
+                  for (final (label, value) in totals.take(totals.length - 1))
+                    total(label, value),
+                  if (totals.length > 1) pw.Divider(color: PdfColors.grey400),
+                  total(totals.last.$1, totals.last.$2, strong: true),
+                ],
               ),
             ),
           ),
@@ -317,12 +355,7 @@ abstract final class InvoicePdfService {
             pw.SizedBox(height: 16),
             pw.Text('Betaalinstructies', style: heading.copyWith(fontSize: 9)),
             pw.SizedBox(height: 4),
-            pw.Text(
-              'Graag ${money(invoice.totalInclVat)} overmaken vóór '
-              '${AppFormat.date(invoice.dueDate)} op ${invoice.sellerIban} '
-              't.n.v. ${invoice.sellerName} o.v.v. ${invoice.invoiceNumber}.',
-              style: small,
-            ),
+            pw.Text(paymentText(invoice), style: small),
           ],
           if (invoice.notes != null) ...[
             pw.SizedBox(height: 14),

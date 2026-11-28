@@ -12,6 +12,7 @@ import '../../widgets/amount_field.dart';
 import '../../widgets/async_body.dart';
 import '../../widgets/feedback.dart';
 import '../../widgets/form_row.dart';
+import '../../widgets/notice_banner.dart';
 import '../../widgets/value_row.dart';
 
 class PensionScreen extends ConsumerWidget {
@@ -23,6 +24,8 @@ class PensionScreen extends ConsumerWidget {
     final year = ref.watch(fiscalYearProvider);
     final rules = ref.watch(taxRulesProvider(year));
     final estimate = ref.watch(taxEstimateProvider(year)).valueOrNull;
+    final employed =
+        ref.watch(taxYearInputsProvider(year)).valueOrNull?.employed ?? false;
 
     return Scaffold(
       appBar: AppBar(title: Text(l.pensionTitle)),
@@ -31,6 +34,13 @@ class PensionScreen extends ConsumerWidget {
         builder: (entry) {
           final room = PensionService.calculate(rules, entry);
           final deductible = PensionService.deductiblePremium(rules, entry);
+          final aovMonths = PensionService.aovMonthsPaid(year, DateTime.now());
+          // Pension built up with an employer lowers the room (art. 3.127
+          // lid 4); without either figure Florin cannot subtract it.
+          final buildUpMissing =
+              employed &&
+              (entry?.factorA ?? 0) == 0 &&
+              (entry?.pensionPremiumsPriorYear ?? 0) == 0;
           final income = estimate?.result.taxableIncome;
           final saving = income == null
               ? 0
@@ -48,6 +58,13 @@ class PensionScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (buildUpMissing) ...[
+                  NoticeBanner(
+                    l.pensionBuildUpMissingNotice,
+                    tone: NoticeTone.warning,
+                  ),
+                  const SizedBox(height: AppSpacing.group),
+                ],
                 SectionLabel(l.pensionInputSection),
                 const SizedBox(height: AppSpacing.heading),
                 FormRow(
@@ -70,8 +87,21 @@ class PensionScreen extends ConsumerWidget {
                           save(PensionEntriesCompanion(factorA: Value(v))),
                     ),
                     AmountField(
+                      label: l.pensionPremiumsPriorYear,
+                      help: l.pensionPremiumsPriorYearHelp,
+                      key: ValueKey('wtp_premiums_$year'),
+                      initialValueCents: entry?.pensionPremiumsPriorYear ?? 0,
+                      onChanged: (v) => save(
+                        PensionEntriesCompanion(
+                          pensionPremiumsPriorYear: Value(v == 0 ? null : v),
+                        ),
+                      ),
+                    ),
+                    AmountField(
                       label: l.pensionReserveringsruimteLabel,
-                      help: l.pensionReserveringsruimteLabelHelp,
+                      help: l.pensionReserveringsruimteLabelHelp(
+                        AppFormat.euros(rules.reserveringsruimteMax),
+                      ),
                       key: ValueKey('reservering_$year'),
                       initialValueCents: entry?.reserveringsruimte ?? 0,
                       onChanged: (v) => save(
@@ -95,10 +125,12 @@ class PensionScreen extends ConsumerWidget {
                   help: l.pensionAowFranchiseHelp,
                 ),
                 ValueRow.cents(
-                  l.pensionPensioengrondslag,
+                  l.pensionPremiegrondslag,
                   room.premiegrondslag,
                   bold: true,
-                  help: l.pensionPensioengrondslagHelp,
+                  help: l.pensionPremiegrondslagHelp(
+                    AppFormat.euros(rules.premiegrondslagMaxIncome),
+                  ),
                 ),
                 ValueRow.cents(
                   l.pensionJaarruimteMax(AppFormat.cents(rules.jaarruimteMax)),
@@ -110,7 +142,9 @@ class PensionScreen extends ConsumerWidget {
                 ValueRow.cents(
                   l.pensionReserveringsruimte,
                   room.reserveringsruimte,
-                  help: l.pensionReserveringsruimteLabelHelp,
+                  help: l.pensionReserveringsruimteLabelHelp(
+                    AppFormat.euros(rules.reserveringsruimteMax),
+                  ),
                 ),
                 ValueRow.cents(
                   l.pensionTotalBudget,
@@ -131,7 +165,11 @@ class PensionScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.field),
-                ValueRow.cents(l.pensionDeductible, deductible),
+                ValueRow.cents(
+                  l.pensionDeductible,
+                  deductible,
+                  help: l.pensionDeductibleHelp,
+                ),
                 ValueRow.cents(
                   l.pensionEstimatedTaxSaving,
                   saving,
@@ -157,7 +195,9 @@ class PensionScreen extends ConsumerWidget {
                     key: ValueKey('aov_$year'),
                     initialValueCents: entry!.monthlyAovPremium,
                     helperText: l.pensionAnnualPremium(
-                      AppFormat.cents(entry.monthlyAovPremium * 12),
+                      AppFormat.cents(
+                        PensionService.aovPremiumPaid(entry, aovMonths),
+                      ),
                     ),
                     onChanged: (v) => save(
                       PensionEntriesCompanion(monthlyAovPremium: Value(v)),

@@ -26,6 +26,10 @@ class TaxResult {
   final int aovDeduction;
   final int lossOffset;
 
+  /// Inkomen uit werk en woning before losses of earlier years: the box 1
+  /// part of the verzamelinkomen (art. 2.18, 3.1 lid 1).
+  final int incomeBox1;
+
   /// Loon from employment, added to box 1 income (art. 3.1 lid 2).
   final int wages;
   final int taxableIncome;
@@ -66,6 +70,7 @@ class TaxResult {
     required this.lijfrenteDeduction,
     required this.aovDeduction,
     required this.lossOffset,
+    required this.incomeBox1,
     this.wages = 0,
     required this.taxableIncome,
     required this.bracketTax,
@@ -157,7 +162,8 @@ abstract final class TaxService {
       .fold(0, (s, e) => s + e.deductibleAmount);
 
   /// The deductible part of course and congress travel: at most the yearly
-  /// amount (art. 3.16 lid 2 f). Lid 8 lifts the limit when the work makes
+  /// amount (art. 3.16 lid 2 f). What is left counts with the gemengde
+  /// kosten (art. 3.15 lid 2). Lid 8 lifts the limit when the work makes
   /// attending necessary; Florin cannot tell that from the records, so it
   /// keeps the limit, which overstates tax rather than understates it.
   static int courseTravelDeductible(int costs, TaxYearRules rules) =>
@@ -179,9 +185,13 @@ abstract final class TaxService {
         food -
         course -
         barredCosts(expenses);
+    // Art. 3.15 lid 2 puts congress travel under the gemengde kosten. Florin
+    // cannot tell it from course travel, so all of it goes there.
     return other +
-        gemengdeKostenDeductible(food, rules) +
-        courseTravelDeductible(course, rules);
+        gemengdeKostenDeductible(
+          food + courseTravelDeductible(course, rules),
+          rules,
+        );
   }
 
   /// Kilometres in a private vehicle deductible at the mileage rate.
@@ -204,7 +214,8 @@ abstract final class TaxService {
   }
 
   /// The urencriterium (art. 3.6 lid 1): at least the yearly hours in the
-  /// business and, with a job, more time in the business than in the job.
+  /// business and more time in the business than in employment and other
+  /// work.
   /// Only logged hours count: assuming the hours would understate the tax
   /// (AGENTS.md rule 5).
   static bool meetsUrencriterium({
@@ -217,12 +228,14 @@ abstract final class TaxService {
         (job == null || totalHours > job);
   }
 
-  /// The hours in employment the business hours must exceed (art. 3.6 lid 1
-  /// a), or null without a job or when the user was not an ondernemer in
-  /// one of the previous years (lid 1 b).
+  /// The hours in employment and other work the business hours must exceed
+  /// (art. 3.6 lid 1 a), or null without such hours or when the user was not
+  /// an ondernemer in one of the previous years (lid 1 b).
   static int? timeTestHours(TaxYearInput? inputs) {
     final i = inputs;
-    if (i == null || !i.employed || notOndernemerBefore(i)) return null;
+    if (i == null || i.employmentHours <= 0 || notOndernemerBefore(i)) {
+      return null;
+    }
     return i.employmentHours;
   }
 
@@ -378,7 +391,9 @@ abstract final class TaxService {
                   rules.tariefaanpassingRate)
               .round();
     final grossBox1 = bracketTax.fold(0, (s, t) => s + t) + tariefaanpassing;
-    final ahk = rules.algemeneHeffingskorting.valueFor(taxableIncome);
+    // Art. 8.10 lid 2 on the verzamelinkomen (art. 2.18): inkomen uit werk
+    // en woning, before the losses of art. 3.1 lid 1.
+    final ahk = rules.algemeneHeffingskorting.valueFor(beforeLosses);
     // Arbeidsinkomen is profit and loon together (art. 8.1 lid 1 e).
     final ak = rules.arbeidskorting.valueFor(profit + wages);
     final box1 = (grossBox1 - ahk - ak).clamp(0, grossBox1);
@@ -410,6 +425,7 @@ abstract final class TaxService {
       lijfrenteDeduction: lijfrentePremium,
       aovDeduction: aovPremium,
       lossOffset: lossOffset,
+      incomeBox1: beforeLosses,
       wages: wages,
       taxableIncome: taxableIncome,
       bracketTax: bracketTax,

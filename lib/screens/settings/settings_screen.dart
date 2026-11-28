@@ -67,18 +67,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         year,
         dialogTitle: l.csvExportChooseFolderDialog,
         periods: ref.read(vatYearProvider(year)).requireValue,
-        quarters: [
-          for (var q = 1; q <= 4; q++)
-            ref
-                .read(
-                  vatPeriodProvider((
-                    year: year,
-                    kind: VatFilingPeriod.quarterly,
-                    number: q,
-                  )),
-                )
-                .requireValue,
-        ],
         incomeTax: ref.read(taxEstimateProvider(year)).valueOrNull?.result,
         balance: ref.read(balanceSheetProvider(year)).valueOrNull,
         kor: ref.read(korStatusProvider).valueOrNull ?? KorStatus.none,
@@ -106,14 +94,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     // Keeps the figures the export writes loaded; the button waits for them.
     final figures = [
       ref.watch(vatYearProvider(year)),
-      for (var q = 1; q <= 4; q++)
-        ref.watch(
-          vatPeriodProvider((
-            year: year,
-            kind: VatFilingPeriod.quarterly,
-            number: q,
-          )),
-        ),
+      ref.watch(korStatusProvider),
       ref.watch(taxEstimateProvider(year)),
       ref.watch(balanceSheetProvider(year)),
     ];
@@ -359,6 +340,7 @@ class _ProfileEditorState extends ConsumerState<_ProfileEditor> {
         BusinessProfileForm(
           fields: _fields,
           rules: ref.watch(taxRulesProvider(ref.watch(fiscalYearProvider))),
+          kor: ref.watch(korStatusProvider).valueOrNull ?? KorStatus.none,
         ),
         const SizedBox(height: AppSpacing.group),
         PrimaryButton(

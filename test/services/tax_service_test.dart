@@ -257,9 +257,19 @@ void main() {
       );
     });
 
-    test('the job hours apply only to someone employed', () {
+    test('hours of other work count against the time test '
+        '(Wet IB 2001 art. 3.6 lid 1 a)', () {
       expect(TaxService.timeTestHours(job(hours: 500)), 500);
+      expect(TaxService.timeTestHours(inputs(jobHours: 500)), 500);
       expect(TaxService.timeTestHours(inputs()), null);
+      expect(
+        calc(
+          revenue: 5000000,
+          hours: 1300,
+          inputs: inputs(jobHours: 1300),
+        ).zelfstandigenaftrek,
+        0,
+      );
       expect(
         TaxService.timeTestHours(job(hours: 500).copyWith(isStarter: true)),
         null,
@@ -369,11 +379,23 @@ void main() {
       expect(r(notBefore: false).disabilityStartersaftrek, 0);
     });
 
-    test('unrealised zelfstandigenaftrek is used up to the profit', () {
+    test('unrealised zelfstandigenaftrek is used up to the profit above '
+        "this year's zelfstandigenaftrek (art. 3.76 lid 7)", () {
       final r = calc(revenue: 150000, inputs: inputs(unrealised: 100000));
       expect(r.zelfstandigenaftrek, 120000);
       expect(r.unrealisedZelfstandigenaftrek, 30000);
     });
+  });
+
+  test('algemene heffingskorting on the verzamelinkomen, before earlier '
+      'losses (art. 2.18, 3.1 lid 1, 8.10 lid 2)', () {
+    final r = calc(revenue: 5000000, inputs: inputs(losses: 100000));
+    expect(r.lossOffset, 100000);
+    expect(r.incomeBox1, r.taxableIncome + r.lossOffset);
+    expect(
+      r.algemeneHeffingskorting,
+      rules.algemeneHeffingskorting.valueFor(r.taxableIncome + r.lossOffset),
+    );
   });
 
   test('earlier losses reduce taxable income down to zero', () {
@@ -426,17 +448,22 @@ void main() {
       '(art. 3.16 lid 2 f)', () {
     expect(
       TaxService.deductibleExpenses([
-        cost(ExpenseCategory.courseTravel, 100000),
-      ], rules),
-      100000,
-    );
-    expect(
-      TaxService.deductibleExpenses([
         cost(ExpenseCategory.courseTravel, 120000),
         cost(ExpenseCategory.courseTravel, 60000),
         cost(ExpenseCategory.office, 1000),
       ], rules),
-      150000 + 1000,
+      TaxService.gemengdeKostenDeductible(150000, rules) + 1000,
+    );
+  });
+
+  test('congress travel counts towards the gemengde kosten after its '
+      '€ 1.500 cap (art. 3.15 lid 2, 3.16 lid 2 f)', () {
+    expect(
+      TaxService.deductibleExpenses([
+        cost(ExpenseCategory.foodAndRepresentation, 300000),
+        cost(ExpenseCategory.courseTravel, 200000),
+      ], rules),
+      (450000 * 0.8).round(),
     );
   });
 
@@ -543,6 +570,17 @@ void main() {
     });
   });
 
+  test('2026 scalar figures (Wet IB 2001 art. 3.76 lid 2, 3.76 lid 3, 3.79a, '
+      '2.10 lid 2, 3.15 lid 1; Fisin 28.2.4)', () {
+    expect(rules.zelfstandigenaftrek, 120000);
+    expect(rules.startersaftrek, 212300);
+    expect(rules.mkbWinstvrijstelling, 0.127);
+    expect(rules.tariefaanpassingRate, 0.1194);
+    expect(rules.zvwRate, 0.0485);
+    expect(rules.zvwMaxIncome, 7940900);
+    expect(rules.gemengdeKostenDrempel, 570000);
+  });
+
   test('mkb-winstvrijstelling applies after ondernemersaftrek', () {
     final r = calc(revenue: 5000000);
     expect(r.mkbWinstvrijstelling, ((5000000 - 120000) * 0.127).round());
@@ -637,40 +675,54 @@ void main() {
 
     test('is time-proportional in the year of purchase', () {
       // 5,000 × 183 of 1,826 days in service
-      expect(AssetService.depreciation(asset(), 2026), 50110);
+      expect(AssetService.depreciation(asset(), 2026, rules), 50110);
       // 5,000 × 365 of 1,826 days
-      expect(AssetService.depreciation(asset(), 2027), 99945);
+      expect(AssetService.depreciation(asset(), 2027, rules), 99945);
     });
 
     test('writes off exactly the cost over the useful life', () {
       final a = asset();
       final total = [
-        for (var y = 2026; y <= 2032; y++) AssetService.depreciation(a, y),
+        for (var y = 2026; y <= 2032; y++)
+          AssetService.depreciation(a, y, rules),
       ].fold(0, (s, d) => s + d);
       expect(total, 500000);
-      expect(AssetService.bookValue(a, 2031), 0);
+      expect(AssetService.bookValue(a, 2031, rules), 0);
     });
 
     test('stops at disposal', () {
       final a = asset(disposal: DateTime(2027, 12, 31));
-      expect(AssetService.depreciation(a, 2027), 99945);
-      expect(AssetService.depreciation(a, 2028), 0);
+      expect(AssetService.depreciation(a, 2027, rules), 99945);
+      expect(AssetService.depreciation(a, 2028, rules), 0);
     });
 
     test('stops at the residual value (Fiscale informatie 2026, 7)', () {
       final a = asset(residual: 50000);
       final total = [
-        for (var y = 2026; y <= 2032; y++) AssetService.depreciation(a, y),
+        for (var y = 2026; y <= 2032; y++)
+          AssetService.depreciation(a, y, rules),
       ].fold(0, (s, d) => s + d);
       expect(total, 450000);
-      expect(AssetService.bookValue(a, 2032), 50000);
+      expect(AssetService.bookValue(a, 2032, rules), 50000);
+    });
+
+    test('at most 20% of the cost a year (art. 3.30 lid 2; Fiscale '
+        'informatie 2026, 7.4.1)', () {
+      final a = asset(residual: 10000).copyWith(
+        costExclVat: 100000,
+        purchaseDate: DateTime(2026, 1, 1),
+        usefulLifeYears: 3,
+      );
+      expect(AssetService.depreciation(a, 2026, rules), 20000);
+      expect(AssetService.depreciation(a, 2030, rules), 10000);
+      expect(AssetService.depreciation(a, 2031, rules), 0);
     });
 
     test('a sale yields proceeds minus book value in that year', () {
       final a = asset(disposal: DateTime(2027, 12, 31), proceeds: 400000);
-      final book = AssetService.bookValue(a, 2027);
-      expect(AssetService.disposalResult([a], 2027), 400000 - book);
-      expect(AssetService.disposalResult([a], 2026), 0);
+      final book = AssetService.bookValue(a, 2027, rules);
+      expect(AssetService.disposalResult([a], 2027, rules), 400000 - book);
+      expect(AssetService.disposalResult([a], 2026, rules), 0);
     });
   });
 }

@@ -112,7 +112,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get dashboardUrencriteriumHelp =>
-      'De uren die je dit jaar voor je onderneming werkte, tegenover het urencriterium. De zelfstandigenaftrek en de meeste andere ondernemersaftrekken vereisen het (Wet IB 2001 art. 3.76). Alle uren voor je onderneming tellen, niet alleen declarabele. Met een baan moet de onderneming ook meer van je tijd vragen dan de baan (art. 3.6).';
+      'De uren die je dit jaar voor je onderneming werkte, tegenover het urencriterium. De zelfstandigenaftrek en de meeste andere ondernemersaftrekken vereisen het. Alle uren voor je onderneming tellen, niet alleen declarabele. Met een baan moet de onderneming ook meer van je tijd vragen dan de baan.';
 
   @override
   String get dashboardBtwDeadlines => 'BTW-deadlines';
@@ -382,7 +382,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get clientsHighRiskWarning =>
-      'Hoog Wet DBA-risico in je eigen beoordeling: is het werk volgens de wet een dienstbetrekking, dan behandelt de Belastingdienst het zo.';
+      'Hoog Wet DBA-risico in je eigen beoordeling. Stelt de Belastingdienst schijnzelfstandigheid vast, dan kan hij de opdrachtgever correctieverplichtingen en naheffingsaanslagen loonheffingen opleggen tot 1 januari 2025 terug, en sinds 2026 vergrijpboetes.';
 
   @override
   String get clientsDeleteTitle => 'Klant verwijderen';
@@ -771,16 +771,15 @@ class AppLocalizationsNl extends AppLocalizations {
   String get assetsFieldUsefulLifeUnit => 'jaar';
 
   @override
-  String assetsFieldUsefulLifeMin(int years, String pct) {
-    return 'Voer minstens $years jaar in: afschrijving is beperkt tot $pct van de kosten per jaar';
-  }
-
-  @override
   String get assetsValidateName => 'Voer de naam van het activum in';
 
   @override
   String get assetsValidateCost =>
       'Vul de aanschafprijs exclusief btw in, boven nul: de afschrijving wordt ervan berekend.';
+
+  @override
+  String get assetsValidateUsefulLife =>
+      'Voer de gebruiksduur in hele jaren in, minstens 1: de afschrijving wordt erover verdeeld.';
 
   @override
   String get assetsFieldKia => 'KIA-aanspraak';
@@ -837,7 +836,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get pensionAowFranchise => 'AOW-franchise';
 
   @override
-  String get pensionPensioengrondslag => 'Pensioengrondslag';
+  String get pensionPremiegrondslag => 'Premiegrondslag';
 
   @override
   String pensionJaarruimteMax(String max) {
@@ -860,13 +859,20 @@ class AppLocalizationsNl extends AppLocalizations {
   String get pensionFactorA => 'Factor A';
 
   @override
+  String get pensionPremiumsPriorYear => 'Pensioenpremies vorig jaar';
+
+  @override
+  String get pensionBuildUpMissingNotice =>
+      'Bouwde je vorig jaar pensioen op bij een werkgever, dan is je jaarruimte lager dan getoond: vul de factor A of premies in.';
+
+  @override
   String get pensionReserveringsruimteLabel => 'Reserveringsruimte';
 
   @override
   String get pensionPlannedSection => 'Voorgenomen inleg';
 
   @override
-  String get pensionLijfrente => 'Lijfrentepremie / AOV-premie';
+  String get pensionLijfrente => 'Lijfrentepremie';
 
   @override
   String get pensionAovSection => 'AOV arbeidsongeschiktheidsverzekering';
@@ -879,7 +885,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String pensionAnnualPremium(String amount) {
-    return 'Jaarlijkse premie: $amount';
+    return 'Telt mee in de schatting: $amount';
   }
 
   @override
@@ -914,7 +920,12 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String vatReturnChangedNextNotice(String max) {
-    return 'Een correctie van maximaal $max verwerk je in je volgende aangifte, in de rubriek waar die hoort (Belastingdienst, Btw-aangifte corrigeren). Florin telt die op bij de volgende aangifte die je nog niet hebt gedaan.';
+    return 'Een correctie van maximaal $max verwerk je in je volgende aangifte, in de rubriek waar die hoort. Florin telt die op bij de volgende aangifte die je nog niet hebt gedaan.';
+  }
+
+  @override
+  String vatReturnChangedNextYearNotice(String max, String nextYear) {
+    return 'Een correctie van maximaal $max verwerk je in je volgende aangifte, in de rubriek waar die hoort. Die aangifte valt in $nextYear, en Florin neemt geen correctie mee naar een ander jaar: tel deze cijfers er zelf bij op.';
   }
 
   @override
@@ -931,7 +942,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String vatReturnCarriedSectionHelp(String max) {
-    return 'Wijzigingen van maximaal $max in aangiftes die je al deed, horen in deze aangifte, in de rubriek waar ze horen (Belastingdienst, Btw-aangifte corrigeren). Ze zijn opgeteld bij de cijfers hierboven en in de export. Als je deze aangifte als gedaan markeert, telt Florin die eerdere aangiftes als gecorrigeerd.';
+    return 'Wijzigingen van maximaal $max in aangiftes die je al deed, horen in deze aangifte, in de rubriek waar ze horen. Ze zijn opgeteld bij de cijfers hierboven en in de export. Als je deze aangifte als gedaan markeert, telt Florin die eerdere aangiftes als gecorrigeerd.';
   }
 
   @override
@@ -941,7 +952,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String vatReturnFilingPeriodHelp(String vat, String eu) {
-    return 'Het tijdvak van je btw-aangiftes, zoals in je aangiftebrief. De meeste ondernemers doen aangifte per kwartaal. De Belastingdienst laat je op verzoek per maand aangifte doen, en op verzoek per jaar als je minder dan $vat btw per jaar betaalt, een eenmanszaak hebt en per soort EU-levering of -aankoop minder dan $eu per jaar hebt; na te late aangiftes of betalingen kan hij ook maandaangifte verplichten. Kies het tijdvak dat de Belastingdienst heeft bevestigd.';
+    return 'Het tijdvak van je btw-aangiftes, zoals in je aangiftebrief. De meeste ondernemers doen aangifte per kwartaal. De Belastingdienst laat je op verzoek per maand aangifte doen, en op verzoek per jaar als je minder dan $vat btw per jaar betaalt, geen vergunning hebt om btw bij invoer te verleggen, een eenmanszaak hebt en per soort EU-levering of -aankoop minder dan $eu per jaar hebt; na te late aangiftes of betalingen kan hij ook maandaangifte verplichten. Kies het tijdvak dat de Belastingdienst heeft bevestigd.';
   }
 
   @override
@@ -964,7 +975,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String vatReturnRevisionSectionHelp(int years, String shift, String min) {
-    return 'Btw die je op een bedrijfsmiddel aftrok wordt $years jaar gevolgd: het jaar van ingebruikname en de jaren daarna. De KOR maakt je prestaties vrijgesteld, dus een deel van die aftrek betaal je terug. In het jaar van aankoop volgt de hele aftrek het aandeel belaste prestaties; in elk later jaar volgt één deel de verandering ten opzichte van het eerste jaar, en een verkoop onder de KOR verwerkt de resterende jaren in één keer. Alleen een verandering van meer dan $shift van het aandeel in het eerste jaar telt, en in latere jaren betaal je niets terug zolang het totaal van het jaar onder $min blijft (Belastingdienst, herziening vanwege de KOR). Florin schat het belaste aandeel uit je facturen.';
+    return 'Btw die je op een bedrijfsmiddel aftrok wordt $years jaar gevolgd: het jaar van ingebruikname en de jaren daarna. De KOR maakt je prestaties vrijgesteld, dus een deel van die aftrek betaal je terug. In het jaar van aankoop volgt de hele aftrek het aandeel belaste prestaties over het hele jaar; in elk later jaar volgt één deel de verandering ten opzichte van het eerste jaar, en een verkoop onder de KOR verwerkt de resterende jaren in één keer. In een later jaar telt alleen een verandering van meer dan $shift van het aandeel in het eerste jaar, en betaal je niets terug zolang het totaal van het jaar onder $min blijft. Florin schat het belaste aandeel uit je facturen.';
   }
 
   @override
@@ -972,7 +983,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get vatReturnRevisionNotice =>
-      'Florin telt dit op bij de btw van rubriek 1a in de laatste aangifte van het jaar, zoals de Belastingdienst aangeeft, en zet het per bedrijfsmiddel in btw_herziening in de export. Doe je mee aan de KOR, dan vraag je de Belastingdienst schriftelijk om een aangifte om het te betalen. Btw die je terug kunt krijgen als je uit de KOR stapt, berekent Florin niet.';
+      'Florin telt dit op bij de btw van rubriek 1a: de jaarlijkse herziening in de laatste aangifte van het jaar, de afrekening bij een verkoop in de aangifte over het tijdvak van de verkoop. Het zet het per bedrijfsmiddel en aangifte in btw_herziening in de export. Doe je mee aan de KOR, dan vraag je de Belastingdienst schriftelijk om een aangifte om het te betalen. Btw die je terug kunt krijgen als je uit de KOR stapt, berekent Florin niet.';
 
   @override
   String get vatReturnStatusSection => 'Afhandelstatus';
@@ -1079,7 +1090,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get plTaxTariefaanpassingHelp =>
-      'De ondernemersaftrek en de mkb-winstvrijstelling verlagen je belasting hoogstens tegen het tarief onder de hoogste schijf. Voor het deel dat in de hoogste schijf valt, wordt het verschil bijgeteld (Wet IB 2001 art. 2.10 lid 2).';
+      'De ondernemersaftrek en de mkb-winstvrijstelling verlagen je belasting hoogstens tegen het tarief onder de hoogste schijf. Voor het deel dat in de hoogste schijf valt, wordt het verschil bijgeteld.';
 
   @override
   String get plTaxInkomsten => 'Inkomstenbelasting';
@@ -1137,18 +1148,18 @@ class AppLocalizationsNl extends AppLocalizations {
       'De winst na de ondernemersaftrek en de mkb-winstvrijstelling, zoals hierboven geschat. De Belastingdienst laat je de ondernemersaftrek waar je recht op hebt aftrekken als je je inkomen voor toeslagen schat.';
 
   @override
-  String get plTaxProvisionalIncome => 'Geschat belastbaar inkomen box 1';
+  String get plTaxProvisionalIncome => 'Geschat verzamelinkomen box 1';
 
   @override
   String get plTaxProvisionalIncomeHelp =>
-      'Voor toeslagen gebruikt de Belastingdienst je toetsingsinkomen: je verzamelinkomen, niet je winst, plus dat van een toeslagpartner. Dit cijfer is alleen box 1 uit je administratie; inkomen dat Florin niet heeft, zoals box 3, zit er niet in. De Belastingdienst raadt aan iets te hoog te schatten, want een te laag inkomen kan betekenen dat je toeslag moet terugbetalen.';
+      'Voor toeslagen gebruikt de Belastingdienst je toetsingsinkomen: je verzamelinkomen, niet je winst, plus dat van een toeslagpartner. Dit is alleen box 1 uit je administratie, vóór verliezen uit eerdere jaren; inkomen dat Florin niet heeft, zoals box 3, zit er niet in. De Belastingdienst raadt aan iets te hoog te schatten, want een te laag inkomen kan betekenen dat je toeslag moet terugbetalen.';
 
   @override
   String get plTaxProvisionalTax => 'Geschatte belasting over het jaar';
 
   @override
   String get plTaxProvisionalTaxHelp =>
-      'Belasting box 1 en de Zvw-bijdrage, min de al ingehouden loonheffing, zoals hierboven geschat. Een voorlopige aanslag spreidt dit over het jaar, zodat de definitieve aanslag geen grote rekening brengt.';
+      'Belasting box 1 en de Zvw-bijdrage, min de al ingehouden loonheffing, zoals hierboven geschat. Een voorlopige aanslag spreidt dit over het jaar, zodat er bij de definitieve aanslag minder te betalen overblijft.';
 
   @override
   String plTaxProvisionalDeadline(int year, String date) {
@@ -1166,7 +1177,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get balancePaperNotice =>
-      'Iedereen met een bedrijf moet een administratie voeren waaruit zijn rechten en verplichtingen altijd blijken, en binnen zes maanden na het jaar de balans en de staat van baten en lasten maken en op papier stellen (BW 3:15i met 2:10). Florin berekent de cijfers; ze op papier bewaren doe je zelf.';
+      'Iedereen met een bedrijf moet een administratie voeren waaruit zijn rechten en verplichtingen altijd blijken, en binnen zes maanden na het jaar de balans en de staat van baten en lasten maken en op papier stellen. Florin berekent de cijfers; ze op papier bewaren doe je zelf.';
 
   @override
   String get balanceBank => 'Zakelijk banksaldo';
@@ -1259,7 +1270,11 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get balanceEstimateProfit =>
-      'Winst in de schatting, vóór investeringsaftrek';
+      'Winst in de schatting, zoals de vergelijking die telt';
+
+  @override
+  String get balanceEstimateProfitHelp =>
+      'De winst in de schatting vóór investeringsaftrek, zonder de desinvesteringsbijtelling en de vrijgevallen herinvesteringsreserve, plus een boekwinst die in de herinvesteringsreserve blijft en min de reserve die op nieuwe bedrijfsmiddelen is afgeboekt. Elk daarvan verandert de winst of het ondernemingsvermogen, niet allebei.';
 
   @override
   String balanceDifferenceNotice(String amount) {
@@ -1280,7 +1295,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String plTaxUrenJobBanner(String hours, int jobHours) {
-    return 'Urencriterium: $hours uur gelogd voor de onderneming, niet meer dan de $jobHours uur in loondienst. Het urencriterium vraagt meer tijd in de onderneming dan in ander werk, dus de schatting laat de zelfstandigenaftrek en de andere aftrekposten die het vereisen weg.';
+    return 'Urencriterium: $hours uur gelogd voor de onderneming, niet meer dan de $jobHours uur in loondienst en ander werk. Het urencriterium vraagt meer tijd in de onderneming dan in ander werk, dus de schatting laat de zelfstandigenaftrek en de andere aftrekposten die het vereisen weg.';
   }
 
   @override
@@ -1359,7 +1374,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String settingsExportDescription(int year) {
-    return 'Exporteer alle gegevens van $year naar CSV-bestanden, met per tijdvak de btw-aangifte per rubriek in hele euro\'s, het ICP-overzicht per kwartaal (en per maand als goederen de opgaaf maandelijks maken), de geschatte inkomstenbelasting en balans van het jaar, en de bonnen. Florin zet ze in een nieuwe map met de exportdatum in de naam, in de map die je kiest.';
+    return 'Exporteer alle gegevens van $year naar CSV-bestanden, met per tijdvak de btw-aangifte per rubriek in hele euro\'s, het ICP-overzicht per ICP-tijdvak (een kwartaal, of maanden zodra goederen de opgaaf maandelijks maken), de geschatte inkomstenbelasting en balans van het jaar, en de bonnen. Florin zet ze in een nieuwe map met de exportdatum in de naam, in de map die je kiest.';
   }
 
   @override
@@ -1493,7 +1508,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String invoiceIssueRenumber(String number, String next) {
-    return '$number sluit niet aan op de laatste factuur die je in deze reeks uitreikte, dus hij wordt verstuurd als $next: factuurnummers lopen zonder gaten door (Wet OB 1968 art. 35a lid 1 b).';
+    return '$number sluit niet aan op de laatste factuur die je in deze reeks uitreikte, dus hij wordt verstuurd als $next: factuurnummers zijn opeenvolgend binnen hun reeks, en Florin laat geen gaten.';
   }
 
   @override
@@ -1528,26 +1543,26 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String expensesFoodNotice(String pct, String drempel) {
-    return 'Voedsel, drank, representatie, congressen, seminars en studiereizen zijn voor de inkomstenbelasting voor $pct aftrekbaar, of voor zover ze $drempel per jaar overschrijden als dat meer is (Wet IB 2001 art. 3.15). Btw op eten en drinken in een restaurant, café of hotel is niet aftrekbaar (Wet OB 1968 art. 15).';
+    return 'Voedsel, drank, representatie, congressen, seminars en studiereizen zijn voor de inkomstenbelasting voor $pct aftrekbaar, of voor zover ze $drempel per jaar overschrijden als dat meer is. Btw op eten en drinken in een restaurant, café of hotel is niet aftrekbaar.';
   }
 
   @override
   String expensesCourseTravelNotice(String max) {
-    return 'Reizen en verblijf voor cursussen, opleidingen, congressen, seminars en studiereizen zijn voor de inkomstenbelasting aftrekbaar tot $max per jaar; het deel daarboven niet, tenzij je werk het bijwonen noodzakelijk maakt (Wet IB 2001 art. 3.16). Florin houdt de grens aan, omdat het dat niet uit je administratie kan afleiden.';
+    return 'Reizen en verblijf voor cursussen, opleidingen, congressen, seminars en studiereizen zijn voor de inkomstenbelasting aftrekbaar tot $max per jaar; het deel daarboven niet, tenzij je werk het bijwonen noodzakelijk maakt. Florin houdt de grens aan, omdat het dat niet uit je administratie kan afleiden. Wat overblijft telt mee met eten, drinken en representatie, omdat de wet reizen voor congressen daar ook beperkt; Florin doet hetzelfde voor cursussen, omdat het die niet kan onderscheiden.';
   }
 
   @override
   String get expensesBarredNotice =>
-      'De wet houdt deze kosten buiten je winst, hoe hoog ze ook zijn: boetes (Wet IB 2001 art. 3.14), en kleding die geen werkkleding is, persoonlijke verzorging, een telefoonaansluiting in je woning en literatuur die geen vakliteratuur is (art. 3.16). Florin legt ze vast maar trekt niets af. Kleding is werkkleding als ze alleen geschikt is om voor je werk te dragen of laat zien dat ze alleen daarvoor bedoeld is; boek werkkleding onder Overig.';
+      'De wet houdt deze kosten buiten je winst, hoe hoog ze ook zijn: boetes, en kleding die geen werkkleding is, persoonlijke verzorging, een telefoonaansluiting in je woning en literatuur die geen vakliteratuur is. Florin legt ze vast maar trekt niets af. Kleding is werkkleding als ze alleen geschikt is om voor je werk te dragen of laat zien dat ze alleen daarvoor bedoeld is; boek werkkleding onder Overig.';
 
   @override
   String expensesGiftNotice(String total, String threshold) {
-    return 'Geschenken aan deze ontvanger dit jaar, deze meegeteld: $total excl. btw. Zolang het totaal niet boven $threshold komt, blijft de btw erop aftrekbaar (Besluit uitsluiting aftrek omzetbelasting 1968 art. 4).';
+    return 'Geschenken met btw aan deze ontvanger dit jaar: $total excl. btw. Zolang het totaal niet boven $threshold komt, blijft de btw erop aftrekbaar. Geschenken zonder btw tellen niet mee.';
   }
 
   @override
   String expensesGiftOverNotice(String total, String threshold) {
-    return 'Geschenken aan deze ontvanger dit jaar, deze meegeteld: $total excl. btw, meer dan $threshold. De btw erop is dan niet aftrekbaar bij een ontvanger die zelf geen btw kan aftrekken (Besluit uitsluiting aftrek omzetbelasting 1968 art. 1 en 4). Florin kan niet zien of de ontvanger dat kan, dus vraagt het op deze geschenken geen btw terug en telt die als kosten.';
+    return 'Geschenken met btw aan deze ontvanger dit jaar: $total excl. btw, meer dan $threshold. De btw erop is dan niet aftrekbaar bij een ontvanger die geen of maar weinig btw kan aftrekken. Florin kan niet zien hoeveel btw de ontvanger kan aftrekken, dus vraagt het op deze geschenken geen btw terug en telt die als kosten.';
   }
 
   @override
@@ -1565,7 +1580,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get plTaxEstimateNotice =>
-      'Dit is een schatting voor een ondernemer onder de AOW-leeftijd. Loon uit dienstbetrekking telt mee als je het hieronder invult. Inkomen van een partner, uit overig werk, box 2 of box 3 telt niet mee.';
+      'Dit is een schatting voor een ondernemer onder de AOW-leeftijd. Loon uit dienstbetrekking telt mee als je het hieronder invult. Inkomen van een partner, uit overig werk, box 2 of box 3 telt niet mee. Andere heffingskortingen dan de algemene heffingskorting en de arbeidskorting zitten er niet in.';
 
   @override
   String settingsMoved(String path) {
@@ -1590,6 +1605,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get pensionDeductible => 'Aftrekbaar dit jaar';
 
   @override
+  String get pensionDeductibleHelp =>
+      'Je voorgenomen lijfrentepremie tot de jaarruimte plus reserveringsruimte: wat de schatting aftrekt.';
+
+  @override
   String get vatRow1e =>
       '1e  Leveringen / diensten belast met 0% of niet bij u belast';
 
@@ -1606,13 +1625,28 @@ class AppLocalizationsNl extends AppLocalizations {
       'Goederen aan EU-ondernemer (intracommunautaire levering, 0%)';
 
   @override
-  String vatReturnIcpNote(String date, String amount, int quarters) {
-    return 'Geef deze prestaties uiterlijk $date op in de ICP-opgaaf over dit kwartaal. Leverde je in dit kwartaal of in een van de $quarters kwartalen ervoor voor meer dan $amount aan goederen aan EU-ondernemers, dan geef je goederen per maand op (Wet OB 1968 art. 37a).';
+  String vatReturnIcpNote(String icpPeriod, String date) {
+    return 'Geef deze prestaties uiterlijk $date op in de ICP-opgaaf over $icpPeriod.';
   }
 
   @override
-  String vatReturnIcpMonthlyNotice(String max, int quarters) {
-    return 'Goederen aan EU-bedrijven kwamen in dit kwartaal of een van de $quarters kwartalen ervoor boven $max, dus de opgaaf ICP over goederen doe je per maand (Wet OB 1968 art. 37a lid 3). De export schrijft dan ook de lijst van elke maand.';
+  String vatReturnIcpMonthlyNotice(String max, int quarters, String quarter) {
+    return 'Goederen aan EU-ondernemers kwamen in een van de $quarters kwartalen voor $quarter boven $max, dus de ICP-opgaaf over goederen is in $quarter per maand, elke maand uiterlijk aan het eind van de maand erna.';
+  }
+
+  @override
+  String vatReturnIcpPassedNotice(String max, String month, String date) {
+    return 'Goederen aan EU-ondernemers kwamen in $month boven $max. De maanden van dat kwartaal tot en met $month komen in één ICP-opgaaf, uiterlijk $date; daarna is de ICP-opgaaf over goederen per maand, elke maand uiterlijk aan het eind van de maand erna.';
+  }
+
+  @override
+  String vatReturnIcpNoRecordsNotice(String year, String max, int quarters) {
+    return 'Florin heeft geen gegevens van $year. Kwamen je goederen aan EU-ondernemers in een kwartaal van $year boven $max, dan is de ICP-opgaaf over goederen per maand in elk van de $quarters kwartalen erna.';
+  }
+
+  @override
+  String icpPeriodMonths(String first, String last) {
+    return '$first tot en met $last';
   }
 
   @override
@@ -1634,11 +1668,11 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get pensionAovHelper =>
-      'Premies voor een arbeidsongeschiktheidsverzekering worden in de belastingschatting volledig afgetrokken.';
+      'Premies voor een arbeidsongeschiktheidsverzekering worden in de belastingschatting volledig afgetrokken. Alleen premies die je in het jaar hebt betaald tellen mee: Florin telt de maanden van het jaar die voorbij zijn.';
 
   @override
   String get assetsFieldCostHelp =>
-      'De aankoopprijs zonder btw. Met de btw die je niet terugvraagt is dit de kostprijs waarover je afschrijft en investeringsaftrek krijgt.';
+      'De aankoopprijs zonder btw, min kortingen en subsidies. Met de btw die je niet terugvraagt is dit de kostprijs waarover je afschrijft en investeringsaftrek krijgt.';
 
   @override
   String get assetsFieldDisposalDateHelp =>
@@ -1646,11 +1680,11 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get assetsFieldDisposalProceedsHelp =>
-      'Wat je voor het bedrijfsmiddel kreeg, zonder btw, of de marktwaarde als je het privé ging gebruiken. Het verschil met de boekwaarde is winst of verlies.';
+      'Wat je voor het bedrijfsmiddel kreeg, zonder btw, of, als je het privé ging gebruiken, wat een vergelijkbaar bedrijfsmiddel in dezelfde staat nu kost, zonder btw. Het verschil met de boekwaarde is winst of verlies.';
 
   @override
   String assetsFieldKiaHelp(String min) {
-    return 'Kleinschaligheidsinvesteringsaftrek: een extra aftrek voor bedrijfsmiddelen. Bedrijfsmiddelen onder $min tellen niet mee, en personenauto\'s en sommige andere bedrijfsmiddelen zijn uitgesloten.';
+    return 'Kleinschaligheidsinvesteringsaftrek: een extra aftrek voor bedrijfsmiddelen. Niet voor bedrijfsmiddelen onder $min, personenauto\'s, grond, woonhuizen, goodwill, bedrijfsmiddelen die vooral aan anderen ter beschikking worden gesteld, aankopen van je huishouden, ouders, kinderen of je eigen bv, of bedrijfsmiddelen uit je privévermogen.';
   }
 
   @override
@@ -1670,8 +1704,8 @@ class AppLocalizationsNl extends AppLocalizations {
       'Wat het bedrijfsmiddel aan het eind van de levensduur nog waard is. De afschrijving stopt bij deze waarde.';
 
   @override
-  String assetsFieldUsefulLifeHelp(int years, String pct) {
-    return 'Hoeveel jaar je het bedrijfsmiddel verwacht te gebruiken. Minimaal $years, omdat afschrijving beperkt is tot $pct van de kosten per jaar.';
+  String assetsFieldUsefulLifeHelp(String pct) {
+    return 'Hoeveel hele jaren je het bedrijfsmiddel verwacht te gebruiken in de onderneming. De afschrijving is hoogstens $pct van de kosten per jaar, dus een kortere gebruiksduur wordt over meer jaren verdeeld.';
   }
 
   @override
@@ -1679,7 +1713,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get assetsVatSectionHelp =>
-      'De btw op de aankoopfactuur. Btw die je terugvraagt komt in de btw-aangifte van het kwartaal van aankoop; btw die je niet terugvraagt hoort bij de kosten van het bedrijfsmiddel.';
+      'De btw op de aankoopfactuur. Btw die je terugvraagt komt in de btw-aangifte van het tijdvak van aankoop; btw die je niet terugvraagt hoort bij de kosten van het bedrijfsmiddel. Een auto gekocht onder de margeregeling of van een particulier heeft geen btw om terug te vragen: vul 0 in.';
 
   @override
   String get assetsFieldVatRate => 'BTW-tarief';
@@ -1705,7 +1739,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get assetsFieldPurchaseVatHelp =>
-      'Nederlandse btw als de leverancier die rekende. Verlegd als op de factuur staat dat de btw naar jou is verlegd, of als de leverancier in het buitenland zit: je geeft de btw dan zelf aan en trekt hem weer af.';
+      'Nederlandse btw als de leverancier die rekende. Verlegd als op de factuur staat dat de btw naar jou is verlegd, of als de leverancier in het buitenland zit: je geeft de btw dan zelf aan en trekt hem weer af. Diensten aan onroerende zaken van een EU-leverancier die de btw naar jou verlegt horen in 2a, niet in 4b: kies Naar mij verlegd door een Nederlandse leverancier (2a).';
 
   @override
   String get assetsReclaimVat => 'Deze btw terugvragen';
@@ -1754,7 +1788,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String assetsFieldDisposalVatRateHelp(String high) {
-    return 'De btw die je verschuldigd bent over de verkoop, of over het privé gaan gebruiken van het bedrijfsmiddel, over het zakelijke deel van de opbrengst. Die komt in de btw-aangifte van dat kwartaal. Meestal $high; vrijgesteld alleen als je het bedrijfsmiddel uitsluitend voor btw-vrijgesteld werk gebruikte en er geen btw op aftrok.';
+    return 'De btw die je verschuldigd bent over de verkoop, of over het privé gaan gebruiken van het bedrijfsmiddel, over het zakelijke deel van de opbrengst. Die komt in de btw-aangifte van dat tijdvak. Meestal $high. Kies vrijgesteld als je het bedrijfsmiddel uitsluitend voor btw-vrijgesteld werk gebruikte en er geen btw op aftrok, of als je een bedrijfsmiddel waarop je geen btw aftrok privé gaat gebruiken.';
   }
 
   @override
@@ -1793,7 +1827,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get clientsRateEstimateHelp =>
-      'Wat je factureerde gedeeld door je uren: een schatting, want facturen en uren hoeven niet in dezelfde periode te vallen. Vanaf 31 december 2026 vermoedt de wet een arbeidsovereenkomst als een bedrijf iemand voor werk ten hoogste een bedrag per uur betaalt (BW 7:610aa, Stb. 2026, 158 en 207). Het bedrag voor de eerste toepassing wordt bij ministeriële regeling vastgesteld, die Florin niet heeft gelezen, dus noemt het geen bedrag.';
+      'Wat je factureerde gedeeld door je uren: een schatting, want facturen en uren hoeven niet in dezelfde periode te vallen. Vanaf 31 december 2026 vermoedt de wet een arbeidsovereenkomst als iemand anders dan een particulier iemand voor werk ten hoogste een bedrag per uur betaalt. Het bedrag voor de eerste toepassing wordt bij ministeriële regeling vastgesteld, die Florin niet heeft gelezen, dus noemt het geen bedrag.';
 
   @override
   String get clientsRateNoHours => 'Geen uren gekoppeld';
@@ -1835,7 +1869,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get clientsFieldVatHelp =>
-      'Het btw-identificatienummer van de klant. Verplicht op facturen met btw verlegd of aan een EU-ondernemer.';
+      'Het btw-identificatienummer van de klant. Verplicht op facturen met btw verlegd en bij intracommunautaire leveringen van goederen.';
 
   @override
   String get clientsRiskLevelHelp =>
@@ -1846,14 +1880,14 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get expensesFieldCategoryHelp =>
-      'Wat voor kosten dit zijn. Voedsel, drank, representatie, congressen, seminars, excursies en studiereizen zijn maar gedeeltelijk aftrekbaar (Wet IB 2001 art. 3.15), reizen voor cursussen en congressen alleen tot een bedrag per jaar, en boetes, gewone kleding, persoonlijke verzorging, een telefoonaansluiting thuis en algemene literatuur helemaal niet (art. 3.14 en 3.16), dus ze hebben elk een eigen categorie.';
+      'Wat voor kosten dit zijn. Voedsel, drank, representatie, congressen, seminars, excursies en studiereizen zijn maar gedeeltelijk aftrekbaar, reizen voor cursussen en congressen alleen tot een bedrag per jaar, en boetes, gewone kleding, persoonlijke verzorging, een telefoonaansluiting thuis en algemene literatuur helemaal niet, dus ze hebben elk een eigen categorie.';
 
   @override
   String get expensesFieldGiftRecipient => 'Ontvanger';
 
   @override
   String get expensesFieldGiftRecipientHelp =>
-      'Wie het geschenk kreeg. Florin telt de geschenken per ontvanger per jaar op, omdat de btw erop alleen aftrekbaar blijft zolang dat totaal binnen de drempel blijft. Typ de naam elke keer hetzelfde.';
+      'Wie het geschenk kreeg. Florin telt de geschenken met btw per ontvanger per jaar op, omdat de btw op geschenken aan iemand die geen of weinig btw kan aftrekken alleen aftrekbaar blijft zolang dat totaal binnen de drempel blijft; Florin gaat daar bij elke ontvanger van uit. Typ de naam elke keer hetzelfde.';
 
   @override
   String get expensesValidateGiftRecipient =>
@@ -1882,7 +1916,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String expensesReclaimVatHelp(String amount) {
-    return 'Vink aan als je deze btw mag aftrekken in je btw-aangifte. Niet voor eten en drinken in een restaurant, voor privégebruik, of voor geschenken aan iemand die zelf geen btw aftrekt als ze voor die persoon samen meer dan $amount per jaar zijn (Besluit uitsluiting aftrek omzetbelasting 1968).';
+    return 'Vink aan als je deze btw mag aftrekken in je btw-aangifte. Niet voor eten en drinken in een restaurant, voor privégebruik, of voor geschenken aan iemand die geen of maar weinig btw kan aftrekken, als ze voor die persoon samen meer dan $amount per jaar zijn.';
   }
 
   @override
@@ -1935,11 +1969,11 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get invoiceFieldNumberHelp =>
-      'Een uniek nummer in een doorlopende reeks, zoals de wet vereist. Florin stelt het volgende voor.';
+      'Een uniek nummer dat in zijn reeks opeenvolgt, zoals de wet vereist (een of meer reeksen mag). Florin stelt het volgende voor.';
 
   @override
   String invoiceFieldPaymentTermHelp(int max, int statutory) {
-    return 'Hoeveel dagen de klant heeft om te betalen. Tussen bedrijven moet een termijn van meer dan $max dagen uitdrukkelijk zijn afgesproken en mag die niet kennelijk onbillijk voor jou zijn; zonder afgesproken termijn is de wettelijke handelsrente verschuldigd vanaf $statutory dagen nadat de klant de factuur heeft ontvangen (BW 6:119a).';
+    return 'Hoeveel dagen de klant heeft om te betalen. Tussen bedrijven moet een termijn van meer dan $max dagen uitdrukkelijk zijn afgesproken en mag die niet kennelijk onbillijk voor jou zijn; zonder afgesproken termijn is de wettelijke handelsrente verschuldigd vanaf $statutory dagen nadat de klant de factuur heeft ontvangen.';
   }
 
   @override
@@ -1958,22 +1992,32 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String invoiceLateNotice(int day, String date) {
-    return 'Een factuur reik je uit uiterlijk op dag $day van de maand na de levering (Wet OB 1968 art. 34g): voor deze levering uiterlijk $date.';
+    return 'Een factuur reik je uit uiterlijk op dag $day van de maand na de levering: voor deze levering uiterlijk $date.';
   }
 
   @override
-  String invoiceLongTermNotice(int max, int large) {
-    return 'Tussen bedrijven geldt een betalingstermijn van meer dan $max dagen alleen als die uitdrukkelijk is afgesproken en niet kennelijk onbillijk voor jou is, en een groot bedrijf mag met een kleine leverancier niet meer dan $large dagen afspreken (BW 6:119a lid 5 en 6).';
+  String invoiceLongTermNotice(
+    int max,
+    int large,
+    int government,
+    int governmentMax,
+  ) {
+    return 'Tussen bedrijven geldt een betalingstermijn van meer dan $max dagen alleen als die uitdrukkelijk is afgesproken en niet kennelijk onbillijk voor jou is, en een groot bedrijf mag met een kleine leverancier niet meer dan $large dagen afspreken. Bij een overheidsklant vraagt een termijn boven $government dagen ook een objectieve rechtvaardiging, en hij is nooit langer dan $governmentMax dagen.';
   }
 
   @override
-  String invoiceOverdueBusinessNotice(String due, String min, String lapses) {
-    return 'Deze factuur moest op $due betaald zijn. Tussen bedrijven loopt vanaf de dag erna de wettelijke handelsrente (BW 6:119a lid 1), en je mag minstens $min incassokosten vragen zonder eerst een aanmaning te sturen (BW 6:96 lid 4). De vordering kan tot $lapses bij de rechter worden ingesteld (BW 3:307). Florin berekent de rente niet.';
+  String invoiceOverdueBusinessNotice(
+    String due,
+    String min,
+    int statutory,
+    String lapses,
+  ) {
+    return 'Deze factuur moest op $due betaald zijn. Tussen bedrijven zijn de wettelijke handelsrente en minstens $min incassokosten zonder aanmaning verschuldigd vanaf de dag na de afgesproken betaaldag; als je er geen afsprak, vanaf $statutory dagen nadat de klant de factuur ontving. De vordering kan tot $lapses bij de rechter worden ingesteld. Florin berekent de rente niet.';
   }
 
   @override
   String invoiceOverdueConsumerNotice(String due, int days, String lapses) {
-    return 'Deze factuur moest op $due betaald zijn. Een particulier is pas incassokosten verschuldigd na een aanmaning die $days dagen geeft om te betalen en de kosten noemt die worden gevraagd (BW 6:96 lid 6); stuur één aanmaning voor alle openstaande facturen van deze klant (lid 7). De vordering kan tot $lapses bij de rechter worden ingesteld (BW 3:307).';
+    return 'Deze factuur moest op $due betaald zijn. Een particulier is pas incassokosten verschuldigd na een aanmaning die $days dagen geeft om te betalen en de kosten noemt die worden gevraagd; stuur één aanmaning voor alle openstaande facturen van deze klant. De vordering kan tot $lapses bij de rechter worden ingesteld.';
   }
 
   @override
@@ -1993,7 +2037,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get invoiceFieldVatTreatmentHelp =>
-      'Hoe de btw werkt. Nederlandse btw voor de meeste Nederlandse klanten, of Vrijgesteld, kleineondernemersregeling zolang je aan de KOR meedoet. Btw verlegd als de klant de btw betaalt. EU-goederen en -diensten aan ondernemers komen ook op de ICP-opgaaf. Diensten aan een ondernemer buiten de EU zijn daar belast en blijven buiten de Nederlandse aangifte.';
+      'Hoe de btw werkt. Nederlandse btw voor de meeste Nederlandse klanten, of Vrijgesteld, kleineondernemersregeling zolang je aan de KOR meedoet. Btw verlegd als de klant de btw betaalt. EU-goederen en -diensten aan ondernemers komen ook op de ICP-opgaaf. Niet een dienst die in het land van de klant is vrijgesteld of 0% heeft, of een dienst bij onroerend goed, evenementen, personenvervoer of catering: die staat niet in de aangifte en niet in de ICP-opgaaf, en vraagt een andere behandeling. Diensten aan een ondernemer buiten de EU worden daar verricht, niet in Nederland, en blijven buiten de Nederlandse aangifte, net als de diensten aan een particulier buiten de EU die de wet daar plaatst.';
 
   @override
   String get labelCategoryHelp => 'Toon alleen uitgaven van één categorie.';
@@ -2095,7 +2139,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get mileageFieldTripTypeHelp =>
-      'Zakelijke ritten en woon-werkritten met een privévoertuig zijn per km aftrekbaar voor de inkomstenbelasting. Privéritten niet.';
+      'Zakelijke ritten en woon-werkritten met een privévoertuig zijn per km aftrekbaar voor de inkomstenbelasting. Privéritten niet. Een privébezoek tijdens je werk, zoals naar de dokter, is een privérit.';
 
   @override
   String get pensionAovInsuredHelp =>
@@ -2103,28 +2147,33 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get pensionFactorAHelp =>
-      'Het pensioen dat je vorig jaar bij een werkgever opbouwde, uit de factor A op je UPO. Laat 0 als je dat niet had. Valt je pensioenregeling onder de Wet toekomst pensioenen, dan staan op je UPO premies: de wet verlaagt de jaarruimte dan met die premies, en dat berekent Florin niet.';
+      'Het pensioen dat je vorig jaar bij een werkgever opbouwde, uit de factor A op je UPO. Laat 0 als je dat niet had. Valt je pensioenregeling onder de Wet toekomst pensioenen, dan staan op je UPO premies: vul die in bij pensioenpremies vorig jaar.';
+
+  @override
+  String get pensionPremiumsPriorYearHelp =>
+      'De premies voor ouderdomspensioen en partnerpensioen die vorig jaar in je pensioenregeling zijn ingelegd, zoals op je UPO, als je regeling de Wet toekomst pensioenen volgt. De jaarruimte wordt daarmee verlaagd. Laat 0 als je die niet had. Premies voor een nettopensioen verlagen hem ook; daar vraagt Florin niet naar.';
 
   @override
   String get pensionLijfrenteHelp =>
-      'Wat je dit jaar in een lijfrente stort of wilt storten. Aftrekbaar tot de ruimte die je hebt.';
+      'Wat je dit jaar in een lijfrente stort. Een premie telt voor het jaar waarin je hem betaalt, tot je jaarruimte en reserveringsruimte.';
 
   @override
   String get pensionMonthlyPremiumHelp =>
-      'De maandpremie van je arbeidsongeschiktheidsverzekering.';
+      'De maandpremie van je arbeidsongeschiktheidsverzekering. Alleen premies die je in het jaar hebt betaald tellen mee: Florin telt de maanden van het jaar die voorbij zijn.';
 
   @override
   String get pensionPriorYearIncomeHelp =>
-      'Je winst uit onderneming van vorig jaar vóór de ondernemersaftrek, plus belastbaar loon, belastbaar resultaat uit overige werkzaamheden en belastbare periodieke uitkeringen, uit de aangifte van dat jaar (Wet IB 2001 art. 3.127 lid 3). De jaarruimte gaat hiervan uit.';
+      'Je winst uit onderneming van vorig jaar vóór de ondernemersaftrek, plus belastbaar loon, belastbaar resultaat uit overige werkzaamheden en belastbare periodieke uitkeringen, uit de aangifte van dat jaar. De jaarruimte gaat hiervan uit. Met een oudedagsreserve gebruik je de winst vóór de afneming daarvan.';
 
   @override
   String pensionCountedIncomeHelp(String max) {
-    return 'Het inkomen zoals het meetelt voor de premiegrondslag: hoogstens $max (Wet IB 2001 art. 3.127 lid 3).';
+    return 'Het inkomen zoals het meetelt voor de premiegrondslag: hoogstens $max.';
   }
 
   @override
-  String get pensionReserveringsruimteLabelHelp =>
-      'Niet-gebruikte jaarruimte uit eerdere jaren die je nog mag gebruiken. Het Hulpmiddel Lijfrentepremie van de Belastingdienst rekent het uit.';
+  String pensionReserveringsruimteLabelHelp(String max) {
+    return 'Jaarruimte uit de vorige tien jaar die je niet gebruikte, oudste jaar eerst, hoogstens $max. Je vraagt erom in je aangifte. Het Hulpmiddel Lijfrentepremie van de Belastingdienst rekent het uit.';
+  }
 
   @override
   String get settingsBusinessAddressHelp =>
@@ -2144,7 +2193,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get settingsVatNumberHelp =>
-      'Je btw-identificatienummer (btw-id): NL, 9 cijfers, B en 2 cijfers. Het staat op elke factuur.';
+      'Je btw-identificatienummer (btw-id): NL, 9 cijfers, B en 2 cijfers. Het staat op elke factuur behalve onder de KOR, waar de factuur geen btw noemt.';
 
   @override
   String get vatReturnFiledHelp =>
@@ -2152,7 +2201,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get vatReturnPaidHelp =>
-      'Vink aan zodra je de btw van dit kwartaal hebt betaald.';
+      'Vink aan zodra je de btw van dit tijdvak hebt betaald. De betaling telt op de dag dat die op de rekening van de Belastingdienst staat; dat kan een paar dagen duren.';
 
   @override
   String get assetKindGeneral => 'Bedrijfsmiddel';
@@ -2179,7 +2228,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get assetsFieldCatalogueValueHelp =>
-      'De oorspronkelijke catalogusprijs inclusief btw en bpm, zoals op het kentekenbewijs of de website van de RDW.';
+      'De officiële nieuwprijs, inclusief btw, bpm en de accessoires die de fabrikant, importeur of dealer aanbracht vóór de registratie, zoals de RDW Kentekencheck die toont.';
 
   @override
   String get assetsValidateCatalogueValue =>
@@ -2217,8 +2266,8 @@ class AppLocalizationsNl extends AppLocalizations {
   String get assetsFieldMarketValue => 'Waarde in het economisch verkeer';
 
   @override
-  String assetsFieldMarketValueHelp(int years) {
-    return 'Wat de auto nu waard is. Wordt alleen gebruikt als de auto ouder is dan $years jaar.';
+  String assetsFieldMarketValueHelp(int years, String pct) {
+    return 'Wat de auto nu waard is. Wordt alleen gebruikt als de auto ouder is dan $years jaar; de bijtelling is dan $pct van deze waarde of meer. Florin past de optionele overgangskeuze voor auto\'s die die leeftijd passeren niet toe.';
   }
 
   @override
@@ -2235,7 +2284,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String assetsInvestmentSectionHelp(int years) {
-    return 'Extra aftrek in het jaar van aankoop. Verkoop je het bedrijfsmiddel binnen $years jaar, dan telt een deel weer bij de winst.';
+    return 'Extra aftrek in het jaar van aankoop. Verkoop je het bedrijfsmiddel binnen $years jaar, dan telt een deel weer bij de winst. Een bedrijfsmiddel dat op 31 december nog niet in gebruik is, krijgt alleen aftrek over wat dan betaald is; Florin legt niet vast wanneer een bedrijfsmiddel in gebruik kwam of wat betaald is, en geeft dus de volle aftrek.';
   }
 
   @override
@@ -2243,7 +2292,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String assetsFieldEiaHelp(int months, String min) {
-    return 'Een bedrijfsmiddel op de Energielijst van RVO, binnen $months maanden gemeld bij RVO. Minimaal $min per bedrijfsmiddel. Niet te combineren met MIA.';
+    return 'Een nieuw (niet eerder gebruikt) bedrijfsmiddel op de Energielijst van RVO, binnen $months maanden gemeld bij RVO. Minimaal $min per bedrijfsmiddel. Niet te combineren met MIA.';
   }
 
   @override
@@ -2251,7 +2300,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String assetsFieldMiaHelp(int months, String min) {
-    return 'De categorie op de Milieulijst van RVO, binnen $months maanden gemeld bij RVO. Minimaal $min per bedrijfsmiddel.';
+    return 'De categorie van een nieuw (niet eerder gebruikt) bedrijfsmiddel op de Milieulijst van RVO, binnen $months maanden gemeld bij RVO. Minimaal $min per bedrijfsmiddel.';
   }
 
   @override
@@ -2344,7 +2393,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get mileageFieldVehicleHelp =>
-      'Een privévoertuig geeft de aftrek per km. Ritten in een auto van de zaak niet; die tellen voor de rittenregistratie van die auto.';
+      'Een privévoertuig geeft de aftrek per km. Ritten in een auto van de zaak niet; die tellen voor de rittenregistratie van die auto. Het bedrag per km dekt brandstof, verzekering, tol en parkeren, dus boek die kosten van een privévoertuig niet als uitgave.';
 
   @override
   String get mileagePrivateVehicle => 'Privévoertuig';
@@ -2354,7 +2403,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String inputPartnerHoursHelp(String pay, int hours) {
-    return 'Uren die je fiscale partner dit jaar in je onderneming werkte en die niet per dag onder Uren staan. Florin telt ze op bij de vastgelegde partneruren. Vanaf $hours uur, zolang je partner zonder vergoeding of voor minder dan $pay werkt, krijg je de meewerkaftrek. De Belastingdienst vraagt je de uren aannemelijk te maken, dus een registratie per dag is het betere bewijs.';
+    return 'Uren die je fiscale partner dit jaar tot nu toe in je onderneming heeft gewerkt en die niet per dag onder Uren staan. Florin telt ze op bij de vastgelegde partneruren. Vanaf $hours uur, zolang je partner zonder vergoeding of voor minder dan $pay werkt, krijg je de meewerkaftrek. De Belastingdienst vraagt je de uren aannemelijk te maken, dus een registratie per dag is het betere bewijs.';
   }
 
   @override
@@ -2362,7 +2411,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String inputPartnerPayHelp(String pay) {
-    return 'Wat je onderneming je fiscale partner dit jaar voor het werk betaalde. Onder $pay is het niet aftrekbaar en telt je partner nog als onbetaald voor de meewerkaftrek (Wet IB 2001 art. 3.16 lid 4, art. 3.78); vanaf $pay trekt Florin het af als kosten en geeft het geen meewerkaftrek. Boek het niet ook als uitgave.';
+    return 'Wat je onderneming je fiscale partner dit jaar voor het werk betaalde. Onder $pay is het niet aftrekbaar en telt je partner nog als onbetaald voor de meewerkaftrek; vanaf $pay trekt Florin het af als kosten en geeft het geen meewerkaftrek. Boek het niet ook als uitgave.';
   }
 
   @override
@@ -2370,7 +2419,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String inputUnrealisedZelfsHelp(int years) {
-    return 'Zelfstandigenaftrek uit de vorige $years jaar die niet in je winst paste, zoals vastgesteld door de Belastingdienst. Wordt gebruikt tot de winst van dit jaar.';
+    return 'Zelfstandigenaftrek uit de vorige $years jaar die niet in je winst paste, zoals vastgesteld door de Belastingdienst. Wordt dit jaar gebruikt voor zover je winst hoger is dan de zelfstandigenaftrek van dit jaar, en alleen als je aan het urencriterium voldoet.';
   }
 
   @override
@@ -2384,8 +2433,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get inputEmployed => 'Ik werk dit jaar ook in loondienst';
 
   @override
-  String get inputEmployedHelp =>
-      'Loon telt in box 1 mee met je winst, en het urencriterium vergelijkt dan ook je uren in de onderneming met je uren in loondienst.';
+  String get inputEmployedHelp => 'Loon telt in box 1 mee met je winst.';
 
   @override
   String get inputWages => 'Loon';
@@ -2409,11 +2457,11 @@ class AppLocalizationsNl extends AppLocalizations {
       'Het loon Zorgverzekeringswet op je jaaropgaven, waarover je werkgever de werkgeversheffing Zvw betaalde. Je betaalt de Zvw-bijdrage over je winst alleen tot het maximumbijdrage-inkomen min dit bedrag.';
 
   @override
-  String get inputEmploymentHours => 'Uren in loondienst';
+  String get inputEmploymentHours => 'Uren in loondienst en ander werk';
 
   @override
   String inputEmploymentHoursHelp(int years) {
-    return 'De uren die je in het hele jaar in loondienst werkt. Het urencriterium vraagt ook meer tijd in de onderneming dan in ander werk, tenzij je in een of meer van de $years voorgaande jaren geen ondernemer was.';
+    return 'De uren die je in het hele jaar werkt in loondienst en in ander werk buiten de onderneming, zoals freelancewerk dat belast is als resultaat uit overige werkzaamheden. Het urencriterium vraagt meer tijd in de onderneming dan in dit werk, tenzij je in een of meer van de $years voorgaande jaren geen ondernemer was.';
   }
 
   @override
@@ -2423,7 +2471,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get inputNotOndernemerBeforeHelp =>
-      'Dan telt dit jaar als startjaar: het urencriterium vraagt niet meer tijd in de onderneming dan in een baan (Wet IB 2001 art. 3.6 lid 1 b), en de startersaftrek bij arbeidsongeschiktheid kan gelden (art. 3.78a). Beantwoord het voor elk jaar opnieuw.';
+      'Dan telt dit jaar als startjaar: het urencriterium vraagt niet meer tijd in de onderneming dan in een baan, en de startersaftrek bij arbeidsongeschiktheid kan gelden. Beantwoord het voor elk jaar opnieuw.';
 
   @override
   String inputStarter(int max) {
@@ -2432,7 +2480,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String inputStarterHelp(String amount) {
-    return 'Dan krijg je de startersaftrek van $amount bovenop de zelfstandigenaftrek, als je aan het urencriterium voldoet (Wet IB 2001 art. 3.76 lid 3). Die stopt zodra je vaker zelfstandigenaftrek hebt gehad, dus controleer het voor elk jaar.';
+    return 'Dan krijg je de startersaftrek van $amount bovenop de zelfstandigenaftrek, als je aan het urencriterium voldoet. Die stopt zodra je vaker zelfstandigenaftrek hebt gehad, dus controleer het voor elk jaar. Een jaar waarin de zelfstandigenaftrek nihil was omdat je verlies maakte, telt ook mee.';
   }
 
   @override
@@ -2493,15 +2541,16 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get pensionAowFranchiseHelp =>
-      'Het deel van je inkomen waarover je al AOW opbouwt. De jaarruimte wordt alleen berekend over inkomen daarboven.';
+      'Een vast bedrag dat de wet van de premiegrondslag aftrekt, elk jaar afgeleid van de AOW-uitkering. De jaarruimte wordt alleen berekend over inkomen daarboven.';
 
   @override
-  String get pensionPensioengrondslagHelp =>
-      'Het inkomen van vorig jaar min de AOW-franchise, tot het wettelijke maximum.';
+  String pensionPremiegrondslagHelp(String max) {
+    return 'Het inkomen van vorig jaar zoals het meetelt, hoogstens $max, min de AOW-franchise.';
+  }
 
   @override
   String pensionJaarruimteHelp(String pct) {
-    return '$pct van de premiegrondslag min een veelvoud van factor A, tot het jaarlijkse maximum. Wat je dit jaar voor een lijfrente mag aftrekken.';
+    return '$pct van de premiegrondslag min een veelvoud van factor A en de pensioenpremies van vorig jaar, tot het jaarlijkse maximum. Wat je dit jaar voor een lijfrente mag aftrekken.';
   }
 
   @override
@@ -2539,8 +2588,8 @@ class AppLocalizationsNl extends AppLocalizations {
   String get plTaxCarPrivateUse => 'Privégebruik auto van de zaak';
 
   @override
-  String plTaxCarPrivateUseHelp(int km) {
-    return 'De bijtelling: een percentage van de cataloguswaarde dat bij de winst telt voor privégebruik, hoogstens de autokosten. Geen bijtelling met een rittenregistratie van $km privékilometers per jaar of minder.';
+  String plTaxCarPrivateUseHelp(int years, int km) {
+    return 'De bijtelling: een percentage van de cataloguswaarde, of van de marktwaarde bij een auto ouder dan $years jaar, dat bij de winst telt voor privégebruik, hoogstens de autokosten. Dat maximum telt alleen de kosten die aan de auto zijn gekoppeld en de afschrijving, dus koppel elke autokost aan de auto. Geen bijtelling met een rittenregistratie van $km privékilometers per jaar of minder.';
   }
 
   @override
@@ -2582,12 +2631,12 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String plTaxFoodLimitedHelp(String pct, String drempel) {
-    return 'Voedsel, drank, representatie, congressen, seminars en studiereizen zijn voor $pct aftrekbaar, of boven de eerste $drempel (Wet IB 2001 art. 3.15). Florin neemt wat de grootste aftrek geeft.';
+    return 'Voedsel, drank, representatie, congressen, seminars en studiereizen zijn voor $pct aftrekbaar, of boven de eerste $drempel. Florin neemt wat de grootste aftrek geeft.';
   }
 
   @override
   String plTaxCourseTravelHelp(String max) {
-    return 'Reizen en verblijf voor cursussen, opleidingen en congressen zijn aftrekbaar tot $max per jaar (Wet IB 2001 art. 3.16 lid 2 f). De grens geldt niet als je werk het bijwonen noodzakelijk maakt (lid 8); Florin houdt de grens aan, omdat het dat niet uit je administratie kan afleiden.';
+    return 'Reizen en verblijf voor cursussen, opleidingen en congressen zijn aftrekbaar tot $max per jaar. De grens geldt niet als je werk het bijwonen noodzakelijk maakt; Florin houdt de grens aan, omdat het dat niet uit je administratie kan afleiden. Wat overblijft telt mee met eten, drinken en representatie, omdat de wet reizen voor congressen daar ook beperkt; Florin doet hetzelfde voor cursussen, omdat het die niet kan onderscheiden.';
   }
 
   @override
@@ -2597,7 +2646,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get plTaxBarredCostsHelp =>
-      'Boetes (Wet IB 2001 art. 3.14), kleding die geen werkkleding is, persoonlijke verzorging, een telefoonaansluiting in de woning en literatuur die geen vakliteratuur is (art. 3.16 lid 2). De wet houdt deze kosten buiten de winst, dus ze verlagen die met niets.';
+      'Boetes, kleding die geen werkkleding is, persoonlijke verzorging, een telefoonaansluiting in de woning en literatuur die geen vakliteratuur is. De wet houdt deze kosten buiten de winst, dus ze verlagen die met niets.';
 
   @override
   String plTaxInputsSection(int year) {
@@ -2610,12 +2659,12 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String plTaxEmploymentSection(int year) {
-    return 'Loondienst in $year';
+    return 'Loondienst en ander werk in $year';
   }
 
   @override
   String get plTaxEmploymentSectionHelp =>
-      'Als je ook in loondienst werkt. Vul de totalen van al je jaaropgaven van het jaar in. Tijdens het jaar vul je in wat je voor het hele jaar verwacht.';
+      'Als je ook in loondienst werkt of ander werk buiten de onderneming doet. Vul de totalen van al je jaaropgaven van het jaar in. Tijdens het jaar vul je in wat je voor het hele jaar verwacht.';
 
   @override
   String get plTaxInvestmentSection => 'Investeringsaftrek';
@@ -2643,8 +2692,8 @@ class AppLocalizationsNl extends AppLocalizations {
   String get plTaxMeewerk => 'Meewerkaftrek';
 
   @override
-  String plTaxMeewerkHelp(int hours) {
-    return 'Een percentage van de winst als je fiscale partner minstens $hours uur zonder vergoeding in de onderneming werkt.';
+  String plTaxMeewerkHelp(int hours, String pay) {
+    return 'Een percentage van de winst als je fiscale partner minstens $hours uur zonder vergoeding of voor minder dan $pay in de onderneming werkt.';
   }
 
   @override
@@ -2706,7 +2755,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get plTaxUnrealisedZelfsHelp =>
-      'Zelfstandigenaftrek uit eerdere jaren die toen niet in de winst paste, gebruikt tot de winst van dit jaar.';
+      'Zelfstandigenaftrek uit eerdere jaren die toen niet in de winst paste. Wordt dit jaar gebruikt voor zover je winst hoger is dan de zelfstandigenaftrek van dit jaar, en alleen als je aan het urencriterium voldoet.';
 
   @override
   String get plTaxZelfstandigenaftrekHelp =>
@@ -2717,8 +2766,9 @@ class AppLocalizationsNl extends AppLocalizations {
       'De inkomensafhankelijke bijdrage Zorgverzekeringswet, over de belastbare winst tot een maximum. Het loon Zvw waarover je werkgever de werkgeversheffing betaalde, verlaagt dat maximum.';
 
   @override
-  String get vatReturnIcpSectionHelp =>
-      'Leveringen aan ondernemers in andere EU-landen, apart opgegeven in de ICP-opgaaf. Zolang je meedoet aan de KOR doe je geen ICP-opgaaf, dus facturen van die datums staan er niet in.';
+  String vatReturnIcpSectionHelp(String max, int quarters) {
+    return 'Leveringen aan ondernemers in andere EU-landen, apart opgegeven in de ICP-opgaaf, met een eigen tijdvak: een kwartaal, of voor goederen een maand, vanaf de maand dat goederen aan EU-ondernemers in een kwartaal boven $max komen en in de $quarters kwartalen erna. Florin zet diensten in dezelfde tijdvakken als goederen, zoals de Belastingdienst toestaat. De Belastingdienst stuurt die niet: je doet hem zelf in Mijn Belastingdienst Zakelijk. Zolang je meedoet aan de KOR doe je geen ICP-opgaaf, dus facturen van die datums staan er niet in. Correcties gaan in de volgende ICP-opgaaf; Florin houdt geen wijzigingen bij in een ingediend ICP-tijdvak.';
+  }
 
   @override
   String vatRow1aHelp(String rate) {
@@ -2735,7 +2785,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String vatRow1dHelp(String rate, String reduced) {
-    return 'Btw over privégebruik van auto\'s van de zaak: $rate of $reduced van de cataloguswaarde, of het werkelijke privédeel met een rittenregistratie. Alleen in de laatste aangifte van het jaar.';
+    return 'Btw over privégebruik van auto\'s van de zaak: $rate of $reduced van de cataloguswaarde inclusief btw en bpm, of het werkelijke privédeel met een rittenregistratie. Alleen in de laatste aangifte van het jaar.';
   }
 
   @override
@@ -2744,7 +2794,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get vatRow3aHelp =>
-      'Uitvoer van goederen naar landen buiten de EU. Diensten aan ondernemers buiten de EU geef je niet aan.';
+      'Uitvoer van goederen naar landen buiten de EU. Diensten belast buiten de EU geef je niet aan.';
 
   @override
   String get vatRow3bHelp =>
@@ -2768,7 +2818,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get expensesFieldPurchaseVatHelp =>
-      'Nederlandse btw als de leverancier die rekende. Verlegd als op de factuur staat dat de btw naar jou is verlegd, of als de leverancier in het buitenland zit: je geeft de btw dan zelf aan en trekt hem weer af.';
+      'Nederlandse btw als de leverancier die rekende. Verlegd als op de factuur staat dat de btw naar jou is verlegd, of als de leverancier in het buitenland zit: je geeft de btw dan zelf aan en trekt hem weer af. Diensten aan onroerende zaken van een EU-leverancier die de btw naar jou verlegt horen in 2a, niet in 4b: kies Naar mij verlegd door een Nederlandse leverancier (2a).';
 
   @override
   String get purchaseVatDomestic => 'Gerekend door de leverancier';
@@ -2827,7 +2877,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get vatTreatmentServicesOutsideEu =>
-      'Diensten aan ondernemer buiten de EU (niet in de btw-aangifte)';
+      'Diensten belast buiten de EU (niet in de btw-aangifte)';
 
   @override
   String get invoiceValidateTreatmentCountry =>
@@ -2835,16 +2885,16 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get invoiceValidateTreatmentConsumer =>
-      'Deze klant is een particulier. Kies Nederlandse btw, de KOR of uitvoer van goederen: btw wordt niet naar een particulier verlegd, en een dienst aan een particulier is in Nederland belast.';
+      'Deze klant is een particulier. Kies Nederlandse btw, de KOR, uitvoer van goederen of, voor een klant buiten de EU, diensten belast buiten de EU: btw wordt niet naar een particulier verlegd.';
 
   @override
   String invoiceEuConsumerNotice(String threshold, String total) {
-    return 'Telecommunicatie-, omroep- en elektronische diensten en afstandsverkopen van goederen aan particulieren in andere EU-landen zijn in hun land belast zodra ze samen in dit of het vorige jaar meer dan $threshold excl. btw zijn (Wet OB 1968 art. 6h, 6k). Je prestaties met Nederlandse btw aan particulieren in andere EU-landen dit jaar, deze factuur meegeteld: $total. Florin kan niet zien welke elektronische diensten zijn, dus telt het ze allemaal, en het maakt de OSS-aangifte niet.';
+    return 'Telecommunicatie-, omroep- en elektronische diensten en afstandsverkopen van goederen aan particulieren in andere EU-landen zijn in hun land belast zodra ze samen in dit of het vorige jaar meer dan $threshold excl. btw zijn. Je prestaties met Nederlandse btw aan particulieren in andere EU-landen dit jaar, deze factuur meegeteld: $total. Florin kan niet zien welke elektronische diensten zijn, dus telt het ze allemaal, en het maakt de OSS-aangifte niet.';
   }
 
   @override
   String invoiceEuConsumerOverNotice(String threshold) {
-    return 'Je prestaties met Nederlandse btw aan particulieren in andere EU-landen zijn in dit of het vorige jaar meer dan $threshold. Zitten er telecommunicatie-, omroep- of elektronische diensten of afstandsverkopen van goederen tussen, dan zijn die belast in het land van de particulier, niet met Nederlandse btw (Wet OB 1968 art. 6h, 6k), meestal via de OSS. Florin berekent dit niet en rekent Nederlandse btw.';
+    return 'Je prestaties met Nederlandse btw aan particulieren in andere EU-landen zijn in dit of het vorige jaar meer dan $threshold. Zitten er telecommunicatie-, omroep- of elektronische diensten of afstandsverkopen van goederen tussen, dan zijn die belast in het land van de particulier, niet met Nederlandse btw, meestal via de OSS. Florin berekent dit niet en rekent Nederlandse btw.';
   }
 
   @override
@@ -2852,7 +2902,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get invoiceSelfBilledHelp =>
-      'Vink aan als de klant, zoals een wederverkoper, de factuur maakt voor wat hij je verschuldigd is. De wet staat dit toe als jullie dat vooraf hebben afgesproken en je elke factuur aanvaardt. Florin legt hem vast met het nummer van de klant en maakt geen pdf: het document van de klant is de factuur.';
+      'Vink aan als de klant, zoals een wederverkoper, de factuur maakt voor wat hij je verschuldigd is. De wet staat dit toe als jullie dat vooraf hebben afgesproken en je elke factuur aanvaardt. Florin legt hem vast met het nummer van de klant en maakt geen pdf: het document van de klant is de factuur. Vul de bedragen en btw precies in zoals de factuur van de klant ze vermeldt: je bent de btw verschuldigd die daarop staat.';
 
   @override
   String get invoiceFieldNumberSelfBilledHelp =>
@@ -2891,7 +2941,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get clientsConsumerHelp =>
-      'Vink dit aan voor een klant die als particulier koopt. Btw wordt nooit naar een particulier verlegd en er is geen ICP-opgaaf voor, dus Florin biedt alleen Nederlandse btw, de KOR of uitvoer van goederen. Een dienst aan een particulier is belast waar jij gevestigd bent (Wet OB 1968 art. 6 lid 2), behalve telecommunicatie-, omroep- en elektronische diensten, die belast zijn waar de particulier woont (art. 6h) zodra zulke prestaties aan andere EU-landen een drempel per jaar overschrijden (art. 6k). Voor een particulier in Nederland hoef je geen factuur uit te reiken (art. 34c).';
+      'Vink dit aan voor een klant die als particulier koopt. Btw wordt nooit naar een particulier verlegd en er is geen ICP-opgaaf voor. Een dienst aan een particulier is belast waar jij gevestigd bent, met uitzonderingen: telecommunicatie-, omroep- en elektronische diensten zijn belast waar de particulier woont, voor particulieren in andere EU-landen pas zodra zulke prestaties een drempel per jaar overschrijden; advies, reclame, licenties, gegevensverwerking en soortgelijke diensten aan een particulier buiten de EU zijn daar belast; gestreamde of virtuele culturele, educatieve en vermaaksactiviteiten zijn belast waar de particulier is. Voor een particulier in Nederland hoef je geen factuur uit te reiken.';
 
   @override
   String get clientsBadgeMerchantOfRecord => 'Merchant of record';
@@ -2901,11 +2951,11 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get vatRowOutsideReturn =>
-      'Diensten aan ondernemers buiten de EU (niet in de aangifte)';
+      'Diensten belast buiten de EU (niet in de aangifte)';
 
   @override
   String get vatRowOutsideReturnHelp =>
-      'Omzet uit diensten aan ondernemers buiten de EU. Volgens de Belastingdienst geef je die niet aan in de Nederlandse aangifte als de dienst buiten de EU is belast. Getoond zodat je ziet waar die omzet is gebleven.';
+      'Omzet uit diensten belast buiten de EU: aan ondernemers daar en, als de wet de dienst daar plaatst, aan particulieren daar. Volgens de Belastingdienst geef je diensten aan ondernemers buiten de EU niet aan in de Nederlandse aangifte als de dienst buiten de EU is belast, en btw wordt alleen geheven over prestaties in Nederland. Getoond zodat je ziet waar die omzet is gebleven.';
 
   @override
   String get vatShortReverseCharge => 'Verlegd';
@@ -2990,7 +3040,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String settingsKorStartHelp(String limit) {
-    return 'De eerste dag waarop de kleineondernemersregeling (KOR) voor je geldt, zoals in de bevestiging van de Belastingdienst. Tot die datum doe je elke aangifte zoals gewoonlijk. Onder de KOR bereken je geen btw, doe je geen gewone btw-aangifte en vraag je geen btw terug, zolang je omzet in Nederland hoogstens $limit per jaar is. Laat leeg als je niet meedoet.';
+    return 'De eerste dag waarop de kleineondernemersregeling (KOR) voor je geldt, zoals in de bevestiging van de Belastingdienst. Tot die datum doe je elke aangifte zoals gewoonlijk. Onder de KOR bereken je geen btw, doe je geen gewone btw-aangifte en vraag je geen btw terug, zolang je omzet in Nederland hoogstens $limit per jaar is. Kwam je omzet in het jaar voor het jaar van aanmelding boven $limit, dan geldt de KOR dat jaar niet. Laat leeg als je niet meedoet.';
   }
 
   @override
@@ -2998,15 +3048,20 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get settingsKorEndHelp =>
-      'De eerste dag waarop de KOR niet meer geldt nadat je je zelf hebt afgemeld. Laat anders leeg: als je omzet boven de grens komt, beëindigt Florin de KOR vanaf die factuur.';
+      'De eerste dag waarop de KOR niet meer geldt nadat je je zelf hebt afgemeld, zoals in de brief van de Belastingdienst. Laat anders leeg: als je omzet boven de grens komt, beëindigt Florin de KOR vanaf die levering.';
 
   @override
   String get settingsValidateKorStart =>
       'De KOR begint op de eerste dag van een aangiftetijdvak, dus vul de 1e van een maand in, zoals in de bevestiging van de Belastingdienst.';
 
   @override
+  String settingsValidateKorStartBlocked(String date) {
+    return 'Nadat je omzet boven de grens kwam, kan de KOR pas weer ingaan vanaf $date.';
+  }
+
+  @override
   String get settingsValidateKorEndDay =>
-      'Een afmelding gaat in op de eerste dag van een aangiftetijdvak, dus vul de 1e van een maand in.';
+      'Een afmelding gaat in op de eerste dag van een maand, normaal een kalenderkwartaal. Vul de datum uit de brief van de Belastingdienst in.';
 
   @override
   String get settingsValidateKorEndBeforeStart =>
@@ -3035,7 +3090,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String dashboardKorHelp(String limit) {
-    return 'Je omzet die meetelt voor de kleineondernemersregeling: prestaties belast in Nederland, ook 0% en verlegging binnenland, niet diensten die in het buitenland belast zijn. Boven $limit in een kalenderjaar eindigt de KOR met de levering die de grens overschrijdt, voor de rest van dat jaar en het jaar erna. De KOR gaat niet vanzelf: hij geldt pas als je je aanmeldt en de Belastingdienst de ingangsdatum bevestigt. Tot dan doe je elk kwartaal aangifte, hoe laag je omzet ook is.';
+    return 'Je omzet die meetelt voor de kleineondernemersregeling: prestaties belast in Nederland, ook 0% en verlegging binnenland, niet diensten die in het buitenland belast zijn. Boven $limit in een kalenderjaar eindigt de KOR met de levering die de grens overschrijdt, voor de rest van dat jaar en het jaar erna. De KOR gaat niet vanzelf: hij geldt pas als je je aanmeldt en de Belastingdienst de ingangsdatum bevestigt. Tot dan doe je elk tijdvak aangifte, hoe laag je omzet ook is.';
   }
 
   @override
@@ -3052,24 +3107,28 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get vatReturnKorNotice =>
-      'Je doet dit hele kwartaal mee aan de KOR en bent er geen btw over verschuldigd, dus je doet geen aangifte. Stuurt de Belastingdienst je toch een aangifte, dien die dan in.';
+      'Je doet dit hele tijdvak mee aan de KOR en bent er geen btw over verschuldigd, dus je doet geen aangifte. Stuurt de Belastingdienst je toch een aangifte, dien die dan in.';
 
   @override
   String get vatReturnKorPartNotice =>
-      'De KOR geldt voor een deel van dit kwartaal. Facturen die onder de KOR zijn vrijgesteld staan niet in de aangifte en btw op inkopen in dat deel vraag je niet terug. Doe aangifte voor het deel buiten de KOR.';
+      'De KOR geldt voor een deel van dit tijdvak. Facturen die onder de KOR zijn vrijgesteld staan niet in de aangifte en btw op inkopen in dat deel vraag je niet terug. Doe aangifte voor het deel buiten de KOR.';
 
   @override
   String get vatReturnKorIncidentalNotice =>
-      'Je doet dit hele kwartaal mee aan de KOR, maar je bent er btw over verschuldigd, zoals btw die naar je is verlegd (2a, 4a of 4b) en die je niet aftrekt. Daarom doe je over dit kwartaal aangifte. De Belastingdienst stuurt die niet vanzelf: vraag hem schriftelijk aan bij je belastingkantoor zodra het kwartaal voorbij is. Florin toont de gewone termijn als datum om aan te houden.';
+      'Je doet dit hele tijdvak mee aan de KOR, maar je bent er btw over verschuldigd, zoals btw die naar je is verlegd (2a, 4a of 4b) en die je niet aftrekt. Daarom doe je er aangifte over. De Belastingdienst stuurt die niet vanzelf: je vraagt hem per kalenderkwartaal schriftelijk aan bij je belastingkantoor, na afloop van het kwartaal, en doet hem op papier. Florin toont de gewone termijn als datum om aan te houden.';
 
   @override
   String get vatReturnNilNotice =>
-      'Niets aan te geven dit kwartaal. Je doet toch op tijd aangifte: een nihilaangifte (0-aangifte). Zonder aangifte stuurt de Belastingdienst een naheffingsaanslag en een boete.';
+      'Niets aan te geven in dit tijdvak. Je doet toch op tijd aangifte: een nihilaangifte (0-aangifte). Zonder aangifte stuurt de Belastingdienst een naheffingsaanslag en een boete.';
 
   @override
   String vatReturnKorExceeded(String date, String limit) {
     return 'Je omzet voor de KOR kwam op $date boven $limit. De KOR eindigde met die levering: vanaf dan bereken je btw en doe je aangifte. Meld je af in Mijn Belastingdienst Zakelijk; je kunt dit jaar en volgend jaar niet opnieuw meedoen.';
   }
+
+  @override
+  String get vatReturnKorPrivateUseNotice =>
+      'De geschatte btw op privégebruik van een auto telt ook de tijd dit jaar waarin de KOR gold. Of die verschuldigd is zolang de KOR geldt, staat niet vast in de bronnen waarop Florin zich baseert; Florin telt hem mee, de uitkomst waarbij je meer betaalt.';
 
   @override
   String get errorDuplicate =>
@@ -3124,7 +3183,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String settingsKorSectionHelp(String limit) {
-    return 'Een btw-vrijstelling voor ondernemers met hoogstens $limit omzet in Nederland per jaar. Hij gaat niet vanzelf: je meldt je aan en af bij de Belastingdienst, en zonder KOR doe je elk kwartaal aangifte. Vul hier de datums in zodat Florin hem volgt.';
+    return 'Een btw-vrijstelling voor ondernemers met hoogstens $limit omzet in Nederland per jaar. Hij gaat niet vanzelf: je meldt je aan en af bij de Belastingdienst, en zonder KOR doe je elk tijdvak aangifte. Vul hier de datums in zodat Florin hem volgt.';
   }
 
   @override
@@ -3143,7 +3202,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String receiptsAssetHelp(int years) {
-    return 'De aankoopfactuur van dit bedrijfsmiddel en ander bewijs, als pdf, foto of scan. Die hoort in je administratie zolang je het bedrijfsmiddel gebruikt, en $years jaar daarna.';
+    return 'De aankoopfactuur van dit bedrijfsmiddel en ander bewijs, als pdf, foto of scan. Die hoort in je administratie zolang je het bedrijfsmiddel gebruikt, en $years jaar daarna. Voor onroerende zaken is de termijn langer en telt die vanaf het jaar van ingebruikname; die datum toont Florin niet.';
   }
 
   @override
@@ -3196,7 +3255,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String receiptsKeepUntilHelp(int years, int navordering, int foreign) {
-    return 'De Belastingdienst vraagt facturen en bonnen $years jaar te bewaren. Florin telt vanaf het einde van het jaar waar ze bij horen en verwijdert ze nooit. De Belastingdienst kan over een jaar nog belasting navorderen tot $navordering jaar nadat de belasting verschuldigd werd, langer als je uitstel had voor de aangifte, en tot $foreign jaar voor inkomen of vermogen in het buitenland (AWR art. 16). Bewaar de administratie van zo\'n jaar dus minstens zo lang.';
+    return 'De Belastingdienst vraagt facturen en bonnen $years jaar te bewaren. Florin telt vanaf het einde van het jaar waar ze bij horen, dus de getoonde datum is de vroegste: de termijn begint pas als een gegeven niet meer actueel is, zoals een contract dat nog loopt. Florin verwijdert ze nooit. Los daarvan kan de Belastingdienst over een jaar nog belasting navorderen tot $navordering jaar nadat de belasting verschuldigd werd, langer als je uitstel had voor de aangifte, en tot $foreign jaar voor inkomen of vermogen in het buitenland.';
   }
 
   @override
@@ -3211,12 +3270,12 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String receiptsRejectedTooLarge(String name, String max) {
-    return '$name is groter dan $max. Sla de scan op met een lagere resolutie, met elke pagina leesbaar, en voeg hem opnieuw toe.';
+    return '$name is groter dan $max. Sla een scan van papier op met een lagere resolutie, met elke pagina leesbaar, en voeg hem opnieuw toe. Een bestand dat je digitaal ontving, blijft in de vorm waarin je het ontving: bewaar het in je eigen administratie.';
   }
 
   @override
   String receiptsRejectedType(String name) {
-    return '$name is geen pdf, JPEG, PNG, HEIC, TIFF of UBL-e-factuur. Sla hem op of druk hem af als pdf en voeg hem opnieuw toe.';
+    return '$name is geen pdf, JPEG, PNG, HEIC, TIFF of UBL-e-factuur, dus Florin kan hem niet opslaan. Bewaar het bestand zoals je het ontving in je eigen administratie.';
   }
 
   @override
