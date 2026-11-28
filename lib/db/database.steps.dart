@@ -6064,6 +6064,416 @@ i1.GeneratedColumn<int> _column_159(String aliasedName) =>
       $customConstraints: 'NOT NULL DEFAULT 0',
       defaultValue: const i1.CustomExpression('0'),
     );
+
+final class Schema13 extends i0.VersionedSchema {
+  Schema13({required super.database}) : super(version: 13);
+  @override
+  late final List<i1.DatabaseSchemaEntity> entities = [
+    businessProfiles,
+    clients,
+    invoices,
+    invoiceLines,
+    fixedAssets,
+    expenses,
+    hourEntries,
+    mileageTrips,
+    pensionEntries,
+    vatReturns,
+    taxYearInputs,
+    receipts,
+    vatFiledFigures,
+    invoicesInvoiceDate,
+    expensesDate,
+    hourEntriesDate,
+    mileageTripsDate,
+  ];
+  late final Shape14 businessProfiles = Shape14(
+    source: i0.VersionedTable(
+      entityName: 'business_profiles',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_4,
+        _column_5,
+        _column_7,
+        _column_8,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape16 clients = Shape16(
+    source: i0.VersionedTable(
+      entityName: 'clients',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_9,
+        _column_1,
+        _column_10,
+        _column_11,
+        _column_12,
+        _column_4,
+        _column_13,
+        _column_14,
+        _column_15,
+        _column_16,
+        _column_17,
+        _column_18,
+        _column_19,
+        _column_20,
+        _column_21,
+        _column_140,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape2 invoices = Shape2(
+    source: i0.VersionedTable(
+      entityName: 'invoices',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_9,
+        _column_22,
+        _column_23,
+        _column_24,
+        _column_25,
+        _column_26,
+        _column_27,
+        _column_28,
+        _column_29,
+        _column_30,
+        _column_31,
+        _column_32,
+        _column_33,
+        _column_34,
+        _column_35,
+        _column_36,
+        _column_37,
+        _column_19,
+        _column_38,
+        _column_39,
+        _column_40,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape3 invoiceLines = Shape3(
+    source: i0.VersionedTable(
+      entityName: 'invoice_lines',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_9,
+        _column_41,
+        _column_42,
+        _column_43,
+        _column_44,
+        _column_45,
+        _column_46,
+        _column_47,
+        _column_48,
+        _column_49,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape12 fixedAssets = Shape12(
+    source: i0.VersionedTable(
+      entityName: 'fixed_assets',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_9,
+        _column_50,
+        _column_51,
+        _column_52,
+        _column_127,
+        _column_76,
+        _column_128,
+        _column_129,
+        _column_130,
+        _column_53,
+        _column_54,
+        _column_55,
+        _column_56,
+        _column_57,
+        _column_58,
+        _column_59,
+        _column_60,
+        _column_61,
+        _column_62,
+        _column_63,
+        _column_64,
+        _column_65,
+        _column_66,
+        _column_67,
+        _column_19,
+        _column_69,
+        _column_70,
+        _column_131,
+        _column_132,
+        _column_133,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape17 expenses = Shape17(
+    source: i0.VersionedTable(
+      entityName: 'expenses',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_9,
+        _column_71,
+        _column_72,
+        _column_42,
+        _column_73,
+        _column_74,
+        _column_75,
+        _column_46,
+        _column_76,
+        _column_47,
+        _column_40,
+        _column_55,
+        _column_77,
+        _column_78,
+        _column_79,
+        _column_19,
+        _column_80,
+        _column_81,
+        _column_141,
+        _column_82,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape20 hourEntries = Shape20(
+    source: i0.VersionedTable(
+      entityName: 'hour_entries',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_9,
+        _column_71,
+        _column_42,
+        _column_83,
+        _column_84,
+        _column_85,
+        _column_144,
+        _column_19,
+        _column_142,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape7 mileageTrips = Shape7(
+    source: i0.VersionedTable(
+      entityName: 'mileage_trips',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_9,
+        _column_71,
+        _column_82,
+        _column_86,
+        _column_87,
+        _column_88,
+        _column_89,
+        _column_90,
+        _column_91,
+        _column_92,
+        _column_93,
+        _column_94,
+        _column_19,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape25 pensionEntries = Shape25(
+    source: i0.VersionedTable(
+      entityName: 'pension_entries',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(year)'],
+      columns: [
+        _column_95,
+        _column_96,
+        _column_97,
+        _column_160,
+        _column_98,
+        _column_99,
+        _column_100,
+        _column_101,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape21 vatReturns = Shape21(
+    source: i0.VersionedTable(
+      entityName: 'vat_returns',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(year, kind, number)'],
+      columns: [_column_95, _column_145, _column_146, _column_103, _column_104],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape24 taxYearInputs = Shape24(
+    source: i0.VersionedTable(
+      entityName: 'tax_year_inputs',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(year)'],
+      columns: [
+        _column_95,
+        _column_105,
+        _column_143,
+        _column_106,
+        _column_107,
+        _column_108,
+        _column_109,
+        _column_110,
+        _column_111,
+        _column_112,
+        _column_113,
+        _column_134,
+        _column_135,
+        _column_136,
+        _column_137,
+        _column_138,
+        _column_139,
+        _column_6,
+        _column_153,
+        _column_154,
+        _column_155,
+        _column_156,
+        _column_157,
+        _column_158,
+        _column_159,
+        _column_147,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape11 receipts = Shape11(
+    source: i0.VersionedTable(
+      entityName: 'receipts',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [
+        'PRIMARY KEY(id)',
+        'CHECK((expense_id IS NOT NULL)+(asset_id IS NOT NULL)+(invoice_id IS NOT NULL)<= 1)',
+        'CHECK(removed_at IS NOT NULL OR(expense_id IS NOT NULL)+(asset_id IS NOT NULL)+(invoice_id IS NOT NULL)= 1)',
+        'CHECK(removed_at IS NULL OR(removed_from_kind IS NOT NULL AND removed_from_date IS NOT NULL AND removed_from_name IS NOT NULL))',
+      ],
+      columns: [
+        _column_114,
+        _column_115,
+        _column_116,
+        _column_117,
+        _column_95,
+        _column_118,
+        _column_119,
+        _column_120,
+        _column_121,
+        _column_122,
+        _column_123,
+        _column_124,
+        _column_125,
+        _column_126,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape23 vatFiledFigures = Shape23(
+    source: i0.VersionedTable(
+      entityName: 'vat_filed_figures',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(year, kind, number, rubriek)'],
+      columns: [
+        _column_95,
+        _column_148,
+        _column_149,
+        _column_150,
+        _column_151,
+        _column_152,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Index invoicesInvoiceDate = i1.Index(
+    'invoices_invoice_date',
+    'CREATE INDEX invoices_invoice_date ON invoices (invoice_date)',
+  );
+  final i1.Index expensesDate = i1.Index(
+    'expenses_date',
+    'CREATE INDEX expenses_date ON expenses (date)',
+  );
+  final i1.Index hourEntriesDate = i1.Index(
+    'hour_entries_date',
+    'CREATE INDEX hour_entries_date ON hour_entries (date)',
+  );
+  final i1.Index mileageTripsDate = i1.Index(
+    'mileage_trips_date',
+    'CREATE INDEX mileage_trips_date ON mileage_trips (date)',
+  );
+}
+
+class Shape25 extends i0.VersionedTable {
+  Shape25({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<int> get year =>
+      columnsByName['year']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get priorYearIncome =>
+      columnsByName['prior_year_income']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get factorA =>
+      columnsByName['factor_a']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get pensionPremiumsPriorYear =>
+      columnsByName['pension_premiums_prior_year']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get reserveringsruimte =>
+      columnsByName['reserveringsruimte']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get plannedContribution =>
+      columnsByName['planned_contribution']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get aovInsured =>
+      columnsByName['aov_insured']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get monthlyAovPremium =>
+      columnsByName['monthly_aov_premium']! as i1.GeneratedColumn<int>;
+}
+
+i1.GeneratedColumn<int> _column_160(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'pension_premiums_prior_year',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NULL',
+    );
 i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
   required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
@@ -6076,6 +6486,7 @@ i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema10 schema) from9To10,
   required Future<void> Function(i1.Migrator m, Schema11 schema) from10To11,
   required Future<void> Function(i1.Migrator m, Schema12 schema) from11To12,
+  required Future<void> Function(i1.Migrator m, Schema13 schema) from12To13,
 }) {
   return (currentVersion, database) async {
     switch (currentVersion) {
@@ -6134,6 +6545,11 @@ i0.MigrationStepWithVersion migrationSteps({
         final migrator = i1.Migrator(database, schema);
         await from11To12(migrator, schema);
         return 12;
+      case 12:
+        final schema = Schema13(database: database);
+        final migrator = i1.Migrator(database, schema);
+        await from12To13(migrator, schema);
+        return 13;
       default:
         throw ArgumentError.value('Unknown migration from $currentVersion');
     }
@@ -6152,6 +6568,7 @@ i1.OnUpgrade stepByStep({
   required Future<void> Function(i1.Migrator m, Schema10 schema) from9To10,
   required Future<void> Function(i1.Migrator m, Schema11 schema) from10To11,
   required Future<void> Function(i1.Migrator m, Schema12 schema) from11To12,
+  required Future<void> Function(i1.Migrator m, Schema13 schema) from12To13,
 }) => i0.VersionedSchema.stepByStepHelper(
   step: migrationSteps(
     from1To2: from1To2,
@@ -6165,5 +6582,6 @@ i1.OnUpgrade stepByStep({
     from9To10: from9To10,
     from10To11: from10To11,
     from11To12: from11To12,
+    from12To13: from12To13,
   ),
 );

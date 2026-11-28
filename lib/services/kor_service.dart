@@ -15,7 +15,8 @@ class KorStatus {
 
   /// Per calendar year, the date of the supply that took the turnover past
   /// the limit. The scheme ends with that supply, for the rest of that year
-  /// and the next (Wet OB 1968 art. 25a lid 9).
+  /// and the next (Wet OB 1968 art. 25a lid 9), and applies again only from
+  /// a new start.
   final Map<int, DateTime> exceededOn;
 
   /// Per calendar year, the turnover that counts for the limit.
@@ -42,9 +43,25 @@ class KorStatus {
     final s = start;
     if (s == null || date.isBefore(s)) return false;
     if (end != null && !date.isBefore(end!)) return false;
-    final exceeded = exceededOn[date.year];
-    if (exceeded != null && !date.isBefore(exceeded)) return false;
-    return !exceededOn.containsKey(date.year - 1);
+    for (final d in exceededOn.values) {
+      if (date.isBefore(d)) continue;
+      // Passing the limit ends the scheme; it applies again only after a new
+      // registration, at the earliest two calendar years later (art. 25a
+      // lid 5 and 9).
+      if (!s.isAfter(d) || date.year <= d.year + 1) return false;
+    }
+    return true;
+  }
+
+  /// For a start of the scheme on [date], the first day a start is possible
+  /// again when the limit was passed before [date] in that year or the year
+  /// before (art. 25a lid 9), or null when [date] is not blocked.
+  DateTime? startBlockedUntil(DateTime date) {
+    for (final d in exceededOn.values) {
+      final until = DateTime(d.year + 2);
+      if (date.isAfter(d) && date.isBefore(until)) return until;
+    }
+    return null;
   }
 
   /// Whether the scheme covers every day from [first] to [last], so no
@@ -92,8 +109,10 @@ abstract final class KorService {
       !assetSales.contains(i.id) &&
       !assetSales.contains(i.correctedInvoiceId);
 
-  /// The turnover that counts, from issued invoices in [year] up to and
-  /// including [through], leaving out [excludingId].
+  /// The turnover that counts, from issued invoices for supplies made in
+  /// [year] up to and including [through], leaving out [excludingId]. A
+  /// supply counts on the day it was made, the supply date when it precedes
+  /// the invoice (art. 25 lid 1 a).
   static int turnover(
     Iterable<Invoice> invoices,
     int year, {
@@ -105,8 +124,8 @@ abstract final class KorService {
         (i) =>
             _countsInvoice(i, assetSales) &&
             i.id != excludingId &&
-            i.invoiceDate.year == year &&
-            (through == null || !i.invoiceDate.isAfter(through)),
+            i.suppliedOn.year == year &&
+            (through == null || !i.suppliedOn.isAfter(through)),
       )
       .fold(0, (s, i) => s + i.signedExclVat);
 
@@ -120,7 +139,7 @@ abstract final class KorService {
     final byYear = <int, List<Invoice>>{};
     for (final i in invoices) {
       if (_countsInvoice(i, assetSales)) {
-        byYear.putIfAbsent(i.invoiceDate.year, () => []).add(i);
+        byYear.putIfAbsent(i.suppliedOn.year, () => []).add(i);
       }
     }
     final exceeded = <int, DateTime>{};
@@ -128,14 +147,14 @@ abstract final class KorService {
     for (final MapEntry(key: year, value: list) in byYear.entries) {
       final limit = taxYears[year]?.korThreshold;
       list.sort((a, b) {
-        final byDate = a.invoiceDate.compareTo(b.invoiceDate);
+        final byDate = a.suppliedOn.compareTo(b.suppliedOn);
         return byDate != 0 ? byDate : a.id.compareTo(b.id);
       });
       var total = 0;
       for (final i in list) {
         total += i.signedExclVat;
         if (limit != null && total > limit && !exceeded.containsKey(year)) {
-          exceeded[year] = i.invoiceDate;
+          exceeded[year] = i.suppliedOn;
         }
       }
       totals[year] = total;
@@ -148,9 +167,9 @@ abstract final class KorService {
     );
   }
 
-  /// Whether an invoice of [amount] excl. VAT on [date] with [treatment]
-  /// takes the turnover past [limit], counting the other issued invoices of
-  /// that year up to that date.
+  /// Whether an invoice of [amount] excl. VAT for a supply made on [date]
+  /// with [treatment] takes the turnover past [limit], counting the other
+  /// issued invoices of that year up to that date.
   static bool wouldExceed({
     required Iterable<Invoice> invoices,
     required DateTime date,
@@ -246,38 +265,44 @@ abstract final class KorService {
     return days == 0 ? 1 : free / days;
   }
 
-  /// The days of [year] in which [asset] is in the business.
+  /// The days of [year] whose figures set the taxed share of [asset]: the
+  /// whole boekjaar (Uitvoeringsbeschikking OB 1968 art. 12 lid 3), up to
+  /// the sale in the year of sale.
   static (DateTime, DateTime) _useIn(FixedAsset asset, int year) {
-    final start = asset.purchaseDate.year == year
-        ? asset.purchaseDate
-        : DateTime(year);
     final sold = asset.disposalDate;
     final end = sold != null && sold.year == year
         ? sold
         : DateTime(year, 12, 31);
-    return (start, end);
+    return (DateTime(year), end);
   }
 
   /// The BTW to repay in [year] on assets whose purchase BTW was deducted,
   /// because the scheme lowers the taxed share of their use (herziening,
-  /// `docs/legal.md`). In the year of purchase the whole deduction follows
-  /// that year's share; in the later years of the period one part a year
-  /// follows the change from the first year's share, and a sale while the
-  /// scheme applies settles the remaining years at once as exempt use. Only
-  /// a change above [TaxYearRules.vatRevisionMinShift] of the first year's
-  /// share counts, and the later years' total below
-  /// [TaxYearRules.korRevisionMin] is not revised. BTW the user may
-  /// get back on leaving the scheme is not computed: the cautious side.
-  static Map<FixedAsset, int> revision({
+  /// `docs/legal.md`). Only a year in which the asset is in the business on
+  /// a day the scheme applies is revised. In the year of purchase the whole
+  /// deduction follows that year's share (Uitvoeringsbeschikking OB 1968
+  /// art. 12 lid 3); in
+  /// the later years of the period one part a year follows the change from
+  /// the first year's share (art. 13 lid 3). These go in [yearEnd], for the
+  /// last return of the year. A later year's change of at most
+  /// [TaxYearRules.vatRevisionMinShift] of the first year's share, and the
+  /// later years' total below [TaxYearRules.korRevisionMin], are not
+  /// revised (art. 13 lid 4). A sale while the scheme applies settles the
+  /// remaining years at once as exempt use (art. 13a lid 1 b); it goes in
+  /// [sales], for the return of the sale's period (art. 13a lid 2). BTW the
+  /// user may get back on leaving the scheme is not computed: the cautious
+  /// side.
+  static ({Map<FixedAsset, int> yearEnd, Map<FixedAsset, int> sales}) revision({
     required KorStatus status,
     required List<FixedAsset> assets,
     required List<Invoice> invoices,
     required int year,
     required TaxYearRules rules,
   }) {
-    if (!status.participates) return const {};
+    if (!status.participates) return (yearEnd: const {}, sales: const {});
     final firstYear = <FixedAsset, int>{};
     final laterYears = <FixedAsset, int>{};
+    final sales = <FixedAsset, int>{};
     for (final a in assets) {
       final bought = a.purchaseDate.year;
       if (a.vatToReclaim <= 0 ||
@@ -286,9 +311,12 @@ abstract final class KorService {
           (a.disposalDate != null && a.disposalDate!.year < year)) {
         continue;
       }
-      // The share over the days the asset is in use; the deduction was
-      // made for full taxed use.
+      // The deduction was made for full taxed use. An asset that is not in
+      // the business on any day the scheme applies in the year served only
+      // taxed supplies and keeps its deduction (art. 11 lid 1 a).
       final (from, to) = _useIn(a, year);
+      final inUse = a.purchaseDate.isAfter(from) ? a.purchaseDate : from;
+      if (!status.touches(inUse, to)) continue;
       final share = taxedShare(status, invoices, from, to);
       final (firstFrom, firstTo) = _useIn(a, bought);
       final first = year == bought
@@ -298,20 +326,25 @@ abstract final class KorService {
       final soldExempt =
           sold != null && sold.year == year && status.appliesOn(sold);
       final shift = first - (soldExempt ? 0.0 : share);
-      if (shift <= rules.vatRevisionMinShift * first) continue;
-      if (year == bought) {
-        firstYear[a] = (a.vatToReclaim * shift).round();
-      } else if (soldExempt) {
+      if (shift <= 0 ||
+          (year != bought && shift <= rules.vatRevisionMinShift * first)) {
+        continue;
+      }
+      if (soldExempt) {
         final remaining = bought + rules.vatRevisionYears - year;
-        firstYear[a] =
-            (a.vatToReclaim * remaining / rules.vatRevisionYears * shift)
-                .round();
+        sales[a] = (a.vatToReclaim * remaining / rules.vatRevisionYears * shift)
+            .round();
+      } else if (year == bought) {
+        firstYear[a] = (a.vatToReclaim * shift).round();
       } else {
         laterYears[a] = (a.vatToReclaim / rules.vatRevisionYears * shift)
             .round();
       }
     }
     final later = laterYears.values.fold(0, (s, v) => s + v);
-    return {...firstYear, if (later >= rules.korRevisionMin) ...laterYears};
+    return (
+      yearEnd: {...firstYear, if (later >= rules.korRevisionMin) ...laterYears},
+      sales: sales,
+    );
   }
 }

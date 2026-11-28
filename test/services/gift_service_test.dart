@@ -52,4 +52,22 @@ void main() {
       });
     },
   );
+
+  test('gifts without BTW do not count toward the threshold '
+      '(Belastingdienst, drempelbedrag giften)', () {
+    final withoutVat = gift(
+      1,
+      'Jan Klant',
+      20000,
+    ).copyWith(vatRate: VatRate.exempt, vatAmount: 0, vatToReclaim: 0);
+    final withVat = gift(2, 'Jan Klant', 5000);
+    final applied = GiftService.applyDeductionRule([
+      withoutVat,
+      withVat,
+    ], taxRulesFor);
+    expect(applied.last.vatToReclaim, withVat.vatToReclaim);
+    expect(GiftService.totalsByRecipient([withoutVat, withVat], 2026), {
+      'jan klant': 5000,
+    });
+  });
 }

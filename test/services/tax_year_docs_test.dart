@@ -60,4 +60,24 @@ void main() {
       expect(fixed, isEmpty, reason: 'Use a placeholder in $path');
     }
   });
+
+  test('texts cite no article, statute or publication', () {
+    // Sources live in docs/legal.md, docs/tax-years and code comments.
+    final citation = RegExp(
+      r'\bart\.|\b[Aa]rtikel\b|\b[Aa]rticle\b|\blid\b|\bStcrt\b|\bStb\.|'
+      r'Staatscourant|Staatsblad|\bBW \d|Wet OB|Wet IB|\bAWR\b|Richtlijn|'
+      r'Directive|Besluit|Uitvoeringsbeschikking|\(Belastingdienst, |ECLI',
+    );
+    for (final path in ['lib/l10n/app_en.arb', 'lib/l10n/app_nl.arb']) {
+      final arb = jsonDecode(File(path).readAsStringSync()) as Map;
+      final cited = [
+        for (final MapEntry(:key, :value) in arb.entries)
+          if (!(key as String).startsWith('@') &&
+              value is String &&
+              citation.hasMatch(value))
+            key,
+      ];
+      expect(cited, isEmpty, reason: 'Remove the citation in $path');
+    }
+  });
 }

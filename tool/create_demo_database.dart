@@ -161,6 +161,14 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     WetDbaRisk.low,
     consumer: true,
   );
+  final consumerUs = await client(
+    'Jamie Example',
+    'US',
+    null,
+    '12 Example Avenue\nPortland, OR 97201\nUnited States',
+    WetDbaRisk.low,
+    consumer: true,
+  );
   await client(
     'Oud Klant BV',
     'NL',
@@ -305,6 +313,18 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     lines: [('Drukwerk posters', 200, 450, VatRate.high)],
     treatment: VatTreatment.euGoods,
   );
+  // Goods to EU businesses pass € 50.000 in August, the second month of
+  // Q3: one ICP-opgaaf over July and August due 30 September, then one per
+  // month (Wet OB 1968 art. 37a lid 3).
+  for (final (day, copies) in [(5, 6000), (20, 4200)]) {
+    await invoice(
+      clientId: belgian,
+      date: DateTime(_year, 8, day),
+      lines: [('Drukwerk catalogi', copies.toDouble(), 500, VatRate.high)],
+      treatment: VatTreatment.euGoods,
+      unit: 'stuk',
+    );
+  }
   // A service supplied in September and invoiced in October: rubriek 3b and
   // the ICP-opgaaf of the third quarter (Belastingdienst, Opgaaf ICP).
   await invoice(
@@ -363,6 +383,16 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
     clientId: dutch,
     date: DateTime(_year, 11, 20),
     lines: [('Ontwerp jaarverslag', 30, 8500, VatRate.high)],
+    status: InvoiceStatus.draft,
+  );
+  // Advice to a private person outside the EU is taxed where that person
+  // lives (Wet OB 1968 art. 6i). A draft, so the year's figures stay as
+  // they are.
+  await invoice(
+    clientId: consumerUs,
+    date: DateTime(_year, 11, 24),
+    lines: [('Advies huisstijl', 4, 9500, VatRate.high)],
+    treatment: VatTreatment.servicesOutsideEu,
     status: InvoiceStatus.draft,
   );
   // The sale of a used monitor, linked to its asset below: its amount is the
@@ -529,7 +559,9 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
   );
   // Bought in a year without rules, sold with a gain kept in the
   // herinvesteringsreserve: shows the deduction input, the
-  // desinvesteringsbijtelling and the reserve.
+  // desinvesteringsbijtelling and the reserve. Sold under the KOR, its
+  // herziening settles in the return of Q1 (Uitvoeringsbeschikking OB 1968
+  // art. 13a lid 2), which then needs an incidental return.
   await asset(
     'Fotocamera',
     400000,
@@ -836,18 +868,21 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
   );
 
   // Gifts: one recipient stays within the threshold of the Besluit
-  // uitsluiting aftrek omzetbelasting 1968 art. 4, the other passes it.
-  for (final (day, recipient, amount) in [
-    (8, 'Voorbeeld Media BV, M. de Vries', 4500),
-    (9, 'Bureau Fictief, A. Jansen', 15000),
-    (10, 'Bureau Fictief, A. Jansen', 12000),
+  // uitsluiting aftrek omzetbelasting 1968 art. 4, as a gift voucher without
+  // BTW does not count toward it, the other passes it.
+  for (final (day, recipient, description, amount, rate) in [
+    (8, 'Voorbeeld Media BV, M. de Vries', 'Kerstpakket', 4500, VatRate.high),
+    (8, 'Voorbeeld Media BV, M. de Vries', 'Cadeaubon', 25000, VatRate.exempt),
+    (9, 'Bureau Fictief, A. Jansen', 'Kerstpakket', 15000, VatRate.high),
+    (10, 'Bureau Fictief, A. Jansen', 'Kerstpakket', 12000, VatRate.high),
   ]) {
     await expense(
       DateTime(_year, 12, day),
       'Wijnhandel Voorbeeld',
-      'Kerstpakket',
+      description,
       ExpenseCategory.gifts,
       amount,
+      rate: rate,
       recipient: recipient,
     );
   }
@@ -1025,8 +1060,8 @@ Future<void> fillDemo(AppDatabase db, {required String folder}) async {
       partnerPay: Value(150000),
       // The year-end figures the records do not show.
       // Set so the equity comparison closes on the demo's own profit.
-      equityStart: Value(12762624),
-      bankBalance: Value(1834500),
+      equityStart: Value(12815116),
+      bankBalance: Value(6859100),
       cashBalance: Value(12000),
       unpaidPurchases: Value(48400),
       longTermLoans: Value(500000),

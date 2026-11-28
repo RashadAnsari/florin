@@ -285,8 +285,9 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
     final l = AppLocalizations.of(context)!;
     final dao = ref.read(invoiceDaoProvider);
     final inv = _original!;
-    // Issued numbers follow on without gaps (art. 35a lid 1 b): a draft in
-    // Florin's series is sent as the next number after the last one issued.
+    // Issued numbers follow on in their series (art. 35a lid 1 b); Florin
+    // leaves no gaps: a draft in Florin's series is sent as the next number
+    // after the last one issued.
     String? next;
     if (!_selfBilled) {
       final read = await guardSave(context, () async {
@@ -449,12 +450,14 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
       return t == VatTreatment.kor ? l.invoiceValidateKorNotActive : null;
     }
     if (!KorService.coveredSupply(t)) return null;
-    final limit = taxYears[_invoiceDate.year]?.korThreshold;
+    // The supply counts on the day it was made (Wet OB 1968 art. 25 lid 1 a).
+    final supplied = suppliedOnOf(_invoiceDate, _supplyDate);
+    final limit = taxYears[supplied.year]?.korThreshold;
     final exceeds =
         limit != null &&
         KorService.wouldExceed(
           invoices: ref.read(allInvoicesProvider).valueOrNull ?? const [],
-          date: _invoiceDate,
+          date: supplied,
           treatment: t,
           amount: _totalExclVat,
           limit: limit,
@@ -512,6 +515,7 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
           : l.invoiceOverdueBusinessNotice(
               AppFormat.date(inv.dueDate),
               AppFormat.euros(rules.minCollectionCosts),
+              rules.statutoryPaymentDays,
               lapses,
             ),
       tone: NoticeTone.warning,
@@ -741,10 +745,9 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                         label: l.invoiceFieldDueDate,
                         help: l.invoiceFieldDueDateHelp,
                         value: AppFormat.date(
-                          _invoiceDate.add(
-                            Duration(
-                              days: parseWholeNumber(_paymentTerm.text) ?? 0,
-                            ),
+                          dueDateOf(
+                            _invoiceDate,
+                            parseWholeNumber(_paymentTerm.text) ?? 0,
                           ),
                         ),
                       ),
@@ -760,6 +763,8 @@ class _InvoiceDetailPanelState extends ConsumerState<InvoiceDetailPanel> {
                       l.invoiceLongTermNotice(
                         _rulesOf(_invoiceDate).maxAgreedPaymentDays,
                         _rulesOf(_invoiceDate).largeDebtorMaxPaymentDays,
+                        _rulesOf(_invoiceDate).governmentPaymentDays,
+                        _rulesOf(_invoiceDate).governmentMaxPaymentDays,
                       ),
                       tone: NoticeTone.warning,
                     ),

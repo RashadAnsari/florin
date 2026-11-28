@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../widgets/help.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:florin/l10n/app_localizations.dart';
@@ -208,6 +209,13 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                 tone: NoticeTone.warning,
               ),
             ],
+            if (result.valueOrNull?.privateUseUnderKor ?? false) ...[
+              const SizedBox(height: AppSpacing.group),
+              NoticeBanner(
+                l.vatReturnKorPrivateUseNotice,
+                tone: NoticeTone.warning,
+              ),
+            ],
             const SizedBox(height: AppSpacing.section),
             AsyncBody(
               value: result,
@@ -349,37 +357,19 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
                     const SizedBox(height: AppSpacing.section),
                     SectionLabel(
                       l.vatReturnIcpSection,
-                      help: l.vatReturnIcpSectionHelp,
-                    ),
-                    Text(
-                      l.vatReturnIcpNote(
-                        AppFormat.date(
-                          VatService.icpDeadline(year, quarterOf(period.last)),
-                        ),
+                      help: l.vatReturnIcpSectionHelp(
                         AppFormat.euros(rules.icpQuarterlyGoodsMax),
                         rules.icpGoodsLookbackQuarters,
                       ),
-                      style: theme.textTheme.bodySmall,
                     ),
-                    if (VatService.icpMonthlyDue(
-                      ref.watch(allInvoicesProvider).valueOrNull ?? const [],
-                      kor,
-                      year,
-                      quarterOf(period.last),
-                      rules,
-                    )) ...[
-                      const SizedBox(height: AppSpacing.heading),
-                      NoticeBanner(
-                        l.vatReturnIcpMonthlyNotice(
-                          AppFormat.euros(rules.icpQuarterlyGoodsMax),
-                          rules.icpGoodsLookbackQuarters,
-                        ),
-                        tone: NoticeTone.warning,
-                      ),
-                    ],
-                    const SizedBox(height: AppSpacing.heading),
-                    for (final inv in r.icpInvoices)
-                      ValueRow.cents(inv.invoiceNumber, inv.signedExclVat),
+                    _IcpPeriods(
+                      period: period,
+                      invoices: r.icpInvoices,
+                      allInvoices:
+                          ref.watch(allInvoicesProvider).valueOrNull ??
+                          const [],
+                      kor: kor,
+                    ),
                   ],
                 ],
               ),
@@ -389,7 +379,11 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
               const SizedBox(height: AppSpacing.section),
               _CorrectionSection(
                 change: r.changedSinceFiled,
-                fitsNext: VatService.fitsNextReturn(r.changedSinceFiled, rules),
+                route: VatService.correctionRoute(
+                  period,
+                  r.changedSinceFiled,
+                  rules,
+                ),
                 onSettled: () => _settle(period),
               ),
             ],
@@ -447,20 +441,22 @@ class _VatReturnScreenState extends ConsumerState<VatReturnScreen> {
 /// Belastingdienst asks for that change.
 class _CorrectionSection extends ConsumerWidget {
   final Map<String, (int, int)> change;
-  final bool fitsNext;
+  final CorrectionRoute route;
   final VoidCallback onSettled;
 
   const _CorrectionSection({
     required this.change,
-    required this.fitsNext,
+    required this.route,
     required this.onSettled,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context)!;
-    final rules = ref.watch(taxRulesProvider(ref.watch(fiscalYearProvider)));
+    final year = ref.watch(fiscalYearProvider);
+    final rules = ref.watch(taxRulesProvider(year));
     final net = VatService.netVatOf(change);
+    final max = AppFormat.euros(rules.correctionNextReturnMax);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -479,18 +475,23 @@ class _CorrectionSection extends ConsumerWidget {
         ValueRow.cents(l.vatReturnChangedNet, net, bold: true),
         const SizedBox(height: AppSpacing.heading),
         NoticeBanner(
-          fitsNext
-              ? l.vatReturnChangedNextNotice(
-                  AppFormat.euros(rules.correctionNextReturnMax),
-                )
-              : l.vatReturnChangedSuppletieNotice(
-                  AppFormat.euros(rules.correctionNextReturnMax),
-                  rules.suppletieWeeks,
-                  rules.correctionYears,
-                ),
-          tone: fitsNext ? NoticeTone.info : NoticeTone.warning,
+          switch (route) {
+            CorrectionRoute.nextReturn => l.vatReturnChangedNextNotice(max),
+            CorrectionRoute.nextYearReturn => l.vatReturnChangedNextYearNotice(
+              max,
+              '${year + 1}',
+            ),
+            CorrectionRoute.suppletie => l.vatReturnChangedSuppletieNotice(
+              max,
+              rules.suppletieWeeks,
+              rules.correctionYears,
+            ),
+          },
+          tone: route == CorrectionRoute.nextReturn
+              ? NoticeTone.info
+              : NoticeTone.warning,
         ),
-        if (!fitsNext) ...[
+        if (route == CorrectionRoute.suppletie) ...[
           const SizedBox(height: AppSpacing.heading),
           OutlinedButton.icon(
             icon: const Icon(Icons.check, size: 16),
@@ -498,6 +499,116 @@ class _CorrectionSection extends ConsumerWidget {
             onPressed: onSettled,
           ),
         ],
+      ],
+    );
+  }
+}
+
+/// The supplies of a BTW period on the ICP-opgaaf, grouped by the ICP
+/// periods they fall in, each with its deadline, and what makes a period
+/// monthly (Wet OB 1968 art. 37a lid 1 and 3).
+class _IcpPeriods extends ConsumerWidget {
+  final VatPeriod period;
+  final List<Invoice> invoices;
+  final List<Invoice> allInvoices;
+  final KorStatus kor;
+
+  const _IcpPeriods({
+    required this.period,
+    required this.invoices,
+    required this.allInvoices,
+    required this.kor,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final year = period.year;
+    final rules = ref.watch(taxRulesProvider(year));
+    final max = AppFormat.euros(rules.icpQuarterlyGoodsMax);
+    final periods = VatService.icpPeriodsIn(
+      VatService.icpPeriods(allInvoices, kor, year, rules),
+      period,
+    );
+    final quarters = {
+      for (final p in periods)
+        if (invoices.any((i) => p.contains(i.vatDate))) quarterOf(p.first),
+    };
+    final withoutRecords = {
+      for (final q in quarters)
+        ?VatService.icpLookbackWithoutRecords(year, q, rules),
+    };
+    final children = <Widget>[];
+    final noticed = <int>{};
+    for (final p in periods) {
+      final listed = [
+        for (final i in invoices)
+          if (p.contains(i.vatDate)) i,
+      ];
+      if (listed.isEmpty) continue;
+      final q = quarterOf(p.first);
+      if (noticed.add(q)) {
+        final quarter = (
+          year: year,
+          kind: VatFilingPeriod.quarterly,
+          number: q,
+        );
+        final passed = VatService.icpGoodsPassedIn(
+          allInvoices,
+          kor,
+          year,
+          q,
+          rules,
+        );
+        final String? notice =
+            VatService.icpMonthlyByLookback(allInvoices, kor, year, q, rules)
+            ? l.vatReturnIcpMonthlyNotice(
+                max,
+                rules.icpGoodsLookbackQuarters,
+                '${quarter.label(l)} $year',
+              )
+            : passed != null
+            ? l.vatReturnIcpPassedNotice(
+                max,
+                DateFormat.yMMMM(l.localeName).format(passed),
+                AppFormat.date(
+                  DateTime(year, passed.month + rules.icpDueMonths + 1, 0),
+                ),
+              )
+            : null;
+        if (notice != null) {
+          children.addAll([
+            const SizedBox(height: AppSpacing.heading),
+            NoticeBanner(notice, tone: NoticeTone.warning),
+          ]);
+        }
+      }
+      children.addAll([
+        const SizedBox(height: AppSpacing.heading),
+        Text(
+          l.vatReturnIcpNote(p.label(l), AppFormat.date(p.due)),
+          style: theme.textTheme.bodySmall,
+        ),
+        const SizedBox(height: AppSpacing.heading),
+        for (final inv in listed)
+          ValueRow.cents(inv.invoiceNumber, inv.signedExclVat),
+      ]);
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final y in withoutRecords) ...[
+          const SizedBox(height: AppSpacing.heading),
+          NoticeBanner(
+            l.vatReturnIcpNoRecordsNotice(
+              '$y',
+              max,
+              rules.icpGoodsLookbackQuarters,
+            ),
+          ),
+        ],
+        ...children,
       ],
     );
   }

@@ -86,52 +86,89 @@ abstract final class AssetService {
       a.businessUsePct;
 
   /// Straight-line depreciation written off up to [moment], spread by day
-  /// over the useful life and stopped at disposal.
-  static int _writtenOffBy(FixedAsset a, DateTime moment) {
+  /// over the useful life and stopped at disposal, and at most the maximum
+  /// rate of the cost for each year in use (art. 3.30 lid 2).
+  static int _writtenOffBy(FixedAsset a, DateTime moment, TaxYearRules rules) {
     final p = a.purchaseDate;
     final lifeEnd = DateTime(p.year + a.usefulLifeYears, p.month, p.day);
     final disposal = a.disposalDate?.add(const Duration(days: 1));
     final until = disposal != null && disposal.isBefore(moment)
         ? disposal
         : moment;
-    final fraction = (until.difference(p).inDays / lifeEnd.difference(p).inDays)
-        .clamp(0.0, 1.0);
-    return (_depreciable(a) * fraction).round();
+    final depreciable = _depreciable(a);
+    final straight =
+        depreciable *
+        (until.difference(p).inDays / lifeEnd.difference(p).inDays).clamp(
+          0.0,
+          1.0,
+        );
+    final cap =
+        rules.maxDepreciationRate *
+        (a.cost - a.reinvestmentReserveApplied) *
+        a.businessUsePct *
+        _yearsBetween(p, until);
+    final written = straight < cap ? straight : cap;
+    return (written < depreciable ? written : depreciable).round();
   }
 
-  static int depreciation(FixedAsset a, int year) =>
-      _writtenOffBy(a, DateTime(year + 1)) - _writtenOffBy(a, DateTime(year));
+  /// The years from [from] to [until], each calendar year counted by its
+  /// share of days, so a full year is 1 also in a leap year.
+  static double _yearsBetween(DateTime from, DateTime until) {
+    var years = 0.0;
+    for (var y = from.year; y <= until.year; y++) {
+      final start = DateTime.utc(y);
+      final end = DateTime.utc(y + 1);
+      final a = y == from.year ? DateTime.utc(y, from.month, from.day) : start;
+      final b = y == until.year ? DateTime.utc(y, until.month, until.day) : end;
+      if (b.isAfter(a)) {
+        years += b.difference(a).inDays / end.difference(start).inDays;
+      }
+    }
+    return years;
+  }
 
-  static int totalDepreciation(List<FixedAsset> assets, int year) =>
-      assets.fold(0, (s, a) => s + depreciation(a, year));
+  static int depreciation(FixedAsset a, int year, TaxYearRules rules) =>
+      _writtenOffBy(a, DateTime(year + 1), rules) -
+      _writtenOffBy(a, DateTime(year), rules);
+
+  static int totalDepreciation(
+    List<FixedAsset> assets,
+    int year,
+    TaxYearRules rules,
+  ) => assets.fold(0, (s, a) => s + depreciation(a, year, rules));
 
   /// Book value of the business share at the end of [year], or at disposal.
-  static int bookValue(FixedAsset a, int year) =>
+  static int bookValue(FixedAsset a, int year, TaxYearRules rules) =>
       PurchaseMath.share(
         a.cost - a.reinvestmentReserveApplied,
         a.businessUsePct,
       ) -
-      _writtenOffBy(a, DateTime(year + 1));
+      _writtenOffBy(a, DateTime(year + 1), rules);
 
   static bool _soldIn(FixedAsset a, int year) => a.disposalDate?.year == year;
 
   /// Business share of the proceeds minus the book value at sale.
-  static int saleResult(FixedAsset a) =>
-      a.businessProceeds - bookValue(a, a.disposalDate!.year);
+  static int saleResult(FixedAsset a, TaxYearRules rules) =>
+      a.businessProceeds - bookValue(a, a.disposalDate!.year, rules);
 
   /// Gains and losses on assets sold in [year], without gains put in the
   /// herinvesteringsreserve.
-  static int disposalResult(List<FixedAsset> assets, int year) =>
-      assets.where((a) => _soldIn(a, year)).fold(0, (s, a) {
-        final r = saleResult(a);
-        return s + (a.reserveGain && r > 0 ? 0 : r);
-      });
+  static int disposalResult(
+    List<FixedAsset> assets,
+    int year,
+    TaxYearRules rules,
+  ) => assets.where((a) => _soldIn(a, year)).fold(0, (s, a) {
+    final r = saleResult(a, rules);
+    return s + (a.reserveGain && r > 0 ? 0 : r);
+  });
 
   /// Gains on assets sold in [year], the stakingswinst when the business
   /// stops.
-  static int saleGains(List<FixedAsset> assets, int year) => assets
-      .where((a) => _soldIn(a, year))
-      .fold(0, (s, a) => s + (saleResult(a) > 0 ? saleResult(a) : 0));
+  static int saleGains(List<FixedAsset> assets, int year, TaxYearRules rules) =>
+      assets.where((a) => _soldIn(a, year)).fold(0, (s, a) {
+        final r = saleResult(a, rules);
+        return s + (r > 0 ? r : 0);
+      });
 
   // Investeringsaftrek, on the investment of art. 3.43 lid 1: [FixedAsset.cost]
 
@@ -219,13 +256,14 @@ abstract final class AssetService {
   /// it is released in [ceasedYear].
   static Map<int, ReserveYear> reserveLedger(
     List<FixedAsset> assets,
-    int untilYear, {
+    int untilYear,
+    TaxYearRules rules, {
     int? ceasedYear,
   }) {
     final formedIn = <int, int>{};
     for (final a in assets) {
       if (a.disposalDate == null || !a.reserveGain) continue;
-      final gain = saleResult(a);
+      final gain = saleResult(a, rules);
       if (gain > 0) {
         formedIn[a.disposalDate!.year] =
             (formedIn[a.disposalDate!.year] ?? 0) + gain;

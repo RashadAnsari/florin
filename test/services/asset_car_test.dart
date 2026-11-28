@@ -195,8 +195,8 @@ void main() {
       final kept = asset(1, vatOnPurchase: 210000, vatReclaimable: false);
       expect(kept.cost, 1210000);
       expect(
-        AssetService.depreciation(kept, 2026),
-        AssetService.depreciation(asset(2, cost: 1210000), 2026),
+        AssetService.depreciation(kept, 2026, rules),
+        AssetService.depreciation(asset(2, cost: 1210000), 2026, rules),
       );
       final small = [
         asset(3, cost: 40000, vatOnPurchase: 8400, kia: true),
@@ -309,7 +309,7 @@ void main() {
         expenses: [carExpense(1, 100000, 21000)],
         year: 2026,
         rules: rules,
-      );
+      ).vat;
       FixedAsset car({int vat = 0, bool reclaimed = true}) => asset(
         1,
         cost: 3000000,
@@ -425,8 +425,8 @@ void main() {
         proceeds: 300000,
         reserveGain: true,
       );
-      expect(AssetService.disposalResult([sold], 2026), 0);
-      final ledger = AssetService.reserveLedger([sold], 2029);
+      expect(AssetService.disposalResult([sold], 2026, rules), 0);
+      final ledger = AssetService.reserveLedger([sold], 2029, rules);
       expect(ledger[2026]!.formed, 300000);
       expect(ledger[2029]!.released, 300000);
     });
@@ -444,11 +444,11 @@ void main() {
         bought: DateTime(2027, 1, 1),
         reserveApplied: 100000,
       );
-      final ledger = AssetService.reserveLedger([sold, next], 2029);
+      final ledger = AssetService.reserveLedger([sold, next], 2029, rules);
       expect(ledger[2027]!.applied, 100000);
       expect(ledger[2029]!.released, 200000);
       // € 9.000 after booking off, × 365 of 1,826 days
-      expect(AssetService.depreciation(next, 2027), 179901);
+      expect(AssetService.depreciation(next, 2027, rules), 179901);
     });
 
     test('everything is released when the business stops', () {
@@ -463,6 +463,7 @@ void main() {
         AssetService.reserveLedger(
           [sold],
           2026,
+          rules,
           ceasedYear: 2026,
         )[2026]!.released,
         300000,
@@ -512,9 +513,29 @@ void main() {
       );
     });
 
+    test('25% for a car first admitted on or before 31 December 2016 '
+        '(art. 10a.4)', () {
+      final car = asset(
+        1,
+        kind: AssetKind.car,
+        catalogue: 3000000,
+        registered: DateTime(2015, 3, 1),
+      );
+      expect(
+        CarService.privateUseAddition(
+          assets: [car],
+          trips: const [],
+          expenses: [carExpense(1, 9000000, 0)],
+          year: 2026,
+          rules: rules,
+        ),
+        750000,
+      );
+    });
+
     test(
-      '35% of the market value only once the car is more than 16 and 15 '
-      'years old: not on the anniversary itself (art. 3.20 lid 1 b, 5 b)',
+      'the catalogue price until the car is more than 16 years old, then 35% '
+      'of the market value (art. 3.20 lid 1, 10a.4; Belastingdienst)',
       () {
         // First registered on 1 July 2010: exactly 16 years on 1 July 2026,
         // more than 16 from 2 July.
@@ -531,10 +552,63 @@ void main() {
           year: 2026,
           rules: rules,
         );
-        // 22% of the market value (more than 15 years) to 1 July, 35% after.
-        expect(addition, closeTo((220000 * 182 + 350000 * 183) / 365, 2));
+        // 25% of the catalogue price, the higher value while the statute
+        // and the Belastingdienst differ, to 1 July; 35% of the market
+        // value after.
+        expect(addition, closeTo((750000 * 182 + 350000 * 183) / 365, 2));
       },
     );
+
+    test('more than 15 but not 16 years old: the higher of the catalogue '
+        'and the market value (art. 3.20 lid 5 b; Belastingdienst)', () {
+      final car = asset(
+        1,
+        kind: AssetKind.car,
+        catalogue: 1000000,
+        registered: DateTime(2010, 7, 1),
+      ).copyWith(marketValue: const Value(3000000));
+      final addition = CarService.privateUseAddition(
+        assets: [car],
+        trips: const [],
+        expenses: [carExpense(1, 9000000, 0)],
+        year: 2026,
+        rules: rules,
+      );
+      expect(addition, closeTo((750000 * 182 + 1050000 * 183) / 365, 2));
+    });
+
+    test('successive cars: 500 km counts in total over the year (Fiscale '
+        'informatie 2026, 6.4.1.2)', () {
+      final first = asset(
+        1,
+        kind: AssetKind.car,
+        catalogue: 4000000,
+        registered: DateTime(2026, 1, 1),
+        sold: DateTime(2026, 6, 30),
+        tripLog: true,
+      );
+      final second = asset(
+        2,
+        kind: AssetKind.car,
+        catalogue: 4000000,
+        registered: DateTime(2026, 7, 1),
+        bought: DateTime(2026, 7, 1),
+        tripLog: true,
+      );
+      expect(
+        CarService.privateUseAddition(
+          assets: [first, second],
+          trips: [
+            trip(1, TripType.private, 200),
+            trip(2, TripType.private, 200),
+          ],
+          expenses: [carExpense(1, 2000000, 0), carExpense(2, 2000000, 0)],
+          year: 2026,
+          rules: rules,
+        ),
+        0,
+      );
+    });
 
     test('zero emission: 4% off, at most € 1.200, or the frozen 2025 rule', () {
       final car2026 = asset(
@@ -599,7 +673,7 @@ void main() {
           expenses: [carExpense(1, 500000, 105000)],
           year: 2026,
           rules: rules,
-        ),
+        ).vat,
         121500,
       );
     });
@@ -623,7 +697,7 @@ void main() {
         ],
         year: year,
         rules: rules,
-      );
+      ).vat;
       expect(owed(2026), 202500);
       expect(owed(2027), 73500 + 63000);
     });
@@ -646,9 +720,44 @@ void main() {
           expenses: [carExpense(1, 500000, 150000)],
           year: 2026,
           rules: rules,
-        ),
+        ).vat,
         25000,
       );
+    });
+
+    test('1d carries 0 as its base with the forfait and the base with a trip '
+        'log (Belastingdienst, Btw en privégebruik auto van de zaak)', () {
+      FixedAsset car({required bool tripLog}) => asset(
+        1,
+        cost: 3000000,
+        kind: AssetKind.car,
+        catalogue: 4500000,
+        registered: DateTime(2026, 1, 1),
+        vatOnPurchase: 630000,
+        tripLog: tripLog,
+      );
+      ({int base, int vat}) owed({required bool tripLog}) {
+        final r = CarService.btwPrivateUse(
+          assets: [car(tripLog: tripLog)],
+          trips: [
+            trip(1, TripType.business, 2500),
+            trip(1, TripType.commute, 500, from: 2500),
+          ],
+          expenses: [carExpense(1, 500000, 105000)],
+          year: 2026,
+          rules: rules,
+        );
+        return (base: r.base, vat: r.vat);
+      }
+
+      expect(owed(tripLog: false).base, 0);
+      expect(owed(tripLog: false).vat, greaterThan(0));
+      // One sixth of the kilometres is private: of the upkeep and one fifth
+      // of the purchase price, as their BTW was deducted.
+      expect(owed(tripLog: true), (
+        base: ((500000 + 3000000 / 5) / 6).round(),
+        vat: ((105000 + 630000 / 5) / 6).round(),
+      ));
     });
 
     test('a trip log holds up only when every kilometre is in a trip and '

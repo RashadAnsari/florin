@@ -12,6 +12,7 @@ import 'asset_service.dart';
 import 'balance_service.dart';
 import '../theme/app_theme.dart';
 import 'domain.dart';
+import 'gift_service.dart';
 import 'kor_service.dart';
 import 'receipt_store.dart';
 import 'tax_service.dart';
@@ -19,7 +20,8 @@ import 'vat_service.dart';
 
 /// Exports one year of bookkeeping as CSV files. Headers and values are Dutch
 /// whatever the app language. The BTW files follow the rubrieken of the
-/// return, one per quarter, so each figure can be typed into the form.
+/// return, one per period of the year's filing period, and the ICP files the
+/// opgaaf, one per ICP period, so each figure can be typed into the form.
 class CsvExportService {
   final AppDatabase db;
 
@@ -121,7 +123,7 @@ class CsvExportService {
   static int _owed(int cents) => (cents / 100).floor();
   static int _reclaim(int cents) => (cents / 100).ceil();
 
-  /// The rows of one quarterly BTW return, in the order of the form.
+  /// The rows of one BTW return, in the order of the form.
   static List<List<Object>> btwReturnRows(VatReturnResult r) {
     final vat = [r.vat1a, r.vat1b, r.vat1d, r.vat2a, r.vat4a, r.vat4b];
     final owed5a = vat.fold(0, (s, v) => s + _owed(v));
@@ -146,15 +148,25 @@ class CsvExportService {
         0,
         0,
       ],
-      ['1d', 'Privégebruik', '', _owed(r.vat1d)],
+      ['1d', 'Privégebruik', _owed(r.base1d), _owed(r.vat1d)],
       [
         '1e',
         'Leveringen/diensten belast met 0% of niet bij u belast',
         _owed(r.revenue1e),
         '',
       ],
-      ['2a', 'Verleggingsregeling binnenland', _owed(r.base2a), _owed(r.vat2a)],
-      ['3a', 'Uitvoer naar landen buiten de EU', _owed(r.revenue3a), ''],
+      [
+        '2a',
+        'Leveringen/diensten waarbij de btw naar u is verlegd',
+        _owed(r.base2a),
+        _owed(r.vat2a),
+      ],
+      [
+        '3a',
+        'Leveringen naar landen buiten de EU (uitvoer)',
+        _owed(r.revenue3a),
+        '',
+      ],
       [
         '3b',
         'Leveringen naar of diensten in landen binnen de EU',
@@ -185,8 +197,11 @@ class CsvExportService {
     ];
   }
 
-  /// The supplies to EU businesses of one quarter, totalled per customer BTW
-  /// number with goods and services apart, as the ICP-opgaaf lists them.
+  /// The supplies to EU businesses of one ICP period, totalled per customer
+  /// BTW number with goods and services apart, as the ICP-opgaaf lists them,
+  /// in euros and cents. The last row adds them up in whole euros, rounded
+  /// as rubriek 3b, which the total over the same period must equal
+  /// (Belastingdienst, Toelichting bij de opgaaf ICP).
   static List<List<Object>> icpRows(
     List<Invoice> icpInvoices,
     Map<int, Client> clients,
@@ -211,8 +226,31 @@ class CsvExportService {
       ],
       for (final e in totals.entries)
         [e.value.country, e.key, _euro(e.value.goods), _euro(e.value.services)],
+      [
+        '',
+        'Totaal (vergelijk met rubriek 3b)',
+        _owed(icpInvoices.fold(0, (s, i) => s + i.signedExclVat)),
+        '',
+      ],
     ];
   }
+
+  /// The ICP-opgaaf files of [year], one per ICP period
+  /// (`VatService.icpPeriods`), each written even when empty, named
+  /// `icp_<code>`.
+  static Map<String, List<List<Object>>> icpFiles(
+    List<Invoice> invoices,
+    Map<int, Client> clients, {
+    required int year,
+    required KorStatus kor,
+    required TaxYearRules rules,
+  }) => {
+    for (final p in VatService.icpPeriods(invoices, kor, year, rules))
+      'icp_${p.code}': icpRows(
+        VatService.icpList(invoices, p.first, p.last, kor),
+        clients,
+      ),
+  };
 
   /// The income tax estimate of the year, line by line as Florin computes it.
   static List<List<Object>> incomeTaxRows(TaxResult t) => [
@@ -259,12 +297,20 @@ class CsvExportService {
     ['Te betalen (negatief: terug te ontvangen)', _euro(t.taxToPay)],
   ];
 
-  /// The BTW on assets to repay in [last], the year's last return, because the
-  /// KOR lowered their taxed use, per asset in euros and cents.
-  static List<List<Object>> revisionRows(VatReturnResult last) => [
-    ['Bedrijfsmiddel', 'Aankoopdatum', 'Terug te betalen btw (herziening)'],
-    for (final e in last.vatRevision.entries)
-      [e.key.assetName, _date(e.key.purchaseDate), _euro(e.value)],
+  /// The BTW on assets to repay in the returns of [periods] because the KOR
+  /// lowered their taxed use, per asset and return in euros and cents.
+  static List<List<Object>> revisionRows(
+    List<(VatPeriod, VatReturnResult)> periods,
+  ) => [
+    [
+      'Bedrijfsmiddel',
+      'Aankoopdatum',
+      'Aangifte',
+      'Terug te betalen btw (herziening)',
+    ],
+    for (final (p, r) in periods)
+      for (final e in r.vatRevision.entries)
+        [e.key.assetName, _date(e.key.purchaseDate), p.code, _euro(e.value)],
   ];
 
   /// The balance sheet on 31 December and the equity comparison of vraag 19
@@ -302,8 +348,12 @@ class CsvExportService {
   /// The figures behind the jaarruimte and the disability insurance.
   static List<List<Object>> pensionRows(PensionEntry? e) => [
     ['Gegeven', 'Waarde'],
-    ['Premiegrondslag: inkomen vorig jaar', _cents(e?.priorYearIncome ?? 0)],
+    [
+      'Inkomen vorig jaar voor de premiegrondslag',
+      _cents(e?.priorYearIncome ?? 0),
+    ],
     ['Factor A', _cents(e?.factorA ?? 0)],
+    ['Pensioenpremies vorig jaar', _cents(e?.pensionPremiumsPriorYear ?? 0)],
     ['Reserveringsruimte', _cents(e?.reserveringsruimte ?? 0)],
     ['Geplande lijfrentepremie', _cents(e?.plannedContribution ?? 0)],
     ['Arbeidsongeschiktheidsverzekering', _yesNo(e?.aovInsured ?? false)],
@@ -337,7 +387,7 @@ class CsvExportService {
     ['Loon', _cents(i?.wages ?? 0)],
     ['Ingehouden loonheffing', _cents(i?.wageTaxWithheld ?? 0)],
     ['Loon Zvw', _cents(i?.zvwWages ?? 0)],
-    ['Uren in loondienst', i?.employmentHours ?? 0],
+    ['Uren in loondienst en ander werk', i?.employmentHours ?? 0],
     [
       'Geen ondernemer in een van de vorige jaren',
       _yesNo(i?.notOndernemerBefore ?? false),
@@ -430,14 +480,13 @@ class CsvExportService {
   }
 
   /// Writes the year's files. [periods] holds the BTW returns of the year's
-  /// filing period and [quarters] those of Q1 to Q4 for the ICP-opgaaf;
-  /// every period gets its files, empty or not. The receipts of the year's
-  /// expenses, invoices and the assets in use are copied from [receipts].
+  /// filing period; every BTW and ICP period gets its file, empty or not.
+  /// The receipts of the year's expenses, invoices and the assets in use are
+  /// copied from [receipts].
   Future<String?> exportYear(
     int year, {
     required String dialogTitle,
     required List<(VatPeriod, VatReturnResult)> periods,
-    required List<VatReturnResult> quarters,
     required TaxResult? incomeTax,
     BalanceSheet? balance,
     KorStatus kor = KorStatus.none,
@@ -451,7 +500,6 @@ class CsvExportService {
       year,
       parent: parent,
       periods: periods,
-      quarters: quarters,
       incomeTax: incomeTax,
       balance: balance,
       kor: kor,
@@ -465,13 +513,12 @@ class CsvExportService {
     int year, {
     required String parent,
     required List<(VatPeriod, VatReturnResult)> periods,
-    required List<VatReturnResult> quarters,
     required TaxResult? incomeTax,
     BalanceSheet? balance,
     KorStatus kor = KorStatus.none,
     required ReceiptStore receipts,
   }) async {
-    assert(quarters.length == 4 && periods.isNotEmpty);
+    assert(periods.isNotEmpty);
     final rules = taxRulesFor(year)!;
     final dir = (await createExportFolder(parent, year, DateTime.now())).path;
 
@@ -491,11 +538,17 @@ class CsvExportService {
         )..orderBy([(l) => OrderingTerm.asc(l.sortOrder)])).get()).where(
           (l) => numbers.containsKey(l.invoiceId),
         );
-    final expenses =
+    // As they count, so the deductible cost and BTW back match the returns.
+    final expenses = GiftService.applyDeductionRule(
+      KorService.applyToExpenses(
         await (db.select(db.expenses)
               ..where((e) => e.date.inYear(year))
               ..orderBy([(e) => OrderingTerm.asc(e.date)]))
-            .get();
+            .get(),
+        kor,
+      ),
+      taxRulesFor,
+    );
     final hours =
         await (db.select(db.hourEntries)
               ..where((h) => h.date.inYear(year))
@@ -875,27 +928,22 @@ class CsvExportService {
       vatStatusRows([for (final (p, _) in periods) p], filed),
     );
 
-    await write('btw_herziening', revisionRows(periods.last.$2));
+    await write('btw_herziening', revisionRows(periods));
 
     for (final (p, r) in periods) {
       await write('btw_${p.code}', btwReturnRows(r));
     }
-    for (var q = 1; q <= 4; q++) {
-      await write('icp_Q$q', icpRows(quarters[q - 1].icpInvoices, clientsById));
-    }
-    // Goods above the quarterly limit make the opgaaf monthly (art. 37a lid
-    // 3); the monthly lists are written for the whole year then.
-    final allInvoices = await db.select(db.invoices).get();
-    if ([
-      for (var q = 1; q <= 4; q++)
-        VatService.icpMonthlyDue(allInvoices, kor, year, q, rules),
-    ].contains(true)) {
-      for (final m in vatPeriodsOf(year, VatFilingPeriod.monthly)) {
-        await write(
-          'icp_${m.code}',
-          icpRows(VatService.icpList(allInvoices, m, kor), clientsById),
-        );
-      }
+    // Every year's invoices: a service counts in the period it was supplied,
+    // and the quarters before the year decide whether goods are monthly.
+    final icp = icpFiles(
+      await db.select(db.invoices).get(),
+      clientsById,
+      year: year,
+      kor: kor,
+      rules: rules,
+    );
+    for (final MapEntry(key: name, value: rows) in icp.entries) {
+      await write(name, rows);
     }
     if (incomeTax != null) {
       await write('inkomstenbelasting_schatting', incomeTaxRows(incomeTax));

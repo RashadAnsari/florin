@@ -18,6 +18,7 @@ import 'generated/schema_v9.dart' as v9;
 import 'generated/schema_v10.dart' as v10;
 import 'generated/schema_v11.dart' as v11;
 import 'generated/schema_v12.dart' as v12;
+import 'generated/schema_v13.dart' as v13;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -836,6 +837,42 @@ void main() {
       },
       validateItems: (newDb) async {
         expect(await newDb.select(newDb.taxYearInputs).get(), [newInputs]);
+      },
+    );
+  });
+
+  test('migration from v12 to v13 keeps the pension entry and leaves the '
+      'Wtp premiums empty', () async {
+    const oldEntry = v12.PensionEntriesData(
+      year: 2026,
+      priorYearIncome: 5000000,
+      factorA: 100000,
+      reserveringsruimte: 0,
+      plannedContribution: 200000,
+      aovInsured: 1,
+      monthlyAovPremium: 18000,
+    );
+    const newEntry = v13.PensionEntriesData(
+      year: 2026,
+      priorYearIncome: 5000000,
+      factorA: 100000,
+      reserveringsruimte: 0,
+      plannedContribution: 200000,
+      aovInsured: 1,
+      monthlyAovPremium: 18000,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 12,
+      newVersion: 13,
+      createOld: v12.DatabaseAtV12.new,
+      createNew: v13.DatabaseAtV13.new,
+      openTestedDatabase: AppDatabase.new,
+      createItems: (batch, oldDb) {
+        batch.insert(oldDb.pensionEntries, oldEntry);
+      },
+      validateItems: (newDb) async {
+        expect(await newDb.select(newDb.pensionEntries).get(), [newEntry]);
       },
     );
   });

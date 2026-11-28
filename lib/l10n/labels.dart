@@ -170,3 +170,18 @@ extension VatPeriodLabel on VatPeriod {
     VatFilingPeriod.yearly => '$year',
   };
 }
+
+extension IcpPeriodLabel on IcpPeriod {
+  /// The name of an ICP-opgaaf period on screen: `Q1 2026`, a month, or the
+  /// months it covers.
+  String label(AppLocalizations l) {
+    if (isQuarter) return 'Q${quarterOf(first)} ${first.year}';
+    final month = DateFormat.yMMMM(l.localeName);
+    return months == 1
+        ? month.format(first)
+        : l.icpPeriodMonths(
+            DateFormat.MMMM(l.localeName).format(first),
+            month.format(last),
+          );
+  }
+}

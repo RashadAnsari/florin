@@ -299,6 +299,7 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
   final reserve = AssetService.reserveLedger(
     every,
     year,
+    rules,
     ceasedYear: ceased ? year : null,
   )[year];
   final soHours = ownHours(
@@ -318,8 +319,8 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
       expenses.requireValue,
       rules,
     ),
-    depreciation: AssetService.totalDepreciation(assetList, year),
-    disposalResult: AssetService.disposalResult(every, year),
+    depreciation: AssetService.totalDepreciation(assetList, year, rules),
+    disposalResult: AssetService.disposalResult(every, year, rules),
     mileageAllowance: TaxService.mileageAllowance(km, rules),
     investmentDeduction: AssetService.investmentDeduction(every, year, rules),
     desinvesteringsbijtelling: AssetService.desinvesteringsbijtelling(
@@ -336,7 +337,7 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
     ),
     reserveReleased: reserve?.released ?? 0,
     stakingswinst: ceased
-        ? AssetService.saleGains(every, year) + (reserve?.released ?? 0)
+        ? AssetService.saleGains(every, year, rules) + (reserve?.released ?? 0)
         : 0,
     totalHours: totalHours,
     soHours: soHours,
@@ -349,9 +350,10 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
       rules,
       pension.requireValue,
     ),
-    aovPremium: (pension.requireValue?.aovInsured ?? false)
-        ? pension.requireValue!.monthlyAovPremium * 12
-        : 0,
+    aovPremium: PensionService.aovPremiumPaid(
+      pension.requireValue,
+      PensionService.aovMonthsPaid(year, DateTime.now()),
+    ),
   );
   return AsyncData(
     TaxEstimate(
@@ -366,6 +368,11 @@ final taxEstimateProvider = Provider.family<AsyncValue<TaxEstimate>, int>((
       timeTestHours: TaxService.timeTestHours(yearInputs),
       yearOver: yearOver,
       businessKm: km,
+      comparableProfit: BalanceService.comparableProfit(
+        grossProfit: result.grossProfit,
+        desinvesteringsbijtelling: result.desinvesteringsbijtelling,
+        reserve: reserve,
+      ),
     ),
   );
 });
@@ -513,6 +520,7 @@ final balanceSheetProvider = Provider.family<AsyncValue<BalanceSheet>, int>((
           vatPeriods: periods.requireValue,
           vatReturns: returns.requireValue,
           inputs: inputs.requireValue,
+          rules: ref.watch(taxRulesProvider(year)),
         ),
       );
 });
@@ -529,6 +537,10 @@ class TaxEstimate {
   final bool yearOver;
   final int businessKm;
 
+  /// The profit the equity comparison of the balance sheet should match
+  /// (`BalanceService.comparableProfit`).
+  final int comparableProfit;
+
   const TaxEstimate({
     required this.rules,
     required this.result,
@@ -537,5 +549,6 @@ class TaxEstimate {
     required this.timeTestHours,
     required this.yearOver,
     required this.businessKm,
+    required this.comparableProfit,
   });
 }

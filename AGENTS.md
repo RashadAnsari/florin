@@ -62,8 +62,9 @@ Two skills hold the procedures:
    return, sourced in `docs/legal.md`: the BTW return as one file per
    period of the year's filing period (`btw_Q1` to `btw_Q4`, `btw_M01` to
    `btw_M12` or `btw_jaar`, written even when a period is empty) with every
-   rubriek in whole euros, the ICP-opgaaf per quarter, and the income tax
-   estimate per year. A change to a return's rubrieken changes the export
+   rubriek in whole euros, the ICP-opgaaf as one file per ICP period
+   (`icp_Q1`, `icp_M04-M05`, `icp_M06` and so on, written even when a
+   period is empty), and the income tax estimate per year. A change to a return's rubrieken changes the export
    and its test in the same commit.
 8. **Every estimate says it is one.** A figure Florin calculates rather than
    reads from the records (tax, net profit after tax, tax savings, private
@@ -286,7 +287,8 @@ apply most:
   `AmountField`, `DateField`, `EnumDropdown` and `HelpCheckbox` (their `help`
   is required), `ValueRow(help:)` and `SectionLabel(help:)`. The help text is
   its own ARB key named after the label with `Help` added, explains what to
-  enter or what the term means and why, and states no rule without a source.
+  enter or what the term means and why, and states no rule that lacks a
+  source in `docs/legal.md` or `docs/tax-years/`, without citing it.
   In fields the icon sits at the end of the field (`fieldSuffix`), never in
   the label: a floating label receives no pointer events.
   `test/widgets/help_tooltip_test.dart` checks that tooltips open.
@@ -392,6 +394,11 @@ apply most:
   or tokens (`€/km`).
 - Dutch tax terms stay Dutch in both languages when the Belastingdienst uses
   them as names: zelfstandigenaftrek, urencriterium, jaarruimte.
+- User-visible text cites no article, lid, statute, Staatscourant or ruling:
+  it says what the law does, as "the law" where needed. Sources live in
+  `docs/legal.md`, `docs/tax-years/` and code comments.
+  `test/services/tax_year_docs_test.dart` checks the ARB files. The invoice
+  PDF keeps the legal wording invoices require.
 
 ## Documentation and comments
 

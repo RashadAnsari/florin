@@ -44,6 +44,12 @@ InvoiceLine _line(int invoiceId, VatRate rate, int amount) => InvoiceLine(
   sortOrder: 0,
 );
 
+Invoice _goods(int id, DateTime date, int total) => _invoice(
+  id,
+  VatTreatment.euGoods,
+  total: total,
+).copyWith(invoiceDate: date);
+
 void main() {
   test('rubrieken follow the Belastingdienst guidance', () {
     final invoices = [
@@ -124,10 +130,36 @@ void main() {
     },
   );
 
-  test('the ICP-opgaaf over a quarter is due the last day of the next month '
-      '(Wet OB 1968 art. 37a lid 1)', () {
-    expect(VatService.icpDeadline(2026, 1), DateTime(2026, 4, 30));
-    expect(VatService.icpDeadline(2026, 4), DateTime(2027, 1, 31));
+  test('without goods above the limit the ICP-opgaaf is per quarter, due '
+      'the last day of the next month (Wet OB 1968 art. 37a lid 1 and 3)', () {
+    final periods = VatService.icpPeriods(
+      const [],
+      KorStatus.none,
+      2026,
+      taxRulesFor(2026)!,
+    );
+    expect(periods.map((p) => p.code), ['Q1', 'Q2', 'Q3', 'Q4']);
+    expect(periods.first.due, DateTime(2026, 4, 30));
+    expect(periods.last.due, DateTime(2027, 1, 31));
+  });
+
+  test('with a yearly BTW period, a goods invoice of 10 February belongs to '
+      'ICP period Q1, due 30 April (Wet OB 1968 art. 37a lid 1 and 3)', () {
+    final yearly = (year: 2026, kind: VatFilingPeriod.yearly, number: 1);
+    final february = _goods(1, DateTime(2026, 2, 10), 100000);
+    final periods = VatService.icpPeriodsIn(
+      VatService.icpPeriods(
+        [february],
+        KorStatus.none,
+        2026,
+        taxRulesFor(2026)!,
+      ),
+      yearly,
+    );
+    expect(periods, hasLength(4));
+    final holding = periods.firstWhere((p) => p.contains(february.vatDate));
+    expect(holding.code, 'Q1');
+    expect(holding.due, DateTime(2026, 4, 30));
   });
 
   VatPeriod period(VatFilingPeriod kind, int n) =>
@@ -233,47 +265,118 @@ void main() {
     expect(euCountries.where((c) => c != 'EL'), hasLength(27));
   });
 
-  test('goods above EUR 50.000 in a quarter or one of the four before make '
-      'the ICP-opgaaf monthly (Wet OB 1968 art. 37a lid 3)', () {
+  List<(String, DateTime)> icp(List<Invoice> invoices) => [
+    for (final p in VatService.icpPeriods(
+      invoices,
+      KorStatus.none,
+      2026,
+      taxRulesFor(2026)!,
+    ))
+      (p.code, p.due),
+  ];
+
+  test('goods passing the limit in the second month of a quarter give one '
+      'opgaaf over both months, due the month after, then months (Wet OB '
+      '1968 art. 37a lid 3)', () {
+    final periods = icp([
+      _goods(1, DateTime(2026, 4, 10), 3000000),
+      _goods(2, DateTime(2026, 5, 12), 3000000),
+    ]);
+    expect(periods.take(4), [
+      ('Q1', DateTime(2026, 4, 30)),
+      ('M04-M05', DateTime(2026, 6, 30)),
+      ('M06', DateTime(2026, 7, 31)),
+      ('M07', DateTime(2026, 8, 31)),
+    ]);
+    expect(periods.last, ('M12', DateTime(2027, 1, 31)));
+    expect(periods, hasLength(9));
+  });
+
+  test('goods passing the limit in the last month of a quarter give one '
+      'opgaaf over the quarter, then months (Wet OB 1968 art. 37a lid 3)', () {
+    final periods = icp([
+      _goods(1, DateTime(2026, 6, 1), 3000000),
+      _goods(2, DateTime(2026, 6, 20), 3000000),
+    ]);
+    expect(periods.take(3), [
+      ('Q1', DateTime(2026, 4, 30)),
+      ('Q2', DateTime(2026, 7, 31)),
+      ('M07', DateTime(2026, 8, 31)),
+    ]);
+    expect(periods, hasLength(8));
+  });
+
+  test('goods passing the limit in the first month of a quarter make each '
+      'month its own opgaaf (Wet OB 1968 art. 37a lid 3)', () {
+    final periods = icp([_goods(1, DateTime(2026, 4, 2), 6000000)]);
+    expect(periods.take(4), [
+      ('Q1', DateTime(2026, 4, 30)),
+      ('M04', DateTime(2026, 5, 31)),
+      ('M05', DateTime(2026, 6, 30)),
+      ('M06', DateTime(2026, 7, 31)),
+    ]);
+  });
+
+  test('goods above the limit in one of the four quarters before make the '
+      'whole quarter monthly, and exactly the limit does not (Wet OB 1968 '
+      'art. 37a lid 3)', () {
     final rules = taxRulesFor(2026)!;
-    Invoice goods(int id, DateTime date, int total) => Invoice(
-      id: id,
-      invoiceNumber: '$id',
-      invoiceType: InvoiceType.invoice,
-      invoiceDate: date,
-      clientId: 1,
-      vatTreatment: VatTreatment.euGoods,
-      selfBilled: false,
-      sellerName: 'S',
-      sellerVatNumber: 'V',
-      sellerKvkNumber: 'K',
-      sellerAddress: 'A',
-      sellerIban: 'I',
-      paymentTermDays: 14,
-      status: InvoiceStatus.sent,
-      totalExclVat: total,
-      totalVat: 0,
-      totalInclVat: total,
-    );
-    final invoices = [goods(1, DateTime(2025, 5, 1), 6000000)];
-    // Q2 2025 is within the four quarters before Q1 2026, not before Q3 2026.
+    // Q2 2025 is within the four quarters before Q1 and Q2 2026, not before
+    // Q3 2026.
+    expect(icp([_goods(1, DateTime(2025, 5, 1), 6000000)]).map((p) => p.$1), [
+      'M01',
+      'M02',
+      'M03',
+      'M04',
+      'M05',
+      'M06',
+      'Q3',
+      'Q4',
+    ]);
     expect(
-      VatService.icpMonthlyDue(invoices, KorStatus.none, 2026, 1, rules),
-      isTrue,
-    );
-    expect(
-      VatService.icpMonthlyDue(invoices, KorStatus.none, 2026, 3, rules),
-      isFalse,
-    );
-    expect(
-      VatService.icpMonthlyDue(
-        [goods(2, DateTime(2026, 2, 1), 5000000)],
+      VatService.icpMonthlyByLookback(
+        [_goods(1, DateTime(2025, 5, 1), 6000000)],
         KorStatus.none,
         2026,
-        1,
+        3,
         rules,
       ),
       isFalse,
     );
+    expect(icp([_goods(2, DateTime(2026, 2, 1), 5000000)]).map((p) => p.$1), [
+      'Q1',
+      'Q2',
+      'Q3',
+      'Q4',
+    ]);
   });
+
+  test('the ICP lookback names the year before the records Florin holds '
+      '(Wet OB 1968 art. 37a lid 3)', () {
+    final rules = taxRulesFor(2026)!;
+    expect(VatService.icpLookbackWithoutRecords(2026, 4, rules), 2025);
+  });
+
+  test(
+    'a change to a filed Q4 of at most EUR 1.000 asks the user to add it to '
+    'next year\'s first return (Belastingdienst, Toelichting Suppletie btw)',
+    () {
+      final rules = taxRulesFor(2026)!;
+      const change = {'5b': (0, 5000)};
+      VatPeriod q(int n) =>
+          (year: 2026, kind: VatFilingPeriod.quarterly, number: n);
+      expect(
+        VatService.correctionRoute(q(4), change, rules),
+        CorrectionRoute.nextYearReturn,
+      );
+      expect(
+        VatService.correctionRoute(q(3), change, rules),
+        CorrectionRoute.nextReturn,
+      );
+      expect(
+        VatService.correctionRoute(q(4), const {'1a': (0, 100001)}, rules),
+        CorrectionRoute.suppletie,
+      );
+    },
+  );
 }

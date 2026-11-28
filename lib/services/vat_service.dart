@@ -17,6 +17,19 @@ enum ReturnDuty {
   none,
 }
 
+/// Where a change to a filed return goes (`docs/legal.md`, Correcting a
+/// filed return).
+enum CorrectionRoute {
+  /// The next return of the same year, which Florin adds it to.
+  nextReturn,
+
+  /// The first return of the next year, which the user adds it to.
+  nextYearReturn,
+
+  /// A suppletie.
+  suppletie,
+}
+
 /// One period of the BTW return, by rubriek. Amounts are in cents, signed
 /// so that credit notes reduce them.
 class VatReturnResult {
@@ -26,8 +39,13 @@ class VatReturnResult {
   final int vat1b;
   final int revenue1e;
 
-  /// BTW on private use (rubriek 1d).
+  /// BTW on private use (rubriek 1d) and the base of its left column.
   final int vat1d;
+  final int base1d;
+
+  /// Whether [vat1d] includes private use of a car on days the KOR applies,
+  /// which the sources Florin quotes do not settle (`docs/legal.md`).
+  final bool privateUseUnderKor;
   final int revenue3a;
   final int revenue3b;
 
@@ -55,8 +73,10 @@ class VatReturnResult {
   final ReturnDuty duty;
 
   /// BTW deducted on assets to repay because the KOR lowered their taxed
-  /// use (herziening), per asset. Added to the BTW of rubriek 1a in the
-  /// last return of the year, as the Belastingdienst instructs.
+  /// use (herziening), per asset, added to the BTW of rubriek 1a: the
+  /// yearly revision in the last return of the year, the settlement of a
+  /// sale in the return of the sale's period (Uitvoeringsbeschikking OB
+  /// 1968 art. 12 lid 3, 13 lid 3 and 13a lid 2).
   final Map<FixedAsset, int> vatRevision;
 
   int get vatRevisionTotal => vatRevision.values.fold(0, (s, v) => s + v);
@@ -80,6 +100,8 @@ class VatReturnResult {
     required this.vat1b,
     required this.revenue1e,
     required this.vat1d,
+    this.base1d = 0,
+    this.privateUseUnderKor = false,
     required this.revenue3a,
     required this.revenue3b,
     required this.base2a,
@@ -103,7 +125,7 @@ class VatReturnResult {
   Map<String, (int, int)> get rubrieken => {
     '1a': (revenue1a, vat1a),
     '1b': (revenue1b, vat1b),
-    '1d': (0, vat1d),
+    '1d': (base1d, vat1d),
     '1e': (revenue1e, 0),
     '2a': (base2a, vat2a),
     '3a': (revenue3a, 0),
@@ -129,6 +151,8 @@ class VatReturnResult {
       vat1b: vat1b + c('1b').$2,
       revenue1e: revenue1e + c('1e').$1,
       vat1d: vat1d + c('1d').$2,
+      base1d: base1d + c('1d').$1,
+      privateUseUnderKor: privateUseUnderKor,
       revenue3a: revenue3a + c('3a').$1,
       revenue3b: revenue3b + c('3b').$1,
       base2a: base2a + c('2a').$1,
@@ -187,6 +211,7 @@ abstract final class VatService {
     required int year,
     required int quarter,
     int privateUseVat = 0,
+    int privateUseBase = 0,
     KorStatus kor = KorStatus.none,
     Map<FixedAsset, int> vatRevision = const {},
   }) => calculatePeriod(
@@ -196,13 +221,16 @@ abstract final class VatService {
     assets: assets,
     period: (year: year, kind: VatFilingPeriod.quarterly, number: quarter),
     privateUseVat: privateUseVat,
+    privateUseBase: privateUseBase,
     kor: kor,
     vatRevision: vatRevision,
   );
 
   /// The return of [period] from the records as they count (the KOR and the
-  /// rule on gifts applied): the herziening and the BTW on private use of a
-  /// car go in the last return of the year.
+  /// rule on gifts applied): the yearly herziening and the BTW on private
+  /// use of a car go in the last return of the year, the herziening of a
+  /// sale under the KOR in the return of the sale's period
+  /// (Uitvoeringsbeschikking OB 1968 art. 13a lid 2).
   static VatReturnResult fromRecords({
     required List<Invoice> invoices,
     required List<InvoiceLine> lines,
@@ -212,32 +240,41 @@ abstract final class VatService {
     required VatPeriod period,
     required KorStatus kor,
     required TaxYearRules rules,
-  }) => calculatePeriod(
-    invoices: invoices,
-    lines: lines,
-    expenses: expenses,
-    assets: assets,
-    period: period,
-    kor: kor,
-    vatRevision: period.isLastOfYear
-        ? KorService.revision(
-            status: kor,
-            assets: assets,
-            invoices: invoices,
-            year: period.year,
-            rules: rules,
-          )
-        : const {},
-    privateUseVat: period.isLastOfYear
+  }) {
+    final revision = KorService.revision(
+      status: kor,
+      assets: assets,
+      invoices: invoices,
+      year: period.year,
+      rules: rules,
+    );
+    final privateUse = period.isLastOfYear
         ? CarService.btwPrivateUse(
             assets: assets,
             trips: trips,
             expenses: expenses,
             year: period.year,
             rules: rules,
+            kor: kor,
           )
-        : 0,
-  );
+        : (base: 0, vat: 0, underKor: false);
+    return calculatePeriod(
+      invoices: invoices,
+      lines: lines,
+      expenses: expenses,
+      assets: assets,
+      period: period,
+      kor: kor,
+      vatRevision: {
+        if (period.isLastOfYear) ...revision.yearEnd,
+        for (final MapEntry(key: a, value: v) in revision.sales.entries)
+          if (period.contains(a.disposalDate!)) a: v,
+      },
+      privateUseVat: privateUse.vat,
+      privateUseBase: privateUse.base,
+      privateUseUnderKor: privateUse.underKor,
+    );
+  }
 
   /// The return of one [period], as [calculateQuarter] describes.
   static VatReturnResult calculatePeriod({
@@ -247,6 +284,8 @@ abstract final class VatService {
     List<FixedAsset> assets = const [],
     required VatPeriod period,
     int privateUseVat = 0,
+    int privateUseBase = 0,
+    bool privateUseUnderKor = false,
     KorStatus kor = KorStatus.none,
     Map<FixedAsset, int> vatRevision = const {},
   }) {
@@ -349,6 +388,8 @@ abstract final class VatService {
       vat1b: v1b,
       revenue1e: r1e,
       vat1d: privateUseVat,
+      base1d: privateUseBase,
+      privateUseUnderKor: privateUseUnderKor,
       revenue3a: r3a,
       revenue3b: r3b,
       base2a: base(PurchaseVat.reverseChargeNl),
@@ -426,6 +467,20 @@ abstract final class VatService {
         (e) => e.value.$2.abs() <= r.correctionNextReturnMax,
       );
 
+  /// Where a change to filed [period] goes (Belastingdienst, Btw-aangifte
+  /// corrigeren): within the amount of [fitsNextReturn] into the next
+  /// return, which for the last period of the year falls in the next year,
+  /// outside Florin's carry; above it a suppletie.
+  static CorrectionRoute correctionRoute(
+    VatPeriod period,
+    Map<String, (int, int)> change,
+    TaxYearRules rules,
+  ) => !fitsNextReturn(change, rules)
+      ? CorrectionRoute.suppletie
+      : period.isLastOfYear
+      ? CorrectionRoute.nextYearReturn
+      : CorrectionRoute.nextReturn;
+
   /// Whether issued invoice [inv] belongs on the ICP-opgaaf: a supply to an
   /// EU business, not dated while the KOR applies (art. 37a lid 1).
   static bool onIcpList(Invoice inv, KorStatus kor) =>
@@ -434,39 +489,138 @@ abstract final class VatService {
           inv.vatTreatment == VatTreatment.euServices) &&
       !kor.appliesOn(inv.vatDate);
 
-  /// The ICP-opgaaf of [period]: the invoices it lists.
+  /// The ICP-opgaaf from [first] to [last]: the invoices it lists.
   static List<Invoice> icpList(
     List<Invoice> invoices,
-    VatPeriod period,
+    DateTime first,
+    DateTime last,
     KorStatus kor,
-  ) => [
-    for (final i in invoices)
-      if (period.contains(i.vatDate) && onIcpList(i, kor)) i,
-  ];
+  ) {
+    final end = DateTime(last.year, last.month, last.day + 1);
+    return [
+      for (final i in invoices)
+        if (!i.vatDate.isBefore(first) &&
+            i.vatDate.isBefore(end) &&
+            onIcpList(i, kor))
+          i,
+    ];
+  }
 
-  /// Whether the goods on the ICP-opgaaf pass the quarterly limit in
-  /// [quarter] of [year] or one of the quarters before it the rules name,
-  /// so the opgaaf over goods is due per month (art. 37a lid 3).
-  static bool icpMonthlyDue(
+  /// The goods on the ICP-opgaaf from [first] to [last] (art. 37a lid 1 a).
+  static int _icpGoods(
+    List<Invoice> invoices,
+    KorStatus kor,
+    DateTime first,
+    DateTime last,
+  ) => icpList(invoices, first, last, kor)
+      .where((i) => i.vatTreatment == VatTreatment.euGoods)
+      .fold(0, (s, i) => s + i.signedExclVat);
+
+  /// The first and last day of calendar quarter [index] counted from year 0.
+  static (DateTime, DateTime) _quarter(int index) => (
+    DateTime(index ~/ 4, index % 4 * 3 + 1),
+    DateTime(index ~/ 4, index % 4 * 3 + 4, 0),
+  );
+
+  /// Whether the goods on the ICP-opgaaf passed the quarterly limit in one
+  /// of the quarters the rules name before [quarter] of [year], so the
+  /// opgaaf over goods is per month for the whole quarter (art. 37a lid 3,
+  /// first sentence).
+  static bool icpMonthlyByLookback(
     List<Invoice> invoices,
     KorStatus kor,
     int year,
     int quarter,
     TaxYearRules rules,
   ) {
-    for (var back = 0; back <= rules.icpGoodsLookbackQuarters; back++) {
-      final index = year * 4 + quarter - 1 - back;
-      final period = (
-        year: index ~/ 4,
-        kind: VatFilingPeriod.quarterly,
-        number: index % 4 + 1,
-      );
-      final goods = icpList(invoices, period, kor)
-          .where((i) => i.vatTreatment == VatTreatment.euGoods)
-          .fold(0, (s, i) => s + i.signedExclVat);
-      if (goods > rules.icpQuarterlyGoodsMax) return true;
+    for (var back = 1; back <= rules.icpGoodsLookbackQuarters; back++) {
+      final (first, last) = _quarter(year * 4 + quarter - 1 - back);
+      if (_icpGoods(invoices, kor, first, last) > rules.icpQuarterlyGoodsMax) {
+        return true;
+      }
     }
     return false;
+  }
+
+  /// The first day of the month in which the goods of [quarter] of [year]
+  /// on the ICP-opgaaf, added up from the start of the quarter, pass the
+  /// quarterly limit, or null when they do not.
+  static DateTime? icpGoodsPassedIn(
+    List<Invoice> invoices,
+    KorStatus kor,
+    int year,
+    int quarter,
+    TaxYearRules rules,
+  ) {
+    final (first, _) = _quarter(year * 4 + quarter - 1);
+    for (var m = 0; m < 3; m++) {
+      final last = DateTime(year, first.month + m + 1, 0);
+      if (_icpGoods(invoices, kor, first, last) > rules.icpQuarterlyGoodsMax) {
+        return DateTime(year, first.month + m);
+      }
+    }
+    return null;
+  }
+
+  /// The ICP-opgaaf periods of [year] over goods (Wet OB 1968 art. 37a lid
+  /// 3): a quarter while goods stay at or below the limit in it and the
+  /// quarters the rules name before it; from the quarter they pass it, one
+  /// list for the months up to and including the month of passing, due the
+  /// month after, then months. Each is due [TaxYearRules.icpDueMonths] after
+  /// it ends (lid 1). Services go in the same periods, as lid 4 allows.
+  static List<IcpPeriod> icpPeriods(
+    List<Invoice> invoices,
+    KorStatus kor,
+    int year,
+    TaxYearRules rules,
+  ) {
+    IcpPeriod period(DateTime first, DateTime last) => (
+      first: first,
+      last: last,
+      due: DateTime(last.year, last.month + rules.icpDueMonths + 1, 0),
+    );
+    IcpPeriod month(int m) =>
+        period(DateTime(year, m), DateTime(year, m + 1, 0));
+    return [
+      for (var q = 1; q <= 4; q++)
+        if (icpMonthlyByLookback(invoices, kor, year, q, rules))
+          for (var m = q * 3 - 2; m <= q * 3; m++) month(m)
+        else if (icpGoodsPassedIn(invoices, kor, year, q, rules)
+            case final passed?) ...[
+          period(
+            DateTime(year, q * 3 - 2),
+            DateTime(year, passed.month + 1, 0),
+          ),
+          for (var m = passed.month + 1; m <= q * 3; m++) month(m),
+        ] else
+          period(DateTime(year, q * 3 - 2), DateTime(year, q * 3 + 1, 0)),
+    ];
+  }
+
+  /// The ICP periods of [periods] that share a day with BTW [period].
+  static List<IcpPeriod> icpPeriodsIn(
+    List<IcpPeriod> periods,
+    VatPeriod period,
+  ) => [
+    for (final p in periods)
+      if (!p.last.isBefore(period.first) && !p.first.isAfter(period.last)) p,
+  ];
+
+  /// The year before the records Florin holds when the quarters before
+  /// [quarter] of [year] that decide its ICP period reach into it, or null.
+  /// Florin cannot see goods in that year (art. 37a lid 3).
+  static int? icpLookbackWithoutRecords(
+    int year,
+    int quarter,
+    TaxYearRules rules,
+  ) {
+    final (first, _) = _quarter(
+      year * 4 + quarter - 1 - rules.icpGoodsLookbackQuarters,
+    );
+    for (var y = year - 1; y >= first.year; y--) {
+      if (taxRulesFor(y) == null) return y;
+    }
+    return null;
   }
 
   /// Whether a year's figures break a condition for a yearly return: BTW to
@@ -478,9 +632,4 @@ abstract final class VatService {
       year.netVat >= rules.yearlyFilingMaxVat ||
       year.revenue3b >= rules.yearlyFilingMaxEu ||
       year.base4b >= rules.yearlyFilingMaxEu;
-
-  /// The last day of the ICP-opgaaf over a quarter: the last day of the
-  /// month after it (Wet OB 1968 art. 37a lid 1 and 3).
-  static DateTime icpDeadline(int year, int quarter) =>
-      DateTime(year, quarter * 3 + taxRulesFor(year)!.icpDueMonths + 1, 0);
 }

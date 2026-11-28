@@ -51,7 +51,7 @@
     }
   },
   "dashboardUrencriterium": "Urencriterium",
-  "dashboardUrencriteriumHelp": "The hours you worked for the business this year against the urencriterium. The zelfstandigenaftrek and most other deductions for business owners require it (Wet IB 2001 art. 3.76). All business hours count, not only billable ones. With a job, the business must also take more of your time than the job (art. 3.6).",
+  "dashboardUrencriteriumHelp": "The hours you worked for the business this year against the urencriterium. The zelfstandigenaftrek and most other deductions for business owners require it. All business hours count, not only billable ones. With a job, the business must also take more of your time than the job.",
   "dashboardBtwDeadlines": "VAT deadlines",
   "dashboardMonthlyRevenue": "Monthly revenue",
   "deadlineStatusFiled": "filed",
@@ -173,7 +173,7 @@
   "clientsRiskHigh": "High",
   "clientsContractSigned": "Contract signed",
   "clientsContractExpiry": "Contract expiry date",
-  "clientsHighRiskWarning": "High Wet DBA risk in your own assessment: if the work is employment in law, the Belastingdienst treats it as such.",
+  "clientsHighRiskWarning": "High Wet DBA risk in your own assessment. When the Belastingdienst finds schijnzelfstandigheid, it can impose corrections and naheffingsaanslagen loonheffingen on the client back to 1 January 2025, and since 2026 vergrijpboetes.",
   "clientsDeleteTitle": "Delete client",
   "clientsDeleteMessage": "Are you sure you want to delete \"{name}\"?",
   "@clientsDeleteMessage": {
@@ -368,9 +368,9 @@
   "assetsFieldPurchaseDate": "Purchase date",
   "assetsFieldUsefulLife": "Useful life",
   "assetsFieldUsefulLifeUnit": "yrs",
-  "assetsFieldUsefulLifeMin": "Enter at least {years} years: depreciation is limited to {pct} of the cost a year",
   "assetsValidateName": "Enter the asset name",
   "assetsValidateCost": "Enter the cost excluding VAT, above zero: depreciation is calculated from it.",
+  "assetsValidateUsefulLife": "Enter the useful life in whole years, at least 1: depreciation is spread over it.",
   "assetsFieldKia": "KIA eligible",
   "assetsKiaBadge": "KIA",
   "assetsSoldBadge": "Sold",
@@ -406,10 +406,10 @@
     }
   },
   "pensionTitle": "Pension",
-  "pensionJaarruimte": "Annual allowance calculation",
+  "pensionJaarruimte": "Jaarruimte",
   "pensionAowFranchise": "AOW franchise",
-  "pensionPensioengrondslag": "Pension base",
-  "pensionJaarruimteMax": "Annual allowance (max {max})",
+  "pensionPremiegrondslag": "Premiegrondslag",
+  "pensionJaarruimteMax": "Jaarruimte (max {max})",
   "@pensionJaarruimteMax": {
     "placeholders": {
       "max": {
@@ -417,18 +417,20 @@
       }
     }
   },
-  "pensionReserveringsruimte": "Unused annual allowance",
+  "pensionReserveringsruimte": "Reserveringsruimte",
   "pensionTotalBudget": "Total available",
   "pensionEstimatedTaxSaving": "Estimated tax saving",
   "pensionInputSection": "Input",
   "pensionFactorA": "Factor A",
+  "pensionPremiumsPriorYear": "Pension premiums last year",
+  "pensionBuildUpMissingNotice": "If you built up a pension with an employer last year, your jaarruimte is lower than shown: enter its factor A or premiums.",
   "pensionReserveringsruimteLabel": "Reserveringsruimte",
   "pensionPlannedSection": "Planned contribution",
-  "pensionLijfrente": "Annuity premium / AOV premium",
+  "pensionLijfrente": "Lijfrente premium",
   "pensionAovSection": "AOV disability insurance",
   "pensionAovInsured": "AOV insured",
   "pensionMonthlyPremium": "Monthly premium",
-  "pensionAnnualPremium": "Annual premium: {amount}",
+  "pensionAnnualPremium": "Counted in the estimate: {amount}",
   "@pensionAnnualPremium": {
     "placeholders": {
       "amount": {
@@ -452,7 +454,18 @@
   "vatReturnChangedSection": "Changed since you filed",
   "vatReturnChangedSectionHelp": "Records of this period changed after you marked the return filed. These are the differences per rubriek with what Florin kept as filed, as base and BTW.",
   "vatReturnChangedNet": "Change in BTW to pay",
-  "vatReturnChangedNextNotice": "A correction of at most {max} goes into your next return, in the rubriek where it belongs (Belastingdienst, Btw-aangifte corrigeren). Florin adds it to the next return you have not filed yet.",
+  "vatReturnChangedNextNotice": "A correction of at most {max} goes into your next return, in the rubriek where it belongs. Florin adds it to the next return you have not filed yet.",
+  "vatReturnChangedNextYearNotice": "A correction of at most {max} goes into your next return, in the rubriek where it belongs. That return falls in {nextYear}, and Florin does not carry a correction into another year: add these figures to it yourself.",
+  "@vatReturnChangedNextYearNotice": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      },
+      "nextYear": {
+        "type": "String"
+      }
+    }
+  },
   "@vatReturnChangedNextNotice": {
     "placeholders": {
       "max": {
@@ -476,7 +489,7 @@
   },
   "vatReturnSuppletieFiled": "I filed the suppletie",
   "vatReturnCarriedSection": "Corrections of earlier returns included",
-  "vatReturnCarriedSectionHelp": "Changes of at most {max} to returns you already filed go into this return, in the rubriek where they belong (Belastingdienst, Btw-aangifte corrigeren). They are added to the figures above and to the export. When you mark this return filed, Florin counts those earlier returns as corrected.",
+  "vatReturnCarriedSectionHelp": "Changes of at most {max} to returns you already filed go into this return, in the rubriek where they belong. They are added to the figures above and to the export. When you mark this return filed, Florin counts those earlier returns as corrected.",
   "@vatReturnCarriedSectionHelp": {
     "placeholders": {
       "max": {
@@ -492,7 +505,7 @@
       }
     }
   },
-  "vatReturnFilingPeriodHelp": "The period of your BTW returns, as in your aangiftebrief. Most businesses file per quarter. The Belastingdienst lets you file per month on request, and per year on request when you pay less than {vat} BTW a year, are an eenmanszaak and have less than {eu} a year of each kind of EU supply or purchase; it can also require monthly returns after late returns or payments. Choose the period the Belastingdienst confirmed.",
+  "vatReturnFilingPeriodHelp": "The period of your BTW returns, as in your aangiftebrief. Most businesses file per quarter. The Belastingdienst lets you file per month on request, and per year on request when you pay less than {vat} BTW a year, have no permit to shift import VAT, are an eenmanszaak and have less than {eu} a year of each kind of EU supply or purchase; it can also require monthly returns after late returns or payments. Choose the period the Belastingdienst confirmed.",
   "@vatReturnFilingPeriodHelp": {
     "placeholders": {
       "vat": {
@@ -518,7 +531,7 @@
   "vatReturnCalculationSection": "VAT calculation",
   "vatReturnIcpSection": "ICP report",
   "vatReturnRevisionSection": "Herziening: BTW on assets to repay (estimated)",
-  "vatReturnRevisionSectionHelp": "BTW you deducted on an asset is followed for {years} years: the year it came into use and the years after. The KOR makes your supplies exempt, so part of that deduction is repaid. In the year of purchase the whole deduction follows the share of taxed supplies; in each later year one part follows the change from the first year, and a sale under the KOR settles the remaining years at once. Only a change of more than {shift} of the first year's share counts, and in later years nothing is repaid while the year's total stays below {min} (Belastingdienst, herziening vanwege de KOR). Florin estimates the taxed share from your invoices.",
+  "vatReturnRevisionSectionHelp": "BTW you deducted on an asset is followed for {years} years: the year it came into use and the years after. The KOR makes your supplies exempt, so part of that deduction is repaid. In the year of purchase the whole deduction follows the share of taxed supplies over the whole year; in each later year one part follows the change from the first year, and a sale under the KOR settles the remaining years at once. In a later year, only a change of more than {shift} of the first year's share counts, and nothing is repaid while the year's total stays below {min}. Florin estimates the taxed share from your invoices.",
   "@vatReturnRevisionSectionHelp": {
     "placeholders": {
       "years": {
@@ -533,7 +546,7 @@
     }
   },
   "vatReturnRevisionTotal": "To repay",
-  "vatReturnRevisionNotice": "Florin adds this to the BTW of rubriek 1a in the last return of the year, as the Belastingdienst instructs, and lists it per asset in btw_herziening in the export. While you take part in the KOR, you ask the Belastingdienst in writing for a return to pay it. BTW you may get back when you leave the KOR is not computed.",
+  "vatReturnRevisionNotice": "Florin adds this to the BTW of rubriek 1a: the yearly revision in the last return of the year, the settlement of a sale in the return of the sale's period. It lists it per asset and return in btw_herziening in the export. While you take part in the KOR, you ask the Belastingdienst in writing for a return to pay it. BTW you may get back when you leave the KOR is not computed.",
   "vatReturnStatusSection": "Processing status",
   "vatReturnFiled": "Return filed",
   "vatReturnPaid": "VAT paid",
@@ -597,13 +610,13 @@
     }
   },
   "plTaxKia": "KIA deduction",
-  "plTaxLijrente": "Annuity deduction",
+  "plTaxLijrente": "Lijfrente",
   "plTaxTaxableProfit": "Taxable income",
   "plTaxBox1Section": "Income tax box 1, estimated",
   "plTaxAlgHeffing": "General tax credit",
   "plTaxArbeidskorting": "Labour tax credit",
   "plTaxTariefaanpassing": "Tariefaanpassing",
-  "plTaxTariefaanpassingHelp": "The ondernemersaftrek and the mkb-winstvrijstelling lower your tax at most at the rate below the top bracket. For the part of them that falls in the top bracket, the difference is added back (Wet IB 2001 art. 2.10 lid 2).",
+  "plTaxTariefaanpassingHelp": "The ondernemersaftrek and the mkb-winstvrijstelling lower your tax at most at the rate below the top bracket. For the part of them that falls in the top bracket, the difference is added back.",
   "plTaxInkomsten": "Income tax",
   "plTaxZvw": "ZVW contribution ({pct}%)",
   "@plTaxZvw": {
@@ -633,10 +646,10 @@
   "plTaxProvisionalSectionHelp": "Estimated figures from your records for the income you give the Belastingdienst during the year: when you ask for or change a voorlopige aanslag, and when you estimate your income for toeslagen. They are estimates and include only what Florin holds.",
   "plTaxProvisionalProfit": "Estimated belastbare winst",
   "plTaxProvisionalProfitHelp": "The profit after the ondernemersaftrek and the mkb-winstvrijstelling, as estimated above. The Belastingdienst lets you deduct the ondernemersaftrek you are entitled to when you estimate your income for toeslagen.",
-  "plTaxProvisionalIncome": "Estimated taxable income box 1",
-  "plTaxProvisionalIncomeHelp": "For toeslagen the Belastingdienst uses your toetsingsinkomen: your verzamelinkomen, not your profit, plus that of a toeslagpartner. This figure is box 1 from your records only; income Florin does not hold, such as box 3, is not in it. The Belastingdienst advises estimating a little high, because too low an income can mean paying toeslag back.",
+  "plTaxProvisionalIncome": "Estimated verzamelinkomen box 1",
+  "plTaxProvisionalIncomeHelp": "For toeslagen the Belastingdienst uses your toetsingsinkomen: your verzamelinkomen, not your profit, plus that of a toeslagpartner. This is box 1 from your records only, before losses from earlier years; income Florin does not hold, such as box 3, is not in it. The Belastingdienst advises estimating a little high, because too low an income can mean paying toeslag back.",
   "plTaxProvisionalTax": "Estimated tax to pay for the year",
-  "plTaxProvisionalTaxHelp": "Box 1 tax and the Zvw contribution, minus loonheffing already withheld, as estimated above. A voorlopige aanslag spreads this over the year so the final assessment brings no large bill.",
+  "plTaxProvisionalTaxHelp": "Box 1 tax and the Zvw contribution, minus loonheffing already withheld, as estimated above. A voorlopige aanslag spreads this over the year so less is left to pay when the final assessment comes.",
   "plTaxProvisionalDeadline": "You can ask for or change a voorlopige aanslag for {year} until {date}. With a letter asking you to file a return, the date in that letter or your uitstel applies; once you have filed the return, you can no longer.",
   "@plTaxProvisionalDeadline": {
     "placeholders": {
@@ -657,7 +670,7 @@
     }
   },
   "balanceSectionHelp": "The income tax return asks for the balance sheet: what the business owns and owes on 1 January and 31 December, and the private withdrawals and deposits, from which it works out the profit (vraag 19). Florin takes the assets, open invoices and open BTW from your records; you enter the rest from your bank statements and loan papers.",
-  "balancePaperNotice": "Everyone running a business must keep records from which their rights and obligations always appear, and make the balance sheet and the statement of income and expenses within six months after the year and put them on paper (BW 3:15i with 2:10). Florin computes the figures; keeping them on paper is up to you.",
+  "balancePaperNotice": "Everyone running a business must keep records from which their rights and obligations always appear, and make the balance sheet and the statement of income and expenses within six months after the year and put them on paper. Florin computes the figures; keeping them on paper is up to you.",
   "balanceBank": "Business bank balance",
   "balanceBankHelp": "The balance of the business bank account on 31 December, as on the bank's year statement.",
   "balanceCash": "Business cash",
@@ -684,7 +697,8 @@
   "balanceEquityEndHelp": "What the business owns minus what it owes on 31 December: vraag 19a of the return.",
   "balanceEquityProfit": "Saldo fiscale winstberekening (19g)",
   "balanceEquityProfitHelp": "19a plus the private withdrawals, minus the ondernemingsvermogen on 1 January and the private deposits, as vraag 19 of the return computes it.",
-  "balanceEstimateProfit": "Profit in the estimate, before investeringsaftrek",
+  "balanceEstimateProfit": "Profit in the estimate, as the comparison counts it",
+  "balanceEstimateProfitHelp": "The estimate's profit before investeringsaftrek, without the desinvesteringsbijtelling and the herinvesteringsreserve released, plus a gain kept in the herinvesteringsreserve and minus the reserve booked off new assets. Each of these changes the profit or the ondernemingsvermogen, not both.",
   "balanceDifferenceNotice": "The equity comparison differs from the estimate by {amount}. A difference usually means a balance or a private movement is missing or a record is not in Florin. Check the figures above against your bank statements.",
   "@balanceDifferenceNotice": {
     "placeholders": {
@@ -709,7 +723,7 @@
   },
   "plTaxUrenBannerSuffixDone": ", so no zelfstandigenaftrek",
   "plTaxUrenBannerSuffixPending": ". Until you reach it, the estimate leaves out the zelfstandigenaftrek and the other deductions that need it",
-  "plTaxUrenJobBanner": "Urencriterium: {hours} hours logged for the business, not more than the {jobHours} hours in employment. The urencriterium needs more time in the business than in other work, so the estimate leaves out the zelfstandigenaftrek and the other deductions that need it.",
+  "plTaxUrenJobBanner": "Urencriterium: {hours} hours logged for the business, not more than the {jobHours} hours in employment and other work. The urencriterium needs more time in the business than in other work, so the estimate leaves out the zelfstandigenaftrek and the other deductions that need it.",
   "@plTaxUrenJobBanner": {
     "placeholders": {
       "hours": {
@@ -749,7 +763,7 @@
   },
   "settingsMoveDatabase": "Copy database and receipts to another folder",
   "settingsExportSection": "Export",
-  "settingsExportDescription": "Export all {year} data to CSV files, with the VAT return of each period by rubriek in whole euros, the ICP list of each quarter (and of each month when goods make it monthly), the estimated income tax and balance sheet of the year, and the receipts. Florin puts them in a new folder named after the export date, inside the folder you choose.",
+  "settingsExportDescription": "Export all {year} data to CSV files, with the VAT return of each period by rubriek in whole euros, the ICP list of each ICP period (a quarter, or months once goods make the opgaaf monthly), the estimated income tax and balance sheet of the year, and the receipts. Florin puts them in a new folder named after the export date, inside the folder you choose.",
   "@settingsExportDescription": {
     "placeholders": {
       "year": {
@@ -842,7 +856,7 @@
   "invoiceValidateClientVat": "This client has no VAT number. Add it to the client: this invoice must show it.",
   "invoiceIssueTitle": "Send invoice",
   "invoiceIssueMessage": "After sending, the invoice can no longer be changed or deleted. Corrections are made with a credit note.",
-  "invoiceIssueRenumber": "{number} does not follow the last invoice you issued in this series, so it is sent as {next}: invoice numbers follow on without gaps (Wet OB 1968 art. 35a lid 1 b).",
+  "invoiceIssueRenumber": "{number} does not follow the last invoice you issued in this series, so it is sent as {next}: invoice numbers follow on in their series, and Florin leaves no gaps.",
   "@invoiceIssueRenumber": {
     "placeholders": {
       "number": {
@@ -875,7 +889,7 @@
   "invoiceRemoveLine": "Remove line",
   "invoiceLockedNotice": "This invoice is issued, so it cannot be changed. To correct it, make a credit note that refers to it.",
   "invoiceLockedCreditNotice": "This credit note is issued, so it cannot be changed.",
-  "expensesFoodNotice": "Food, drinks, representation, congresses, seminars and study trips are deductible for income tax at {pct}, or as far as they exceed {drempel} a year if that is more (Wet IB 2001 art. 3.15). VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed (Wet OB 1968 art. 15).",
+  "expensesFoodNotice": "Food, drinks, representation, congresses, seminars and study trips are deductible for income tax at {pct}, or as far as they exceed {drempel} a year if that is more. VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed.",
   "@expensesFoodNotice": {
     "placeholders": {
       "pct": {
@@ -886,7 +900,7 @@
       }
     }
   },
-  "expensesCourseTravelNotice": "Travel and stay for courses, studies, congresses, seminars and study trips are deductible for income tax up to {max} a year; the part above it is not, unless your work makes attending necessary (Wet IB 2001 art. 3.16). Florin keeps the limit, because it cannot tell that from your records.",
+  "expensesCourseTravelNotice": "Travel and stay for courses, studies, congresses, seminars and study trips are deductible for income tax up to {max} a year; the part above it is not, unless your work makes attending necessary. Florin keeps the limit, because it cannot tell that from your records. What is left counts with food, drinks and representation, as the law limits travel for congresses there too; Florin does the same for courses, because it cannot tell them apart.",
   "@expensesCourseTravelNotice": {
     "placeholders": {
       "max": {
@@ -894,8 +908,8 @@
       }
     }
   },
-  "expensesBarredNotice": "The law keeps this cost out of your profit, whatever the amount: fines (Wet IB 2001 art. 3.14), and clothing other than werkkleding, personal care, a phone line in your home and literature other than professional literature (art. 3.16). Florin records it but deducts nothing. Clothing counts as werkkleding when it is only fit to wear for your work or shows that it is meant only for it; record werkkleding under Other.",
-  "expensesGiftNotice": "Gifts to this recipient this year, this one included: {total} excl. BTW. While the total stays at or below {threshold}, the BTW on them stays deductible (Besluit uitsluiting aftrek omzetbelasting 1968 art. 4).",
+  "expensesBarredNotice": "The law keeps this cost out of your profit, whatever the amount: fines, and clothing other than werkkleding, personal care, a phone line in your home and literature other than professional literature. Florin records it but deducts nothing. Clothing counts as werkkleding when it is only fit to wear for your work or shows that it is meant only for it; record werkkleding under Other.",
+  "expensesGiftNotice": "Gifts with BTW to this recipient this year: {total} excl. BTW. While the total stays at or below {threshold}, the BTW on them stays deductible. Gifts without BTW do not count.",
   "@expensesGiftNotice": {
     "placeholders": {
       "total": {
@@ -906,7 +920,7 @@
       }
     }
   },
-  "expensesGiftOverNotice": "Gifts to this recipient this year, this one included: {total} excl. BTW, more than {threshold}. The BTW on them is then not deductible for a recipient who cannot deduct BTW (Besluit uitsluiting aftrek omzetbelasting 1968 art. 1 and 4). Florin cannot tell whether the recipient can, so it reclaims no BTW on these gifts and counts it as a cost.",
+  "expensesGiftOverNotice": "Gifts with BTW to this recipient this year: {total} excl. BTW, more than {threshold}. The BTW on them is then not deductible for a recipient who can deduct no BTW or only a small part of it. Florin cannot tell how much BTW the recipient can deduct, so it reclaims no BTW on these gifts and counts it as a cost.",
   "@expensesGiftOverNotice": {
     "placeholders": {
       "total": {
@@ -940,17 +954,7 @@
       }
     }
   },
-  "plTaxEstimateNotice": "This is an estimate for a business owner under the AOW age. Wages from employment count when you enter them below. Income of a partner, from other work, box 2 or box 3 is not included.",
-  "@assetsFieldUsefulLifeMin": {
-    "placeholders": {
-      "years": {
-        "type": "int"
-      },
-      "pct": {
-        "type": "String"
-      }
-    }
-  },
+  "plTaxEstimateNotice": "This is an estimate for a business owner under the AOW age. Wages from employment count when you enter them below. Income of a partner, from other work, box 2 or box 3 is not included. Tax credits other than the general and labour tax credit are not included.",
   "settingsMoved": "Database copied to {path} and now in use. The old file was kept.",
   "@settingsMoved": {
     "placeholders": {
@@ -977,27 +981,41 @@
     }
   },
   "pensionDeductible": "Deductible this year",
+  "pensionDeductibleHelp": "Your planned lijfrente premium up to the jaarruimte plus reserveringsruimte: what the estimate deducts.",
   "vatRow1e": "1e  Supplies / services taxed at 0% or not taxed with you",
   "vatRow3b": "3b  Supplies to or services in EU countries",
   "vatTreatmentEuServices": "Services to an EU business (VAT reverse-charged)",
   "vatTreatmentEuGoods": "Goods to an EU business (intra-Community supply, 0%)",
-  "vatReturnIcpNote": "Report these supplies in the ICP report over this quarter by {date}. If you supplied goods to EU businesses for more than {amount} in this quarter or in one of the {quarters} quarters before it, you report goods per month instead (Wet OB 1968 art. 37a).",
+  "vatReturnIcpNote": "Report these supplies in the ICP report over {icpPeriod} by {date}.",
   "@vatReturnIcpNote": {
     "placeholders": {
+      "icpPeriod": {
+        "type": "String"
+      },
       "date": {
         "type": "String"
-      },
-      "amount": {
-        "type": "String"
-      },
-      "quarters": {
-        "type": "int"
       }
     }
   },
-  "vatReturnIcpMonthlyNotice": "Goods to EU businesses passed {max} in this quarter or one of the {quarters} before it, so the ICP-opgaaf over goods is due per month (Wet OB 1968 art. 37a lid 3). The export then also writes the list of each month.",
-  "@vatReturnIcpMonthlyNotice": {
+  "vatReturnIcpMonthlyNotice": "Goods to EU businesses passed {max} in one of the {quarters} quarters before {quarter}, so the ICP report over goods is per month in {quarter}, each month due by the end of the month after it.",
+  "vatReturnIcpPassedNotice": "Goods to EU businesses passed {max} in {month}. The months of that quarter up to and including {month} go in one ICP report, due {date}; after that the ICP report over goods is per month, each month due by the end of the month after it.",
+  "vatReturnIcpNoRecordsNotice": "Florin holds no records of {year}. If your goods to EU businesses passed {max} in a quarter of {year}, the ICP report over goods is per month in each of the {quarters} quarters after it.",
+  "icpPeriodMonths": "{first} to {last}",
+  "@icpPeriodMonths": {
     "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "last": {
+        "type": "String"
+      }
+    }
+  },
+  "@vatReturnIcpNoRecordsNotice": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      },
       "max": {
         "type": "String"
       },
@@ -1006,16 +1024,42 @@
       }
     }
   },
+  "@vatReturnIcpPassedNotice": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      },
+      "month": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@vatReturnIcpMonthlyNotice": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      },
+      "quarters": {
+        "type": "int"
+      },
+      "quarter": {
+        "type": "String"
+      }
+    }
+  },
   "assetsFieldResidualValue": "Residual value",
   "assetsValidateResidualValue": "Enter the residual value, or 0 if the asset will have no value left",
   "assetsValidateResidualAboveCost": "The residual value cannot be higher than the cost",
   "plTaxDisposalResult": "Result on sold assets",
   "plTaxAov": "Disability insurance premiums",
-  "pensionAovHelper": "Premiums for disability insurance are deducted in full in the tax estimate.",
-  "assetsFieldCostHelp": "The purchase price without VAT. With any VAT you do not reclaim, it is the cost that depreciation and the investment deductions are based on.",
+  "pensionAovHelper": "Premiums for disability insurance are deducted in full in the tax estimate. Only premiums you have paid in the year count: Florin counts the months of the year that have ended.",
+  "assetsFieldCostHelp": "The purchase price without VAT, minus discounts and subsidies. With any VAT you do not reclaim, it is the cost that depreciation and the investment deductions are based on.",
   "assetsFieldDisposalDateHelp": "The date you sold the asset or took it out of the business. Depreciation stops on this date.",
-  "assetsFieldDisposalProceedsHelp": "What you received for the asset, without VAT, or its market value when you took it into private use. The difference with the book value is a gain or loss.",
-  "assetsFieldKiaHelp": "Kleinschaligheidsinvesteringsaftrek: an extra deduction for business assets. Assets under {min} do not count, and passenger cars and some other assets are excluded.",
+  "assetsFieldDisposalProceedsHelp": "What you received for the asset, without VAT, or, when you took it into private use, what a similar asset in the same state costs now, without VAT. The difference with the book value is a gain or loss.",
+  "assetsFieldKiaHelp": "Kleinschaligheidsinvesteringsaftrek: an extra deduction for business assets. Not for assets under {min}, passenger cars, land, dwellings, goodwill, assets mainly made available to others, assets bought from your household, parents, children or your own company, or assets moved from your private property.",
   "@assetsFieldKiaHelp": {
     "placeholders": {
       "min": {
@@ -1027,19 +1071,16 @@
   "assetsFieldNotesHelp": "Anything you want to remember about this asset. Not used in calculations.",
   "assetsFieldPurchaseDateHelp": "The date you bought the asset. Depreciation starts on this date and the investment deductions apply to this year.",
   "assetsFieldResidualValueHelp": "What the asset will still be worth at the end of its useful life. Depreciation stops at this value.",
-  "assetsFieldUsefulLifeHelp": "How many years you expect to use the asset. At least {years}, because depreciation is limited to {pct} of the cost a year.",
+  "assetsFieldUsefulLifeHelp": "How many whole years you expect to use the asset in the business. Depreciation is at most {pct} of the cost a year, so a shorter life is spread over more years.",
   "@assetsFieldUsefulLifeHelp": {
     "placeholders": {
-      "years": {
-        "type": "int"
-      },
       "pct": {
         "type": "String"
       }
     }
   },
   "assetsVatSection": "VAT on the purchase",
-  "assetsVatSectionHelp": "The VAT on the purchase invoice. VAT you reclaim goes into the VAT return of the quarter of purchase; VAT you do not reclaim is part of the asset's cost.",
+  "assetsVatSectionHelp": "The VAT on the purchase invoice. VAT you reclaim goes into the VAT return of the period of purchase; VAT you do not reclaim is part of the asset's cost. A car bought under the margin scheme or from a private person carries no VAT to reclaim: enter 0.",
   "assetsFieldVatRate": "VAT rate",
   "assetsFieldVatRateHelp": "The VAT rate on the purchase invoice: {high}, {low}, 0% or exempt. Choose 0% when no VAT was charged, such as on a purchase from a private seller.",
   "@assetsFieldVatRateHelp": {
@@ -1056,7 +1097,7 @@
   "assetsFieldVatAmount": "VAT amount",
   "assetsFieldVatAmountHelp": "The VAT on the purchase invoice. Florin has no tax rules for the year of purchase, so you enter the amount instead of a rate.",
   "assetsFieldPurchaseVat": "How the VAT was charged",
-  "assetsFieldPurchaseVatHelp": "Dutch VAT when the supplier charged it. Shifted when the invoice says the VAT is reverse-charged to you, or the supplier is abroad: you then report and deduct the VAT yourself.",
+  "assetsFieldPurchaseVatHelp": "Dutch VAT when the supplier charged it. Shifted when the invoice says the VAT is reverse-charged to you, or the supplier is abroad: you then report and deduct the VAT yourself. Services to real estate from an EU supplier that shifts the VAT to you go in 2a, not 4b: choose Shifted to me by a Dutch supplier (2a).",
   "assetsReclaimVat": "Reclaim this VAT",
   "assetsReclaimVatHelp": "Tick when you may deduct this VAT in your VAT return. You may for the business share used for work you charge VAT on: not while you take part in the KOR, and not for an asset used only for VAT-exempt work.",
   "assetsValidateKorReclaim": "You take part in the KOR on the purchase date, so you cannot reclaim this VAT. Untick Reclaim this VAT: the VAT is then part of the cost.",
@@ -1070,7 +1111,7 @@
   "assetsSaleInvoiceNone": "No invoice in Florin",
   "assetsProceedsFromInvoiceHelp": "What the sale invoice and any credit note on it come to, without VAT. The difference with the book value is a gain or loss.",
   "assetsFieldDisposalVatRate": "VAT on the sale",
-  "assetsFieldDisposalVatRateHelp": "The VAT you owe on the sale, or on taking the asset into private use, over the business share of the proceeds. It goes into the VAT return of that quarter. Usually {high}; exempt only when you used the asset solely for VAT-exempt work and deducted no VAT on it.",
+  "assetsFieldDisposalVatRateHelp": "The VAT you owe on the sale, or on taking the asset into private use, over the business share of the proceeds. It goes into the VAT return of that period. Usually {high}. Choose exempt when you used the asset solely for VAT-exempt work and deducted no VAT on it, or when you take into private use an asset on which no VAT was deducted.",
   "@assetsFieldDisposalVatRateHelp": {
     "placeholders": {
       "high": {
@@ -1094,7 +1135,7 @@
   "clientsRateHours": "Hours logged",
   "clientsRateInvoiced": "Invoiced excl. BTW",
   "clientsRateEstimate": "Estimated hourly rate",
-  "clientsRateEstimateHelp": "What you invoiced divided by your hours: an estimate, as invoices and hours need not fall in the same period. From 31 December 2026 the law presumes an employment contract when a business pays someone at most an hourly amount for work (BW 7:610aa, Stb. 2026, 158 and 207). The amount for its first application is set by ministerial regulation, which Florin has not read, so it names no figure.",
+  "clientsRateEstimateHelp": "What you invoiced divided by your hours: an estimate, as invoices and hours need not fall in the same period. From 31 December 2026 the law presumes an employment contract when anyone other than a private person pays someone at most an hourly amount for work. The amount for its first application is set by ministerial regulation, which Florin has not read, so it names no figure.",
   "clientsRateNoHours": "No hours linked",
   "clientsFieldActiveHelp": "Inactive clients stay in your records but are not offered on new invoices.",
   "clientsFieldAddressHelp": "The client's full business address. It is printed on every invoice.",
@@ -1105,12 +1146,12 @@
   "clientsFieldNameHelp": "The client's legal or registered trade name, as it should appear on invoices.",
   "clientsFieldNotesHelp": "Anything you want to remember about this client. Not printed on invoices.",
   "clientsFieldPhoneHelp": "A phone number for this client.",
-  "clientsFieldVatHelp": "The client's VAT identification number. Required on invoices where the VAT is reverse-charged or that go to an EU business.",
+  "clientsFieldVatHelp": "The client's VAT identification number. Required on invoices where the VAT is reverse-charged and on intra-Community supplies of goods.",
   "clientsRiskLevelHelp": "Your own assessment of whether the work could be seen as employment under the Wet DBA. Used only to remind you.",
   "expensesFieldAmountExclHelp": "The amount on the receipt without VAT.",
-  "expensesFieldCategoryHelp": "What kind of cost this is. Food, drinks, representation, congresses, seminars, excursions and study trips are only partly deductible (Wet IB 2001 art. 3.15), travel for courses and congresses only up to a yearly amount, and fines, ordinary clothing, personal care, a phone line at home and general literature not at all (art. 3.14 and 3.16), so each has its own category.",
+  "expensesFieldCategoryHelp": "What kind of cost this is. Food, drinks, representation, congresses, seminars, excursions and study trips are only partly deductible, travel for courses and congresses only up to a yearly amount, and fines, ordinary clothing, personal care, a phone line at home and general literature not at all, so each has its own category.",
   "expensesFieldGiftRecipient": "Recipient",
-  "expensesFieldGiftRecipientHelp": "Who received the gift. Florin adds up the gifts to each recipient in a year, because the BTW on them stays deductible only while that total stays within the threshold. Type the name the same way each time.",
+  "expensesFieldGiftRecipientHelp": "Who received the gift. Florin adds up the gifts with BTW to each recipient in a year, because the BTW on gifts to someone who can deduct no or little VAT stays deductible only while that total stays within the threshold; Florin assumes this for every recipient. Type the name the same way each time.",
   "expensesValidateGiftRecipient": "Enter who received the gift, so Florin can add up the gifts per recipient.",
   "expensesFieldDescriptionHelp": "What you bought, so you and the Belastingdienst can see the business purpose.",
   "expensesFieldPaidFromHelp": "The account or card you paid with, to match the expense with your bank statement.",
@@ -1127,7 +1168,7 @@
       }
     }
   },
-  "expensesReclaimVatHelp": "Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, for private use, or for gifts to someone who cannot deduct VAT when they total more than {amount} for that person in a year (Besluit uitsluiting aftrek omzetbelasting 1968).",
+  "expensesReclaimVatHelp": "Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, for private use, or for gifts to someone who can deduct no VAT or only a small part of it, when they total more than {amount} for that person in a year.",
   "@expensesReclaimVatHelp": {
     "placeholders": {
       "amount": {
@@ -1161,8 +1202,8 @@
   "invoiceFieldDescriptionHelp": "What you delivered: the nature of the goods or services, as the law requires on an invoice.",
   "invoiceFieldDueDateHelp": "The last day for payment: the invoice date plus the payment term.",
   "invoiceFieldInvoiceDateHelp": "The date the invoice is issued. It decides the year and quarter the revenue and VAT belong to.",
-  "invoiceFieldNumberHelp": "A unique number in an unbroken sequence, as the law requires. Florin suggests the next one.",
-  "invoiceFieldPaymentTermHelp": "How many days the client has to pay. Between businesses, a term of more than {max} days needs to be agreed explicitly and must not be clearly unfair to you; without an agreed term, statutory commercial interest is due from {statutory} days after the client received the invoice (BW 6:119a).",
+  "invoiceFieldNumberHelp": "A unique number that follows on in its series, as the law requires (one or more series are allowed). Florin suggests the next one.",
+  "invoiceFieldPaymentTermHelp": "How many days the client has to pay. Between businesses, a term of more than {max} days needs to be agreed explicitly and must not be clearly unfair to you; without an agreed term, statutory commercial interest is due from {statutory} days after the client received the invoice.",
   "@invoiceFieldPaymentTermHelp": {
     "placeholders": {
       "max": {
@@ -1177,7 +1218,7 @@
   "invoiceFieldQuantityHelp": "How many units, such as hours or pieces.",
   "invoiceFieldRemarksHelp": "Extra text printed at the bottom of the invoice.",
   "invoiceFieldSupplyDateHelp": "When you delivered, if that differs from the invoice date. The law requires it on the invoice in that case.",
-  "invoiceLateNotice": "An invoice is due by day {day} of the month after the supply (Wet OB 1968 art. 34g): for this supply by {date}.",
+  "invoiceLateNotice": "An invoice is due by day {day} of the month after the supply: for this supply by {date}.",
   "@invoiceLateNotice": {
     "placeholders": {
       "day": {
@@ -1188,7 +1229,7 @@
       }
     }
   },
-  "invoiceLongTermNotice": "Between businesses, a payment term of more than {max} days holds only when it is agreed explicitly and is not clearly unfair to you, and a large company may not agree more than {large} days with a small supplier (BW 6:119a lid 5 and 6).",
+  "invoiceLongTermNotice": "Between businesses, a payment term of more than {max} days holds only when it is agreed explicitly and is not clearly unfair to you, and a large company may not agree more than {large} days with a small supplier. With a government client a term above {government} days also needs an objective justification, and it is never longer than {governmentMax} days.",
   "@invoiceLongTermNotice": {
     "placeholders": {
       "max": {
@@ -1196,10 +1237,16 @@
       },
       "large": {
         "type": "int"
+      },
+      "government": {
+        "type": "int"
+      },
+      "governmentMax": {
+        "type": "int"
       }
     }
   },
-  "invoiceOverdueBusinessNotice": "This invoice was due on {due}. Between businesses, statutory commercial interest runs from the day after that (BW 6:119a lid 1), and you may claim collection costs of at least {min} without sending a reminder first (BW 6:96 lid 4). The claim can be brought to court until {lapses} (BW 3:307). Florin does not compute the interest.",
+  "invoiceOverdueBusinessNotice": "This invoice was due on {due}. Between businesses, statutory commercial interest and collection costs of at least {min} are owed without a reminder from the day after the agreed payment day; if you agreed none, from {statutory} days after the client received the invoice. The claim can be brought to court until {lapses}. Florin does not compute the interest.",
   "@invoiceOverdueBusinessNotice": {
     "placeholders": {
       "due": {
@@ -1208,12 +1255,15 @@
       "min": {
         "type": "String"
       },
+      "statutory": {
+        "type": "int"
+      },
       "lapses": {
         "type": "String"
       }
     }
   },
-  "invoiceOverdueConsumerNotice": "This invoice was due on {due}. A private person owes collection costs only after a reminder that gives {days} days to pay and states the costs that will be claimed (BW 6:96 lid 6); send one reminder for all open invoices of this client (lid 7). The claim can be brought to court until {lapses} (BW 3:307).",
+  "invoiceOverdueConsumerNotice": "This invoice was due on {due}. A private person owes collection costs only after a reminder that gives {days} days to pay and states the costs that will be claimed; send one reminder for all open invoices of this client. The claim can be brought to court until {lapses}.",
   "@invoiceOverdueConsumerNotice": {
     "placeholders": {
       "due": {
@@ -1231,7 +1281,7 @@
   "invoiceFieldVatHelp": "The VAT rate for this line.",
   "invoiceFieldVatReverseHelp": "The VAT rate that would apply without reverse charge. The invoice states it with the amount per rate, and your customer pays the VAT.",
   "invoiceValidateLineRate": "Choose the VAT rate for this line: the invoice states it, also when the VAT is reverse-charged.",
-  "invoiceFieldVatTreatmentHelp": "How VAT applies. Dutch VAT for most Dutch clients, or Exempt under the KOR while you take part in it. Reverse charge when the customer pays the VAT. EU goods and services to businesses also go on the ICP report. Services to a business outside the EU are taxed there and stay out of the Dutch return.",
+  "invoiceFieldVatTreatmentHelp": "How VAT applies. Dutch VAT for most Dutch clients, or Exempt under the KOR while you take part in it. Reverse charge when the customer pays the VAT. EU goods and services to businesses also go on the ICP report. Not a service that is exempt or 0% in the customer's country, or one tied to property, events, passenger transport or catering: such a service is in neither the return nor the ICP report, and needs another treatment. Services to a business outside the EU are supplied there, not in the Netherlands, and stay out of the Dutch return, as do the services to a private person outside the EU that the law places there.",
   "labelCategoryHelp": "Show only expenses of one category.",
   "labelDateHelp": "The date on the receipt. It decides the year and quarter of the expense.",
   "labelNotesHelp": "Anything you want to remember. Not used in calculations.",
@@ -1290,13 +1340,14 @@
   },
   "tripLogConsequence": "A trip log that does not meet the requirements counts as none, so Florin applies the bijtelling and the BTW on private use without it until the log is complete.",
   "mileageFieldToHelp": "Where the trip ended.",
-  "mileageFieldTripTypeHelp": "Business and commuting trips in a private vehicle are deductible per km for income tax. Private trips are not.",
+  "mileageFieldTripTypeHelp": "Business and commuting trips in a private vehicle are deductible per km for income tax. Private trips are not. A private stop during work, such as a doctor's visit, is a private trip.",
   "pensionAovInsuredHelp": "Tick when you have a private disability insurance (AOV). Its premiums are deductible.",
-  "pensionFactorAHelp": "The pension you built up with an employer last year, from the factor A on your UPO. Leave 0 if you had none. If your pension scheme follows the Wet toekomst pensioenen, your UPO shows premiums instead: the law then lowers the jaarruimte by those premiums, which Florin does not calculate.",
-  "pensionLijfrenteHelp": "What you pay or plan to pay into a lijfrente this year. Deducted up to the room you have.",
-  "pensionMonthlyPremiumHelp": "The monthly premium of your disability insurance.",
-  "pensionPriorYearIncomeHelp": "Last year's profit from business before the ondernemersaftrek, plus taxable wages, taxable result from other work and taxable periodic benefits, from that year's tax return (Wet IB 2001 art. 3.127 lid 3). The jaarruimte is based on it.",
-  "pensionCountedIncomeHelp": "The income as it counts for the premiegrondslag: at most {max} (Wet IB 2001 art. 3.127 lid 3).",
+  "pensionFactorAHelp": "The pension you built up with an employer last year, from the factor A on your UPO. Leave 0 if you had none. If your pension scheme follows the Wet toekomst pensioenen, your UPO shows premiums instead: enter those under pension premiums last year.",
+  "pensionPremiumsPriorYearHelp": "The premiums for ouderdomspensioen and partnerpensioen put into your pension scheme last year, as on your UPO, when your scheme follows the Wet toekomst pensioenen. The jaarruimte is lowered by them. Leave 0 if you had none. Premiums for a nettopensioen also lower it; Florin does not ask for them.",
+  "pensionLijfrenteHelp": "What you pay into a lijfrente this year. A premium counts for the year in which you pay it, up to your jaarruimte and reserveringsruimte.",
+  "pensionMonthlyPremiumHelp": "The monthly premium of your disability insurance. Only premiums you have paid in the year count: Florin counts the months of the year that have ended.",
+  "pensionPriorYearIncomeHelp": "Last year's profit from business before the ondernemersaftrek, plus taxable wages, taxable result from other work and taxable periodic benefits, from that year's tax return. The jaarruimte is based on it. With an oudedagsreserve, use the profit before its release.",
+  "pensionCountedIncomeHelp": "The income as it counts for the premiegrondslag: at most {max}.",
   "@pensionCountedIncomeHelp": {
     "placeholders": {
       "max": {
@@ -1304,14 +1355,21 @@
       }
     }
   },
-  "pensionReserveringsruimteLabelHelp": "Unused jaarruimte from earlier years that you may still use. The Belastingdienst's Hulpmiddel Lijfrentepremie calculates it.",
+  "pensionReserveringsruimteLabelHelp": "Jaarruimte of the previous ten years that you did not use, oldest year first, at most {max}. You ask for it in your return. The Belastingdienst's Hulpmiddel Lijfrentepremie calculates it.",
+  "@pensionReserveringsruimteLabelHelp": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "settingsBusinessAddressHelp": "Your full business address. It is printed on every invoice.",
   "settingsBusinessNameHelp": "Your business name as registered with the KvK. It is printed on every invoice.",
   "settingsIbanHelp": "The bank account clients pay to. It is printed in the payment instructions.",
   "settingsKvkNumberHelp": "Your 8-digit KvK number. It is printed on every invoice.",
-  "settingsVatNumberHelp": "Your VAT identification number (btw-id), NL followed by 9 digits, B and 2 digits. It is printed on every invoice.",
+  "settingsVatNumberHelp": "Your VAT identification number (btw-id), NL followed by 9 digits, B and 2 digits. It is printed on every invoice except under the KOR, where the invoice mentions no BTW.",
   "vatReturnFiledHelp": "Tick once you filed this return. Florin keeps the figures you filed, so a later change to this period's records shows as a correction: small ones go into your next return, larger ones need a suppletie.",
-  "vatReturnPaidHelp": "Tick once you have paid the VAT due for this quarter.",
+  "vatReturnPaidHelp": "Tick once you have paid the VAT due for this period. The payment counts on the day it reaches the Belastingdienst's account, which can take a few days.",
   "assetKindGeneral": "Business asset",
   "assetKindCar": "Car owned by the business",
   "assetsFieldKind": "Type",
@@ -1319,7 +1377,7 @@
   "assetsCarSection": "Car",
   "assetsCarSectionHelp": "These details decide the addition for private use (bijtelling) and the VAT on private use. A business car counts in full: the bijtelling and the VAT on private use correct for its private use.",
   "assetsFieldCatalogueValue": "Catalogue value",
-  "assetsFieldCatalogueValueHelp": "The original list price including VAT and BPM, as on the registration certificate or the RDW website.",
+  "assetsFieldCatalogueValueHelp": "The official list price when new, including VAT, BPM and the accessories the manufacturer, importer or dealer fitted before registration, as the RDW Kentekencheck shows it.",
   "assetsValidateCatalogueValue": "Enter the catalogue value including VAT and BPM, above zero: the private-use addition is a percentage of it.",
   "assetsFieldFirstRegistration": "First registration",
   "assetsFieldFirstRegistrationHelp": "The date the car was first registered, on the registration certificate. It decides which bijtelling percentage applies.",
@@ -1330,11 +1388,14 @@
   "zeroEmissionBattery": "Battery electric",
   "zeroEmissionHydrogenOrSolar": "Hydrogen or integrated solar",
   "assetsFieldMarketValue": "Market value",
-  "assetsFieldMarketValueHelp": "What the car is worth now. Only used once the car is more than {years} years old.",
+  "assetsFieldMarketValueHelp": "What the car is worth now. Only used once the car is more than {years} years old; the bijtelling is then {pct} of this value or more. Florin does not apply the optional transitional choice for cars that pass that age.",
   "@assetsFieldMarketValueHelp": {
     "placeholders": {
       "years": {
         "type": "int"
+      },
+      "pct": {
+        "type": "String"
       }
     }
   },
@@ -1348,7 +1409,7 @@
     }
   },
   "assetsInvestmentSection": "Investment deductions",
-  "assetsInvestmentSectionHelp": "Extra deductions in the year of purchase. If you sell the asset within {years} years, part of them is added back.",
+  "assetsInvestmentSectionHelp": "Extra deductions in the year of purchase. If you sell the asset within {years} years, part of them is added back. An asset not yet in use on 31 December only gets the deduction on what was paid by then; Florin does not record when an asset came into use or what was paid, so it gives the full deduction.",
   "@assetsInvestmentSectionHelp": {
     "placeholders": {
       "years": {
@@ -1357,7 +1418,7 @@
     }
   },
   "assetsFieldEia": "Energy investment (EIA), reported to RVO",
-  "assetsFieldEiaHelp": "An asset on the RVO Energy List, reported to RVO within {months} months. At least {min} per asset. Cannot be combined with MIA.",
+  "assetsFieldEiaHelp": "A new asset (not used before) on the RVO Energy List, reported to RVO within {months} months. At least {min} per asset. Cannot be combined with MIA.",
   "@assetsFieldEiaHelp": {
     "placeholders": {
       "months": {
@@ -1369,7 +1430,7 @@
     }
   },
   "assetsFieldMia": "Environmental investment (MIA)",
-  "assetsFieldMiaHelp": "The category on the RVO Environmental List, reported to RVO within {months} months. At least {min} per asset.",
+  "assetsFieldMiaHelp": "The category of a new asset (not used before) on the RVO Environmental List, reported to RVO within {months} months. At least {min} per asset.",
   "@assetsFieldMiaHelp": {
     "placeholders": {
       "months": {
@@ -1425,10 +1486,10 @@
   "expensesFieldCarHelp": "Link costs such as fuel and insurance to a business car. A linked cost counts in full, as the bijtelling and the VAT on private use correct for private use. Linked costs cap the bijtelling and decide the VAT on private use.",
   "expensesNoCar": "Not for a business car",
   "mileageFieldVehicle": "Vehicle",
-  "mileageFieldVehicleHelp": "A private vehicle earns the per-km deduction. Trips in a business car do not; they count for its trip log instead.",
+  "mileageFieldVehicleHelp": "A private vehicle earns the per-km deduction. Trips in a business car do not; they count for its trip log instead. The per-km amount covers fuel, insurance, tolls and parking, so do not record those costs of a private vehicle as expenses.",
   "mileagePrivateVehicle": "Private vehicle",
   "inputPartnerHours": "Partner's hours not in the hour log",
-  "inputPartnerHoursHelp": "Hours your fiscal partner worked in your business this year that are not logged per day under Hours. Florin adds them to the logged partner hours. From {hours} hours, while the partner works unpaid or for less than {pay}, you get the meewerkaftrek. The Belastingdienst asks you to make the hours plausible, so a day log is the better proof.",
+  "inputPartnerHoursHelp": "Hours your fiscal partner has worked in your business so far this year that are not logged per day under Hours. Florin adds them to the logged partner hours. From {hours} hours, while the partner works unpaid or for less than {pay}, you get the meewerkaftrek. The Belastingdienst asks you to make the hours plausible, so a day log is the better proof.",
   "@inputPartnerHoursHelp": {
     "placeholders": {
       "pay": {
@@ -1440,7 +1501,7 @@
     }
   },
   "inputPartnerPay": "Pay to your partner",
-  "inputPartnerPayHelp": "What your business paid your fiscal partner for the work this year. Below {pay} it is not deductible and your partner still counts as unpaid for the meewerkaftrek (Wet IB 2001 art. 3.16 lid 4, art. 3.78); from {pay} Florin deducts it as a cost and gives no meewerkaftrek. Do not also record it as an expense.",
+  "inputPartnerPayHelp": "What your business paid your fiscal partner for the work this year. Below {pay} it is not deductible and your partner still counts as unpaid for the meewerkaftrek; from {pay} Florin deducts it as a cost and gives no meewerkaftrek. Do not also record it as an expense.",
   "@inputPartnerPayHelp": {
     "placeholders": {
       "pay": {
@@ -1449,7 +1510,7 @@
     }
   },
   "inputUnrealisedZelfs": "Unused zelfstandigenaftrek",
-  "inputUnrealisedZelfsHelp": "Zelfstandigenaftrek from the previous {years} years that did not fit your profit, as stated by the Belastingdienst. Used up to this year's profit.",
+  "inputUnrealisedZelfsHelp": "Zelfstandigenaftrek from the previous {years} years that did not fit your profit, as stated by the Belastingdienst. Used this year as far as your profit exceeds this year's zelfstandigenaftrek, and only when you meet the urencriterium.",
   "@inputUnrealisedZelfsHelp": {
     "placeholders": {
       "years": {
@@ -1460,15 +1521,15 @@
   "inputLossCarryForward": "Losses from earlier years",
   "inputLossCarryForwardHelp": "Box 1 losses from earlier years still to offset, as stated by the Belastingdienst. Offset against this year's income.",
   "inputEmployed": "I also work as an employee this year",
-  "inputEmployedHelp": "Wages count in box 1 together with your profit, and the urencriterium then also compares your hours in the business with your hours in employment.",
+  "inputEmployedHelp": "Wages count in box 1 together with your profit.",
   "inputWages": "Wages (loon)",
   "inputWagesHelp": "The loon on your jaaropgaven: the wage that is taxed, not the gross salary. It is added to your profit in box 1.",
   "inputWageTaxWithheld": "Loonheffing withheld",
   "inputWageTaxWithheldHelp": "The loonheffing on your jaaropgaven: the loonbelasting and premie volksverzekeringen your employers withheld. The return subtracts it from the tax.",
   "inputZvwWages": "Loon Zvw",
   "inputZvwWagesHelp": "The loon Zorgverzekeringswet on your jaaropgaven, on which your employer paid the werkgeversheffing Zvw. You pay the Zvw contribution on your profit only up to the maximum bijdrage-inkomen minus this amount.",
-  "inputEmploymentHours": "Hours in employment",
-  "inputEmploymentHoursHelp": "The hours you work as an employee in the whole year. The urencriterium also requires more time in the business than in other work, unless you were not a business owner in one or more of the {years} previous years.",
+  "inputEmploymentHours": "Hours in employment and other work",
+  "inputEmploymentHoursHelp": "The hours you work in the whole year as an employee and in other work outside the business, such as freelance work taxed as resultaat uit overige werkzaamheden. The urencriterium requires more time in the business than in this work, unless you were not a business owner in one or more of the {years} previous years.",
   "@inputEmploymentHoursHelp": {
     "placeholders": {
       "years": {
@@ -1484,7 +1545,7 @@
       }
     }
   },
-  "inputNotOndernemerBeforeHelp": "Then this year counts as a starting year: the urencriterium does not require more time in the business than in a job (Wet IB 2001 art. 3.6 lid 1 b), and the startersaftrek bij arbeidsongeschiktheid can apply (art. 3.78a). Answer it again for every year.",
+  "inputNotOndernemerBeforeHelp": "Then this year counts as a starting year: the urencriterium does not require more time in the business than in a job, and the startersaftrek bij arbeidsongeschiktheid can apply. Answer it again for every year.",
   "inputStarter": "I had the zelfstandigenaftrek at most {max} times in those years",
   "@inputStarter": {
     "placeholders": {
@@ -1493,7 +1554,7 @@
       }
     }
   },
-  "inputStarterHelp": "Then you get the startersaftrek of {amount} on top of the zelfstandigenaftrek, if you meet the urencriterium (Wet IB 2001 art. 3.76 lid 3). It stops once you have had the zelfstandigenaftrek more often, so check it for every year.",
+  "inputStarterHelp": "Then you get the startersaftrek of {amount} on top of the zelfstandigenaftrek, if you meet the urencriterium. It stops once you have had the zelfstandigenaftrek more often, so check it for every year. A year in which the zelfstandigenaftrek was nil because you made a loss also counts.",
   "@inputStarterHelp": {
     "placeholders": {
       "amount": {
@@ -1572,9 +1633,16 @@
       }
     }
   },
-  "pensionAowFranchiseHelp": "The part of your income for which you already build up AOW. Jaarruimte is only calculated on income above it.",
-  "pensionPensioengrondslagHelp": "Last year's income minus the AOW-franchise, up to the legal maximum.",
-  "pensionJaarruimteHelp": "{pct} of the premiegrondslag minus a multiple of factor A, up to the yearly maximum. What you may deduct for a lijfrente this year.",
+  "pensionAowFranchiseHelp": "A fixed amount the law subtracts from the premiegrondslag, set each year from the AOW benefit. The jaarruimte is only calculated on income above it.",
+  "pensionPremiegrondslagHelp": "Last year's income as it counts, at most {max}, minus the AOW-franchise.",
+  "@pensionPremiegrondslagHelp": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "pensionJaarruimteHelp": "{pct} of the premiegrondslag minus a multiple of factor A and last year's pension premiums, up to the yearly maximum. What you may deduct for a lijfrente this year.",
   "@pensionJaarruimteHelp": {
     "placeholders": {
       "pct": {
@@ -1591,9 +1659,12 @@
   "plTaxWagesHelp": "The loon you entered below. It is box 1 income like the profit, so it raises the rate on the profit and lowers the algemene heffingskorting.",
   "plTaxBox1SectionHelp": "Estimated income tax including national insurance premiums, in brackets, minus the heffingskortingen.",
   "plTaxCarPrivateUse": "Private use of business car",
-  "plTaxCarPrivateUseHelp": "The bijtelling: a percentage of the catalogue value added to profit for private use, at most the car costs. None with a trip log of {km} private km a year or less.",
+  "plTaxCarPrivateUseHelp": "The bijtelling: a percentage of the catalogue value, or of the market value for a car more than {years} years old, added to profit for private use, at most the car costs. That cap counts only the costs linked to the car and its depreciation, so link every car cost to the car. None with a trip log of {km} private km a year or less.",
   "@plTaxCarPrivateUseHelp": {
     "placeholders": {
+      "years": {
+        "type": "int"
+      },
       "km": {
         "type": "int"
       }
@@ -1629,7 +1700,7 @@
   "plTaxDisposalResultHelp": "Sale price minus book value of assets sold this year. A gain adds to profit, a loss lowers it.",
   "plTaxEia": "Energie-investeringsaftrek (EIA)",
   "plTaxEiaHelp": "An extra deduction for investments on the RVO Energy List.",
-  "plTaxFoodLimitedHelp": "Food, drinks, representation, congresses, seminars and study trips are deductible for {pct}, or above the first {drempel} (Wet IB 2001 art. 3.15). Florin uses whichever gives the larger deduction.",
+  "plTaxFoodLimitedHelp": "Food, drinks, representation, congresses, seminars and study trips are deductible for {pct}, or above the first {drempel}. Florin uses whichever gives the larger deduction.",
   "@plTaxFoodLimitedHelp": {
     "placeholders": {
       "pct": {
@@ -1640,7 +1711,7 @@
       }
     }
   },
-  "plTaxCourseTravelHelp": "Travel and stay for courses, studies and congresses are deductible up to {max} a year (Wet IB 2001 art. 3.16 lid 2 f). The limit does not apply when your work makes attending necessary (lid 8); Florin keeps it, because it cannot tell that from your records.",
+  "plTaxCourseTravelHelp": "Travel and stay for courses, studies and congresses are deductible up to {max} a year. The limit does not apply when your work makes attending necessary; Florin keeps it, because it cannot tell that from your records. What is left counts with food, drinks and representation, as the law limits travel for congresses there too; Florin does the same for courses, because it cannot tell them apart.",
   "@plTaxCourseTravelHelp": {
     "placeholders": {
       "max": {
@@ -1656,7 +1727,7 @@
       }
     }
   },
-  "plTaxBarredCostsHelp": "Fines (Wet IB 2001 art. 3.14), clothing other than werkkleding, personal care, a phone line at home and literature other than professional literature (art. 3.16 lid 2). The law keeps these costs out of the profit, so they lower it by nothing.",
+  "plTaxBarredCostsHelp": "Fines, clothing other than werkkleding, personal care, a phone line at home and literature other than professional literature. The law keeps these costs out of the profit, so they lower it by nothing.",
   "plTaxInputsSection": "Your situation in {year}",
   "@plTaxInputsSection": {
     "placeholders": {
@@ -1666,7 +1737,7 @@
     }
   },
   "plTaxInputsSectionHelp": "Facts the bookkeeping cannot show. They change the estimate above.",
-  "plTaxEmploymentSection": "Employment in {year}",
+  "plTaxEmploymentSection": "Employment and other work in {year}",
   "@plTaxEmploymentSection": {
     "placeholders": {
       "year": {
@@ -1674,7 +1745,7 @@
       }
     }
   },
-  "plTaxEmploymentSectionHelp": "If you also work as an employee. Enter the totals of all your jaaropgaven for the year. During the year, enter what you expect for the whole year.",
+  "plTaxEmploymentSectionHelp": "If you also work as an employee or do other work outside the business. Enter the totals of all your jaaropgaven for the year. During the year, enter what you expect for the whole year.",
   "plTaxInvestmentSection": "Investment deductions",
   "plTaxInvestmentSectionHelp": "Extra deductions for assets bought this year.",
   "plTaxKiaHelp": "Kleinschaligheidsinvesteringsaftrek: a percentage or fixed amount based on your total qualifying investments this year.",
@@ -1682,11 +1753,14 @@
   "plTaxLossOffset": "Losses from earlier years",
   "plTaxLossOffsetHelp": "Box 1 losses from earlier years, offset against this year's income.",
   "plTaxMeewerk": "Meewerkaftrek",
-  "plTaxMeewerkHelp": "A percentage of profit when your fiscal partner works at least {hours} hours in the business without pay.",
+  "plTaxMeewerkHelp": "A percentage of profit when your fiscal partner works at least {hours} hours in the business without pay or for less than {pay}.",
   "@plTaxMeewerkHelp": {
     "placeholders": {
       "hours": {
         "type": "int"
+      },
+      "pay": {
+        "type": "String"
       }
     }
   },
@@ -1726,10 +1800,20 @@
   "plTaxStartersaftrekHelp": "An extra deduction on top of the zelfstandigenaftrek for business owners who recently started.",
   "plTaxTaxableProfitHelp": "The income in box 1 the tax is calculated on: belastbare winst plus wages, minus the deductions above.",
   "plTaxUnrealisedZelfs": "Unused zelfstandigenaftrek from earlier years",
-  "plTaxUnrealisedZelfsHelp": "Zelfstandigenaftrek from earlier years that did not fit the profit then, used up to this year's profit.",
+  "plTaxUnrealisedZelfsHelp": "Zelfstandigenaftrek from earlier years that did not fit the profit then. Used this year as far as your profit exceeds this year's zelfstandigenaftrek, and only when you meet the urencriterium.",
   "plTaxZelfstandigenaftrekHelp": "A fixed deduction for business owners who meet the urencriterium. At most the profit, unless you are a starter.",
   "plTaxZvwHelp": "The income-related contribution to the health care insurance act, on belastbare winst up to a maximum. The loon Zvw your employer paid the werkgeversheffing on lowers that maximum.",
-  "vatReturnIcpSectionHelp": "Supplies to businesses in other EU countries, reported separately in the ICP report. While you take part in the KOR you file no ICP report, so invoices from those dates are not listed.",
+  "vatReturnIcpSectionHelp": "Supplies to businesses in other EU countries, reported separately in the ICP report, with its own period: a quarter, or for goods a month, from the month goods to EU businesses pass {max} in a quarter and in the {quarters} quarters after it. Florin lists services in the same periods as goods, as the Belastingdienst allows. The Belastingdienst does not send it: you file it yourself in Mijn Belastingdienst Zakelijk. While you take part in the KOR you file no ICP report, so invoices from those dates are not listed. Corrections go in the next ICP report; Florin does not track changes to a filed ICP period.",
+  "@vatReturnIcpSectionHelp": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      },
+      "quarters": {
+        "type": "int"
+      }
+    }
+  },
   "vatRow1aHelp": "Revenue taxed at {rate} and the VAT on it.",
   "@vatRow1aHelp": {
     "placeholders": {
@@ -1747,7 +1831,7 @@
     }
   },
   "vatRow1d": "1d  Private use",
-  "vatRow1dHelp": "VAT on private use of business cars: {rate} or {reduced} of the catalogue value, or the actual private share with a trip log. In the last return of the year only.",
+  "vatRow1dHelp": "VAT on private use of business cars: {rate} or {reduced} of the catalogue value including VAT and BPM, or the actual private share with a trip log. In the last return of the year only.",
   "@vatRow1dHelp": {
     "placeholders": {
       "rate": {
@@ -1759,14 +1843,14 @@
     }
   },
   "vatRow1eHelp": "Revenue at 0% or where the VAT is reverse-charged to a Dutch business.",
-  "vatRow3aHelp": "Exports of goods to countries outside the EU. Services to businesses outside the EU are not reported.",
+  "vatRow3aHelp": "Exports of goods to countries outside the EU. Services taxed outside the EU are not reported.",
   "vatRow3bHelp": "Goods and services to businesses in other EU countries.",
   "vatRow5aHelp": "The VAT you owe on your revenue and private use.",
   "vatRow5bHelp": "The VAT on business costs you may deduct.",
   "clientsSearchHelp": "Search clients by name.",
   "invoicesSearchHelp": "Search by invoice number or client name.",
   "expensesFieldPurchaseVat": "VAT on this purchase",
-  "expensesFieldPurchaseVatHelp": "Dutch VAT when the supplier charged it. Shifted when the invoice says the VAT is reverse-charged to you, or the supplier is abroad: you then report and deduct the VAT yourself.",
+  "expensesFieldPurchaseVatHelp": "Dutch VAT when the supplier charged it. Shifted when the invoice says the VAT is reverse-charged to you, or the supplier is abroad: you then report and deduct the VAT yourself. Services to real estate from an EU supplier that shifts the VAT to you go in 2a, not 4b: choose Shifted to me by a Dutch supplier (2a).",
   "purchaseVatDomestic": "Charged by the supplier",
   "purchaseVatReverseChargeNl": "Shifted to me by a Dutch supplier (2a)",
   "purchaseVatFromEu": "From a supplier in another EU country (4b)",
@@ -1792,10 +1876,10 @@
   },
   "expensesBusinessUseHelp": "The share used for the business. Only that share of the cost and VAT is deductible.",
   "settingsLanguageSectionHelp": "The language of the app. Invoices and CSV exports are always in Dutch.",
-  "vatTreatmentServicesOutsideEu": "Services to a business outside the EU (not in the VAT return)",
+  "vatTreatmentServicesOutsideEu": "Services taxed outside the EU (not in the VAT return)",
   "invoiceValidateTreatmentCountry": "This VAT treatment does not fit the client's country. Domestic reverse charge is for Dutch clients, the EU treatments for other EU countries and the treatments outside the EU for countries outside it.",
-  "invoiceValidateTreatmentConsumer": "This client is a private person. Choose Dutch BTW, the KOR or export of goods: BTW is not shifted to a private person, and a service to one is taxed in the Netherlands.",
-  "invoiceEuConsumerNotice": "Telecommunication, broadcasting and electronic services and distance sales of goods to private persons in other EU countries are taxed in their country once together they pass {threshold} excl. BTW in this year or the last (Wet OB 1968 art. 6h, 6k). Your supplies with Dutch BTW to private persons in other EU countries this year, this invoice included: {total}. Florin cannot tell which are electronic services, so it counts all of them, and it does not prepare the OSS return.",
+  "invoiceValidateTreatmentConsumer": "This client is a private person. Choose Dutch BTW, the KOR, export of goods or, for a client outside the EU, services taxed outside the EU: BTW is not shifted to a private person.",
+  "invoiceEuConsumerNotice": "Telecommunication, broadcasting and electronic services and distance sales of goods to private persons in other EU countries are taxed in their country once together they pass {threshold} excl. BTW in this year or the last. Your supplies with Dutch BTW to private persons in other EU countries this year, this invoice included: {total}. Florin cannot tell which are electronic services, so it counts all of them, and it does not prepare the OSS return.",
   "@invoiceEuConsumerNotice": {
     "placeholders": {
       "threshold": {
@@ -1806,7 +1890,7 @@
       }
     }
   },
-  "invoiceEuConsumerOverNotice": "Your supplies with Dutch BTW to private persons in other EU countries pass {threshold} in this year or the last. If they include telecommunication, broadcasting or electronic services or distance sales of goods, those are taxed in the private person's country, not with Dutch BTW (Wet OB 1968 art. 6h, 6k), usually through the OSS. Florin does not model this and keeps charging Dutch BTW.",
+  "invoiceEuConsumerOverNotice": "Your supplies with Dutch BTW to private persons in other EU countries pass {threshold} in this year or the last. If they include telecommunication, broadcasting or electronic services or distance sales of goods, those are taxed in the private person's country, not with Dutch BTW, usually through the OSS. Florin does not model this and keeps charging Dutch BTW.",
   "@invoiceEuConsumerOverNotice": {
     "placeholders": {
       "threshold": {
@@ -1815,7 +1899,7 @@
     }
   },
   "invoiceSelfBilled": "Issued by the customer (self-billing)",
-  "invoiceSelfBilledHelp": "Tick this when the customer, such as a reseller, makes the invoice for what it owes you. The law allows this when you agreed on it beforehand and you accept each invoice. Florin records it with the customer's number and makes no PDF: the customer's document is the invoice.",
+  "invoiceSelfBilledHelp": "Tick this when the customer, such as a reseller, makes the invoice for what it owes you. The law allows this when you agreed on it beforehand and you accept each invoice. Florin records it with the customer's number and makes no PDF: the customer's document is the invoice. Enter the amounts and BTW exactly as the customer's invoice states them: you owe the BTW it shows.",
   "invoiceFieldNumberSelfBilledHelp": "The number on the invoice the customer issued to you.",
   "invoiceActionRecord": "Record",
   "invoiceRecordTitle": "Record invoice",
@@ -1826,11 +1910,11 @@
   "clientsMerchantOfRecord": "Merchant of record (reseller)",
   "clientsMerchantOfRecordHelp": "Tick this for a platform that sells your product to end customers in its own name and pays you, such as a merchant of record or an app store. It is the seller towards the end customers, so you invoice only the platform. The Wet DBA section is about working relationships and is hidden for a reseller.",
   "clientsConsumer": "Private person, not a business",
-  "clientsConsumerHelp": "Tick this for a customer who buys as a private person. BTW is never shifted to a private person and there is no ICP-opgaaf for one, so Florin offers only Dutch BTW, the KOR or export of goods. A service to a private person is taxed where you are established (Wet OB 1968 art. 6 lid 2), except telecommunication, broadcasting and electronic services, which are taxed where the private person lives (art. 6h) once such supplies to other EU countries pass a yearly threshold (art. 6k). For a private person in the Netherlands you need not issue an invoice (art. 34c).",
+  "clientsConsumerHelp": "Tick this for a customer who buys as a private person. BTW is never shifted to a private person and there is no ICP-opgaaf for one. A service to a private person is taxed where you are established, with exceptions: telecommunication, broadcasting and electronic services are taxed where the private person lives, for private persons in other EU countries only once such supplies pass a yearly threshold; advice, advertising, licences, data processing and similar services to a private person outside the EU are taxed there; streamed or virtual cultural, educational and entertainment activities are taxed where the private person is. For a private person in the Netherlands you need not issue an invoice.",
   "clientsBadgeMerchantOfRecord": "Merchant of record",
   "clientsBadgeConsumer": "Private person",
-  "vatRowOutsideReturn": "Services to businesses outside the EU (not in the return)",
-  "vatRowOutsideReturnHelp": "Revenue from services to businesses outside the EU. The Belastingdienst says these are not reported in the Dutch return when the service is taxed outside the EU. Shown so you can see where that revenue went.",
+  "vatRowOutsideReturn": "Services taxed outside the EU (not in the return)",
+  "vatRowOutsideReturnHelp": "Revenue from services taxed outside the EU: to businesses there and, where the law places the service there, to private persons there. The Belastingdienst says services to businesses outside the EU are not reported in the Dutch return when the service is taxed outside the EU, and BTW is levied only on supplies in the Netherlands. Shown so you can see where that revenue went.",
   "@invoiceMerchantOfRecordNotice": {
     "placeholders": {
       "name": {
@@ -1899,7 +1983,7 @@
   "expensesValidateKorReclaim": "You take part in the KOR on this date, so you cannot reclaim VAT on purchases. Untick Reclaim VAT: the VAT then counts as part of the cost.",
   "expensesKorNotice": "You take part in the KOR on this date. VAT on purchases is not reclaimed; it counts as part of the cost for income tax.",
   "settingsKorStart": "KOR applies from",
-  "settingsKorStartHelp": "The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst's confirmation. Until that date you file every return as usual. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most {limit} a year. Leave empty when you do not take part.",
+  "settingsKorStartHelp": "The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst's confirmation. Until that date you file every return as usual. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most {limit} a year. If your turnover passed {limit} in the year before the one you register in, the KOR does not apply in that year. Leave empty when you do not take part.",
   "@settingsKorStartHelp": {
     "placeholders": {
       "limit": {
@@ -1908,16 +1992,24 @@
     }
   },
   "settingsKorEnd": "KOR ended on",
-  "settingsKorEndHelp": "The first day the KOR no longer applies after you deregistered yourself. Leave empty otherwise: when your turnover passes the limit, Florin ends the KOR from that invoice on.",
+  "settingsKorEndHelp": "The first day the KOR no longer applies after you deregistered yourself, as in the Belastingdienst's letter. Leave empty otherwise: when your turnover passes the limit, Florin ends the KOR from that supply on.",
   "settingsValidateKorStart": "The KOR starts on the first day of a return period, so enter a 1st of the month, as in the Belastingdienst's confirmation.",
-  "settingsValidateKorEndDay": "A deregistration takes effect on the first day of a return period, so enter a 1st of the month.",
+  "settingsValidateKorStartBlocked": "After your turnover passed the limit, the KOR can start again only from {date}.",
+  "@settingsValidateKorStartBlocked": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsValidateKorEndDay": "A deregistration takes effect on the first day of a month, normally a calendar quarter. Enter the date in the Belastingdienst's letter.",
   "settingsValidateKorEndBeforeStart": "The end of the KOR comes after its start. Check both dates.",
   "settingsKorClear": "I do not take part in the KOR",
   "korProgress": "{turnover} of {limit}",
   "korExceededBadge": "Limit passed on {date}",
   "korLeftBadge": "{left} below the limit",
   "dashboardKor": "KOR turnover",
-  "dashboardKorHelp": "Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above {limit} in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next. The KOR is not automatic: it applies only after you register and the Belastingdienst confirms the start date. Until then you file a return every quarter, however low your turnover.",
+  "dashboardKorHelp": "Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above {limit} in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next. The KOR is not automatic: it applies only after you register and the Belastingdienst confirms the start date. Until then you file a return every period, however low your turnover.",
   "@dashboardKorHelp": {
     "placeholders": {
       "limit": {
@@ -1953,10 +2045,10 @@
   "deadlineStatusIncidental": "incidental return",
   "deadlineBadgeKor": "No return: KOR",
   "deadlineBadgeIncidental": "Incidental return due",
-  "vatReturnKorNotice": "You take part in the KOR for this whole quarter and owe no VAT in it, so no return is due. If the Belastingdienst sends you one anyway, file it.",
-  "vatReturnKorPartNotice": "The KOR applies for part of this quarter. Invoices exempt under the KOR are not in the return and VAT on purchases in that part is not reclaimed. File a return for the part outside the KOR.",
-  "vatReturnKorIncidentalNotice": "You take part in the KOR for this whole quarter, but you owe VAT in it, such as VAT shifted to you (2a, 4a or 4b), which you cannot deduct. So you file a return for this quarter. The Belastingdienst does not send it: ask your belastingkantoor for it in writing once the quarter is over. Florin shows the usual deadline as the date to aim for.",
-  "vatReturnNilNotice": "Nothing to report this quarter. You still file a return by the deadline: a nil return (0-aangifte). Without it the Belastingdienst sends an additional assessment and a fine.",
+  "vatReturnKorNotice": "You take part in the KOR for this whole period and owe no VAT in it, so no return is due. If the Belastingdienst sends you one anyway, file it.",
+  "vatReturnKorPartNotice": "The KOR applies for part of this period. Invoices exempt under the KOR are not in the return and VAT on purchases in that part is not reclaimed. File a return for the part outside the KOR.",
+  "vatReturnKorIncidentalNotice": "You take part in the KOR for this whole period, but you owe VAT in it, such as VAT shifted to you (2a, 4a or 4b), which you cannot deduct. So you file a return for it. The Belastingdienst does not send it: you request it in writing from your belastingkantoor per calendar quarter, after the quarter ends, and file it on paper. Florin shows the usual deadline as the date to aim for.",
+  "vatReturnNilNotice": "Nothing to report in this period. You still file a return by the deadline: a nil return (0-aangifte). Without it the Belastingdienst sends an additional assessment and a fine.",
   "vatReturnKorExceeded": "Your turnover for the KOR passed {limit} on {date}. The KOR ended with that supply: from then on you charge VAT and file returns. Deregister in Mijn Belastingdienst Zakelijk; you cannot take part again this year or next year.",
   "@vatReturnKorExceeded": {
     "placeholders": {
@@ -1968,6 +2060,7 @@
       }
     }
   },
+  "vatReturnKorPrivateUseNotice": "The estimated BTW on private use of a car also covers time this year when the KOR applied. Whether it is owed while the KOR applies is not settled by the sources Florin relies on; Florin counts it, the branch that pays more.",
   "errorDuplicate": "Another record already uses this value, such as the same invoice number. Use a value that is not taken yet.",
   "errorInUse": "Other records refer to this one, such as invoices of a client. Remove or change those first, or mark this one inactive.",
   "errorBusy": "The database is in use by another program. Close that program, or wait a moment, and try again.",
@@ -1998,7 +2091,7 @@
   "invoiceTotal": "Total",
   "settingsTaxKor": "KOR turnover limit",
   "settingsKorSection": "Kleineondernemersregeling (KOR)",
-  "settingsKorSectionHelp": "A VAT exemption for businesses with at most {limit} turnover in the Netherlands a year. It is not automatic: you register for it and deregister with the Belastingdienst, and without it you file a return every quarter. Enter its dates here so Florin follows it.",
+  "settingsKorSectionHelp": "A VAT exemption for businesses with at most {limit} turnover in the Netherlands a year. It is not automatic: you register for it and deregister with the Belastingdienst, and without it you file a return every period. Enter its dates here so Florin follows it.",
   "@settingsKorSectionHelp": {
     "placeholders": {
       "limit": {
@@ -2017,7 +2110,7 @@
     }
   },
   "receiptsAssetTitle": "Purchase invoice and receipts",
-  "receiptsAssetHelp": "The purchase invoice of this asset and any other proof, as a PDF, photo or scan. It belongs in your records while the asset is in use, and {years} years after that.",
+  "receiptsAssetHelp": "The purchase invoice of this asset and any other proof, as a PDF, photo or scan. It belongs in your records while the asset is in use, and {years} years after that. For real estate the term is longer and counts from the year it came into use; Florin does not show that date.",
   "@receiptsAssetHelp": {
     "placeholders": {
       "years": {
@@ -2039,7 +2132,7 @@
   "receiptsAdded": "added {date}",
   "receiptsMissing": "The file is missing from the receipts folder. Restore it from a backup.",
   "receiptsKeepUntil": "Keep until",
-  "receiptsKeepUntilHelp": "The Belastingdienst asks you to keep invoices and receipts for {years} years. Florin counts them from the end of the year they belong to and never deletes them. The Belastingdienst can raise a year's tax afterwards for {navordering} years after the tax became due, longer when you had extra time to file, and for {foreign} years for income or assets held abroad (AWR art. 16), so keep the records of such a year at least that long.",
+  "receiptsKeepUntilHelp": "The Belastingdienst asks you to keep invoices and receipts for {years} years. Florin counts from the end of the year they belong to, so the date shown is the earliest: the term starts only once a record is no longer current, such as a contract that still runs. Florin never deletes them. Separately, the Belastingdienst can raise a year's tax afterwards for {navordering} years after the tax became due, longer when you had extra time to file, and for {foreign} years for income or assets held abroad.",
   "@receiptsKeepUntilHelp": {
     "placeholders": {
       "years": {
@@ -2062,8 +2155,8 @@
     }
   },
   "receiptsRejectedEmpty": "{name} is empty. Choose the file again.",
-  "receiptsRejectedTooLarge": "{name} is larger than {max}. Save the scan at a lower resolution, keeping every page readable, and add it again.",
-  "receiptsRejectedType": "{name} is not a PDF, JPEG, PNG, HEIC, TIFF or UBL e-invoice. Save or print it as PDF and add it again.",
+  "receiptsRejectedTooLarge": "{name} is larger than {max}. For a scan of paper, save it at a lower resolution, keeping every page readable, and add it again. A file you received digitally stays in the form you received it: keep it in your own records.",
+  "receiptsRejectedType": "{name} is not a PDF, JPEG, PNG, HEIC, TIFF or UBL e-invoice, so Florin cannot store it. Keep the file as you received it in your own records.",
   "receiptsDuplicate": "{name} is already stored with another record. It was added here too.",
   "receiptsOpenFailed": "Could not open {name}. Open it from the receipts folder instead.",
   "@receiptsAdded": {

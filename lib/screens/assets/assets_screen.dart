@@ -66,7 +66,7 @@ class AssetsScreen extends ConsumerWidget {
         ),
         SummaryStat(
           l.assetsDepreciationThisYear,
-          AppFormat.cents(AssetService.totalDepreciation(list, year)),
+          AppFormat.cents(AssetService.totalDepreciation(list, year, rules)),
         ),
       ]),
       itemBuilder: (context, a) {
@@ -96,7 +96,9 @@ class AssetsScreen extends ConsumerWidget {
               ],
               Tooltip(
                 message: l.assetsBookValueTooltip(year),
-                child: Text(AppFormat.cents(AssetService.bookValue(a, year))),
+                child: Text(
+                  AppFormat.cents(AssetService.bookValue(a, year, rules)),
+                ),
               ),
             ],
           ),
@@ -121,7 +123,7 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
   late final _name = TextEditingController(text: widget.asset?.assetName);
   late final _notes = TextEditingController(text: widget.asset?.notes);
   late final _usefulLife = TextEditingController(
-    text: '${widget.asset?.usefulLifeYears ?? _rules.minUsefulLifeYears}',
+    text: widget.asset == null ? '' : '${widget.asset!.usefulLifeYears}',
   );
   late DateTime _purchaseDate = widget.asset?.purchaseDate ?? DateTime.now();
   late int _costExclVat = widget.asset?.costExclVat ?? 0;
@@ -255,11 +257,13 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
     final before = AssetService.reserveLedger(
       others,
       _purchaseDate.year - 1,
+      _rules,
     )[_purchaseDate.year - 1];
     final formedThisYear =
         AssetService.reserveLedger(
           others,
           _purchaseDate.year,
+          _rules,
         )[_purchaseDate.year]?.formed ??
         0;
     return (before?.balance ?? 0) + formedThisYear;
@@ -413,7 +417,6 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                   decoration: fieldDecoration(
                     label: l.assetsFieldUsefulLife,
                     help: l.assetsFieldUsefulLifeHelp(
-                      _rules.minUsefulLifeYears,
                       AppFormat.percentLabel(_rules.maxDepreciationRate),
                     ),
                     required: true,
@@ -422,11 +425,8 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                   keyboardType: TextInputType.number,
                   validator: (v) => Validate.wholeNumber(
                     v,
-                    l.assetsFieldUsefulLifeMin(
-                      _rules.minUsefulLifeYears,
-                      AppFormat.percentLabel(_rules.maxDepreciationRate),
-                    ),
-                    min: _rules.minUsefulLifeYears,
+                    l.assetsValidateUsefulLife,
+                    min: 1,
                   ),
                 ),
               ],
@@ -572,6 +572,7 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                     label: l.assetsFieldMarketValue,
                     help: l.assetsFieldMarketValueHelp(
                       _rules.carMarketValueAfterYears,
+                      AppFormat.percentLabel(_rules.carOldBijtellingRate),
                     ),
                     initialValueCents: _marketValue,
                     onChanged: (v) => setState(() => _marketValue = v),

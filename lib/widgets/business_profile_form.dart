@@ -6,6 +6,7 @@ import 'help.dart';
 import 'package:florin/l10n/app_localizations.dart';
 import '../db/database.dart';
 import '../services/formats.dart';
+import '../services/kor_service.dart';
 import '../theme/app_spacing.dart';
 import 'date_field.dart';
 import 'form_row.dart';
@@ -56,10 +57,14 @@ class BusinessProfileForm extends StatefulWidget {
   /// The rules of the selected year, for the figures the help texts name.
   final TaxYearRules rules;
 
+  /// The KOR as the records show it, for the years a new start is blocked.
+  final KorStatus kor;
+
   const BusinessProfileForm({
     super.key,
     required this.fields,
     required this.rules,
+    this.kor = KorStatus.none,
   });
 
   @override
@@ -162,9 +167,15 @@ class _BusinessProfileFormState extends State<BusinessProfileForm> {
               value: f.korStart,
               firstDate: DateTime(2000),
               onChanged: (d) => setState(() => f.korStart = d),
-              validator: (_) => f.korStart != null && f.korStart!.day != 1
-                  ? l.settingsValidateKorStart
-                  : null,
+              validator: (_) {
+                final start = f.korStart;
+                if (start == null) return null;
+                if (start.day != 1) return l.settingsValidateKorStart;
+                final until = widget.kor.startBlockedUntil(start);
+                return until == null
+                    ? null
+                    : l.settingsValidateKorStartBlocked(AppFormat.date(until));
+              },
             ),
             if (f.korStart == null)
               const SizedBox.shrink()

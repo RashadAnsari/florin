@@ -281,7 +281,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardUrencriteriumHelp.
   ///
   /// In en, this message translates to:
-  /// **'The hours you worked for the business this year against the urencriterium. The zelfstandigenaftrek and most other deductions for business owners require it (Wet IB 2001 art. 3.76). All business hours count, not only billable ones. With a job, the business must also take more of your time than the job (art. 3.6).'**
+  /// **'The hours you worked for the business this year against the urencriterium. The zelfstandigenaftrek and most other deductions for business owners require it. All business hours count, not only billable ones. With a job, the business must also take more of your time than the job.'**
   String get dashboardUrencriteriumHelp;
 
   /// No description provided for @dashboardBtwDeadlines.
@@ -785,7 +785,7 @@ abstract class AppLocalizations {
   /// No description provided for @clientsHighRiskWarning.
   ///
   /// In en, this message translates to:
-  /// **'High Wet DBA risk in your own assessment: if the work is employment in law, the Belastingdienst treats it as such.'**
+  /// **'High Wet DBA risk in your own assessment. When the Belastingdienst finds schijnzelfstandigheid, it can impose corrections and naheffingsaanslagen loonheffingen on the client back to 1 January 2025, and since 2026 vergrijpboetes.'**
   String get clientsHighRiskWarning;
 
   /// No description provided for @clientsDeleteTitle.
@@ -1496,12 +1496,6 @@ abstract class AppLocalizations {
   /// **'yrs'**
   String get assetsFieldUsefulLifeUnit;
 
-  /// No description provided for @assetsFieldUsefulLifeMin.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter at least {years} years: depreciation is limited to {pct} of the cost a year'**
-  String assetsFieldUsefulLifeMin(int years, String pct);
-
   /// No description provided for @assetsValidateName.
   ///
   /// In en, this message translates to:
@@ -1513,6 +1507,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter the cost excluding VAT, above zero: depreciation is calculated from it.'**
   String get assetsValidateCost;
+
+  /// No description provided for @assetsValidateUsefulLife.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the useful life in whole years, at least 1: depreciation is spread over it.'**
+  String get assetsValidateUsefulLife;
 
   /// No description provided for @assetsFieldKia.
   ///
@@ -1601,7 +1601,7 @@ abstract class AppLocalizations {
   /// No description provided for @pensionJaarruimte.
   ///
   /// In en, this message translates to:
-  /// **'Annual allowance calculation'**
+  /// **'Jaarruimte'**
   String get pensionJaarruimte;
 
   /// No description provided for @pensionAowFranchise.
@@ -1610,22 +1610,22 @@ abstract class AppLocalizations {
   /// **'AOW franchise'**
   String get pensionAowFranchise;
 
-  /// No description provided for @pensionPensioengrondslag.
+  /// No description provided for @pensionPremiegrondslag.
   ///
   /// In en, this message translates to:
-  /// **'Pension base'**
-  String get pensionPensioengrondslag;
+  /// **'Premiegrondslag'**
+  String get pensionPremiegrondslag;
 
   /// No description provided for @pensionJaarruimteMax.
   ///
   /// In en, this message translates to:
-  /// **'Annual allowance (max {max})'**
+  /// **'Jaarruimte (max {max})'**
   String pensionJaarruimteMax(String max);
 
   /// No description provided for @pensionReserveringsruimte.
   ///
   /// In en, this message translates to:
-  /// **'Unused annual allowance'**
+  /// **'Reserveringsruimte'**
   String get pensionReserveringsruimte;
 
   /// No description provided for @pensionTotalBudget.
@@ -1652,6 +1652,18 @@ abstract class AppLocalizations {
   /// **'Factor A'**
   String get pensionFactorA;
 
+  /// No description provided for @pensionPremiumsPriorYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Pension premiums last year'**
+  String get pensionPremiumsPriorYear;
+
+  /// No description provided for @pensionBuildUpMissingNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'If you built up a pension with an employer last year, your jaarruimte is lower than shown: enter its factor A or premiums.'**
+  String get pensionBuildUpMissingNotice;
+
   /// No description provided for @pensionReserveringsruimteLabel.
   ///
   /// In en, this message translates to:
@@ -1667,7 +1679,7 @@ abstract class AppLocalizations {
   /// No description provided for @pensionLijfrente.
   ///
   /// In en, this message translates to:
-  /// **'Annuity premium / AOV premium'**
+  /// **'Lijfrente premium'**
   String get pensionLijfrente;
 
   /// No description provided for @pensionAovSection.
@@ -1691,7 +1703,7 @@ abstract class AppLocalizations {
   /// No description provided for @pensionAnnualPremium.
   ///
   /// In en, this message translates to:
-  /// **'Annual premium: {amount}'**
+  /// **'Counted in the estimate: {amount}'**
   String pensionAnnualPremium(String amount);
 
   /// No description provided for @vatReturnTitle.
@@ -1751,8 +1763,14 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnChangedNextNotice.
   ///
   /// In en, this message translates to:
-  /// **'A correction of at most {max} goes into your next return, in the rubriek where it belongs (Belastingdienst, Btw-aangifte corrigeren). Florin adds it to the next return you have not filed yet.'**
+  /// **'A correction of at most {max} goes into your next return, in the rubriek where it belongs. Florin adds it to the next return you have not filed yet.'**
   String vatReturnChangedNextNotice(String max);
+
+  /// No description provided for @vatReturnChangedNextYearNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'A correction of at most {max} goes into your next return, in the rubriek where it belongs. That return falls in {nextYear}, and Florin does not carry a correction into another year: add these figures to it yourself.'**
+  String vatReturnChangedNextYearNotice(String max, String nextYear);
 
   /// No description provided for @vatReturnChangedSuppletieNotice.
   ///
@@ -1775,7 +1793,7 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnCarriedSectionHelp.
   ///
   /// In en, this message translates to:
-  /// **'Changes of at most {max} to returns you already filed go into this return, in the rubriek where they belong (Belastingdienst, Btw-aangifte corrigeren). They are added to the figures above and to the export. When you mark this return filed, Florin counts those earlier returns as corrected.'**
+  /// **'Changes of at most {max} to returns you already filed go into this return, in the rubriek where they belong. They are added to the figures above and to the export. When you mark this return filed, Florin counts those earlier returns as corrected.'**
   String vatReturnCarriedSectionHelp(String max);
 
   /// No description provided for @vatReturnCarriedFrom.
@@ -1787,7 +1805,7 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnFilingPeriodHelp.
   ///
   /// In en, this message translates to:
-  /// **'The period of your BTW returns, as in your aangiftebrief. Most businesses file per quarter. The Belastingdienst lets you file per month on request, and per year on request when you pay less than {vat} BTW a year, are an eenmanszaak and have less than {eu} a year of each kind of EU supply or purchase; it can also require monthly returns after late returns or payments. Choose the period the Belastingdienst confirmed.'**
+  /// **'The period of your BTW returns, as in your aangiftebrief. Most businesses file per quarter. The Belastingdienst lets you file per month on request, and per year on request when you pay less than {vat} BTW a year, have no permit to shift import VAT, are an eenmanszaak and have less than {eu} a year of each kind of EU supply or purchase; it can also require monthly returns after late returns or payments. Choose the period the Belastingdienst confirmed.'**
   String vatReturnFilingPeriodHelp(String vat, String eu);
 
   /// No description provided for @vatReturnYearlyNotAllowed.
@@ -1823,7 +1841,7 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnRevisionSectionHelp.
   ///
   /// In en, this message translates to:
-  /// **'BTW you deducted on an asset is followed for {years} years: the year it came into use and the years after. The KOR makes your supplies exempt, so part of that deduction is repaid. In the year of purchase the whole deduction follows the share of taxed supplies; in each later year one part follows the change from the first year, and a sale under the KOR settles the remaining years at once. Only a change of more than {shift} of the first year\'s share counts, and in later years nothing is repaid while the year\'s total stays below {min} (Belastingdienst, herziening vanwege de KOR). Florin estimates the taxed share from your invoices.'**
+  /// **'BTW you deducted on an asset is followed for {years} years: the year it came into use and the years after. The KOR makes your supplies exempt, so part of that deduction is repaid. In the year of purchase the whole deduction follows the share of taxed supplies over the whole year; in each later year one part follows the change from the first year, and a sale under the KOR settles the remaining years at once. In a later year, only a change of more than {shift} of the first year\'s share counts, and nothing is repaid while the year\'s total stays below {min}. Florin estimates the taxed share from your invoices.'**
   String vatReturnRevisionSectionHelp(int years, String shift, String min);
 
   /// No description provided for @vatReturnRevisionTotal.
@@ -1835,7 +1853,7 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnRevisionNotice.
   ///
   /// In en, this message translates to:
-  /// **'Florin adds this to the BTW of rubriek 1a in the last return of the year, as the Belastingdienst instructs, and lists it per asset in btw_herziening in the export. While you take part in the KOR, you ask the Belastingdienst in writing for a return to pay it. BTW you may get back when you leave the KOR is not computed.'**
+  /// **'Florin adds this to the BTW of rubriek 1a: the yearly revision in the last return of the year, the settlement of a sale in the return of the sale\'s period. It lists it per asset and return in btw_herziening in the export. While you take part in the KOR, you ask the Belastingdienst in writing for a return to pay it. BTW you may get back when you leave the KOR is not computed.'**
   String get vatReturnRevisionNotice;
 
   /// No description provided for @vatReturnStatusSection.
@@ -1991,7 +2009,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxLijrente.
   ///
   /// In en, this message translates to:
-  /// **'Annuity deduction'**
+  /// **'Lijfrente'**
   String get plTaxLijrente;
 
   /// No description provided for @plTaxTaxableProfit.
@@ -2027,7 +2045,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxTariefaanpassingHelp.
   ///
   /// In en, this message translates to:
-  /// **'The ondernemersaftrek and the mkb-winstvrijstelling lower your tax at most at the rate below the top bracket. For the part of them that falls in the top bracket, the difference is added back (Wet IB 2001 art. 2.10 lid 2).'**
+  /// **'The ondernemersaftrek and the mkb-winstvrijstelling lower your tax at most at the rate below the top bracket. For the part of them that falls in the top bracket, the difference is added back.'**
   String get plTaxTariefaanpassingHelp;
 
   /// No description provided for @plTaxInkomsten.
@@ -2123,13 +2141,13 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxProvisionalIncome.
   ///
   /// In en, this message translates to:
-  /// **'Estimated taxable income box 1'**
+  /// **'Estimated verzamelinkomen box 1'**
   String get plTaxProvisionalIncome;
 
   /// No description provided for @plTaxProvisionalIncomeHelp.
   ///
   /// In en, this message translates to:
-  /// **'For toeslagen the Belastingdienst uses your toetsingsinkomen: your verzamelinkomen, not your profit, plus that of a toeslagpartner. This figure is box 1 from your records only; income Florin does not hold, such as box 3, is not in it. The Belastingdienst advises estimating a little high, because too low an income can mean paying toeslag back.'**
+  /// **'For toeslagen the Belastingdienst uses your toetsingsinkomen: your verzamelinkomen, not your profit, plus that of a toeslagpartner. This is box 1 from your records only, before losses from earlier years; income Florin does not hold, such as box 3, is not in it. The Belastingdienst advises estimating a little high, because too low an income can mean paying toeslag back.'**
   String get plTaxProvisionalIncomeHelp;
 
   /// No description provided for @plTaxProvisionalTax.
@@ -2141,7 +2159,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxProvisionalTaxHelp.
   ///
   /// In en, this message translates to:
-  /// **'Box 1 tax and the Zvw contribution, minus loonheffing already withheld, as estimated above. A voorlopige aanslag spreads this over the year so the final assessment brings no large bill.'**
+  /// **'Box 1 tax and the Zvw contribution, minus loonheffing already withheld, as estimated above. A voorlopige aanslag spreads this over the year so less is left to pay when the final assessment comes.'**
   String get plTaxProvisionalTaxHelp;
 
   /// No description provided for @plTaxProvisionalDeadline.
@@ -2165,7 +2183,7 @@ abstract class AppLocalizations {
   /// No description provided for @balancePaperNotice.
   ///
   /// In en, this message translates to:
-  /// **'Everyone running a business must keep records from which their rights and obligations always appear, and make the balance sheet and the statement of income and expenses within six months after the year and put them on paper (BW 3:15i with 2:10). Florin computes the figures; keeping them on paper is up to you.'**
+  /// **'Everyone running a business must keep records from which their rights and obligations always appear, and make the balance sheet and the statement of income and expenses within six months after the year and put them on paper. Florin computes the figures; keeping them on paper is up to you.'**
   String get balancePaperNotice;
 
   /// No description provided for @balanceBank.
@@ -2327,8 +2345,14 @@ abstract class AppLocalizations {
   /// No description provided for @balanceEstimateProfit.
   ///
   /// In en, this message translates to:
-  /// **'Profit in the estimate, before investeringsaftrek'**
+  /// **'Profit in the estimate, as the comparison counts it'**
   String get balanceEstimateProfit;
+
+  /// No description provided for @balanceEstimateProfitHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The estimate\'s profit before investeringsaftrek, without the desinvesteringsbijtelling and the herinvesteringsreserve released, plus a gain kept in the herinvesteringsreserve and minus the reserve booked off new assets. Each of these changes the profit or the ondernemingsvermogen, not both.'**
+  String get balanceEstimateProfitHelp;
 
   /// No description provided for @balanceDifferenceNotice.
   ///
@@ -2357,7 +2381,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxUrenJobBanner.
   ///
   /// In en, this message translates to:
-  /// **'Urencriterium: {hours} hours logged for the business, not more than the {jobHours} hours in employment. The urencriterium needs more time in the business than in other work, so the estimate leaves out the zelfstandigenaftrek and the other deductions that need it.'**
+  /// **'Urencriterium: {hours} hours logged for the business, not more than the {jobHours} hours in employment and other work. The urencriterium needs more time in the business than in other work, so the estimate leaves out the zelfstandigenaftrek and the other deductions that need it.'**
   String plTaxUrenJobBanner(String hours, int jobHours);
 
   /// No description provided for @settingsLanguageSection.
@@ -2495,7 +2519,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsExportDescription.
   ///
   /// In en, this message translates to:
-  /// **'Export all {year} data to CSV files, with the VAT return of each period by rubriek in whole euros, the ICP list of each quarter (and of each month when goods make it monthly), the estimated income tax and balance sheet of the year, and the receipts. Florin puts them in a new folder named after the export date, inside the folder you choose.'**
+  /// **'Export all {year} data to CSV files, with the VAT return of each period by rubriek in whole euros, the ICP list of each ICP period (a quarter, or months once goods make the opgaaf monthly), the estimated income tax and balance sheet of the year, and the receipts. Florin puts them in a new folder named after the export date, inside the folder you choose.'**
   String settingsExportDescription(int year);
 
   /// No description provided for @settingsExportButton.
@@ -2717,7 +2741,7 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceIssueRenumber.
   ///
   /// In en, this message translates to:
-  /// **'{number} does not follow the last invoice you issued in this series, so it is sent as {next}: invoice numbers follow on without gaps (Wet OB 1968 art. 35a lid 1 b).'**
+  /// **'{number} does not follow the last invoice you issued in this series, so it is sent as {next}: invoice numbers follow on in their series, and Florin leaves no gaps.'**
   String invoiceIssueRenumber(String number, String next);
 
   /// No description provided for @invoiceActionSendAs.
@@ -2771,31 +2795,31 @@ abstract class AppLocalizations {
   /// No description provided for @expensesFoodNotice.
   ///
   /// In en, this message translates to:
-  /// **'Food, drinks, representation, congresses, seminars and study trips are deductible for income tax at {pct}, or as far as they exceed {drempel} a year if that is more (Wet IB 2001 art. 3.15). VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed (Wet OB 1968 art. 15).'**
+  /// **'Food, drinks, representation, congresses, seminars and study trips are deductible for income tax at {pct}, or as far as they exceed {drempel} a year if that is more. VAT on food and drinks consumed in a restaurant, café or hotel cannot be reclaimed.'**
   String expensesFoodNotice(String pct, String drempel);
 
   /// No description provided for @expensesCourseTravelNotice.
   ///
   /// In en, this message translates to:
-  /// **'Travel and stay for courses, studies, congresses, seminars and study trips are deductible for income tax up to {max} a year; the part above it is not, unless your work makes attending necessary (Wet IB 2001 art. 3.16). Florin keeps the limit, because it cannot tell that from your records.'**
+  /// **'Travel and stay for courses, studies, congresses, seminars and study trips are deductible for income tax up to {max} a year; the part above it is not, unless your work makes attending necessary. Florin keeps the limit, because it cannot tell that from your records. What is left counts with food, drinks and representation, as the law limits travel for congresses there too; Florin does the same for courses, because it cannot tell them apart.'**
   String expensesCourseTravelNotice(String max);
 
   /// No description provided for @expensesBarredNotice.
   ///
   /// In en, this message translates to:
-  /// **'The law keeps this cost out of your profit, whatever the amount: fines (Wet IB 2001 art. 3.14), and clothing other than werkkleding, personal care, a phone line in your home and literature other than professional literature (art. 3.16). Florin records it but deducts nothing. Clothing counts as werkkleding when it is only fit to wear for your work or shows that it is meant only for it; record werkkleding under Other.'**
+  /// **'The law keeps this cost out of your profit, whatever the amount: fines, and clothing other than werkkleding, personal care, a phone line in your home and literature other than professional literature. Florin records it but deducts nothing. Clothing counts as werkkleding when it is only fit to wear for your work or shows that it is meant only for it; record werkkleding under Other.'**
   String get expensesBarredNotice;
 
   /// No description provided for @expensesGiftNotice.
   ///
   /// In en, this message translates to:
-  /// **'Gifts to this recipient this year, this one included: {total} excl. BTW. While the total stays at or below {threshold}, the BTW on them stays deductible (Besluit uitsluiting aftrek omzetbelasting 1968 art. 4).'**
+  /// **'Gifts with BTW to this recipient this year: {total} excl. BTW. While the total stays at or below {threshold}, the BTW on them stays deductible. Gifts without BTW do not count.'**
   String expensesGiftNotice(String total, String threshold);
 
   /// No description provided for @expensesGiftOverNotice.
   ///
   /// In en, this message translates to:
-  /// **'Gifts to this recipient this year, this one included: {total} excl. BTW, more than {threshold}. The BTW on them is then not deductible for a recipient who cannot deduct BTW (Besluit uitsluiting aftrek omzetbelasting 1968 art. 1 and 4). Florin cannot tell whether the recipient can, so it reclaims no BTW on these gifts and counts it as a cost.'**
+  /// **'Gifts with BTW to this recipient this year: {total} excl. BTW, more than {threshold}. The BTW on them is then not deductible for a recipient who can deduct no BTW or only a small part of it. Florin cannot tell how much BTW the recipient can deduct, so it reclaims no BTW on these gifts and counts it as a cost.'**
   String expensesGiftOverNotice(String total, String threshold);
 
   /// No description provided for @plTaxFoodLimited.
@@ -2819,7 +2843,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxEstimateNotice.
   ///
   /// In en, this message translates to:
-  /// **'This is an estimate for a business owner under the AOW age. Wages from employment count when you enter them below. Income of a partner, from other work, box 2 or box 3 is not included.'**
+  /// **'This is an estimate for a business owner under the AOW age. Wages from employment count when you enter them below. Income of a partner, from other work, box 2 or box 3 is not included. Tax credits other than the general and labour tax credit are not included.'**
   String get plTaxEstimateNotice;
 
   /// No description provided for @settingsMoved.
@@ -2852,6 +2876,12 @@ abstract class AppLocalizations {
   /// **'Deductible this year'**
   String get pensionDeductible;
 
+  /// No description provided for @pensionDeductibleHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your planned lijfrente premium up to the jaarruimte plus reserveringsruimte: what the estimate deducts.'**
+  String get pensionDeductibleHelp;
+
   /// No description provided for @vatRow1e.
   ///
   /// In en, this message translates to:
@@ -2879,14 +2909,32 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnIcpNote.
   ///
   /// In en, this message translates to:
-  /// **'Report these supplies in the ICP report over this quarter by {date}. If you supplied goods to EU businesses for more than {amount} in this quarter or in one of the {quarters} quarters before it, you report goods per month instead (Wet OB 1968 art. 37a).'**
-  String vatReturnIcpNote(String date, String amount, int quarters);
+  /// **'Report these supplies in the ICP report over {icpPeriod} by {date}.'**
+  String vatReturnIcpNote(String icpPeriod, String date);
 
   /// No description provided for @vatReturnIcpMonthlyNotice.
   ///
   /// In en, this message translates to:
-  /// **'Goods to EU businesses passed {max} in this quarter or one of the {quarters} before it, so the ICP-opgaaf over goods is due per month (Wet OB 1968 art. 37a lid 3). The export then also writes the list of each month.'**
-  String vatReturnIcpMonthlyNotice(String max, int quarters);
+  /// **'Goods to EU businesses passed {max} in one of the {quarters} quarters before {quarter}, so the ICP report over goods is per month in {quarter}, each month due by the end of the month after it.'**
+  String vatReturnIcpMonthlyNotice(String max, int quarters, String quarter);
+
+  /// No description provided for @vatReturnIcpPassedNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Goods to EU businesses passed {max} in {month}. The months of that quarter up to and including {month} go in one ICP report, due {date}; after that the ICP report over goods is per month, each month due by the end of the month after it.'**
+  String vatReturnIcpPassedNotice(String max, String month, String date);
+
+  /// No description provided for @vatReturnIcpNoRecordsNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Florin holds no records of {year}. If your goods to EU businesses passed {max} in a quarter of {year}, the ICP report over goods is per month in each of the {quarters} quarters after it.'**
+  String vatReturnIcpNoRecordsNotice(String year, String max, int quarters);
+
+  /// No description provided for @icpPeriodMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{first} to {last}'**
+  String icpPeriodMonths(String first, String last);
 
   /// No description provided for @assetsFieldResidualValue.
   ///
@@ -2921,13 +2969,13 @@ abstract class AppLocalizations {
   /// No description provided for @pensionAovHelper.
   ///
   /// In en, this message translates to:
-  /// **'Premiums for disability insurance are deducted in full in the tax estimate.'**
+  /// **'Premiums for disability insurance are deducted in full in the tax estimate. Only premiums you have paid in the year count: Florin counts the months of the year that have ended.'**
   String get pensionAovHelper;
 
   /// No description provided for @assetsFieldCostHelp.
   ///
   /// In en, this message translates to:
-  /// **'The purchase price without VAT. With any VAT you do not reclaim, it is the cost that depreciation and the investment deductions are based on.'**
+  /// **'The purchase price without VAT, minus discounts and subsidies. With any VAT you do not reclaim, it is the cost that depreciation and the investment deductions are based on.'**
   String get assetsFieldCostHelp;
 
   /// No description provided for @assetsFieldDisposalDateHelp.
@@ -2939,13 +2987,13 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldDisposalProceedsHelp.
   ///
   /// In en, this message translates to:
-  /// **'What you received for the asset, without VAT, or its market value when you took it into private use. The difference with the book value is a gain or loss.'**
+  /// **'What you received for the asset, without VAT, or, when you took it into private use, what a similar asset in the same state costs now, without VAT. The difference with the book value is a gain or loss.'**
   String get assetsFieldDisposalProceedsHelp;
 
   /// No description provided for @assetsFieldKiaHelp.
   ///
   /// In en, this message translates to:
-  /// **'Kleinschaligheidsinvesteringsaftrek: an extra deduction for business assets. Assets under {min} do not count, and passenger cars and some other assets are excluded.'**
+  /// **'Kleinschaligheidsinvesteringsaftrek: an extra deduction for business assets. Not for assets under {min}, passenger cars, land, dwellings, goodwill, assets mainly made available to others, assets bought from your household, parents, children or your own company, or assets moved from your private property.'**
   String assetsFieldKiaHelp(String min);
 
   /// No description provided for @assetsFieldNameHelp.
@@ -2975,8 +3023,8 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldUsefulLifeHelp.
   ///
   /// In en, this message translates to:
-  /// **'How many years you expect to use the asset. At least {years}, because depreciation is limited to {pct} of the cost a year.'**
-  String assetsFieldUsefulLifeHelp(int years, String pct);
+  /// **'How many whole years you expect to use the asset in the business. Depreciation is at most {pct} of the cost a year, so a shorter life is spread over more years.'**
+  String assetsFieldUsefulLifeHelp(String pct);
 
   /// No description provided for @assetsVatSection.
   ///
@@ -2987,7 +3035,7 @@ abstract class AppLocalizations {
   /// No description provided for @assetsVatSectionHelp.
   ///
   /// In en, this message translates to:
-  /// **'The VAT on the purchase invoice. VAT you reclaim goes into the VAT return of the quarter of purchase; VAT you do not reclaim is part of the asset\'s cost.'**
+  /// **'The VAT on the purchase invoice. VAT you reclaim goes into the VAT return of the period of purchase; VAT you do not reclaim is part of the asset\'s cost. A car bought under the margin scheme or from a private person carries no VAT to reclaim: enter 0.'**
   String get assetsVatSectionHelp;
 
   /// No description provided for @assetsFieldVatRate.
@@ -3029,7 +3077,7 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldPurchaseVatHelp.
   ///
   /// In en, this message translates to:
-  /// **'Dutch VAT when the supplier charged it. Shifted when the invoice says the VAT is reverse-charged to you, or the supplier is abroad: you then report and deduct the VAT yourself.'**
+  /// **'Dutch VAT when the supplier charged it. Shifted when the invoice says the VAT is reverse-charged to you, or the supplier is abroad: you then report and deduct the VAT yourself. Services to real estate from an EU supplier that shifts the VAT to you go in 2a, not 4b: choose Shifted to me by a Dutch supplier (2a).'**
   String get assetsFieldPurchaseVatHelp;
 
   /// No description provided for @assetsReclaimVat.
@@ -3113,7 +3161,7 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldDisposalVatRateHelp.
   ///
   /// In en, this message translates to:
-  /// **'The VAT you owe on the sale, or on taking the asset into private use, over the business share of the proceeds. It goes into the VAT return of that quarter. Usually {high}; exempt only when you used the asset solely for VAT-exempt work and deducted no VAT on it.'**
+  /// **'The VAT you owe on the sale, or on taking the asset into private use, over the business share of the proceeds. It goes into the VAT return of that period. Usually {high}. Choose exempt when you used the asset solely for VAT-exempt work and deducted no VAT on it, or when you take into private use an asset on which no VAT was deducted.'**
   String assetsFieldDisposalVatRateHelp(String high);
 
   /// No description provided for @assetsValidateDisposalVatRate.
@@ -3173,7 +3221,7 @@ abstract class AppLocalizations {
   /// No description provided for @clientsRateEstimateHelp.
   ///
   /// In en, this message translates to:
-  /// **'What you invoiced divided by your hours: an estimate, as invoices and hours need not fall in the same period. From 31 December 2026 the law presumes an employment contract when a business pays someone at most an hourly amount for work (BW 7:610aa, Stb. 2026, 158 and 207). The amount for its first application is set by ministerial regulation, which Florin has not read, so it names no figure.'**
+  /// **'What you invoiced divided by your hours: an estimate, as invoices and hours need not fall in the same period. From 31 December 2026 the law presumes an employment contract when anyone other than a private person pays someone at most an hourly amount for work. The amount for its first application is set by ministerial regulation, which Florin has not read, so it names no figure.'**
   String get clientsRateEstimateHelp;
 
   /// No description provided for @clientsRateNoHours.
@@ -3239,7 +3287,7 @@ abstract class AppLocalizations {
   /// No description provided for @clientsFieldVatHelp.
   ///
   /// In en, this message translates to:
-  /// **'The client\'s VAT identification number. Required on invoices where the VAT is reverse-charged or that go to an EU business.'**
+  /// **'The client\'s VAT identification number. Required on invoices where the VAT is reverse-charged and on intra-Community supplies of goods.'**
   String get clientsFieldVatHelp;
 
   /// No description provided for @clientsRiskLevelHelp.
@@ -3257,7 +3305,7 @@ abstract class AppLocalizations {
   /// No description provided for @expensesFieldCategoryHelp.
   ///
   /// In en, this message translates to:
-  /// **'What kind of cost this is. Food, drinks, representation, congresses, seminars, excursions and study trips are only partly deductible (Wet IB 2001 art. 3.15), travel for courses and congresses only up to a yearly amount, and fines, ordinary clothing, personal care, a phone line at home and general literature not at all (art. 3.14 and 3.16), so each has its own category.'**
+  /// **'What kind of cost this is. Food, drinks, representation, congresses, seminars, excursions and study trips are only partly deductible, travel for courses and congresses only up to a yearly amount, and fines, ordinary clothing, personal care, a phone line at home and general literature not at all, so each has its own category.'**
   String get expensesFieldCategoryHelp;
 
   /// No description provided for @expensesFieldGiftRecipient.
@@ -3269,7 +3317,7 @@ abstract class AppLocalizations {
   /// No description provided for @expensesFieldGiftRecipientHelp.
   ///
   /// In en, this message translates to:
-  /// **'Who received the gift. Florin adds up the gifts to each recipient in a year, because the BTW on them stays deductible only while that total stays within the threshold. Type the name the same way each time.'**
+  /// **'Who received the gift. Florin adds up the gifts with BTW to each recipient in a year, because the BTW on gifts to someone who can deduct no or little VAT stays deductible only while that total stays within the threshold; Florin assumes this for every recipient. Type the name the same way each time.'**
   String get expensesFieldGiftRecipientHelp;
 
   /// No description provided for @expensesValidateGiftRecipient.
@@ -3311,7 +3359,7 @@ abstract class AppLocalizations {
   /// No description provided for @expensesReclaimVatHelp.
   ///
   /// In en, this message translates to:
-  /// **'Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, for private use, or for gifts to someone who cannot deduct VAT when they total more than {amount} for that person in a year (Besluit uitsluiting aftrek omzetbelasting 1968).'**
+  /// **'Tick when you may deduct this VAT in your VAT return. Not for food and drinks in a restaurant, for private use, or for gifts to someone who can deduct no VAT or only a small part of it, when they total more than {amount} for that person in a year.'**
   String expensesReclaimVatHelp(String amount);
 
   /// No description provided for @hoursFieldClientProjectHelp.
@@ -3389,13 +3437,13 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceFieldNumberHelp.
   ///
   /// In en, this message translates to:
-  /// **'A unique number in an unbroken sequence, as the law requires. Florin suggests the next one.'**
+  /// **'A unique number that follows on in its series, as the law requires (one or more series are allowed). Florin suggests the next one.'**
   String get invoiceFieldNumberHelp;
 
   /// No description provided for @invoiceFieldPaymentTermHelp.
   ///
   /// In en, this message translates to:
-  /// **'How many days the client has to pay. Between businesses, a term of more than {max} days needs to be agreed explicitly and must not be clearly unfair to you; without an agreed term, statutory commercial interest is due from {statutory} days after the client received the invoice (BW 6:119a).'**
+  /// **'How many days the client has to pay. Between businesses, a term of more than {max} days needs to be agreed explicitly and must not be clearly unfair to you; without an agreed term, statutory commercial interest is due from {statutory} days after the client received the invoice.'**
   String invoiceFieldPaymentTermHelp(int max, int statutory);
 
   /// No description provided for @invoiceFieldPriceHelp.
@@ -3425,25 +3473,35 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceLateNotice.
   ///
   /// In en, this message translates to:
-  /// **'An invoice is due by day {day} of the month after the supply (Wet OB 1968 art. 34g): for this supply by {date}.'**
+  /// **'An invoice is due by day {day} of the month after the supply: for this supply by {date}.'**
   String invoiceLateNotice(int day, String date);
 
   /// No description provided for @invoiceLongTermNotice.
   ///
   /// In en, this message translates to:
-  /// **'Between businesses, a payment term of more than {max} days holds only when it is agreed explicitly and is not clearly unfair to you, and a large company may not agree more than {large} days with a small supplier (BW 6:119a lid 5 and 6).'**
-  String invoiceLongTermNotice(int max, int large);
+  /// **'Between businesses, a payment term of more than {max} days holds only when it is agreed explicitly and is not clearly unfair to you, and a large company may not agree more than {large} days with a small supplier. With a government client a term above {government} days also needs an objective justification, and it is never longer than {governmentMax} days.'**
+  String invoiceLongTermNotice(
+    int max,
+    int large,
+    int government,
+    int governmentMax,
+  );
 
   /// No description provided for @invoiceOverdueBusinessNotice.
   ///
   /// In en, this message translates to:
-  /// **'This invoice was due on {due}. Between businesses, statutory commercial interest runs from the day after that (BW 6:119a lid 1), and you may claim collection costs of at least {min} without sending a reminder first (BW 6:96 lid 4). The claim can be brought to court until {lapses} (BW 3:307). Florin does not compute the interest.'**
-  String invoiceOverdueBusinessNotice(String due, String min, String lapses);
+  /// **'This invoice was due on {due}. Between businesses, statutory commercial interest and collection costs of at least {min} are owed without a reminder from the day after the agreed payment day; if you agreed none, from {statutory} days after the client received the invoice. The claim can be brought to court until {lapses}. Florin does not compute the interest.'**
+  String invoiceOverdueBusinessNotice(
+    String due,
+    String min,
+    int statutory,
+    String lapses,
+  );
 
   /// No description provided for @invoiceOverdueConsumerNotice.
   ///
   /// In en, this message translates to:
-  /// **'This invoice was due on {due}. A private person owes collection costs only after a reminder that gives {days} days to pay and states the costs that will be claimed (BW 6:96 lid 6); send one reminder for all open invoices of this client (lid 7). The claim can be brought to court until {lapses} (BW 3:307).'**
+  /// **'This invoice was due on {due}. A private person owes collection costs only after a reminder that gives {days} days to pay and states the costs that will be claimed; send one reminder for all open invoices of this client. The claim can be brought to court until {lapses}.'**
   String invoiceOverdueConsumerNotice(String due, int days, String lapses);
 
   /// No description provided for @invoiceFieldUnitHelp.
@@ -3473,7 +3531,7 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceFieldVatTreatmentHelp.
   ///
   /// In en, this message translates to:
-  /// **'How VAT applies. Dutch VAT for most Dutch clients, or Exempt under the KOR while you take part in it. Reverse charge when the customer pays the VAT. EU goods and services to businesses also go on the ICP report. Services to a business outside the EU are taxed there and stay out of the Dutch return.'**
+  /// **'How VAT applies. Dutch VAT for most Dutch clients, or Exempt under the KOR while you take part in it. Reverse charge when the customer pays the VAT. EU goods and services to businesses also go on the ICP report. Not a service that is exempt or 0% in the customer\'s country, or one tied to property, events, passenger transport or catering: such a service is in neither the return nor the ICP report, and needs another treatment. Services to a business outside the EU are supplied there, not in the Netherlands, and stay out of the Dutch return, as do the services to a private person outside the EU that the law places there.'**
   String get invoiceFieldVatTreatmentHelp;
 
   /// No description provided for @labelCategoryHelp.
@@ -3599,7 +3657,7 @@ abstract class AppLocalizations {
   /// No description provided for @mileageFieldTripTypeHelp.
   ///
   /// In en, this message translates to:
-  /// **'Business and commuting trips in a private vehicle are deductible per km for income tax. Private trips are not.'**
+  /// **'Business and commuting trips in a private vehicle are deductible per km for income tax. Private trips are not. A private stop during work, such as a doctor\'s visit, is a private trip.'**
   String get mileageFieldTripTypeHelp;
 
   /// No description provided for @pensionAovInsuredHelp.
@@ -3611,38 +3669,44 @@ abstract class AppLocalizations {
   /// No description provided for @pensionFactorAHelp.
   ///
   /// In en, this message translates to:
-  /// **'The pension you built up with an employer last year, from the factor A on your UPO. Leave 0 if you had none. If your pension scheme follows the Wet toekomst pensioenen, your UPO shows premiums instead: the law then lowers the jaarruimte by those premiums, which Florin does not calculate.'**
+  /// **'The pension you built up with an employer last year, from the factor A on your UPO. Leave 0 if you had none. If your pension scheme follows the Wet toekomst pensioenen, your UPO shows premiums instead: enter those under pension premiums last year.'**
   String get pensionFactorAHelp;
+
+  /// No description provided for @pensionPremiumsPriorYearHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The premiums for ouderdomspensioen and partnerpensioen put into your pension scheme last year, as on your UPO, when your scheme follows the Wet toekomst pensioenen. The jaarruimte is lowered by them. Leave 0 if you had none. Premiums for a nettopensioen also lower it; Florin does not ask for them.'**
+  String get pensionPremiumsPriorYearHelp;
 
   /// No description provided for @pensionLijfrenteHelp.
   ///
   /// In en, this message translates to:
-  /// **'What you pay or plan to pay into a lijfrente this year. Deducted up to the room you have.'**
+  /// **'What you pay into a lijfrente this year. A premium counts for the year in which you pay it, up to your jaarruimte and reserveringsruimte.'**
   String get pensionLijfrenteHelp;
 
   /// No description provided for @pensionMonthlyPremiumHelp.
   ///
   /// In en, this message translates to:
-  /// **'The monthly premium of your disability insurance.'**
+  /// **'The monthly premium of your disability insurance. Only premiums you have paid in the year count: Florin counts the months of the year that have ended.'**
   String get pensionMonthlyPremiumHelp;
 
   /// No description provided for @pensionPriorYearIncomeHelp.
   ///
   /// In en, this message translates to:
-  /// **'Last year\'s profit from business before the ondernemersaftrek, plus taxable wages, taxable result from other work and taxable periodic benefits, from that year\'s tax return (Wet IB 2001 art. 3.127 lid 3). The jaarruimte is based on it.'**
+  /// **'Last year\'s profit from business before the ondernemersaftrek, plus taxable wages, taxable result from other work and taxable periodic benefits, from that year\'s tax return. The jaarruimte is based on it. With an oudedagsreserve, use the profit before its release.'**
   String get pensionPriorYearIncomeHelp;
 
   /// No description provided for @pensionCountedIncomeHelp.
   ///
   /// In en, this message translates to:
-  /// **'The income as it counts for the premiegrondslag: at most {max} (Wet IB 2001 art. 3.127 lid 3).'**
+  /// **'The income as it counts for the premiegrondslag: at most {max}.'**
   String pensionCountedIncomeHelp(String max);
 
   /// No description provided for @pensionReserveringsruimteLabelHelp.
   ///
   /// In en, this message translates to:
-  /// **'Unused jaarruimte from earlier years that you may still use. The Belastingdienst\'s Hulpmiddel Lijfrentepremie calculates it.'**
-  String get pensionReserveringsruimteLabelHelp;
+  /// **'Jaarruimte of the previous ten years that you did not use, oldest year first, at most {max}. You ask for it in your return. The Belastingdienst\'s Hulpmiddel Lijfrentepremie calculates it.'**
+  String pensionReserveringsruimteLabelHelp(String max);
 
   /// No description provided for @settingsBusinessAddressHelp.
   ///
@@ -3671,7 +3735,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsVatNumberHelp.
   ///
   /// In en, this message translates to:
-  /// **'Your VAT identification number (btw-id), NL followed by 9 digits, B and 2 digits. It is printed on every invoice.'**
+  /// **'Your VAT identification number (btw-id), NL followed by 9 digits, B and 2 digits. It is printed on every invoice except under the KOR, where the invoice mentions no BTW.'**
   String get settingsVatNumberHelp;
 
   /// No description provided for @vatReturnFiledHelp.
@@ -3683,7 +3747,7 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnPaidHelp.
   ///
   /// In en, this message translates to:
-  /// **'Tick once you have paid the VAT due for this quarter.'**
+  /// **'Tick once you have paid the VAT due for this period. The payment counts on the day it reaches the Belastingdienst\'s account, which can take a few days.'**
   String get vatReturnPaidHelp;
 
   /// No description provided for @assetKindGeneral.
@@ -3731,7 +3795,7 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldCatalogueValueHelp.
   ///
   /// In en, this message translates to:
-  /// **'The original list price including VAT and BPM, as on the registration certificate or the RDW website.'**
+  /// **'The official list price when new, including VAT, BPM and the accessories the manufacturer, importer or dealer fitted before registration, as the RDW Kentekencheck shows it.'**
   String get assetsFieldCatalogueValueHelp;
 
   /// No description provided for @assetsValidateCatalogueValue.
@@ -3797,8 +3861,8 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldMarketValueHelp.
   ///
   /// In en, this message translates to:
-  /// **'What the car is worth now. Only used once the car is more than {years} years old.'**
-  String assetsFieldMarketValueHelp(int years);
+  /// **'What the car is worth now. Only used once the car is more than {years} years old; the bijtelling is then {pct} of this value or more. Florin does not apply the optional transitional choice for cars that pass that age.'**
+  String assetsFieldMarketValueHelp(int years, String pct);
 
   /// No description provided for @assetsFieldTripLog.
   ///
@@ -3821,7 +3885,7 @@ abstract class AppLocalizations {
   /// No description provided for @assetsInvestmentSectionHelp.
   ///
   /// In en, this message translates to:
-  /// **'Extra deductions in the year of purchase. If you sell the asset within {years} years, part of them is added back.'**
+  /// **'Extra deductions in the year of purchase. If you sell the asset within {years} years, part of them is added back. An asset not yet in use on 31 December only gets the deduction on what was paid by then; Florin does not record when an asset came into use or what was paid, so it gives the full deduction.'**
   String assetsInvestmentSectionHelp(int years);
 
   /// No description provided for @assetsFieldEia.
@@ -3833,7 +3897,7 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldEiaHelp.
   ///
   /// In en, this message translates to:
-  /// **'An asset on the RVO Energy List, reported to RVO within {months} months. At least {min} per asset. Cannot be combined with MIA.'**
+  /// **'A new asset (not used before) on the RVO Energy List, reported to RVO within {months} months. At least {min} per asset. Cannot be combined with MIA.'**
   String assetsFieldEiaHelp(int months, String min);
 
   /// No description provided for @assetsFieldMia.
@@ -3845,7 +3909,7 @@ abstract class AppLocalizations {
   /// No description provided for @assetsFieldMiaHelp.
   ///
   /// In en, this message translates to:
-  /// **'The category on the RVO Environmental List, reported to RVO within {months} months. At least {min} per asset.'**
+  /// **'The category of a new asset (not used before) on the RVO Environmental List, reported to RVO within {months} months. At least {min} per asset.'**
   String assetsFieldMiaHelp(int months, String min);
 
   /// No description provided for @assetsMiaNone.
@@ -3995,7 +4059,7 @@ abstract class AppLocalizations {
   /// No description provided for @mileageFieldVehicleHelp.
   ///
   /// In en, this message translates to:
-  /// **'A private vehicle earns the per-km deduction. Trips in a business car do not; they count for its trip log instead.'**
+  /// **'A private vehicle earns the per-km deduction. Trips in a business car do not; they count for its trip log instead. The per-km amount covers fuel, insurance, tolls and parking, so do not record those costs of a private vehicle as expenses.'**
   String get mileageFieldVehicleHelp;
 
   /// No description provided for @mileagePrivateVehicle.
@@ -4013,7 +4077,7 @@ abstract class AppLocalizations {
   /// No description provided for @inputPartnerHoursHelp.
   ///
   /// In en, this message translates to:
-  /// **'Hours your fiscal partner worked in your business this year that are not logged per day under Hours. Florin adds them to the logged partner hours. From {hours} hours, while the partner works unpaid or for less than {pay}, you get the meewerkaftrek. The Belastingdienst asks you to make the hours plausible, so a day log is the better proof.'**
+  /// **'Hours your fiscal partner has worked in your business so far this year that are not logged per day under Hours. Florin adds them to the logged partner hours. From {hours} hours, while the partner works unpaid or for less than {pay}, you get the meewerkaftrek. The Belastingdienst asks you to make the hours plausible, so a day log is the better proof.'**
   String inputPartnerHoursHelp(String pay, int hours);
 
   /// No description provided for @inputPartnerPay.
@@ -4025,7 +4089,7 @@ abstract class AppLocalizations {
   /// No description provided for @inputPartnerPayHelp.
   ///
   /// In en, this message translates to:
-  /// **'What your business paid your fiscal partner for the work this year. Below {pay} it is not deductible and your partner still counts as unpaid for the meewerkaftrek (Wet IB 2001 art. 3.16 lid 4, art. 3.78); from {pay} Florin deducts it as a cost and gives no meewerkaftrek. Do not also record it as an expense.'**
+  /// **'What your business paid your fiscal partner for the work this year. Below {pay} it is not deductible and your partner still counts as unpaid for the meewerkaftrek; from {pay} Florin deducts it as a cost and gives no meewerkaftrek. Do not also record it as an expense.'**
   String inputPartnerPayHelp(String pay);
 
   /// No description provided for @inputUnrealisedZelfs.
@@ -4037,7 +4101,7 @@ abstract class AppLocalizations {
   /// No description provided for @inputUnrealisedZelfsHelp.
   ///
   /// In en, this message translates to:
-  /// **'Zelfstandigenaftrek from the previous {years} years that did not fit your profit, as stated by the Belastingdienst. Used up to this year\'s profit.'**
+  /// **'Zelfstandigenaftrek from the previous {years} years that did not fit your profit, as stated by the Belastingdienst. Used this year as far as your profit exceeds this year\'s zelfstandigenaftrek, and only when you meet the urencriterium.'**
   String inputUnrealisedZelfsHelp(int years);
 
   /// No description provided for @inputLossCarryForward.
@@ -4061,7 +4125,7 @@ abstract class AppLocalizations {
   /// No description provided for @inputEmployedHelp.
   ///
   /// In en, this message translates to:
-  /// **'Wages count in box 1 together with your profit, and the urencriterium then also compares your hours in the business with your hours in employment.'**
+  /// **'Wages count in box 1 together with your profit.'**
   String get inputEmployedHelp;
 
   /// No description provided for @inputWages.
@@ -4103,13 +4167,13 @@ abstract class AppLocalizations {
   /// No description provided for @inputEmploymentHours.
   ///
   /// In en, this message translates to:
-  /// **'Hours in employment'**
+  /// **'Hours in employment and other work'**
   String get inputEmploymentHours;
 
   /// No description provided for @inputEmploymentHoursHelp.
   ///
   /// In en, this message translates to:
-  /// **'The hours you work as an employee in the whole year. The urencriterium also requires more time in the business than in other work, unless you were not a business owner in one or more of the {years} previous years.'**
+  /// **'The hours you work in the whole year as an employee and in other work outside the business, such as freelance work taxed as resultaat uit overige werkzaamheden. The urencriterium requires more time in the business than in this work, unless you were not a business owner in one or more of the {years} previous years.'**
   String inputEmploymentHoursHelp(int years);
 
   /// No description provided for @inputNotOndernemerBefore.
@@ -4121,7 +4185,7 @@ abstract class AppLocalizations {
   /// No description provided for @inputNotOndernemerBeforeHelp.
   ///
   /// In en, this message translates to:
-  /// **'Then this year counts as a starting year: the urencriterium does not require more time in the business than in a job (Wet IB 2001 art. 3.6 lid 1 b), and the startersaftrek bij arbeidsongeschiktheid can apply (art. 3.78a). Answer it again for every year.'**
+  /// **'Then this year counts as a starting year: the urencriterium does not require more time in the business than in a job, and the startersaftrek bij arbeidsongeschiktheid can apply. Answer it again for every year.'**
   String get inputNotOndernemerBeforeHelp;
 
   /// No description provided for @inputStarter.
@@ -4133,7 +4197,7 @@ abstract class AppLocalizations {
   /// No description provided for @inputStarterHelp.
   ///
   /// In en, this message translates to:
-  /// **'Then you get the startersaftrek of {amount} on top of the zelfstandigenaftrek, if you meet the urencriterium (Wet IB 2001 art. 3.76 lid 3). It stops once you have had the zelfstandigenaftrek more often, so check it for every year.'**
+  /// **'Then you get the startersaftrek of {amount} on top of the zelfstandigenaftrek, if you meet the urencriterium. It stops once you have had the zelfstandigenaftrek more often, so check it for every year. A year in which the zelfstandigenaftrek was nil because you made a loss also counts.'**
   String inputStarterHelp(String amount);
 
   /// No description provided for @inputSoVerklaring.
@@ -4217,19 +4281,19 @@ abstract class AppLocalizations {
   /// No description provided for @pensionAowFranchiseHelp.
   ///
   /// In en, this message translates to:
-  /// **'The part of your income for which you already build up AOW. Jaarruimte is only calculated on income above it.'**
+  /// **'A fixed amount the law subtracts from the premiegrondslag, set each year from the AOW benefit. The jaarruimte is only calculated on income above it.'**
   String get pensionAowFranchiseHelp;
 
-  /// No description provided for @pensionPensioengrondslagHelp.
+  /// No description provided for @pensionPremiegrondslagHelp.
   ///
   /// In en, this message translates to:
-  /// **'Last year\'s income minus the AOW-franchise, up to the legal maximum.'**
-  String get pensionPensioengrondslagHelp;
+  /// **'Last year\'s income as it counts, at most {max}, minus the AOW-franchise.'**
+  String pensionPremiegrondslagHelp(String max);
 
   /// No description provided for @pensionJaarruimteHelp.
   ///
   /// In en, this message translates to:
-  /// **'{pct} of the premiegrondslag minus a multiple of factor A, up to the yearly maximum. What you may deduct for a lijfrente this year.'**
+  /// **'{pct} of the premiegrondslag minus a multiple of factor A and last year\'s pension premiums, up to the yearly maximum. What you may deduct for a lijfrente this year.'**
   String pensionJaarruimteHelp(String pct);
 
   /// No description provided for @pensionEstimatedTaxSavingHelp.
@@ -4289,8 +4353,8 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxCarPrivateUseHelp.
   ///
   /// In en, this message translates to:
-  /// **'The bijtelling: a percentage of the catalogue value added to profit for private use, at most the car costs. None with a trip log of {km} private km a year or less.'**
-  String plTaxCarPrivateUseHelp(int km);
+  /// **'The bijtelling: a percentage of the catalogue value, or of the market value for a car more than {years} years old, added to profit for private use, at most the car costs. That cap counts only the costs linked to the car and its depreciation, so link every car cost to the car. None with a trip log of {km} private km a year or less.'**
+  String plTaxCarPrivateUseHelp(int years, int km);
 
   /// No description provided for @plTaxDeductionsSectionHelp.
   ///
@@ -4349,13 +4413,13 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxFoodLimitedHelp.
   ///
   /// In en, this message translates to:
-  /// **'Food, drinks, representation, congresses, seminars and study trips are deductible for {pct}, or above the first {drempel} (Wet IB 2001 art. 3.15). Florin uses whichever gives the larger deduction.'**
+  /// **'Food, drinks, representation, congresses, seminars and study trips are deductible for {pct}, or above the first {drempel}. Florin uses whichever gives the larger deduction.'**
   String plTaxFoodLimitedHelp(String pct, String drempel);
 
   /// No description provided for @plTaxCourseTravelHelp.
   ///
   /// In en, this message translates to:
-  /// **'Travel and stay for courses, studies and congresses are deductible up to {max} a year (Wet IB 2001 art. 3.16 lid 2 f). The limit does not apply when your work makes attending necessary (lid 8); Florin keeps it, because it cannot tell that from your records.'**
+  /// **'Travel and stay for courses, studies and congresses are deductible up to {max} a year. The limit does not apply when your work makes attending necessary; Florin keeps it, because it cannot tell that from your records. What is left counts with food, drinks and representation, as the law limits travel for congresses there too; Florin does the same for courses, because it cannot tell them apart.'**
   String plTaxCourseTravelHelp(String max);
 
   /// No description provided for @plTaxBarredCosts.
@@ -4367,7 +4431,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxBarredCostsHelp.
   ///
   /// In en, this message translates to:
-  /// **'Fines (Wet IB 2001 art. 3.14), clothing other than werkkleding, personal care, a phone line at home and literature other than professional literature (art. 3.16 lid 2). The law keeps these costs out of the profit, so they lower it by nothing.'**
+  /// **'Fines, clothing other than werkkleding, personal care, a phone line at home and literature other than professional literature. The law keeps these costs out of the profit, so they lower it by nothing.'**
   String get plTaxBarredCostsHelp;
 
   /// No description provided for @plTaxInputsSection.
@@ -4385,13 +4449,13 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxEmploymentSection.
   ///
   /// In en, this message translates to:
-  /// **'Employment in {year}'**
+  /// **'Employment and other work in {year}'**
   String plTaxEmploymentSection(int year);
 
   /// No description provided for @plTaxEmploymentSectionHelp.
   ///
   /// In en, this message translates to:
-  /// **'If you also work as an employee. Enter the totals of all your jaaropgaven for the year. During the year, enter what you expect for the whole year.'**
+  /// **'If you also work as an employee or do other work outside the business. Enter the totals of all your jaaropgaven for the year. During the year, enter what you expect for the whole year.'**
   String get plTaxEmploymentSectionHelp;
 
   /// No description provided for @plTaxInvestmentSection.
@@ -4439,8 +4503,8 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxMeewerkHelp.
   ///
   /// In en, this message translates to:
-  /// **'A percentage of profit when your fiscal partner works at least {hours} hours in the business without pay.'**
-  String plTaxMeewerkHelp(int hours);
+  /// **'A percentage of profit when your fiscal partner works at least {hours} hours in the business without pay or for less than {pay}.'**
+  String plTaxMeewerkHelp(int hours, String pay);
 
   /// No description provided for @plTaxMia.
   ///
@@ -4535,7 +4599,7 @@ abstract class AppLocalizations {
   /// No description provided for @plTaxUnrealisedZelfsHelp.
   ///
   /// In en, this message translates to:
-  /// **'Zelfstandigenaftrek from earlier years that did not fit the profit then, used up to this year\'s profit.'**
+  /// **'Zelfstandigenaftrek from earlier years that did not fit the profit then. Used this year as far as your profit exceeds this year\'s zelfstandigenaftrek, and only when you meet the urencriterium.'**
   String get plTaxUnrealisedZelfsHelp;
 
   /// No description provided for @plTaxZelfstandigenaftrekHelp.
@@ -4553,8 +4617,8 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnIcpSectionHelp.
   ///
   /// In en, this message translates to:
-  /// **'Supplies to businesses in other EU countries, reported separately in the ICP report. While you take part in the KOR you file no ICP report, so invoices from those dates are not listed.'**
-  String get vatReturnIcpSectionHelp;
+  /// **'Supplies to businesses in other EU countries, reported separately in the ICP report, with its own period: a quarter, or for goods a month, from the month goods to EU businesses pass {max} in a quarter and in the {quarters} quarters after it. Florin lists services in the same periods as goods, as the Belastingdienst allows. The Belastingdienst does not send it: you file it yourself in Mijn Belastingdienst Zakelijk. While you take part in the KOR you file no ICP report, so invoices from those dates are not listed. Corrections go in the next ICP report; Florin does not track changes to a filed ICP period.'**
+  String vatReturnIcpSectionHelp(String max, int quarters);
 
   /// No description provided for @vatRow1aHelp.
   ///
@@ -4577,7 +4641,7 @@ abstract class AppLocalizations {
   /// No description provided for @vatRow1dHelp.
   ///
   /// In en, this message translates to:
-  /// **'VAT on private use of business cars: {rate} or {reduced} of the catalogue value, or the actual private share with a trip log. In the last return of the year only.'**
+  /// **'VAT on private use of business cars: {rate} or {reduced} of the catalogue value including VAT and BPM, or the actual private share with a trip log. In the last return of the year only.'**
   String vatRow1dHelp(String rate, String reduced);
 
   /// No description provided for @vatRow1eHelp.
@@ -4589,7 +4653,7 @@ abstract class AppLocalizations {
   /// No description provided for @vatRow3aHelp.
   ///
   /// In en, this message translates to:
-  /// **'Exports of goods to countries outside the EU. Services to businesses outside the EU are not reported.'**
+  /// **'Exports of goods to countries outside the EU. Services taxed outside the EU are not reported.'**
   String get vatRow3aHelp;
 
   /// No description provided for @vatRow3bHelp.
@@ -4631,7 +4695,7 @@ abstract class AppLocalizations {
   /// No description provided for @expensesFieldPurchaseVatHelp.
   ///
   /// In en, this message translates to:
-  /// **'Dutch VAT when the supplier charged it. Shifted when the invoice says the VAT is reverse-charged to you, or the supplier is abroad: you then report and deduct the VAT yourself.'**
+  /// **'Dutch VAT when the supplier charged it. Shifted when the invoice says the VAT is reverse-charged to you, or the supplier is abroad: you then report and deduct the VAT yourself. Services to real estate from an EU supplier that shifts the VAT to you go in 2a, not 4b: choose Shifted to me by a Dutch supplier (2a).'**
   String get expensesFieldPurchaseVatHelp;
 
   /// No description provided for @purchaseVatDomestic.
@@ -4727,7 +4791,7 @@ abstract class AppLocalizations {
   /// No description provided for @vatTreatmentServicesOutsideEu.
   ///
   /// In en, this message translates to:
-  /// **'Services to a business outside the EU (not in the VAT return)'**
+  /// **'Services taxed outside the EU (not in the VAT return)'**
   String get vatTreatmentServicesOutsideEu;
 
   /// No description provided for @invoiceValidateTreatmentCountry.
@@ -4739,19 +4803,19 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceValidateTreatmentConsumer.
   ///
   /// In en, this message translates to:
-  /// **'This client is a private person. Choose Dutch BTW, the KOR or export of goods: BTW is not shifted to a private person, and a service to one is taxed in the Netherlands.'**
+  /// **'This client is a private person. Choose Dutch BTW, the KOR, export of goods or, for a client outside the EU, services taxed outside the EU: BTW is not shifted to a private person.'**
   String get invoiceValidateTreatmentConsumer;
 
   /// No description provided for @invoiceEuConsumerNotice.
   ///
   /// In en, this message translates to:
-  /// **'Telecommunication, broadcasting and electronic services and distance sales of goods to private persons in other EU countries are taxed in their country once together they pass {threshold} excl. BTW in this year or the last (Wet OB 1968 art. 6h, 6k). Your supplies with Dutch BTW to private persons in other EU countries this year, this invoice included: {total}. Florin cannot tell which are electronic services, so it counts all of them, and it does not prepare the OSS return.'**
+  /// **'Telecommunication, broadcasting and electronic services and distance sales of goods to private persons in other EU countries are taxed in their country once together they pass {threshold} excl. BTW in this year or the last. Your supplies with Dutch BTW to private persons in other EU countries this year, this invoice included: {total}. Florin cannot tell which are electronic services, so it counts all of them, and it does not prepare the OSS return.'**
   String invoiceEuConsumerNotice(String threshold, String total);
 
   /// No description provided for @invoiceEuConsumerOverNotice.
   ///
   /// In en, this message translates to:
-  /// **'Your supplies with Dutch BTW to private persons in other EU countries pass {threshold} in this year or the last. If they include telecommunication, broadcasting or electronic services or distance sales of goods, those are taxed in the private person\'s country, not with Dutch BTW (Wet OB 1968 art. 6h, 6k), usually through the OSS. Florin does not model this and keeps charging Dutch BTW.'**
+  /// **'Your supplies with Dutch BTW to private persons in other EU countries pass {threshold} in this year or the last. If they include telecommunication, broadcasting or electronic services or distance sales of goods, those are taxed in the private person\'s country, not with Dutch BTW, usually through the OSS. Florin does not model this and keeps charging Dutch BTW.'**
   String invoiceEuConsumerOverNotice(String threshold);
 
   /// No description provided for @invoiceSelfBilled.
@@ -4763,7 +4827,7 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceSelfBilledHelp.
   ///
   /// In en, this message translates to:
-  /// **'Tick this when the customer, such as a reseller, makes the invoice for what it owes you. The law allows this when you agreed on it beforehand and you accept each invoice. Florin records it with the customer\'s number and makes no PDF: the customer\'s document is the invoice.'**
+  /// **'Tick this when the customer, such as a reseller, makes the invoice for what it owes you. The law allows this when you agreed on it beforehand and you accept each invoice. Florin records it with the customer\'s number and makes no PDF: the customer\'s document is the invoice. Enter the amounts and BTW exactly as the customer\'s invoice states them: you owe the BTW it shows.'**
   String get invoiceSelfBilledHelp;
 
   /// No description provided for @invoiceFieldNumberSelfBilledHelp.
@@ -4829,7 +4893,7 @@ abstract class AppLocalizations {
   /// No description provided for @clientsConsumerHelp.
   ///
   /// In en, this message translates to:
-  /// **'Tick this for a customer who buys as a private person. BTW is never shifted to a private person and there is no ICP-opgaaf for one, so Florin offers only Dutch BTW, the KOR or export of goods. A service to a private person is taxed where you are established (Wet OB 1968 art. 6 lid 2), except telecommunication, broadcasting and electronic services, which are taxed where the private person lives (art. 6h) once such supplies to other EU countries pass a yearly threshold (art. 6k). For a private person in the Netherlands you need not issue an invoice (art. 34c).'**
+  /// **'Tick this for a customer who buys as a private person. BTW is never shifted to a private person and there is no ICP-opgaaf for one. A service to a private person is taxed where you are established, with exceptions: telecommunication, broadcasting and electronic services are taxed where the private person lives, for private persons in other EU countries only once such supplies pass a yearly threshold; advice, advertising, licences, data processing and similar services to a private person outside the EU are taxed there; streamed or virtual cultural, educational and entertainment activities are taxed where the private person is. For a private person in the Netherlands you need not issue an invoice.'**
   String get clientsConsumerHelp;
 
   /// No description provided for @clientsBadgeMerchantOfRecord.
@@ -4847,13 +4911,13 @@ abstract class AppLocalizations {
   /// No description provided for @vatRowOutsideReturn.
   ///
   /// In en, this message translates to:
-  /// **'Services to businesses outside the EU (not in the return)'**
+  /// **'Services taxed outside the EU (not in the return)'**
   String get vatRowOutsideReturn;
 
   /// No description provided for @vatRowOutsideReturnHelp.
   ///
   /// In en, this message translates to:
-  /// **'Revenue from services to businesses outside the EU. The Belastingdienst says these are not reported in the Dutch return when the service is taxed outside the EU. Shown so you can see where that revenue went.'**
+  /// **'Revenue from services taxed outside the EU: to businesses there and, where the law places the service there, to private persons there. The Belastingdienst says services to businesses outside the EU are not reported in the Dutch return when the service is taxed outside the EU, and BTW is levied only on supplies in the Netherlands. Shown so you can see where that revenue went.'**
   String get vatRowOutsideReturnHelp;
 
   /// No description provided for @vatShortReverseCharge.
@@ -4979,7 +5043,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsKorStartHelp.
   ///
   /// In en, this message translates to:
-  /// **'The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst\'s confirmation. Until that date you file every return as usual. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most {limit} a year. Leave empty when you do not take part.'**
+  /// **'The first day the kleineondernemersregeling (KOR) applies to you, as in the Belastingdienst\'s confirmation. Until that date you file every return as usual. Under the KOR you charge no VAT, file no regular VAT return and reclaim no VAT, while your turnover in the Netherlands stays at most {limit} a year. If your turnover passed {limit} in the year before the one you register in, the KOR does not apply in that year. Leave empty when you do not take part.'**
   String settingsKorStartHelp(String limit);
 
   /// No description provided for @settingsKorEnd.
@@ -4991,7 +5055,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsKorEndHelp.
   ///
   /// In en, this message translates to:
-  /// **'The first day the KOR no longer applies after you deregistered yourself. Leave empty otherwise: when your turnover passes the limit, Florin ends the KOR from that invoice on.'**
+  /// **'The first day the KOR no longer applies after you deregistered yourself, as in the Belastingdienst\'s letter. Leave empty otherwise: when your turnover passes the limit, Florin ends the KOR from that supply on.'**
   String get settingsKorEndHelp;
 
   /// No description provided for @settingsValidateKorStart.
@@ -5000,10 +5064,16 @@ abstract class AppLocalizations {
   /// **'The KOR starts on the first day of a return period, so enter a 1st of the month, as in the Belastingdienst\'s confirmation.'**
   String get settingsValidateKorStart;
 
+  /// No description provided for @settingsValidateKorStartBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'After your turnover passed the limit, the KOR can start again only from {date}.'**
+  String settingsValidateKorStartBlocked(String date);
+
   /// No description provided for @settingsValidateKorEndDay.
   ///
   /// In en, this message translates to:
-  /// **'A deregistration takes effect on the first day of a return period, so enter a 1st of the month.'**
+  /// **'A deregistration takes effect on the first day of a month, normally a calendar quarter. Enter the date in the Belastingdienst\'s letter.'**
   String get settingsValidateKorEndDay;
 
   /// No description provided for @settingsValidateKorEndBeforeStart.
@@ -5045,7 +5115,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardKorHelp.
   ///
   /// In en, this message translates to:
-  /// **'Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above {limit} in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next. The KOR is not automatic: it applies only after you register and the Belastingdienst confirms the start date. Until then you file a return every quarter, however low your turnover.'**
+  /// **'Your turnover that counts for the kleineondernemersregeling: supplies taxed in the Netherlands, including 0% and domestic reverse charge, not services taxed abroad. Above {limit} in a calendar year the KOR ends with the supply that passes the limit, for the rest of that year and the next. The KOR is not automatic: it applies only after you register and the Belastingdienst confirms the start date. Until then you file a return every period, however low your turnover.'**
   String dashboardKorHelp(String limit);
 
   /// No description provided for @deadlineStatusKor.
@@ -5075,25 +5145,25 @@ abstract class AppLocalizations {
   /// No description provided for @vatReturnKorNotice.
   ///
   /// In en, this message translates to:
-  /// **'You take part in the KOR for this whole quarter and owe no VAT in it, so no return is due. If the Belastingdienst sends you one anyway, file it.'**
+  /// **'You take part in the KOR for this whole period and owe no VAT in it, so no return is due. If the Belastingdienst sends you one anyway, file it.'**
   String get vatReturnKorNotice;
 
   /// No description provided for @vatReturnKorPartNotice.
   ///
   /// In en, this message translates to:
-  /// **'The KOR applies for part of this quarter. Invoices exempt under the KOR are not in the return and VAT on purchases in that part is not reclaimed. File a return for the part outside the KOR.'**
+  /// **'The KOR applies for part of this period. Invoices exempt under the KOR are not in the return and VAT on purchases in that part is not reclaimed. File a return for the part outside the KOR.'**
   String get vatReturnKorPartNotice;
 
   /// No description provided for @vatReturnKorIncidentalNotice.
   ///
   /// In en, this message translates to:
-  /// **'You take part in the KOR for this whole quarter, but you owe VAT in it, such as VAT shifted to you (2a, 4a or 4b), which you cannot deduct. So you file a return for this quarter. The Belastingdienst does not send it: ask your belastingkantoor for it in writing once the quarter is over. Florin shows the usual deadline as the date to aim for.'**
+  /// **'You take part in the KOR for this whole period, but you owe VAT in it, such as VAT shifted to you (2a, 4a or 4b), which you cannot deduct. So you file a return for it. The Belastingdienst does not send it: you request it in writing from your belastingkantoor per calendar quarter, after the quarter ends, and file it on paper. Florin shows the usual deadline as the date to aim for.'**
   String get vatReturnKorIncidentalNotice;
 
   /// No description provided for @vatReturnNilNotice.
   ///
   /// In en, this message translates to:
-  /// **'Nothing to report this quarter. You still file a return by the deadline: a nil return (0-aangifte). Without it the Belastingdienst sends an additional assessment and a fine.'**
+  /// **'Nothing to report in this period. You still file a return by the deadline: a nil return (0-aangifte). Without it the Belastingdienst sends an additional assessment and a fine.'**
   String get vatReturnNilNotice;
 
   /// No description provided for @vatReturnKorExceeded.
@@ -5101,6 +5171,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your turnover for the KOR passed {limit} on {date}. The KOR ended with that supply: from then on you charge VAT and file returns. Deregister in Mijn Belastingdienst Zakelijk; you cannot take part again this year or next year.'**
   String vatReturnKorExceeded(String date, String limit);
+
+  /// No description provided for @vatReturnKorPrivateUseNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'The estimated BTW on private use of a car also covers time this year when the KOR applied. Whether it is owed while the KOR applies is not settled by the sources Florin relies on; Florin counts it, the branch that pays more.'**
+  String get vatReturnKorPrivateUseNotice;
 
   /// No description provided for @errorDuplicate.
   ///
@@ -5183,7 +5259,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsKorSectionHelp.
   ///
   /// In en, this message translates to:
-  /// **'A VAT exemption for businesses with at most {limit} turnover in the Netherlands a year. It is not automatic: you register for it and deregister with the Belastingdienst, and without it you file a return every quarter. Enter its dates here so Florin follows it.'**
+  /// **'A VAT exemption for businesses with at most {limit} turnover in the Netherlands a year. It is not automatic: you register for it and deregister with the Belastingdienst, and without it you file a return every period. Enter its dates here so Florin follows it.'**
   String settingsKorSectionHelp(String limit);
 
   /// No description provided for @receiptTypeEInvoice.
@@ -5213,7 +5289,7 @@ abstract class AppLocalizations {
   /// No description provided for @receiptsAssetHelp.
   ///
   /// In en, this message translates to:
-  /// **'The purchase invoice of this asset and any other proof, as a PDF, photo or scan. It belongs in your records while the asset is in use, and {years} years after that.'**
+  /// **'The purchase invoice of this asset and any other proof, as a PDF, photo or scan. It belongs in your records while the asset is in use, and {years} years after that. For real estate the term is longer and counts from the year it came into use; Florin does not show that date.'**
   String receiptsAssetHelp(int years);
 
   /// No description provided for @receiptsInvoiceTitle.
@@ -5303,7 +5379,7 @@ abstract class AppLocalizations {
   /// No description provided for @receiptsKeepUntilHelp.
   ///
   /// In en, this message translates to:
-  /// **'The Belastingdienst asks you to keep invoices and receipts for {years} years. Florin counts them from the end of the year they belong to and never deletes them. The Belastingdienst can raise a year\'s tax afterwards for {navordering} years after the tax became due, longer when you had extra time to file, and for {foreign} years for income or assets held abroad (AWR art. 16), so keep the records of such a year at least that long.'**
+  /// **'The Belastingdienst asks you to keep invoices and receipts for {years} years. Florin counts from the end of the year they belong to, so the date shown is the earliest: the term starts only once a record is no longer current, such as a contract that still runs. Florin never deletes them. Separately, the Belastingdienst can raise a year\'s tax afterwards for {navordering} years after the tax became due, longer when you had extra time to file, and for {foreign} years for income or assets held abroad.'**
   String receiptsKeepUntilHelp(int years, int navordering, int foreign);
 
   /// No description provided for @receiptsKeepWhileInUse.
@@ -5321,13 +5397,13 @@ abstract class AppLocalizations {
   /// No description provided for @receiptsRejectedTooLarge.
   ///
   /// In en, this message translates to:
-  /// **'{name} is larger than {max}. Save the scan at a lower resolution, keeping every page readable, and add it again.'**
+  /// **'{name} is larger than {max}. For a scan of paper, save it at a lower resolution, keeping every page readable, and add it again. A file you received digitally stays in the form you received it: keep it in your own records.'**
   String receiptsRejectedTooLarge(String name, String max);
 
   /// No description provided for @receiptsRejectedType.
   ///
   /// In en, this message translates to:
-  /// **'{name} is not a PDF, JPEG, PNG, HEIC, TIFF or UBL e-invoice. Save or print it as PDF and add it again.'**
+  /// **'{name} is not a PDF, JPEG, PNG, HEIC, TIFF or UBL e-invoice, so Florin cannot store it. Keep the file as you received it in your own records.'**
   String receiptsRejectedType(String name);
 
   /// No description provided for @receiptsDuplicate.

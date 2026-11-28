@@ -66,11 +66,50 @@ extension VatPeriodDomain on VatPeriod {
   };
 }
 
+/// One period of the ICP-opgaaf: a quarter, a month, or the months of a
+/// quarter up to the month goods passed the quarterly limit, with the last
+/// day its opgaaf is due (Wet OB 1968 art. 37a lid 1 and 3).
+typedef IcpPeriod = ({DateTime first, DateTime last, DateTime due});
+
+extension IcpPeriodDomain on IcpPeriod {
+  bool contains(DateTime d) =>
+      !d.isBefore(first) &&
+      d.isBefore(DateTime(last.year, last.month, last.day + 1));
+
+  int get months =>
+      (last.year - first.year) * 12 + last.month - first.month + 1;
+
+  /// A whole calendar quarter.
+  bool get isQuarter => months == 3 && first.month % 3 == 1;
+
+  /// The short Dutch name of the period, as an export file names it: `Q1`,
+  /// `M04` or `M04-M05`.
+  String get code {
+    String m(DateTime d) => 'M${d.month.toString().padLeft(2, '0')}';
+    if (isQuarter) return 'Q${quarterOf(first)}';
+    return months == 1 ? m(first) : '${m(first)}-${m(last)}';
+  }
+}
+
+/// The day an invoice dated [invoiceDate] with a term of [termDays] days is
+/// due: the invoice date plus the term in calendar days, whatever the clock
+/// change (BW 6:119a lid 1).
+DateTime dueDateOf(DateTime invoiceDate, int termDays) =>
+    DateTime(invoiceDate.year, invoiceDate.month, invoiceDate.day + termDays);
+
+/// The earliest day the records give for a supply invoiced on
+/// [invoiceDate]: [supplyDate] when it precedes the invoice, else the invoice
+/// date.
+DateTime suppliedOnOf(DateTime invoiceDate, DateTime? supplyDate) =>
+    supplyDate != null && supplyDate.isBefore(invoiceDate)
+    ? supplyDate
+    : invoiceDate;
+
 extension InvoiceDomain on Invoice {
   /// Issued invoices count for revenue and BTW; drafts do not.
   bool get isIssued => status != InvoiceStatus.draft;
 
-  DateTime get dueDate => invoiceDate.add(Duration(days: paymentTermDays));
+  DateTime get dueDate => dueDateOf(invoiceDate, paymentTermDays);
 
   bool get isCreditNote => invoiceType == InvoiceType.creditNote;
 
@@ -84,6 +123,9 @@ extension InvoiceDomain on Invoice {
       ? supplyDate ?? invoiceDate
       : invoiceDate;
 
+  /// The earliest day the records give for the supply ([suppliedOnOf]).
+  DateTime get suppliedOn => suppliedOnOf(invoiceDate, supplyDate);
+
   /// +1 for an invoice, -1 for a credit note, which reduces every total.
   int get sign => isCreditNote ? -1 : 1;
 
@@ -92,8 +134,13 @@ extension InvoiceDomain on Invoice {
 
   int get signedInclVat => sign * totalInclVat;
 
-  bool get isOverdue =>
-      status == InvoiceStatus.sent && dueDate.isBefore(DateTime.now());
+  /// Sent, unpaid and past its due date on [day]: interest and collection
+  /// costs run from the day after the due date (BW 6:119a lid 1, 6:96 lid 4).
+  bool isOverdueOn(DateTime day) =>
+      status == InvoiceStatus.sent &&
+      DateTime(day.year, day.month, day.day).isAfter(dueDate);
+
+  bool get isOverdue => isOverdueOn(DateTime.now());
 
   /// Issued on or before [day] and not paid by the end of it: a receivable
   /// on that day, or for a credit note an amount owed back.
@@ -105,12 +152,21 @@ extension InvoiceDomain on Invoice {
   }
 
   /// The last day the claim can be brought to court: the limitation term
-  /// runs from the day after the due date (BW 3:307 lid 1).
-  DateTime claimLapsesOn(TaxYearRules rules) => DateTime(
-    dueDate.year + rules.claimLimitationYears,
-    dueDate.month,
-    dueDate.day,
-  );
+  /// runs from the day after the claim fell due (BW 3:307 lid 1). The records
+  /// do not show whether the term on the invoice was agreed, and without one
+  /// payment can be claimed at once (BW 6:38), so Florin counts from the
+  /// earliest day it knows: the supply date or the invoice date.
+  DateTime claimLapsesOn(TaxYearRules rules) {
+    final from = suppliedOn;
+    final year = from.year + rules.claimLimitationYears;
+    // 29 February becomes 28 February, the earlier day.
+    final lastOfMonth = DateTime(year, from.month + 1, 0).day;
+    return DateTime(
+      year,
+      from.month,
+      from.day > lastOfMonth ? lastOfMonth : from.day,
+    );
+  }
 }
 
 /// What clients owe on [day], incl. BTW: issued invoices not yet paid, less
@@ -163,14 +219,14 @@ extension VatTreatmentDomain on VatTreatment {
     };
   }
 
-  /// Whether this treatment can apply to a consumer: reverse charge and the
-  /// zero rate for EU supplies need a business customer, and a service to a
-  /// consumer outside the EU is taxed where the supplier is (Wet OB 1968
-  /// art. 6 lid 2), so it carries Dutch BTW.
+  /// A consumer: Dutch BTW, the KOR or export of goods, and outside the EU
+  /// services taxed there (Wet OB 1968 art. 6e, 6h, 6i); reverse charge and
+  /// the EU zero rates need a business customer.
   bool get fitsConsumer => switch (this) {
     VatTreatment.standard ||
     VatTreatment.kor ||
-    VatTreatment.exportOutsideEu => true,
+    VatTreatment.exportOutsideEu ||
+    VatTreatment.servicesOutsideEu => true,
     _ => false,
   };
 
@@ -202,7 +258,9 @@ extension ClientDomain on Client {
       isConsumer && country != 'NL' && isEuCountry(country);
 
   /// The treatment a new invoice to this client starts with: Dutch BTW in
-  /// the Netherlands or to a consumer, or the KOR exemption while that applies; services with
+  /// the Netherlands or to a consumer, the cautious choice since most
+  /// services to a consumer are taxed where the supplier is (Wet OB 1968
+  /// art. 6 lid 2), or the KOR exemption while that applies; services with
   /// BTW verlegd in another member state and services outside the EU
   /// elsewhere. The user can pick another that fits.
   VatTreatment suggestedVatTreatment({required bool korApplies}) {

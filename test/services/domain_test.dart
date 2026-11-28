@@ -45,8 +45,9 @@ void main() {
     isConsumer: consumer,
   );
 
-  test('a private person gets Dutch BTW, the KOR or export of goods, never '
-      'reverse charge (Wet OB 1968 art. 6 lid 2)', () {
+  test('a private person gets Dutch BTW, the KOR or export of goods, and '
+      'outside the EU services taxed there (Wet OB 1968 art. 6 lid 2, 6h, '
+      '6i)', () {
     final de = client('DE', consumer: true);
     expect(VatTreatment.values.where((t) => t.fitsClient(de)).toSet(), {
       VatTreatment.standard,
@@ -57,9 +58,11 @@ void main() {
       VatTreatment.standard,
       VatTreatment.kor,
       VatTreatment.exportOutsideEu,
+      VatTreatment.servicesOutsideEu,
     });
     expect(VatTreatment.euServices.fitsClient(client('DE')), isTrue);
     expect(de.suggestedVatTreatment(korApplies: false), VatTreatment.standard);
+    expect(us.suggestedVatTreatment(korApplies: false), VatTreatment.standard);
   });
 
   test('supplies to private persons in other member states count towards the '
@@ -105,11 +108,14 @@ void main() {
     DateTime? paid,
     InvoiceType type = InvoiceType.invoice,
     InvoiceStatus status = InvoiceStatus.sent,
+    DateTime? supplyDate,
+    int termDays = 30,
   }) => Invoice(
     id: id,
     invoiceNumber: '$id',
     invoiceType: type,
     invoiceDate: date,
+    supplyDate: supplyDate,
     clientId: 1,
     vatTreatment: VatTreatment.standard,
     selfBilled: false,
@@ -118,7 +124,7 @@ void main() {
     sellerKvkNumber: 'K',
     sellerAddress: 'A',
     sellerIban: 'I',
-    paymentTermDays: 30,
+    paymentTermDays: termDays,
     status: paid == null ? status : InvoiceStatus.paid,
     paidDate: paid,
     totalExclVat: 10000,
@@ -139,8 +145,55 @@ void main() {
     expect(openReceivables(invoices, day), 12100 + 12100 - 12100);
   });
 
-  test('a claim lapses five years after it fell due (BW 3:307 lid 1)', () {
-    final inv = sale(1, DateTime(2026, 3, 1));
-    expect(inv.claimLapsesOn(taxRulesFor(2026)!), DateTime(2031, 3, 31));
+  test('the due date is the invoice date plus the term in calendar days, '
+      'also across the end of summer time (BW 6:119a lid 1)', () {
+    final inv = sale(1, DateTime(2026, 10, 20), termDays: 14);
+    expect(inv.dueDate, DateTime(2026, 11, 3));
+    expect(dueDateOf(DateTime(2026, 3, 20), 14), DateTime(2026, 4, 3));
+  });
+
+  test('an invoice is overdue from the day after its due date, not on it '
+      '(BW 6:119a lid 1, 6:96 lid 4)', () {
+    final inv = sale(1, DateTime(2026, 10, 1), termDays: 30);
+    expect(inv.dueDate, DateTime(2026, 10, 31));
+    expect(inv.isOverdueOn(DateTime(2026, 10, 31, 23, 59)), isFalse);
+    expect(inv.isOverdueOn(DateTime(2026, 11, 1)), isTrue);
+    final paid = sale(
+      2,
+      DateTime(2026, 10, 1),
+      paid: DateTime(2026, 11, 5),
+      termDays: 30,
+    );
+    expect(paid.isOverdueOn(DateTime(2026, 11, 2)), isFalse);
+  });
+
+  test('a claim lapses five years after the invoice date at the latest, or '
+      'after the supply date when that is earlier (BW 3:307 lid 1, 6:38)', () {
+    final rules = taxRulesFor(2026)!;
+    expect(
+      sale(1, DateTime(2026, 3, 1)).claimLapsesOn(rules),
+      DateTime(2031, 3, 1),
+    );
+    expect(
+      sale(
+        2,
+        DateTime(2026, 3, 1),
+        supplyDate: DateTime(2026, 2, 20),
+      ).claimLapsesOn(rules),
+      DateTime(2031, 2, 20),
+    );
+    expect(
+      sale(
+        3,
+        DateTime(2026, 3, 1),
+        supplyDate: DateTime(2026, 3, 10),
+      ).claimLapsesOn(rules),
+      DateTime(2031, 3, 1),
+    );
+    // 29 February has no counterpart five years on; the earlier day holds.
+    expect(
+      sale(4, DateTime(2028, 2, 29)).claimLapsesOn(rules),
+      DateTime(2033, 2, 28),
+    );
   });
 }

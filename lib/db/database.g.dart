@@ -7608,6 +7608,17 @@ class $PensionEntriesTable extends PensionEntries
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _pensionPremiumsPriorYearMeta =
+      const VerificationMeta('pensionPremiumsPriorYear');
+  @override
+  late final GeneratedColumn<int> pensionPremiumsPriorYear =
+      GeneratedColumn<int>(
+        'pension_premiums_prior_year',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _reserveringsruimteMeta =
       const VerificationMeta('reserveringsruimte');
   @override
@@ -7662,6 +7673,7 @@ class $PensionEntriesTable extends PensionEntries
     year,
     priorYearIncome,
     factorA,
+    pensionPremiumsPriorYear,
     reserveringsruimte,
     plannedContribution,
     aovInsured,
@@ -7698,6 +7710,15 @@ class $PensionEntriesTable extends PensionEntries
       context.handle(
         _factorAMeta,
         factorA.isAcceptableOrUnknown(data['factor_a']!, _factorAMeta),
+      );
+    }
+    if (data.containsKey('pension_premiums_prior_year')) {
+      context.handle(
+        _pensionPremiumsPriorYearMeta,
+        pensionPremiumsPriorYear.isAcceptableOrUnknown(
+          data['pension_premiums_prior_year']!,
+          _pensionPremiumsPriorYearMeta,
+        ),
       );
     }
     if (data.containsKey('reserveringsruimte')) {
@@ -7754,6 +7775,10 @@ class $PensionEntriesTable extends PensionEntries
         DriftSqlType.int,
         data['${effectivePrefix}factor_a'],
       )!,
+      pensionPremiumsPriorYear: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}pension_premiums_prior_year'],
+      ),
       reserveringsruimte: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}reserveringsruimte'],
@@ -7786,6 +7811,10 @@ class PensionEntry extends DataClass implements Insertable<PensionEntry> {
   /// (Wet IB 2001 art. 3.127).
   final int priorYearIncome;
   final int factorA;
+
+  /// Premiums for ouderdomspensioen and partnerpensioen put into a pension
+  /// scheme under the Wet toekomst pensioenen last year (art. 3.127 lid 4).
+  final int? pensionPremiumsPriorYear;
   final int reserveringsruimte;
   final int plannedContribution;
   final bool aovInsured;
@@ -7794,6 +7823,7 @@ class PensionEntry extends DataClass implements Insertable<PensionEntry> {
     required this.year,
     required this.priorYearIncome,
     required this.factorA,
+    this.pensionPremiumsPriorYear,
     required this.reserveringsruimte,
     required this.plannedContribution,
     required this.aovInsured,
@@ -7805,6 +7835,11 @@ class PensionEntry extends DataClass implements Insertable<PensionEntry> {
     map['year'] = Variable<int>(year);
     map['prior_year_income'] = Variable<int>(priorYearIncome);
     map['factor_a'] = Variable<int>(factorA);
+    if (!nullToAbsent || pensionPremiumsPriorYear != null) {
+      map['pension_premiums_prior_year'] = Variable<int>(
+        pensionPremiumsPriorYear,
+      );
+    }
     map['reserveringsruimte'] = Variable<int>(reserveringsruimte);
     map['planned_contribution'] = Variable<int>(plannedContribution);
     map['aov_insured'] = Variable<bool>(aovInsured);
@@ -7817,6 +7852,9 @@ class PensionEntry extends DataClass implements Insertable<PensionEntry> {
       year: Value(year),
       priorYearIncome: Value(priorYearIncome),
       factorA: Value(factorA),
+      pensionPremiumsPriorYear: pensionPremiumsPriorYear == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pensionPremiumsPriorYear),
       reserveringsruimte: Value(reserveringsruimte),
       plannedContribution: Value(plannedContribution),
       aovInsured: Value(aovInsured),
@@ -7833,6 +7871,9 @@ class PensionEntry extends DataClass implements Insertable<PensionEntry> {
       year: serializer.fromJson<int>(json['year']),
       priorYearIncome: serializer.fromJson<int>(json['priorYearIncome']),
       factorA: serializer.fromJson<int>(json['factorA']),
+      pensionPremiumsPriorYear: serializer.fromJson<int?>(
+        json['pensionPremiumsPriorYear'],
+      ),
       reserveringsruimte: serializer.fromJson<int>(json['reserveringsruimte']),
       plannedContribution: serializer.fromJson<int>(
         json['plannedContribution'],
@@ -7848,6 +7889,9 @@ class PensionEntry extends DataClass implements Insertable<PensionEntry> {
       'year': serializer.toJson<int>(year),
       'priorYearIncome': serializer.toJson<int>(priorYearIncome),
       'factorA': serializer.toJson<int>(factorA),
+      'pensionPremiumsPriorYear': serializer.toJson<int?>(
+        pensionPremiumsPriorYear,
+      ),
       'reserveringsruimte': serializer.toJson<int>(reserveringsruimte),
       'plannedContribution': serializer.toJson<int>(plannedContribution),
       'aovInsured': serializer.toJson<bool>(aovInsured),
@@ -7859,6 +7903,7 @@ class PensionEntry extends DataClass implements Insertable<PensionEntry> {
     int? year,
     int? priorYearIncome,
     int? factorA,
+    Value<int?> pensionPremiumsPriorYear = const Value.absent(),
     int? reserveringsruimte,
     int? plannedContribution,
     bool? aovInsured,
@@ -7867,6 +7912,9 @@ class PensionEntry extends DataClass implements Insertable<PensionEntry> {
     year: year ?? this.year,
     priorYearIncome: priorYearIncome ?? this.priorYearIncome,
     factorA: factorA ?? this.factorA,
+    pensionPremiumsPriorYear: pensionPremiumsPriorYear.present
+        ? pensionPremiumsPriorYear.value
+        : this.pensionPremiumsPriorYear,
     reserveringsruimte: reserveringsruimte ?? this.reserveringsruimte,
     plannedContribution: plannedContribution ?? this.plannedContribution,
     aovInsured: aovInsured ?? this.aovInsured,
@@ -7879,6 +7927,9 @@ class PensionEntry extends DataClass implements Insertable<PensionEntry> {
           ? data.priorYearIncome.value
           : this.priorYearIncome,
       factorA: data.factorA.present ? data.factorA.value : this.factorA,
+      pensionPremiumsPriorYear: data.pensionPremiumsPriorYear.present
+          ? data.pensionPremiumsPriorYear.value
+          : this.pensionPremiumsPriorYear,
       reserveringsruimte: data.reserveringsruimte.present
           ? data.reserveringsruimte.value
           : this.reserveringsruimte,
@@ -7900,6 +7951,7 @@ class PensionEntry extends DataClass implements Insertable<PensionEntry> {
           ..write('year: $year, ')
           ..write('priorYearIncome: $priorYearIncome, ')
           ..write('factorA: $factorA, ')
+          ..write('pensionPremiumsPriorYear: $pensionPremiumsPriorYear, ')
           ..write('reserveringsruimte: $reserveringsruimte, ')
           ..write('plannedContribution: $plannedContribution, ')
           ..write('aovInsured: $aovInsured, ')
@@ -7913,6 +7965,7 @@ class PensionEntry extends DataClass implements Insertable<PensionEntry> {
     year,
     priorYearIncome,
     factorA,
+    pensionPremiumsPriorYear,
     reserveringsruimte,
     plannedContribution,
     aovInsured,
@@ -7925,6 +7978,7 @@ class PensionEntry extends DataClass implements Insertable<PensionEntry> {
           other.year == this.year &&
           other.priorYearIncome == this.priorYearIncome &&
           other.factorA == this.factorA &&
+          other.pensionPremiumsPriorYear == this.pensionPremiumsPriorYear &&
           other.reserveringsruimte == this.reserveringsruimte &&
           other.plannedContribution == this.plannedContribution &&
           other.aovInsured == this.aovInsured &&
@@ -7935,6 +7989,7 @@ class PensionEntriesCompanion extends UpdateCompanion<PensionEntry> {
   final Value<int> year;
   final Value<int> priorYearIncome;
   final Value<int> factorA;
+  final Value<int?> pensionPremiumsPriorYear;
   final Value<int> reserveringsruimte;
   final Value<int> plannedContribution;
   final Value<bool> aovInsured;
@@ -7943,6 +7998,7 @@ class PensionEntriesCompanion extends UpdateCompanion<PensionEntry> {
     this.year = const Value.absent(),
     this.priorYearIncome = const Value.absent(),
     this.factorA = const Value.absent(),
+    this.pensionPremiumsPriorYear = const Value.absent(),
     this.reserveringsruimte = const Value.absent(),
     this.plannedContribution = const Value.absent(),
     this.aovInsured = const Value.absent(),
@@ -7952,6 +8008,7 @@ class PensionEntriesCompanion extends UpdateCompanion<PensionEntry> {
     this.year = const Value.absent(),
     this.priorYearIncome = const Value.absent(),
     this.factorA = const Value.absent(),
+    this.pensionPremiumsPriorYear = const Value.absent(),
     this.reserveringsruimte = const Value.absent(),
     this.plannedContribution = const Value.absent(),
     this.aovInsured = const Value.absent(),
@@ -7961,6 +8018,7 @@ class PensionEntriesCompanion extends UpdateCompanion<PensionEntry> {
     Expression<int>? year,
     Expression<int>? priorYearIncome,
     Expression<int>? factorA,
+    Expression<int>? pensionPremiumsPriorYear,
     Expression<int>? reserveringsruimte,
     Expression<int>? plannedContribution,
     Expression<bool>? aovInsured,
@@ -7970,6 +8028,8 @@ class PensionEntriesCompanion extends UpdateCompanion<PensionEntry> {
       if (year != null) 'year': year,
       if (priorYearIncome != null) 'prior_year_income': priorYearIncome,
       if (factorA != null) 'factor_a': factorA,
+      if (pensionPremiumsPriorYear != null)
+        'pension_premiums_prior_year': pensionPremiumsPriorYear,
       if (reserveringsruimte != null) 'reserveringsruimte': reserveringsruimte,
       if (plannedContribution != null)
         'planned_contribution': plannedContribution,
@@ -7982,6 +8042,7 @@ class PensionEntriesCompanion extends UpdateCompanion<PensionEntry> {
     Value<int>? year,
     Value<int>? priorYearIncome,
     Value<int>? factorA,
+    Value<int?>? pensionPremiumsPriorYear,
     Value<int>? reserveringsruimte,
     Value<int>? plannedContribution,
     Value<bool>? aovInsured,
@@ -7991,6 +8052,8 @@ class PensionEntriesCompanion extends UpdateCompanion<PensionEntry> {
       year: year ?? this.year,
       priorYearIncome: priorYearIncome ?? this.priorYearIncome,
       factorA: factorA ?? this.factorA,
+      pensionPremiumsPriorYear:
+          pensionPremiumsPriorYear ?? this.pensionPremiumsPriorYear,
       reserveringsruimte: reserveringsruimte ?? this.reserveringsruimte,
       plannedContribution: plannedContribution ?? this.plannedContribution,
       aovInsured: aovInsured ?? this.aovInsured,
@@ -8009,6 +8072,11 @@ class PensionEntriesCompanion extends UpdateCompanion<PensionEntry> {
     }
     if (factorA.present) {
       map['factor_a'] = Variable<int>(factorA.value);
+    }
+    if (pensionPremiumsPriorYear.present) {
+      map['pension_premiums_prior_year'] = Variable<int>(
+        pensionPremiumsPriorYear.value,
+      );
     }
     if (reserveringsruimte.present) {
       map['reserveringsruimte'] = Variable<int>(reserveringsruimte.value);
@@ -8031,6 +8099,7 @@ class PensionEntriesCompanion extends UpdateCompanion<PensionEntry> {
           ..write('year: $year, ')
           ..write('priorYearIncome: $priorYearIncome, ')
           ..write('factorA: $factorA, ')
+          ..write('pensionPremiumsPriorYear: $pensionPremiumsPriorYear, ')
           ..write('reserveringsruimte: $reserveringsruimte, ')
           ..write('plannedContribution: $plannedContribution, ')
           ..write('aovInsured: $aovInsured, ')
@@ -16337,6 +16406,7 @@ typedef $$PensionEntriesTableCreateCompanionBuilder =
       Value<int> year,
       Value<int> priorYearIncome,
       Value<int> factorA,
+      Value<int?> pensionPremiumsPriorYear,
       Value<int> reserveringsruimte,
       Value<int> plannedContribution,
       Value<bool> aovInsured,
@@ -16347,6 +16417,7 @@ typedef $$PensionEntriesTableUpdateCompanionBuilder =
       Value<int> year,
       Value<int> priorYearIncome,
       Value<int> factorA,
+      Value<int?> pensionPremiumsPriorYear,
       Value<int> reserveringsruimte,
       Value<int> plannedContribution,
       Value<bool> aovInsured,
@@ -16374,6 +16445,11 @@ class $$PensionEntriesTableFilterComposer
 
   ColumnFilters<int> get factorA => $composableBuilder(
     column: $table.factorA,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get pensionPremiumsPriorYear => $composableBuilder(
+    column: $table.pensionPremiumsPriorYear,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -16422,6 +16498,11 @@ class $$PensionEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get pensionPremiumsPriorYear => $composableBuilder(
+    column: $table.pensionPremiumsPriorYear,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get reserveringsruimte => $composableBuilder(
     column: $table.reserveringsruimte,
     builder: (column) => ColumnOrderings(column),
@@ -16462,6 +16543,11 @@ class $$PensionEntriesTableAnnotationComposer
 
   GeneratedColumn<int> get factorA =>
       $composableBuilder(column: $table.factorA, builder: (column) => column);
+
+  GeneratedColumn<int> get pensionPremiumsPriorYear => $composableBuilder(
+    column: $table.pensionPremiumsPriorYear,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<int> get reserveringsruimte => $composableBuilder(
     column: $table.reserveringsruimte,
@@ -16520,6 +16606,7 @@ class $$PensionEntriesTableTableManager
                 Value<int> year = const Value.absent(),
                 Value<int> priorYearIncome = const Value.absent(),
                 Value<int> factorA = const Value.absent(),
+                Value<int?> pensionPremiumsPriorYear = const Value.absent(),
                 Value<int> reserveringsruimte = const Value.absent(),
                 Value<int> plannedContribution = const Value.absent(),
                 Value<bool> aovInsured = const Value.absent(),
@@ -16528,6 +16615,7 @@ class $$PensionEntriesTableTableManager
                 year: year,
                 priorYearIncome: priorYearIncome,
                 factorA: factorA,
+                pensionPremiumsPriorYear: pensionPremiumsPriorYear,
                 reserveringsruimte: reserveringsruimte,
                 plannedContribution: plannedContribution,
                 aovInsured: aovInsured,
@@ -16538,6 +16626,7 @@ class $$PensionEntriesTableTableManager
                 Value<int> year = const Value.absent(),
                 Value<int> priorYearIncome = const Value.absent(),
                 Value<int> factorA = const Value.absent(),
+                Value<int?> pensionPremiumsPriorYear = const Value.absent(),
                 Value<int> reserveringsruimte = const Value.absent(),
                 Value<int> plannedContribution = const Value.absent(),
                 Value<bool> aovInsured = const Value.absent(),
@@ -16546,6 +16635,7 @@ class $$PensionEntriesTableTableManager
                 year: year,
                 priorYearIncome: priorYearIncome,
                 factorA: factorA,
+                pensionPremiumsPriorYear: pensionPremiumsPriorYear,
                 reserveringsruimte: reserveringsruimte,
                 plannedContribution: plannedContribution,
                 aovInsured: aovInsured,

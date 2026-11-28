@@ -34,7 +34,7 @@ The legal-review skill's scripts read the sources (run them with `python3 -I`):
 10. Tests: add `test/services/tax_year_<year>_test.dart` modelled on the previous year's, with expected values worked by hand from the sourced tables. Update the test that asserts which years exist. `test/services/tax_year_docs_test.dart` fails until every field is in the year's doc.
 11. Run `verify_quotes.py` on `docs/legal.md` and the new year's doc until only table rows remain to check by hand, and check those.
 12. Check the non-yearly rules in `docs/legal.md` still hold: BTW rubrieken, invoice contents, the KOR, the ICP-opgaaf, artikel 3.30, the bewaarplicht. Quote the new year's row of the BTW deadlines table.
-13. Update both READMEs where they name the covered tax years.
+13. Update both READMEs and both guides (`docs/guide.md`, `docs/guide.nl.md`) where they name the covered tax years or a yearly figure, such as an amount or the urencriterium hours.
 14. Run `make local` until it passes. Then run the app on the new year with the `ui-review` skill (`UI_REVIEW_YEAR=<year> .claude/skills/ui-review/scripts/start.sh en light`) and open the dashboard, BTW return, P&L & Tax, Pension, a new expense, an asset and Settings. Check the figures in the help texts show the new year's values.
 
 ## Report

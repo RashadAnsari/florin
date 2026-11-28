@@ -51,7 +51,11 @@ class PlTaxScreen extends ConsumerWidget {
             estimate.businessKm,
             rules,
           );
-          final depreciation = AssetService.totalDepreciation(assets, year);
+          final depreciation = AssetService.totalDepreciation(
+            assets,
+            year,
+            rules,
+          );
           final d = r.investmentDeduction;
 
           return SingleChildScrollView(
@@ -70,7 +74,7 @@ class PlTaxScreen extends ConsumerWidget {
                           )
                         : l.plTaxUrenBanner(
                             AppFormat.hours(estimate.totalHours),
-                            '${rules.urencriterium}',
+                            AppFormat.number(rules.urencriterium.toDouble()),
                             estimate.yearOver
                                 ? l.plTaxUrenBannerSuffixDone
                                 : l.plTaxUrenBannerSuffixPending,
@@ -155,7 +159,10 @@ class PlTaxScreen extends ConsumerWidget {
                   ValueRow.cents(
                     l.plTaxCarPrivateUse,
                     r.carPrivateUse,
-                    help: l.plTaxCarPrivateUseHelp(rules.carPrivateKmLimit),
+                    help: l.plTaxCarPrivateUseHelp(
+                      rules.carOldAfterYears,
+                      rules.carPrivateKmLimit,
+                    ),
                   ),
                 if (r.reserveReleased > 0)
                   ValueRow.cents(
@@ -216,7 +223,10 @@ class PlTaxScreen extends ConsumerWidget {
                   ValueRow.cents(
                     l.plTaxMeewerk,
                     -r.meewerkaftrek,
-                    help: l.plTaxMeewerkHelp(rules.meewerkaftrek.first.$1),
+                    help: l.plTaxMeewerkHelp(
+                      rules.meewerkaftrek.first.$1,
+                      AppFormat.euros(rules.meewerkMaxPartnerPay),
+                    ),
                   ),
                 if (r.disabilityStartersaftrek > 0)
                   ValueRow.cents(
@@ -344,7 +354,7 @@ class PlTaxScreen extends ConsumerWidget {
                 ),
                 ValueRow.cents(
                   l.plTaxProvisionalIncome,
-                  r.taxableIncome,
+                  r.incomeBox1,
                   help: l.plTaxProvisionalIncomeHelp,
                 ),
                 ValueRow.cents(
@@ -363,7 +373,10 @@ class PlTaxScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.section),
                 _YearInputs(year: year),
                 const SizedBox(height: AppSpacing.section),
-                _BalanceSheetSection(year: year, profit: r.grossProfit),
+                _BalanceSheetSection(
+                  year: year,
+                  profit: estimate.comparableProfit,
+                ),
               ],
             ),
           );
@@ -557,7 +570,6 @@ class _YearInputs extends ConsumerWidget {
                         wages: Value(0),
                         wageTaxWithheld: Value(0),
                         zvwWages: Value(0),
-                        employmentHours: Value(0),
                       ),
               ),
               title: l.inputEmployed,
@@ -585,31 +597,32 @@ class _YearInputs extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.field),
-              FormRow(
-                children: [
+            ],
+            const SizedBox(height: AppSpacing.field),
+            // The time test counts other work too, so the hours are asked
+            // with or without a job (art. 3.6 lid 1 a).
+            FormRow(
+              children: [
+                if (i?.employed ?? false)
                   AmountField(
                     key: ValueKey('zvw_wages_$year'),
                     label: l.inputZvwWages,
                     help: l.inputZvwWagesHelp,
-                    initialValueCents: i.zvwWages,
+                    initialValueCents: i!.zvwWages,
                     onChanged: (v) =>
                         save(TaxYearInputsCompanion(zvwWages: Value(v))),
                   ),
-                  _WholeNumberField(
-                    key: ValueKey('job_hours_$year'),
-                    label: l.inputEmploymentHours,
-                    help: l.inputEmploymentHoursHelp(
-                      rules.starterLookbackYears,
-                    ),
-                    value: i.employmentHours,
-                    max: _hoursInYear,
-                    onChanged: (v) =>
-                        save(TaxYearInputsCompanion(employmentHours: Value(v))),
-                  ),
-                ],
-              ),
-            ],
+                _WholeNumberField(
+                  key: ValueKey('job_hours_$year'),
+                  label: l.inputEmploymentHours,
+                  help: l.inputEmploymentHoursHelp(rules.starterLookbackYears),
+                  value: i?.employmentHours ?? 0,
+                  max: _hoursInYear,
+                  onChanged: (v) =>
+                      save(TaxYearInputsCompanion(employmentHours: Value(v))),
+                ),
+              ],
+            ),
           ],
         );
       },
@@ -817,7 +830,11 @@ class _BalanceSheetSection extends ConsumerWidget {
                 bold: true,
                 help: l.balanceEquityProfitHelp,
               ),
-              ValueRow.cents(l.balanceEstimateProfit, profit),
+              ValueRow.cents(
+                l.balanceEstimateProfit,
+                profit,
+                help: l.balanceEstimateProfitHelp,
+              ),
               if (b.equityProfit != profit) ...[
                 const SizedBox(height: AppSpacing.heading),
                 NoticeBanner(
